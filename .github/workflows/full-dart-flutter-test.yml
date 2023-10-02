@@ -8,13 +8,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Dart
         uses: dart-lang/setup-dart@v1
+      - name: Install Dart Dept
+        run:  dart pub get
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1      
       - name: Install Flutter Deps
         run:  flutter pub get
+      - name: Exit if the directory changes
+        run:  dart format --output=none --set-exit-if-chaned .
+      - name: Run Dart Analysis
+        run:  dart analyze
       - name: Run Dart tests
         run : dart test --coverage="./coverage/dart"
       - name: Run Flutter analysis
         run:  flutter analyze
       - name: Run Flutter Tests
-        run:  flutter test --coverage="./coverage/flutter"
+        run: flutter test --coverage="./coverage/flutter"
