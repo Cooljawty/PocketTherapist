@@ -9,7 +9,7 @@ jobs:
       - name: Install Dart
         uses: dart-lang/setup-dart@v1
       - name: Install Flutter
-        uses: subosito/flutter-action@v1.3.2
+        uses: britannio/action-install-flutter@v1.1      
       - name: Install Flutter Deps
         run:  flutter pub get
       - name: Run Dart tests
