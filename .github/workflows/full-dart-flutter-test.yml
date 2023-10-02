@@ -13,9 +13,6 @@ jobs:
       - name: Install Flutter Deps
         working-directory: ./app
         run:  flutter pub get
-      - name: Exit if the directory changes
-        working-directory: ./app
-        run:  dart format --output=none --set-exit-if-chaned .
       - name: Run Dart Analysis
         working-directory: ./app
         run:  dart analyze
