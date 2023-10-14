@@ -17,13 +17,10 @@ jobs:
       - name: Run Flutter Tests
         working-directory: ./app
         run: flutter test --branch-coverage
-      - name: Setup LCOV
-        uses: hrishikesh-kadam/setup-lcov@v1.0.0
-      - name: Report Code Coverage
-        uses: zgosalvez/github-actions-report-lcov@v3.1.8
+      - name: Codecov
+        uses: codecov/codecov-action@v4.0.0-beta.3
         with:
-          working-directory: app/coverage
-          coverage-files: lcov.info
-          minimum-coverage: 95
-          artifact-name: code-coverage-report
-          update-comment: true
+          files: ./app/coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          name: code-coverage
+          verbose: true
