@@ -20,7 +20,8 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v4.0.0-beta.3
         with:
-          files: ./app/coverage
+          files: ./app/coverage/*.info
           token: ${{ secrets.CODECOV_TOKEN }}
           name: code-coverage
+          fail_ci_if_error: true
           verbose: true
