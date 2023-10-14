@@ -18,7 +18,7 @@ jobs:
         working-directory: ./app
         run: flutter test --branch-coverage
       - name: Codecov
-        uses: codecov/codecov-action@v4.0.0-beta.3
+        uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
