@@ -23,7 +23,7 @@ jobs:
         uses: zgosalvez/github-actions-report-lcov@v3.1.8
         with:
           working-directory: ./app/coverage
-          coverage-files: ./*.info
+          coverage-files: lcov.info
           update-comment: true
           minimum-coverage: 90
             
