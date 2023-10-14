@@ -11,6 +11,8 @@ jobs:
       - name: Install Flutter Deps
         working-directory: ./app
         run:  flutter pub get
+      - name: Install genhtml for CI reporting
+        run: sudo apt-get install -y lcov
       - name: Run Flutter analysis
         working-directory: ./app
         run:  flutter analyze
