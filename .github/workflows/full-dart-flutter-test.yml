@@ -12,7 +12,7 @@ jobs:
         working-directory: ./app
         run:  flutter pub get
       - name: Install genhmtl for CI reporting
-        run: apt get install genhtml
+        run: apt install genhtml
       - name: Run Flutter analysis
         working-directory: ./app
         run:  flutter analyze
