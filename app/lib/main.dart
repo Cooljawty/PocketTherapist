@@ -26,6 +26,7 @@ class _RootAppState extends State<RootApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: ThemeData.light().copyWith(
         useMaterial3: true,
@@ -51,28 +52,23 @@ class _RootAppState extends State<RootApp> {
                   color: Colors.deepOrangeAccent,
                   fontSize: 14,
                   fontWeight: FontWeight.bold))),
-      routes: {
-        '/dashboard': (context) => FutureBuilder(future: SettingsManager
-            .loadSettings(), builder: (context, snapshot) {
-                if(snapshot.hasData) {
-                   return DashboardPage();
-                }
-                else if(snapshot.hasError) {
-                   // Do something with error.
-                   return Placeholder();
-                } else {
-                  // still loading
-                  return SplashScreen();
-                }
-        }),
+      home: DashboardPage()
 
-        '/calendar': (context) => CalendarPage(),
-        '/entries': (context) => EntriesPage(),
-        '/plans': (context) => PlanningPage(),
-        '/settings': (context) => SettingsPage(),
-      },
-      initialRoute: '/dashboard',
 
     );
   }
 }
+//
+// FutureBuilder(future: SettingsManager
+//     .loadSettings(), builder: (context, snapshot) {
+// if(snapshot.hasData) {
+// return DashboardPage();
+// }
+// else if(snapshot.hasError) {
+// // Do something with error.
+// return Placeholder();
+// } else {
+// // still loading
+// return SplashScreen();
+// }
+// }),

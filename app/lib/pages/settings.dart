@@ -1,7 +1,11 @@
+import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 class SettingsPage extends StatefulWidget {
+  static Route<dynamic> route() {
+    return MaterialPageRoute(builder: (context) => SettingsPage());
+  }
   const SettingsPage({super.key});
 
   @override
@@ -11,25 +15,41 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              const Text('Settings'),
+              ElevatedButton(onPressed: (){
+
+                Navigator.of(context).pushReplacement(CalendarPage.route());
+
+              }, child: const Text('nextPageCalendar') )
+            ],
+          ),
+        )
+    );
   }
 }
 
 class SettingsManager extends ChangeNotifier {
 
-    static ThemeMode _currentMode = SchedulerBinding.instance.platformDispatcher
+    ThemeMode _currentMode = SchedulerBinding.instance.platformDispatcher
         .platformBrightness == Brightness.light ? ThemeMode.dark : ThemeMode.light;
 
     // This will be chhagned to load and parse the settings.yml file with dart.yml
-    static Future<Map<String, Object>> loadSettings([String fileName= "settings.yml"]) async {
-      return Future.delayed(
-            const Duration(seconds: 5),
+    Future<Map<String, Object>> loadSettings([String fileName= "settings.yml"]) {
+      return Future.delayed (
+        const Duration(seconds: 5),
           () => {"This": 0}
       );
     }
 
-    static void toggleDarkMode() =>
-      _currentMode = (_currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
+    void toggleDarkMode() {
+      _currentMode =
+      (_currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
+
+    }
 
     bool isDarkmode() => (_currentMode == ThemeMode.dark);
 }

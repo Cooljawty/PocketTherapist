@@ -29,7 +29,8 @@ class ToggleThemeButton extends StatelessWidget {
                 ? 0.0
                 : 25.0,
             child: InkWell(
-                onTap: SettingsManager.toggleDarkMode,
+                onTap: () {
+                },
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder:
