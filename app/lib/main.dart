@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 // ------------------- Pages ----------
-import 'package:app/pages/settings.dart';
 import 'package:app/pages/dashboard.dart';
 
 void main() {
   //Things that need to be done before the application is ran.
   // await initialization(null);
-  runApp(RootApp());
+  runApp(const RootApp());
 }
 //
 // Future initialization(BuildContext? context) async {
@@ -14,7 +13,7 @@ void main() {
 // }
 
 class RootApp extends StatefulWidget {
-  RootApp({super.key});
+  const RootApp({super.key});
 
   // This will need to change eventually.
 
@@ -53,7 +52,7 @@ class _RootAppState extends State<RootApp> {
                   color: Colors.deepOrangeAccent,
                   fontSize: 14,
                   fontWeight: FontWeight.bold))),
-      home: DashboardPage(),
+      home: const DashboardPage(),
     );
   }
 }

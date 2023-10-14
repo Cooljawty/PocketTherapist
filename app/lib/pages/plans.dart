@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PlansPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => PlansPage());
+    return MaterialPageRoute(builder: (context) => const PlansPage());
   }
   const PlansPage({super.key });
 

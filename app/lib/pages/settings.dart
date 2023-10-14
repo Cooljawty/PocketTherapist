@@ -1,10 +1,9 @@
 import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => SettingsPage());
+    return MaterialPageRoute(builder: (context) => const SettingsPage());
   }
   const SettingsPage({super.key});
 

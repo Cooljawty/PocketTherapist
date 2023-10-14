@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => EntriesPage());
+    return MaterialPageRoute(builder: (context) => const EntriesPage());
   }
 
   const EntriesPage({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CalendarPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => CalendarPage());
+    return MaterialPageRoute(builder: (context) => const CalendarPage());
   }
   const CalendarPage({super.key});
 

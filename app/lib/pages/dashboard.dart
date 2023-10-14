@@ -1,11 +1,9 @@
 import 'package:app/pages/entries.dart';
-import 'package:app/pages/loading.dart';
-import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => DashboardPage());
+    return MaterialPageRoute(builder: (context) => const DashboardPage());
   }
 
   const DashboardPage({super.key });

@@ -13,8 +13,8 @@ void main() {
 
   testWidgets('Cycle through pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(RootApp());
-    await tester.pumpAndSettle(Duration(seconds: 5));
+    await tester.pumpWidget(const RootApp());
+    await tester.pumpAndSettle(const Duration(seconds: 5));
     // found dashboard, find next thigns
     expect(find.text('Dashboard'), findsOneWidget);
     Finder nextPageButton = find.text('nextPageEntries');
