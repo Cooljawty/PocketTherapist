@@ -8,8 +8,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1      
-      - name: Install Dart
-        uses: dart-lang/setup-dart@v1
       - name: Install Flutter Deps
         working-directory: ./app
         run:  flutter pub get
