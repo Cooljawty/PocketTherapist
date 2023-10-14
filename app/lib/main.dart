@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 // ------------------- Pages ----------
 import 'package:app/pages/settings.dart';
-import 'package:app/pages/loading.dart';
-import 'package:app/pages/calendar.dart';
-import 'package:app/pages/entries.dart';
 import 'package:app/pages/dashboard.dart';
-import 'package:app/pages/plans.dart';
 
 void main() {
   //Things that need to be done before the application is ran.
+  // await initialization(null);
   runApp(RootApp());
 }
+//
+// Future initialization(BuildContext? context) async {
+//
+// }
 
 class RootApp extends StatefulWidget {
   RootApp({super.key});
@@ -52,23 +53,13 @@ class _RootAppState extends State<RootApp> {
                   color: Colors.deepOrangeAccent,
                   fontSize: 14,
                   fontWeight: FontWeight.bold))),
-      home: DashboardPage()
-
-
+      home: DashboardPage(),
     );
   }
 }
+
+
+// Used for displaying the splashscreen and then the dashboard, but when used with routes, causes
+// Duplicate entries.
 //
-// FutureBuilder(future: SettingsManager
-//     .loadSettings(), builder: (context, snapshot) {
-// if(snapshot.hasData) {
-// return DashboardPage();
-// }
-// else if(snapshot.hasError) {
-// // Do something with error.
-// return Placeholder();
-// } else {
-// // still loading
-// return SplashScreen();
-// }
-// }),
+

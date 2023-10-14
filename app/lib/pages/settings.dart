@@ -32,24 +32,24 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-class SettingsManager extends ChangeNotifier {
-
-    ThemeMode _currentMode = SchedulerBinding.instance.platformDispatcher
-        .platformBrightness == Brightness.light ? ThemeMode.dark : ThemeMode.light;
-
-    // This will be chhagned to load and parse the settings.yml file with dart.yml
-    Future<Map<String, Object>> loadSettings([String fileName= "settings.yml"]) {
-      return Future.delayed (
-        const Duration(seconds: 5),
-          () => {"This": 0}
-      );
-    }
-
-    void toggleDarkMode() {
-      _currentMode =
-      (_currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
-
-    }
-
-    bool isDarkmode() => (_currentMode == ThemeMode.dark);
-}
+// class SettingsManager extends ChangeNotifier {
+//
+//     Map<String, Object> _settings = {};
+//     ThemeMode _currentMode = SchedulerBinding.instance.platformDispatcher
+//         .platformBrightness == Brightness.light ? ThemeMode.dark : ThemeMode.light;
+//
+//     // This will be changed to load and parse the settings.yml file with dart.yml
+//     static Future<void> loadSettings([String fileName= "settings.yml"]) {
+//       return Future.delayed (
+//         const Duration(seconds: 5),
+//           () => {"This": 0}
+//       );
+//     }
+//
+//     void toggleDarkMode() {
+//       _currentMode =
+//       (_currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
+//     }
+//
+//     bool isDarkmode() => (_currentMode == ThemeMode.dark);
+// }

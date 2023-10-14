@@ -20,10 +20,9 @@ class _CalendarPageState extends State<CalendarPage> {
             children: [
               const Text('Calendar'),
               ElevatedButton(onPressed: (){
-
                 Navigator.of(context).pushReplacement(DashboardPage.route());
-
-              }, child: const Text('nextPageDashboard') )
+              },
+              child: const Text('nextPageDashboard'))
             ],
           ),
         )
