@@ -8,8 +8,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1      
-      - name: Install Dart
-        uses: dart-lang/setup-dart@v1
       - name: Install Flutter Deps
         working-directory: ./app
         run:  flutter pub get
@@ -18,4 +16,13 @@ jobs:
         run:  flutter analyze
       - name: Run Flutter Tests
         working-directory: ./app
-        run: flutter test --coverage
+        run: flutter test --branch-coverage
+      - name: Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: ./app/coverage/lcov.info
+          name: code-coverage
+          verbose: true
+          
