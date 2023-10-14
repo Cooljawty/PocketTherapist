@@ -18,10 +18,8 @@ jobs:
         working-directory: ./app
         run: flutter test --branch-coverage
       - name: Codecov
-        uses: codecov/codecov-action@v4.0.0-beta.3
+        uses: codecov/codecov-action@v4.0.0
         with:
-          files: ./app/coverage/*.info
-          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./app/coverage/lcov.info
           name: code-coverage
-          fail_ci_if_error: true
           verbose: true
