@@ -22,7 +22,7 @@ jobs:
       - name: Report Code Coverage
         uses: zgosalvez/github-actions-report-lcov@v3.1.8
         with:
-          working-directory: ./app/coverage
+          working-directory: app/coverage
           coverage-files: lcov.info
           minimum-coverage: 95
           artifact-name: code-coverage-report
