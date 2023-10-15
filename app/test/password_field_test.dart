@@ -60,21 +60,4 @@ void main() {
     //Check if the current validator would have errored on the input text
     expect(tstr.widget<TextFormField>(find.byType(TextFormField)).validator!(''), isNotNull);
   });
-
-  testWidgets('Testing Dashboard\'s Password Field', (widgetTester) async {
-    myApp = const RootApp();
-    await widgetTester.pumpWidget(myApp);
-    // Always starts on the dashboard
-    find.descendant(
-        of: find.byWidget(myApp),
-        matching: find.byType(PasswordField)
-    ).first;
-
-    TextFormField field = widgetTester.widget<TextFormField>(
-        find.descendant( of: find.byType(PasswordField),
-            matching: find.byType(TextFormField))
-    );
-
-    expect(field.validator!(''), isNotNull);
-  });
 }

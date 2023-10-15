@@ -25,15 +25,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   ElevatedButton(onPressed: (){
                     Navigator.of(context).pushReplacement(EntriesPage.route());
                   }, child: const Text('nextPageEntries') ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
                     child: Column(
                       children: [
-                        PasswordField(
-                            key: const Key('passwordField'),
-                            hintText: "Password",
-                            validator: (textInField) => (textInField?.isEmpty ?? true) ? 'Field is required' : null
-                        ),
+
                       ],
                     )
                   ),
