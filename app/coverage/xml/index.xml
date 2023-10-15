@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="jgenhtml.xsl"?><coverage branch-rate="0.27027026" branches-covered="10" branches-valid="37" complexity="0" date="2023-10-15" filename="index" function-rate="NaN" functions-covered="0" functions-valid="0" line-rate="0.5301205" lines-covered="44" lines-valid="83" testname="lcov.info" version="1.6">
+<sources>
+<source branches-hit="2" branches-valid="3" functions-hit="0" functions-valid="0" lines-hit="11" lines-valid="11" pathname="lib/uiwidgets" prefix="/Users/Katri/Desktop/PocketTherapist/Pocket-Therapist/app/"/>
+<source branches-hit="6" branches-valid="30" functions-hit="0" functions-valid="0" lines-hit="23" lines-valid="60" pathname="lib/pages" prefix="/Users/Katri/Desktop/PocketTherapist/Pocket-Therapist/app/"/>
+<source branches-hit="2" branches-valid="4" functions-hit="0" functions-valid="0" lines-hit="10" lines-valid="12" pathname="lib" prefix="/Users/Katri/Desktop/PocketTherapist/Pocket-Therapist/app/"/>
+</sources>
+<config branch-coverage="true" description-file="false" function-coverage="true" genhtml_hi_limit="90" genhtml_med_limit="75" legend="false" no-sort="false" no-source="false" show-details="false"/>
+</coverage>

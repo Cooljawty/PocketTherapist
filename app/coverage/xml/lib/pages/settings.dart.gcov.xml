@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../jgenhtml.xsl"?><coverage branch-rate="0.6666667" branches-covered="4" branches-valid="6" complexity="0" date="2023-10-15" filename="settings.dart" function-rate="NaN" functions-covered="0" functions-valid="0" line-rate="0.9166667" lines-covered="11" lines-valid="12" package="lib/pages" testname="lcov.info" version="1.6">
+<lines>
+<line number="1">
+<code>import 'package:app/pages/calendar.dart';</code>
+</line>
+<line number="2">
+<code>import 'package:flutter/material.dart';</code>
+</line>
+<line number="3">
+<code/>
+</line>
+<line number="4">
+<code>class SettingsPage extends StatefulWidget {</code>
+</line>
+<line hits="1" number="5">
+<code>  static Route&lt;dynamic&gt; route() {</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line hits="2" number="6">
+<code>    return MaterialPageRoute(builder: (context) =&gt; const SettingsPage());</code>
+<hit count="2" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line number="7">
+<code>  }</code>
+</line>
+<line hits="1" number="8">
+<code>  const SettingsPage({super.key});</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="9">
+<code/>
+</line>
+<line hits="1" number="10">
+<code>  @override</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line hits="1" number="11">
+<code>  State&lt;SettingsPage&gt; createState() =&gt; _SettingsPageState();</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="12">
+<code>}</code>
+</line>
+<line number="13">
+<code/>
+</line>
+<line number="14">
+<code>class _SettingsPageState extends State&lt;SettingsPage&gt; {</code>
+</line>
+<line hits="1" number="15">
+<code>  @override</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line number="16">
+<code>  Widget build(BuildContext context) {</code>
+</line>
+<line hits="1" number="17">
+<code>    return Scaffold(</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="18">
+<code>        body: SafeArea(</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="19">
+<code>          child: Column(</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="20">
+<code>            children: [</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="21">
+<code>              const Text('Settings'),</code>
+</line>
+<line hits="1" number="22">
+<code>              ElevatedButton(onPressed: (){</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="23">
+<code/>
+</line>
+<line hits="0" number="24">
+<code>                Navigator.of(context).pushReplacement(CalendarPage.route());</code>
+</line>
+<line number="25">
+<code/>
+</line>
+<line number="26">
+<code>              }, child: const Text('nextPageCalendar') )</code>
+</line>
+<line number="27">
+<code>            ],</code>
+</line>
+<line number="28">
+<code>          ),</code>
+</line>
+<line number="29">
+<code>        )</code>
+</line>
+<line number="30">
+<code>    );</code>
+</line>
+<line number="31">
+<code>  }</code>
+</line>
+<line number="32">
+<code>}</code>
+</line>
+<line number="33">
+<code/>
+</line>
+<line number="34">
+<code>// class SettingsManager extends ChangeNotifier {</code>
+</line>
+<line number="35">
+<code>//</code>
+</line>
+<line number="36">
+<code>//     Map&lt;String, Object&gt; _settings = {};</code>
+</line>
+<line number="37">
+<code>//     ThemeMode _currentMode = SchedulerBinding.instance.platformDispatcher</code>
+</line>
+<line number="38">
+<code>//         .platformBrightness == Brightness.light ? ThemeMode.dark : ThemeMode.light;</code>
+</line>
+<line number="39">
+<code>//</code>
+</line>
+<line number="40">
+<code>//     // This will be changed to load and parse the settings.yml file with dart.yml</code>
+</line>
+<line number="41">
+<code>//     static Future&lt;void&gt; loadSettings([String fileName= "settings.yml"]) {</code>
+</line>
+<line number="42">
+<code>//       return Future.delayed (</code>
+</line>
+<line number="43">
+<code>//         const Duration(seconds: 5),</code>
+</line>
+<line number="44">
+<code>//           () =&gt; {"This": 0}</code>
+</line>
+<line number="45">
+<code>//       );</code>
+</line>
+<line number="46">
+<code>//     }</code>
+</line>
+<line number="47">
+<code>//</code>
+</line>
+<line number="48">
+<code>//     void toggleDarkMode() {</code>
+</line>
+<line number="49">
+<code>//       _currentMode =</code>
+</line>
+<line number="50">
+<code>//       (_currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);</code>
+</line>
+<line number="51">
+<code>//     }</code>
+</line>
+<line number="52">
+<code>//</code>
+</line>
+<line number="53">
+<code>//     bool isDarkmode() =&gt; (_currentMode == ThemeMode.dark);</code>
+</line>
+<line number="54">
+<code>// }</code>
+</line>
+</lines>
+<config branch-coverage="true" description-file="false" function-coverage="true" genhtml_hi_limit="90" genhtml_med_limit="75" legend="false" no-sort="false" no-source="false" show-details="false"/>
+<base href="../../"/>
+<base href="../../"/>
+</coverage>

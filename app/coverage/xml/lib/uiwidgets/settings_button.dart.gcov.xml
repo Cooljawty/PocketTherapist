@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../jgenhtml.xsl"?><coverage branch-rate="0.6666667" branches-covered="2" branches-valid="3" complexity="0" date="2023-10-15" filename="settings_button.dart" function-rate="NaN" functions-covered="0" functions-valid="0" line-rate="1.0" lines-covered="11" lines-valid="11" package="lib/uiwidgets" testname="lcov.info" version="1.6">
+<lines>
+<line number="1">
+<code>import 'package:flutter/material.dart';</code>
+</line>
+<line number="2">
+<code>import 'package:app/pages/settings.dart';</code>
+</line>
+<line number="3">
+<code/>
+</line>
+<line number="4">
+<code>// Button for settings</code>
+</line>
+<line number="5">
+<code>class SettingsButton extends StatelessWidget {</code>
+</line>
+<line hits="1" number="6">
+<code>  const SettingsButton({super.key});</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="7">
+<code/>
+</line>
+<line hits="1" number="8">
+<code>  @override</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line number="9">
+<code>  Widget build(BuildContext context) {</code>
+</line>
+<line hits="1" number="10">
+<code>        return Container(</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="11">
+<code>            color: Colors.white54,</code>
+</line>
+<line hits="1" number="12">
+<code>              child: GestureDetector(   // Detect if pushed</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="13">
+<code>                  onTap: () {</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="1">
+<hit count="1" name="&lt;unnamed&gt;"/>
+</branch>
+</line>
+<line hits="1" number="14">
+<code>                    Navigator.push(     // Go to settings page</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="15">
+<code>                        context, SettingsPage.route()</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="16">
+<code>                    );</code>
+</line>
+<line number="17">
+<code>                  },</code>
+</line>
+<line hits="1" number="18">
+<code>                  child: Container(     // Decoration</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="19">
+<code>                    height: 50,</code>
+</line>
+<line number="20">
+<code>                    width: 150,</code>
+</line>
+<line hits="1" number="21">
+<code>                    decoration: BoxDecoration(</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="22">
+<code>                      color: Colors.grey.shade200,</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line hits="1" number="23">
+<code>                      borderRadius: BorderRadius.circular(50),</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+</line>
+<line number="24">
+<code>                      boxShadow: const [</code>
+</line>
+<line number="25">
+<code>                        BoxShadow(</code>
+</line>
+<line number="26">
+<code>                          color: Colors.deepPurpleAccent,</code>
+</line>
+<line number="27">
+<code>                          spreadRadius: 3,</code>
+</line>
+<line number="28">
+<code>                          blurRadius: 13,</code>
+</line>
+<line number="29">
+<code>                          offset: Offset(5, 10),</code>
+</line>
+<line number="30">
+<code>                        ),</code>
+</line>
+<line number="31">
+<code>                      ],</code>
+</line>
+<line number="32">
+<code>                    ),</code>
+</line>
+<line number="33">
+<code>                    child: const Center(</code>
+</line>
+<line number="34">
+<code>                      child: Text("Settings",</code>
+</line>
+<line number="35">
+<code>                          style: TextStyle(</code>
+</line>
+<line number="36">
+<code>                              color: Colors.deepPurple,</code>
+</line>
+<line number="37">
+<code>                              fontWeight: FontWeight.bold,</code>
+</line>
+<line number="38">
+<code>                              fontSize: 18)</code>
+</line>
+<line number="39">
+<code>                      ),</code>
+</line>
+<line number="40">
+<code>                    ),</code>
+</line>
+<line number="41">
+<code>                  )</code>
+</line>
+<line number="42">
+<code>              ),</code>
+</line>
+<line number="43">
+<code>        );</code>
+</line>
+<line number="44">
+<code>  }</code>
+</line>
+<line number="45">
+<code>}</code>
+</line>
+<line number="46">
+<code/>
+</line>
+<line number="47">
+<code>// // Settings Page and Back button</code>
+</line>
+<line number="48">
+<code>// class Settings extends StatelessWidget {</code>
+</line>
+<line number="49">
+<code>//   const Settings({Key? key}) : super(key: key);</code>
+</line>
+<line number="50">
+<code>//</code>
+</line>
+<line number="51">
+<code>//   @override</code>
+</line>
+<line number="52">
+<code>//   Widget build(BuildContext context) {</code>
+</line>
+<line number="53">
+<code>//     return Scaffold(</code>
+</line>
+<line number="54">
+<code>//       appBar: AppBar(   // Contains the back button</code>
+</line>
+<line number="55">
+<code>//         title: const Text("Settings"),</code>
+</line>
+<line number="56">
+<code>//         backgroundColor: Colors.deepPurpleAccent,</code>
+</line>
+<line number="57">
+<code>//         shadowColor: Colors.orangeAccent,</code>
+</line>
+<line number="58">
+<code>//       ),</code>
+</line>
+<line number="59">
+<code>//     );</code>
+</line>
+<line number="60">
+<code>//   }</code>
+</line>
+<line number="61">
+<code>// }</code>
+</line>
+</lines>
+<config branch-coverage="true" description-file="false" function-coverage="true" genhtml_hi_limit="90" genhtml_med_limit="75" legend="false" no-sort="false" no-source="false" show-details="false"/>
+<base href="../../"/>
+<base href="../../"/>
+</coverage>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../jgenhtml.xsl"?><coverage branch-rate="0.0" branches-covered="0" branches-valid="6" complexity="0" date="2023-10-15" filename="plans.dart" function-rate="NaN" functions-covered="0" functions-valid="0" line-rate="0.083333336" lines-covered="1" lines-valid="12" package="lib/pages" testname="lcov.info" version="1.6">
+<lines>
+<line number="1">
+<code>import 'package:app/pages/settings.dart';</code>
+</line>
+<line number="2">
+<code>import 'package:flutter/material.dart';</code>
+</line>
+<line number="3">
+<code/>
+</line>
+<line number="4">
+<code>class PlansPage extends StatefulWidget {</code>
+</line>
+<line hits="0" number="5">
+<code>  static Route&lt;dynamic&gt; route() {</code>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line hits="0" number="6">
+<code>    return MaterialPageRoute(builder: (context) =&gt; const PlansPage());</code>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="7">
+<code>  }</code>
+</line>
+<line hits="1" number="8">
+<code>  const PlansPage({super.key });</code>
+<hit count="1" name="&lt;unnamed&gt;"/>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="9">
+<code/>
+</line>
+<line hits="0" number="10">
+<code>  @override</code>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line hits="0" number="11">
+<code>  State&lt;PlansPage&gt; createState() =&gt; _PlansPageState();</code>
+</line>
+<line number="12">
+<code>}</code>
+</line>
+<line number="13">
+<code/>
+</line>
+<line number="14">
+<code>class _PlansPageState extends State&lt;PlansPage&gt; {</code>
+</line>
+<line hits="0" number="15">
+<code>  @override</code>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line number="16">
+<code>  Widget build(BuildContext context) {</code>
+</line>
+<line hits="0" number="17">
+<code>    return Scaffold(</code>
+</line>
+<line hits="0" number="18">
+<code>        body: SafeArea(</code>
+</line>
+<line hits="0" number="19">
+<code>          child: Column(</code>
+</line>
+<line hits="0" number="20">
+<code>            children: [</code>
+</line>
+<line number="21">
+<code>              const Text('Plans'),</code>
+</line>
+<line hits="0" number="22">
+<code>              ElevatedButton(onPressed: (){</code>
+<branch block="0" number="0" taken="0"/>
+</line>
+<line hits="0" number="23">
+<code>                Navigator.of(context).pushReplacement(SettingsPage.route());</code>
+</line>
+<line number="24">
+<code>              }, child: const Text('nextPageSettings') )</code>
+</line>
+<line number="25">
+<code>            ],</code>
+</line>
+<line number="26">
+<code>          ),</code>
+</line>
+<line number="27">
+<code>        )</code>
+</line>
+<line number="28">
+<code>    );</code>
+</line>
+<line number="29">
+<code>  }</code>
+</line>
+<line number="30">
+<code>}</code>
+</line>
+</lines>
+<config branch-coverage="true" description-file="false" function-coverage="true" genhtml_hi_limit="90" genhtml_med_limit="75" legend="false" no-sort="false" no-source="false" show-details="false"/>
+<base href="../../"/>
+<base href="../../"/>
+</coverage>
