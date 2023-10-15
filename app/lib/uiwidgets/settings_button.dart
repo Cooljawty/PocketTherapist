@@ -3,7 +3,7 @@ import 'package:app/pages/settings.dart';
 
 // Button for settings
 class SettingsButton extends StatelessWidget {
-  const SettingsButton({Key? key}) : super(key: key);
+  const SettingsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
