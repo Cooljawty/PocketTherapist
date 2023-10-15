@@ -1,10 +1,9 @@
 import 'package:app/pages/calendar.dart';
 import 'package:app/pages/settings.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/main.dart';
-import 'package:app/uiwidgets/settings_button.dart';
-
+import 'package:app/uiwidgets/buttons.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   testNextPage(String textonPage, String textOnButton, WidgetTester tester)  async {
