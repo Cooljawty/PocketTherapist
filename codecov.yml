@@ -12,5 +12,5 @@ coverage:
         target: 100%  # we always want 100% coverage here
         paths: "app/tests/"  # only include coverage in "tests/" folder
       app:  # declare a new status context "app"
-        paths: "!app/tests/"  # remove all files in "tests/"
+        paths: "app/lib"  # only include coverage in these folders
     patch: off
