@@ -1,6 +1,3 @@
-import 'package:app/pages/calendar.dart';
-import 'package:app/pages/settings.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/main.dart';
 
@@ -30,42 +27,9 @@ void main() {
      await testNextPage('Settings', 'nextPageCalendar', tester);
      await testNextPage('Calendar', 'nextPageDashboard', tester);
 
-     // Ensure no duplicates
-    expect(find.text('Dashboard'), findsOneWidget);
-    nextPageButton = find.text('nextPageEntries');
-    expect(nextPageButton, findsOneWidget);
+       // Ensure no duplicates
+      expect(find.text('Dashboard'), findsOneWidget);
+      nextPageButton = find.text('nextPageEntries');
+      expect(nextPageButton, findsOneWidget);
   });
-  
-  testWidgets('Display Settings', (tester)  async {
-    await tester.pumpWidget(const Directionality(
-        textDirection: TextDirection.ltr,
-        child: SettingsPage()));
-    expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('nextPageCalendar'), findsOneWidget);
-  });
-
-  testWidgets('Display Calendar', (tester)  async {
-    await tester.pumpWidget(const Directionality(
-        textDirection: TextDirection.ltr,
-        child: CalendarPage()));
-    expect(find.text('Calendar'), findsOneWidget);
-    expect(find.text('nextPageDashboard'), findsOneWidget);
-  });
-  testWidgets('Display Settings', (tester)  async {
-    await tester.pumpWidget(const Directionality(
-        textDirection: TextDirection.ltr,
-        child: SettingsPage()));
-    expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('nextPageCalendar'), findsOneWidget);
-  });
-
-  testWidgets('Display Calendar', (tester)  async {
-    await tester.pumpWidget(const Directionality(
-        textDirection: TextDirection.ltr,
-        child: CalendarPage()));
-    expect(find.text('Calendar'), findsOneWidget);
-    expect(find.text('nextPageDashboard'), findsOneWidget);
-  });
-
-
 }
