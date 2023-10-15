@@ -5,8 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:app/uiwidgets/settingsButton.dart';
-import 'package:flutter/material.dart';
+import 'package:app/uiwidgets/settings_button.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:app/main.dart';

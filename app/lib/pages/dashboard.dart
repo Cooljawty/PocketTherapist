@@ -1,6 +1,6 @@
 import 'package:app/pages/entries.dart';
 import 'package:flutter/material.dart';
-import 'package:app/uiwidgets/settingsButton.dart';
+import 'package:app/uiwidgets/settings_button.dart';
 
 class DashboardPage extends StatefulWidget {
   static Route<dynamic> route() {
