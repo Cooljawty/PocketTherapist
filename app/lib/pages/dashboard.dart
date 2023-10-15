@@ -1,5 +1,6 @@
 import 'package:app/pages/entries.dart';
 import 'package:flutter/material.dart';
+import 'package:app/uiwidgets/settingsButton.dart';
 
 class DashboardPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -23,7 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   const Text('Dashboard'),
                   ElevatedButton(onPressed: (){
                     Navigator.of(context).pushReplacement(EntriesPage.route());
-                  }, child: const Text('nextPageEntries') )
+                  }, child: const Text('nextPageEntries') ),
                 ],
               ),
             )
