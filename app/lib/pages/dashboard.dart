@@ -23,15 +23,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   const Text('Dashboard'),
                   ElevatedButton(onPressed: (){
                     Navigator.of(context).pushReplacement(EntriesPage.route());
-                  }, child: const Text('nextPageEntries') ),
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
 
-                      ],
-                    )
-                  ),
+                  }, child: const Text('nextPageEntries') )
                 ],
               ),
             )

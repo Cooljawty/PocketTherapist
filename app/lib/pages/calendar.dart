@@ -2,6 +2,7 @@ import 'package:app/pages/dashboard.dart';
 import 'package:flutter/material.dart';
 
 class CalendarPage extends StatefulWidget {
+  // This is the static route for drawing this page
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => const CalendarPage());
   }
@@ -10,6 +11,7 @@ class CalendarPage extends StatefulWidget {
   @override
   State<CalendarPage> createState() => _CalendarPageState();
 }
+
 
 class _CalendarPageState extends State<CalendarPage> {
   @override

@@ -11,7 +11,8 @@ void main() {
 //
 // }
 
-
+/// This is the root application
+/// It contains
 class RootApp extends StatefulWidget {
   const RootApp({super.key});
 
