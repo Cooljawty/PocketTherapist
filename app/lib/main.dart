@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// ------------------- Pages ----------
 import 'package:app/pages/dashboard.dart';
 
 void main() {
@@ -11,6 +10,7 @@ void main() {
 // Future initialization(BuildContext? context) async {
 //
 // }
+
 
 class RootApp extends StatefulWidget {
   const RootApp({super.key});
