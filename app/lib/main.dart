@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// ------------------- Pages ----------
 import 'package:app/pages/dashboard.dart';
 
 void main() {
