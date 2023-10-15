@@ -25,6 +25,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ElevatedButton(onPressed: (){
                     Navigator.of(context).pushReplacement(EntriesPage.route());
                   }, child: const Text('nextPageEntries') ),
+                  const SettingsButton(),
                 ],
               ),
             )
