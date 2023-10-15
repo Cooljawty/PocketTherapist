@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/main.dart';
+
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/buttons.dart';
+
 
 
 void main() {
@@ -56,5 +58,4 @@ void main() {
     // Verify that we have moved to the settings
     expect(find.text('Settings'), findsOneWidget);
   });
-
 }
