@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// ------------------- Pages ----------
 import 'package:app/pages/dashboard.dart';
 
 void main() {
@@ -12,6 +11,8 @@ void main() {
 //
 // }
 
+/// This is the root application
+/// It contains
 class RootApp extends StatefulWidget {
   const RootApp({super.key});
 
