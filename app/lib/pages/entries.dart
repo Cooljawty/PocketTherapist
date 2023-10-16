@@ -1,5 +1,7 @@
 import 'package:app/pages/plans.dart';
+import 'package:app/uiwidgets/cards.dart';
 import 'package:flutter/material.dart';
+
 
 class EntriesPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -20,6 +22,7 @@ class _EntriesPageState extends State<EntriesPage> {
           child: Column(
             children: [
               const Text('Entries'),
+			  DisplayCard(content: ["Test text"]),
               ElevatedButton(onPressed: (){
                 Navigator.of(context).pushReplacement(PlansPage.route());
               }, child: const Text('nextPagePlans') )
