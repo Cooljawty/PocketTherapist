@@ -4,25 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
 
 void main() {
+	const content = ["Entry","Entry","Entry",];
+
+	late Widget myApp;
+  setUp(() => {
+		myApp = const MaterialApp(
+			home: Scaffold(
+				body: SafeArea(
+					child: DisplayCard( content: content )
+				),
+			)
+		),
+	});
 
 	testWidgets('Test the DisplayCard constructor', (tester) async {
-		var content = <String>["Entry"];
-
-		await tester.pumpWidget(DisplayCard(content: content));
+		await tester.pumpWidget(myApp);
 
 		final cardFinder = find.byType(DisplayCard);
 		expect(cardFinder, findsOneWidget);
 	});
 
 	testWidgets('All content items are displayed', (tester) async {
-		const entryCount = 3;
-		var content = List<String>.filled(entryCount, "Entry");
-
-		await tester.pumpWidget(DisplayCard(content: content));
+		await tester.pumpWidget(myApp);
 
 		final cardFinder = find.byType(DisplayCard);
 
 		final entryFinder = find.text("Entry");
-		expect(entryFinder, findsNWidgets(entryCount));
+		expect(entryFinder, findsNWidgets(3));
 	});
 }

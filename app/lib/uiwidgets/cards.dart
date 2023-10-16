@@ -12,15 +12,21 @@ class DisplayCard extends StatefulWidget {
 class _DisplayCardState extends State<DisplayCard> {
 	@override
   Widget build(BuildContext context) {
-	return Center(
-	  child: ListView.builder(
-			itemCount: widget.content.length,
-			itemBuilder: (BuildContext context, int index) {
-				return Container(
-					child: Center(child: Text("${widget.content[index]}")),
-				);
-			}
-		),
-	);
+		return Flexible(
+			fit: FlexFit.tight,
+			flex: 1,
+			child: Center( 
+				child: Card( 
+					child: ListView.builder(
+						scrollDirection: Axis.horizontal,
+						padding: const EdgeInsets.all(8),
+						itemCount: widget.content.length,
+						itemBuilder: (BuildContext context, int index) {
+							return Text("${widget.content[index]}");
+						}
+					),
+				),
+			),
+		);
   }
 }
