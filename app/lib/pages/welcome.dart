@@ -55,10 +55,10 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
             ),
             //add image line to show logo place holder
-            const Image(image: AssetImage('assets/logo.png')),
-            //spacer between image and qoute
-            const Spacer(
-              flex: 1,
+            const Image(
+              image: AssetImage('assets/logo.png'),
+              height: 250.0,
+              width: 250.0,
             ),
             //add another non functional text button for the qoute under the
             //photo
