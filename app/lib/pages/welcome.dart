@@ -57,8 +57,8 @@ class _WelcomePageState extends State<WelcomePage> {
             //add image line to show logo place holder
             const Image(
               image: AssetImage('assets/logo.png'),
-              height: 250.0,
-              width: 250.0,
+              height: 90.0,
+              width: 90.0,
             ),
             //add another non functional text button for the qoute under the
             //photo
