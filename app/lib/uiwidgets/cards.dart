@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 /// A genaric card for displaying journal entries and plans
 class DisplayCard extends StatefulWidget {
-	final List<String> content;
+	final List<Map<String,String>> content;
 
   const DisplayCard({super.key, required this.content});
 
@@ -39,8 +39,8 @@ class _DisplayCardState extends State<DisplayCard> {
 								child: Column( 
 									crossAxisAlignment: CrossAxisAlignment.start,
 									children: <Widget>[ 
-										Text( "${widget.content[index]}", style: titleStyle,),
-										Text( "${widget.content[index]}", style: previewStyle,), 
+										Text( "${widget.content[index]['title']}", style: titleStyle,),
+										Text( "${widget.content[index]['body']}", style: previewStyle,), 
 									],
 								),
 							);
