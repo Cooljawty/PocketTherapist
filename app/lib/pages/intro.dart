@@ -102,7 +102,7 @@ class _IntroPageState extends State<IntroPage> {
                 key: const Key("Start"),
                 //current on press event is null but functionality will be added
                 onPressed: () {
-                  null;
+                  skipTutorialPrompt();
                 },
                 child: const Text(
                   style: TextStyle(
@@ -123,4 +123,74 @@ class _IntroPageState extends State<IntroPage> {
       ),
     );
   }
+
+  //create function for dialog box for option to skip tutorial
+  Future skipTutorialPrompt() => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.blueAccent,
+          //simple title to offer tutorial
+          title: const Text(
+            "Would you like to start the tutorial?",
+            //align text
+            textAlign: TextAlign.center,
+          ),
+          //align buttons to center
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              //key used for distinction in test case
+              key: const Key("Start_Tutorial"),
+              //tutorial should start but for it will lead to the dashboard page
+              onPressed: () {
+                //event should be changed in further edits for route of tutorial
+                Navigator.of(context).pushReplacement(DashboardPage.route());
+              },
+              //style for button to add some distinction
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 3.0,
+                    )),
+                elevation: 10.0,
+                shadowColor: Colors.black,
+                backgroundColor: Colors.blue,
+              ),
+              //text for yes button
+              child: const Text(
+                'Yes',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              //add key for test case
+              key: const Key("Start_Intro"),
+              //skip to Welcome page for start fresh button
+              onPressed: () {
+                //on skip we go to the welcome page for account creation
+                Navigator.of(context).pushReplacement(WelcomePage.route());
+              },
+              //add style
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 3.0,
+                    )),
+                elevation: 10.0,
+                shadowColor: Colors.black,
+                backgroundColor: Colors.blue,
+              ),
+              //text for skip tutorial
+              child: const Text(
+                "Skip",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
 }

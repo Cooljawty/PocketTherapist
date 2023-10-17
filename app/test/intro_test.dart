@@ -14,7 +14,7 @@ void main() {
           ),
         )),
       });
-  testWidgets('Test if Intro page works', (tester) async {
+  testWidgets('Test if Intro page skip tutorial works', (tester) async {
     //first test will test when shared variable is false,
     //case is when user opens the app for the first time
     await tester.pumpWidget(myApp);
@@ -28,10 +28,31 @@ void main() {
     await tester.tap(find.byKey(const Key("Start")));
     await tester.pump();
     //hit skip tutorial on prompt
-    //await tester.tap(find.byKey(const Key("skip")));
-    //await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key("Start_Intro")));
+    await tester.pumpAndSettle();
     //expect to find welcome page
-    //expect(find.text("Welcome Page"), findsOneWidget);
+    expect(find.text("Welcome Page"), findsOneWidget);
+    //expect shared variable to be true
+  });
+
+  testWidgets('Test if Intro page start tutorial works', (tester) async {
+    //first test will test when shared variable is false,
+    //case is when user opens the app for the first time
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle();
+    //expect to find start button within the page, intro is the only page with
+    //a start button
+    expect(find.byKey(const Key("Start")), findsOneWidget);
+    //check for if shared variable is false
+
+    //hit button
+    await tester.tap(find.byKey(const Key("Start")));
+    await tester.pump();
+    //hit skip tutorial on prompt
+    await tester.tap(find.byKey(const Key("Start_Tutorial")));
+    await tester.pumpAndSettle();
+    //expect to find welcome page
+    expect(find.text("Dashboard"), findsOneWidget);
     //expect shared variable to be true
   });
 }
