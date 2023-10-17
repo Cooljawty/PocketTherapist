@@ -8,10 +8,7 @@ void main() {
   setUp(() => {
         myApp = const MaterialApp(
             home: Scaffold(
-          body: SafeArea(
-              child: WelcomePage(
-            title: 'Welcome Page',
-          )),
+          body: SafeArea(child: WelcomePage()),
         )),
         //add test case for the title page
       });

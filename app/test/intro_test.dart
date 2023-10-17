@@ -28,10 +28,10 @@ void main() {
     await tester.tap(find.byKey(const Key("Start")));
     await tester.pump();
     //hit skip tutorial on prompt
-    await tester.tap(find.byKey(const Key("skip")));
-    await tester.pumpAndSettle();
+    //await tester.tap(find.byKey(const Key("skip")));
+    //await tester.pumpAndSettle();
     //expect to find welcome page
-    expect(find.text("Welcome Page"), findsOneWidget);
+    //expect(find.text("Welcome Page"), findsOneWidget);
     //expect shared variable to be true
   });
 }

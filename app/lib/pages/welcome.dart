@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
+  //add route for later use
+  static Route<dynamic> route() {
+    return MaterialPageRoute(builder: (context) => const WelcomePage());
+  }
+
   //for now it requires a title but since the welcome page is always the welcome
   //page we could change this
-  const WelcomePage({super.key, required this.title});
-  final String title;
+  const WelcomePage({super.key});
 
   //overide the new state
   @override
@@ -26,7 +30,7 @@ class _WelcomePageState extends State<WelcomePage> {
           backgroundColor: Colors.transparent,
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
+          title: const Text("Welcome Page"),
         ),
       ),
       body: Center(
