@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
 
 void main() {
-	const content = ["Entry","Entry","Entry",];
+	const content = [
+		{ "title": "Title of entry", "body": "Body of entry"},
+		{ "title": "Title of entry", "body": "Body of entry"},
+		{ "title": "Title of entry", "body": "Body of entry"},
+	];
 
 	late Widget myApp;
   setUp(() => {
@@ -29,7 +33,10 @@ void main() {
 
 		final cardFinder = find.byType(DisplayCard);
 
-		final entryFinder = find.text("Entry");
-		expect(entryFinder, findsNWidgets(3));
+		final entryTitleFinder = find.text("Title of entry");
+		final entryBodyFinder = find.text("Body of entry");
+
+		expect(entryTitleFinder, findsNWidgets(3));
+		expect(entryBodyFinder, findsNWidgets(3));
 	});
 }
