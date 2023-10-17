@@ -13,7 +13,11 @@ class _DisplayCardState extends State<DisplayCard> {
 	@override
   Widget build(BuildContext context) {
 		final theme = Theme.of(context);
-		final style = theme.textTheme.displayMedium!.copyWith(
+
+		final titleStyle = theme.textTheme.titleMedium!.copyWith(
+			color: theme.colorScheme.onBackground,
+		);
+		final previewStyle = theme.textTheme.bodyMedium!.copyWith(
 			color: theme.colorScheme.onBackground,
 		);
 
@@ -31,13 +35,13 @@ class _DisplayCardState extends State<DisplayCard> {
 							return Container(
 								margin: const EdgeInsets.all(4),
 								padding: const EdgeInsets.all(8),
-								decoration: BoxDecoration(
-									border: Border.all(),
-									borderRadius: BorderRadius.circular(8),
-								), 
-								child: Text(
-									"${widget.content[index]}",
-									style: style,
+								decoration: BoxDecoration( border: Border.all(), borderRadius: BorderRadius.circular(8),), 
+								child: Column( 
+									crossAxisAlignment: CrossAxisAlignment.start,
+									children: <Widget>[ 
+										Text( "${widget.content[index]}", style: titleStyle,),
+										Text( "${widget.content[index]}", style: previewStyle,), 
+									],
 								),
 							);
 						}
@@ -45,5 +49,5 @@ class _DisplayCardState extends State<DisplayCard> {
 				),
 			),
 		);
-  }
+	}
 }
