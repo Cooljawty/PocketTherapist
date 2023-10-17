@@ -17,7 +17,7 @@ void main() {
 				body: SafeArea(
 					child: Column(
 						children: [
-							const DisplayCard(content: content),
+							DisplayCard(content: content),
 						],
 					),
 				)
