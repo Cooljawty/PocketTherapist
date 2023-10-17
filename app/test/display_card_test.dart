@@ -31,8 +31,6 @@ void main() {
 	testWidgets('All content items are displayed', (tester) async {
 		await tester.pumpWidget(myApp);
 
-		final cardFinder = find.byType(DisplayCard);
-
 		final entryTitleFinder = find.text("Title of entry");
 		final entryBodyFinder = find.text("Body of entry");
 
