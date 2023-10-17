@@ -12,13 +12,17 @@ void main() {
 
 	late Widget myApp;
   setUp(() => {
-		myApp = const MaterialApp(
+    myApp = const MaterialApp(
 			home: Scaffold(
 				body: SafeArea(
-					child: DisplayCard( content: content )
-				),
+					child: Column(
+						children: [
+							const DisplayCard(content: content),
+						],
+					),
+				)
 			)
-		),
+		)
 	});
 
 	testWidgets('Test the DisplayCard constructor', (tester) async {
