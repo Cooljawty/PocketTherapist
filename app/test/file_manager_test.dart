@@ -10,7 +10,8 @@ void main() async {
     const filename = "file.txt";
     const fileContents = "Test File";
     await File(filename).writeAsString(fileContents);
-    expect(await openDatabaseFile(filename), fileContents);
+    var data = await openDatabaseFile(filename);
+    expect(data, fileContents);
     openDatabaseFile(filename);
   });
 }
