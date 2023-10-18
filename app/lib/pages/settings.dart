@@ -1,5 +1,6 @@
 import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:app/helper/file_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -24,7 +25,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 Navigator.of(context).pushReplacement(CalendarPage.route());
 
 
-              }, child: const Text('nextPageCalendar') )
+              }, child: const Text('nextPageCalendar') ),
+              const ElevatedButton(
+                onPressed: openDatabaseFile,
+                child: Text("Open Vault File"),
+              )
             ],
           ),
         )
