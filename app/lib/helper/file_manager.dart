@@ -12,13 +12,18 @@ Future<FilePickerResult?> pickDatabaseFile() async {
 }
 
 /// Asks the user to open a file and then prints the contents
-void openDatabaseFile() async {
+Future<String> openDatabaseFile(String filepath) async {
+  File file = File(filepath);
+  var contents = await file.readAsString();
+  return contents;
+}
+
+void loadFile() async {
   var filepath = await pickDatabaseFile();
   if (filepath != null) {
-    File file = File(filepath.files.single.path!);
-    var contents = await file.readAsString();
-    debugPrint(contents);
+    openDatabaseFile(filepath.files.single.path!);
   } else {
     debugPrint("No file");
   }
 }
+

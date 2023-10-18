@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               }, child: const Text('nextPageCalendar') ),
               const ElevatedButton(
-                onPressed: openDatabaseFile,
+                onPressed: loadFile,
                 child: Text("Open Vault File"),
               )
             ],
