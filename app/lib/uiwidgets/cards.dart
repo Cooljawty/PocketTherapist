@@ -21,23 +21,27 @@ class _DisplayCardState extends State<DisplayCard> {
 			color: theme.colorScheme.onBackground,
 		);
 
-		return Flexible(
-			fit: FlexFit.tight,
-			flex: 1,
-			child: Center( 
-				child: Card( 
-					color: theme.colorScheme.background, 
-					child: Container(
-						margin: const EdgeInsets.all(4),
-						padding: const EdgeInsets.all(8),
-						decoration: BoxDecoration( border: Border.all(), borderRadius: BorderRadius.circular(8),), 
-						child: Column( 
-							crossAxisAlignment: CrossAxisAlignment.start,
-							children: <Widget>[ 
-								Text( "${widget.entry['title']}", style: titleStyle,),
-								Text( "${widget.entry['previewText']}", style: previewStyle,), 
-							],
-						),
+		return  Container(
+			margin: const EdgeInsets.all(2),
+			padding: const EdgeInsets.symmetric(horizontal: 12),
+			width: MediaQuery.of(context).size.width,
+			child: Card( 
+				color: theme.colorScheme.background, 
+				shape: RoundedRectangleBorder(
+					side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+				),
+				child: Container(
+					padding: const EdgeInsets.all(12),
+					child: Wrap( 
+						direction: Axis.vertical,
+						spacing: 3.0,
+						children: <Widget>[ 
+							Text( "${widget.entry['title']}", style: titleStyle, ),
+							Text( "${widget.entry['previewText']}", style: previewStyle, ), 
+						],
 					),
 				),
 			),
