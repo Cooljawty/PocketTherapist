@@ -7,7 +7,10 @@ import 'package:flutter/cupertino.dart';
 ///
 /// Returns the path to the file as a Future
 Future<FilePickerResult?> pickDatabaseFile() async {
+  debugPrint("1");
   FilePickerResult? filepath = await FilePicker.platform.pickFiles();
+  for (var element in filepath!.files) {debugPrint(element.toString());}
+  debugPrint("2");
   return filepath;
 }
 

@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() async {
 
   test("openDatabaseFile can read a file", () async {
+    loadFile();
+
     const filename = "file.txt";
     const fileContents = "Test File";
     await File(filename).writeAsString(fileContents);
