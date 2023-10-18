@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
 
 void main() {
-	const content = [
-		{ "title": "Title of entry", "body": "Body of entry"},
-		{ "title": "Title of entry", "body": "Body of entry"},
-		{ "title": "Title of entry", "body": "Body of entry"},
-	];
+	const entry = { "title": "Title of entry", "previewText": "Preview of entry"};
 
 	late Widget myApp;
   setUp(() => {
@@ -17,7 +13,7 @@ void main() {
 				body: SafeArea(
 					child: Column(
 						children: [
-							DisplayCard(content: content),
+							DisplayCard(entry: entry),
 						],
 					),
 				)
@@ -32,13 +28,13 @@ void main() {
 		expect(cardFinder, findsOneWidget);
 	});
 
-	testWidgets('All content items are displayed', (tester) async {
+	testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
 		await tester.pumpWidget(myApp);
 
 		final entryTitleFinder = find.text("Title of entry");
-		final entryBodyFinder = find.text("Body of entry");
+		final entryPreviewFinder = find.text("Preview of entry");
 
-		expect(entryTitleFinder, findsNWidgets(3));
-		expect(entryBodyFinder, findsNWidgets(3));
+		expect(entryTitleFinder, findsOneWidget);
+		expect(entryPreviewFinder, findsOneWidget);
 	});
 }
