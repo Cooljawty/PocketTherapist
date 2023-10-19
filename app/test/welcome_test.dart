@@ -27,7 +27,10 @@ void main() {
     final Map<String, Object> mockValues = <String, Object>{
       'DataInitialized': false
     };
+    //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
+    //wait some time for them to be set
+    await SharedPreferences.getInstance();
     //expected behavior, start button is present
     await widgetTester.pumpWidget(myApp);
     await widgetTester.pumpAndSettle();
@@ -37,12 +40,15 @@ void main() {
   testWidgets(
       'Test to see if password field is displayed when account is there',
       (widgetTester) async {
-    //for shared preferences we must declare their initial values if they will be used
+    //for shared preferences we can declare their initial values if they will be used
     final Map<String, Object> mockValues = <String, Object>{
       'DataInitialized': true
     };
+    //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
-    //expected behavior, start button is present
+    //wait until values are set before running app
+    await SharedPreferences.getInstance();
+    //expected behavior, password field is present
     await widgetTester.pumpWidget(myApp);
     await widgetTester.pumpAndSettle();
     expect(find.byKey(const Key('Password_Field')), findsOneWidget);

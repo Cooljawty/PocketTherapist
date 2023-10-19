@@ -19,6 +19,48 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  //add in boolean that will be used to hold the shared preference
+  bool _dataInit = false;
+
+  //add in function to retrieve/initialize shared preference bool value
+  Future isInitialized() async {
+    //declare local shared preference by waiting for global shared reference
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //update values accordingly
+    setState(() {
+      //first consider if value is already present and if not create it
+      if (prefs.getBool('DataInitialized') == null) {
+        prefs.setBool('DataInitilized', false);
+      }
+      //set the boolean already declared or false if still null
+      _dataInit = prefs.getBool('DataInitialized') ?? false;
+    });
+  }
+
+  //add one more function for assigning shared pref value for testing
+  //specifically this function is called to change the bool value after the start
+  //button is hit
+  Future setDataValue() async {
+    //grab shared preference like before
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //set to the same as the boolean dataInit to ensure both values are updated
+    setState(() {
+      //set the shared preference to match the local variable
+      prefs.setBool('DataInitialized', _dataInit);
+    });
+  }
+
+  //overide the initial state to add in the shared preferences
+  @override
+  void initState() {
+    //run initial state of app
+    super.initState();
+    //run to initialize the shared preference used
+    isInitialized();
+    //sync up data values
+    setDataValue();
+  }
+
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
@@ -61,7 +103,7 @@ class _WelcomePageState extends State<WelcomePage> {
             //add image line to show logo place holder
             const Image(
               image: AssetImage('assets/logo.png'),
-              width: 280.0,
+              width: 100.0,
             ),
             //add another container instead of button for the welcome text
             Container(
@@ -91,30 +133,77 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
             //to limit the text fields with we add a sized box
             SizedBox(
-              width: 350,
-              child: //add text field for password
-                  TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(45.0),
-                      borderSide: const BorderSide(
-                        width: 0,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                    filled: true,
-                    contentPadding: const EdgeInsets.only(
-                      left: 30.0,
-                      right: 30.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                    ),
-                    fillColor: Colors.deepPurple,
-                    labelStyle: const TextStyle(color: Colors.white),
-                    labelText: "Enter Your Password"),
-              ),
-            ),
+                width: 350,
+                child:
+                    //add in code block to determine what to display
+                    (() {
+                  //if data is initialized then open up text field
+                  if (_dataInit) {
+                    //add text field for password if data is
+                    return TextField(
+                      //key will be called in testing
+                      key: const Key('Password_Field'),
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(45.0),
+                            borderSide: const BorderSide(
+                              width: 0,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          filled: true,
+                          contentPadding: const EdgeInsets.only(
+                            left: 30.0,
+                            right: 30.0,
+                            top: 0.0,
+                            bottom: 0.0,
+                          ),
+                          fillColor: Colors.deepPurple,
+                          labelStyle: const TextStyle(color: Colors.white),
+                          labelText: "Enter Your Password"),
+                    );
+                  } else {
+                    //sized box  to display start button
+                    return SizedBox(
+                        width: 270,
+                        height: 45,
+                        child:
+                            //start button
+                            TextButton(
+                          //key is called in testing
+                          key: const Key("Start_Button"),
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 10.0,
+                            shadowColor: Colors.black,
+                            backgroundColor: Colors.deepPurple,
+                            //add padding to shape the button
+                            padding: const EdgeInsets.only(
+                              left: 0.0,
+                              right: 0.0,
+                              top: 0.0,
+                              bottom: 0.0,
+                            ),
+                          ),
+                          //current on press event acts as if user set up database
+                          onPressed: () {
+                            //set DataInitialized to true and see if password field pops up
+                            _dataInit = true;
+                            setDataValue();
+                          },
+                          child: const Text(
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                            'Start',
+                          ),
+                        ));
+                  }
+                }())),
             //for spacing between password field and reset password add a spacer widget
             const Spacer(
               flex: 1,
