@@ -46,7 +46,10 @@ void main() {
 		await tester.pumpWidget(myApp);
 
 		final card = find.byType(DisplayCard);
+
+		//Tap on display card and wait for new page to open
 		await tester.tap(card);
+		await tester.pumpAndSettle();
 
 		final title = find.text("Title of entry");
 		final text = find.text("Actual text of entry");
