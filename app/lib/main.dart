@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
+import 'package:yaml/yaml.dart';
+
 
 void main() {
   //Things that need to be done before the application is ran.
-  // await initialization(null);
+  preInit();
   runApp(const RootApp());
 }
-//
-// Future initialization(BuildContext? context) async {
-//
-// }
+
+void preInit() async {
+  await loadQuotes();
+
+}
+
+Future<void> loadQuotes() {
+  final YamlDocument quoteDoc = loadYamlDocument("", Uri.file("assets/quotes.yml"));
+  final List<String> quotes = quoteDoc['Quotes'];
+  debugPrint(quotes);
+
+}
 
 /// This is the root application
-/// It contains
+/// It contains the main functions and loading that will be necessary for
+/// the rest of the application to run.
 class RootApp extends StatefulWidget {
-  const RootApp({super.key});
+  const RootApp({
+    super.key,
+    SettingsManager _settings
+    });
 
   // This will need to change eventually.
 

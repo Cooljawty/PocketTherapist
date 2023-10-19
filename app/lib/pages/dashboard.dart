@@ -1,4 +1,5 @@
 import 'package:app/pages/entries.dart';
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -23,8 +24,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   const Text('Dashboard'),
                   ElevatedButton(onPressed: (){
                     Navigator.of(context).pushReplacement(EntriesPage.route());
-
-                  }, child: const Text('nextPageEntries') )
+                  }, child: const Text('nextPageEntries') ),
+                  const RandomQuoteGenerator(),
                 ],
               ),
             )
