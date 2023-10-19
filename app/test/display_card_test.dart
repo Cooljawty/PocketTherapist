@@ -7,7 +7,7 @@ void main() {
 	const entry = { 
 		"title": "Title of entry", 
 		"previewText": "Preview of entry",
-		"entryText": "Actial text of entry"
+		"entryText": "Actual text of entry"
 	};
 
 	late Widget myApp;
@@ -49,7 +49,7 @@ void main() {
 		await tester.tap(card);
 
 		final title = find.text("Title of entry");
-		final text = find.text("Actial text of entry");
+		final text = find.text("Actual text of entry");
 
 		expect(title, findsOneWidget);
 		expect(text, findsOneWidget);
