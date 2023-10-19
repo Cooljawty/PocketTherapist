@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+//add line for shared preferences
+import 'package:shared_preferences/shared_preferences.dart';
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
