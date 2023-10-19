@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
 
 void main() {
-	const entry = { "title": "Title of entry", "previewText": "Preview of entry"};
+	const entry = { 
+		"title": "Title of entry", 
+		"previewText": "Preview of entry",
+		"entryText": "Actial text of entry"
+	};
 
 	late Widget myApp;
   setUp(() => {
@@ -36,5 +40,18 @@ void main() {
 
 		expect(entryTitleFinder, findsOneWidget);
 		expect(entryPreviewFinder, findsOneWidget);
+	});
+
+	testWidgets('Tapping on display card opens entry in new page', (tester) async {
+		await tester.pumpWidget(myApp);
+
+		final card = find.byType(DisplayCard);
+		await tester.tap(card);
+
+		final title = find.text("Title of entry");
+		final text = find.text("Actial text of entry");
+
+		expect(title, findsOneWidget);
+		expect(text, findsOneWidget);
 	});
 }
