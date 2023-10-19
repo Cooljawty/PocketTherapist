@@ -16,6 +16,6 @@ void main() {
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
-    expect(find.text("Welcome Page"), findsOneWidget);
+    expect(find.text("Pocket Therapist"), findsOneWidget);
   });
 }

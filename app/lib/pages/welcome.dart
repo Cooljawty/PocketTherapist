@@ -21,66 +21,66 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //make app bar appear hidden but title will be in test case
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: AppBar(
-          //make the app bar invisible since we do not use it on this screen
-          foregroundColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: const Text("Welcome Page"),
-        ),
-      ),
+      //remove app bar entirely since it is not yet used
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            //add a text button with no functionality to get the round button shape
-            TextButton(
-              style: TextButton.styleFrom(
-                  elevation: 10.0,
-                  shadowColor: Colors.black,
-                  backgroundColor: Colors.deepPurple,
-                  //add padding to shape the button
-                  padding: const EdgeInsets.only(
-                    left: 120.0,
-                    right: 120.0,
-                    top: 0.0,
-                    bottom: 0.0,
-                  )),
-              onPressed: null,
+            //add spacer widget for the top of the page
+            const Spacer(
+              flex: 10,
+            ),
+            //replace text btuton with container for cleaner code
+            Container(
+              //apply custom container properties for title
+              //font length plus padding
+              width: 350,
+              //minimum height is aquired from fontSize from top and bottom padding
+              //on edge for symmetry
+              height: 35,
+              padding: const EdgeInsets.only(
+                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+              decoration: const BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              //child is title text
               child: const Text(
-                style: TextStyle(color: Colors.white),
                 'Pocket Therapist',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
+
             //add image line to show logo place holder
             const Image(
               image: AssetImage('assets/logo.png'),
               width: 280.0,
             ),
-            //add another non functional text button for the qoute under the
-            //photo
-            TextButton(
-              style: TextButton.styleFrom(
-                  elevation: 10.0,
-                  shadowColor: Colors.black,
-                  backgroundColor: Colors.deepPurple,
-                  //add padding to shape the button
-                  padding: const EdgeInsets.only(
-                    left: 10.0,
-                    right: 10.0,
-                    top: 0.0,
-                    bottom: 0.0,
-                  )),
-              onPressed: null,
+            //add another container instead of button for the welcome text
+            Container(
+              //apply custom container properties for title
+              //font length plus padding
+              width: 280,
+              //minimum height is aquired from fontSize border radius
+              height: 31,
+              padding: const EdgeInsets.only(
+                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+              decoration: const BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              //child is title text
               child: const Text(
-                style: TextStyle(color: Colors.white),
                 'How are you "really" feeling today?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    //14 by default
+                    fontSize: 16),
               ),
             ),
             //spacer between qoute and password field
