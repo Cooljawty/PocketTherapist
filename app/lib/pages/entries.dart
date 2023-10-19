@@ -23,10 +23,18 @@ class _EntriesPageState extends State<EntriesPage> {
             children: [
               const Text('Entries'),
 							const DisplayCard(entry:
-								{"title": "Entry1", "previewText": "The First entry"}, 
+								{
+									"title": "Entry1", 
+									"previewText": "The First entry",
+									"entryText": "The First entry has more words in it",
+								}, 
 							),
 							const DisplayCard(entry:
-								{"title": "Entry2", "previewText": "And this is the second entry"},
+								{
+									"title": "Entry2", 
+									"previewText": "And this is the second entry",
+									"entryText": "And this is the second entry also has more word",
+								},
 							),
               ElevatedButton(onPressed: (){
                 Navigator.of(context).pushReplacement(PlansPage.route());
