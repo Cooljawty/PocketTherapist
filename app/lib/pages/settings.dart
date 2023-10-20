@@ -20,7 +20,6 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               const Text('Settings'),
               ElevatedButton(onPressed: (){
-
                 Navigator.of(context).pushReplacement(CalendarPage.route());
 
 

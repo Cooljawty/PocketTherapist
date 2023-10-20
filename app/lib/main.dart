@@ -1,36 +1,28 @@
+import 'package:app/managers/settingsmanager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
-import 'package:yaml/yaml.dart';
+import 'package:provider/provider.dart';
 
-
-void main() {
+void main() async{
   //Things that need to be done before the application is ran.
-  preInit();
-  runApp(const RootApp());
-}
-
-void preInit() async {
-  await loadQuotes();
+ // final SettingsManager settings = SettingsManager();
+  // await preInit(settings);
+  runApp(const RootApp(/*settings: settings*/));
 
 }
 
-Future<void> loadQuotes() {
-  final YamlDocument quoteDoc = loadYamlDocument("", Uri.file("assets/quotes.yml"));
-  final List<String> quotes = quoteDoc['Quotes'];
-  debugPrint(quotes);
+// Future<void> preInit(SettingsManager settings) async {}
 
-}
 
 /// This is the root application
 /// It contains the main functions and loading that will be necessary for
 /// the rest of the application to run.
 class RootApp extends StatefulWidget {
+//  final SettingsManager settings;
   const RootApp({
     super.key,
-    SettingsManager _settings
-    });
-
-  // This will need to change eventually.
+//    required this.settings
+  });
 
   @override
   State<RootApp> createState() => _RootAppState();
@@ -40,7 +32,8 @@ class _RootAppState extends State<RootApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return
+    MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: ThemeData.light().copyWith(
