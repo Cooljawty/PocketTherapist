@@ -90,15 +90,15 @@ class _WelcomePageState extends State<WelcomePage> {
               height: 35,
               padding: const EdgeInsets.only(
                   left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-              decoration: const BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(15.0))),
               //child is title text
-              child: const Text(
+              child: Text(
                 'Pocket Therapist',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.background,
                   fontSize: 20,
                 ),
               ),
@@ -123,15 +123,15 @@ class _WelcomePageState extends State<WelcomePage> {
               height: 31,
               padding: const EdgeInsets.only(
                   left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-              decoration: const BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(15.0))),
               //child is title text
-              child: const Text(
+              child: Text(
                 'How are you "really" feeling today?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.background,
                     //14 by default
                     fontSize: 16),
               ),
@@ -168,8 +168,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             top: 0.0,
                             bottom: 0.0,
                           ),
-                          fillColor: Colors.deepPurple,
-                          labelStyle: const TextStyle(color: Colors.white),
+                          fillColor: Theme.of(context).colorScheme.primary,
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.background),
                           labelText: "Enter Your Password"),
                     );
                     //if it is null or false then we display the start screen
@@ -188,8 +189,9 @@ class _WelcomePageState extends State<WelcomePage> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             elevation: 10.0,
-                            shadowColor: Colors.black,
-                            backgroundColor: Colors.deepPurple,
+                            shadowColor: Theme.of(context).colorScheme.shadow,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                             //add padding to shape the button
                             padding: const EdgeInsets.only(
                               left: 0.0,
@@ -204,9 +206,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             await setDataPref(true);
                             //call to change the state to account creation page
                           },
-                          child: const Text(
+                          child: Text(
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.background,
                               fontSize: 16,
                             ),
                             'Start',
@@ -227,8 +229,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   TextButton(
                 style: TextButton.styleFrom(
                     elevation: 10.0,
-                    shadowColor: Colors.black,
-                    backgroundColor: Colors.deepPurple,
+                    shadowColor: Theme.of(context).colorScheme.shadow,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     //add padding to shape the button
                     padding: const EdgeInsets.only(
                       left: 0.0,
@@ -238,8 +240,9 @@ class _WelcomePageState extends State<WelcomePage> {
                     )),
                 //use commented out function to test shared preferences during run time
                 onPressed: null, //() {setDataPref(false);},
-                child: const Text(
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.background),
                   'Reset Password',
                 ),
               ),
@@ -257,8 +260,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   TextButton(
                 style: TextButton.styleFrom(
                     elevation: 10.0,
-                    shadowColor: Colors.black,
-                    backgroundColor: Colors.deepPurple,
+                    shadowColor: Theme.of(context).colorScheme.shadow,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     //add padding to shape the button
                     padding: const EdgeInsets.only(
                       left: 0.0,
@@ -267,8 +270,9 @@ class _WelcomePageState extends State<WelcomePage> {
                       bottom: 0.0,
                     )),
                 onPressed: null,
-                child: const Text(
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.background),
                   'Erase everything',
                 ),
               ),
@@ -281,18 +285,20 @@ class _WelcomePageState extends State<WelcomePage> {
             Container(
               width: 350,
               height: 240,
-              decoration: const BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
               ),
               child: Column(
                 children: <Widget>[
-                  const Align(
+                  Align(
                       alignment: Alignment.topLeft,
                       widthFactor: 2,
                       child: Text(
                         "Qoute of the Day:",
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.background,
+                            fontSize: 20.0),
                       )),
                   //extra container to hold the qoute
                   Container(
@@ -301,8 +307,9 @@ class _WelcomePageState extends State<WelcomePage> {
                     padding: const EdgeInsets.only(
                         left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.background,
                         border: Border.all(
+                          //left for now
                           color: Colors.black,
                           width: 3.0,
                         ),
@@ -326,13 +333,13 @@ class _WelcomePageState extends State<WelcomePage> {
           ],
         ),
       ),
-      floatingActionButton: const FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: null,
         tooltip: 'Settings',
-        backgroundColor: Color.fromARGB(255, 37, 37, 37),
-        foregroundColor: Colors.grey,
-        shape: CircleBorder(eccentricity: 1.0),
-        child: Icon(Icons.settings),
+        backgroundColor: Theme.of(context).colorScheme.onBackground,
+        foregroundColor: Theme.of(context).colorScheme.background,
+        shape: const CircleBorder(eccentricity: 1.0),
+        child: const Icon(Icons.settings),
       ),
     );
   }
