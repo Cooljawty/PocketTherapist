@@ -1,14 +1,12 @@
-import 'package:app/managers/settingsmanager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
-import 'package:provider/provider.dart';
+import 'dart:io';
 
 void main() async{
   //Things that need to be done before the application is ran.
  // final SettingsManager settings = SettingsManager();
   // await preInit(settings);
   runApp(const RootApp(/*settings: settings*/));
-
 }
 
 // Future<void> preInit(SettingsManager settings) async {}

@@ -174,7 +174,7 @@ class _WelcomePageState extends State<WelcomePage> {
               flex: 1,
             ),
             //use a container for the qoute of the day
-            const RandomQuoteGenerator(),
+            RandomQuoteGenerator(),
             //spacer for after erase everything and qoute of the day
             const Spacer(
               flex: 1,

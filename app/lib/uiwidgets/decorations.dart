@@ -1,3 +1,4 @@
+import 'package:app/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:yaml/yaml.dart';
@@ -5,16 +6,24 @@ import 'dart:math';
 
 class RandomQuoteGenerator extends StatefulWidget {
   //final String _quoteFilePath;
-  late final List<String> _quotes;
+  late final List<String> _quotes = [];
   RandomQuoteGenerator({super.key}){
     _loadQuotes();
   }
 
   void _loadQuotes() async {
-    var settingsFile = File("assets/quotes.yml");
+    var settingsFile =
     String contents = await settingsFile.readAsString();
     var contentAsYml = loadYaml(contents);
-    _quotes = contentAsYml['Quotes'];
+    _quotes.addAll(contentAsYml['Quotes']);
+  }
+
+  String _newQuote(){
+    var random = Random();
+    debugPrint('$_quotes.length');
+    int quoteIndex = random.nextInt(_quotes.length);
+    debugPrint('$quoteIndex');
+    return _quotes[quoteIndex];
   }
 
   @override
@@ -24,15 +33,15 @@ class RandomQuoteGenerator extends StatefulWidget {
 class _RandomQuoteGeneratorState extends State<RandomQuoteGenerator> {
   late String _currentQuote;
 
-  void _newQuote(){
-    var random = Random();
-    int quoteIndex = random.nextInt(widget._quotes.length);
-    _currentQuote = widget._quotes[quoteIndex];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentQuote = widget._quotes[Random().nextInt(widget._quotes.length)];
   }
 
   @override
   Widget build(BuildContext context) {
-
     return
       Container(
         width: 350,
@@ -69,7 +78,7 @@ class _RandomQuoteGeneratorState extends State<RandomQuoteGenerator> {
                 textAlign: TextAlign.center,
               ),
             ),
-            TextButton(onPressed: _newQuote, child: const Text("New Quote")),
+            TextButton(onPressed: () => _currentQuote = widget._newQuote(), child: const Text("New Quote")),
           ],
         ),
       );
