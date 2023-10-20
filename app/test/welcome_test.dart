@@ -35,6 +35,7 @@ void main() {
     await widgetTester.pumpWidget(myApp);
     await widgetTester.pumpAndSettle();
     expect(find.byKey(const Key('Start_Button')), findsOneWidget);
+    //now test on pressed event for button
   });
 //create one more test for if the account is made then display password field
   testWidgets(
@@ -46,8 +47,6 @@ void main() {
     };
     //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
-    //wait until values are set before running app
-    await SharedPreferences.getInstance();
     //expected behavior, password field is present
     await widgetTester.pumpWidget(myApp);
     await widgetTester.pumpAndSettle();

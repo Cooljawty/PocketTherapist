@@ -19,46 +19,48 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  //add in boolean that will be used to hold the shared preference
-  bool _dataInit = false;
+  //add in boolean that will be used to hold the shared preference and control
+  //the display
+  late bool dataInit = false;
 
-  //add in function to retrieve/initialize shared preference bool value
-  Future isInitialized() async {
-    //declare local shared preference by waiting for global shared reference
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //update values accordingly
-    setState(() {
-      //first consider if value is already present and if not create it
-      if (prefs.getBool('DataInitialized') == null) {
-        prefs.setBool('DataInitilized', false);
-      }
-      //set the boolean already declared or false if still null
-      _dataInit = prefs.getBool('DataInitialized') ?? false;
-    });
+  //add function to set shared preference
+  Future setDataPref(bool setValue) async {
+    //grab global pref
+    SharedPreferences localPref = await SharedPreferences.getInstance();
+    //store value in shared pref
+    localPref.setBool('DataInitialized', setValue);
+    //ensure both match up
+    dataInit = setValue;
   }
 
-  //add one more function for assigning shared pref value for testing
-  //specifically this function is called to change the bool value after the start
-  //button is hit
-  Future setDataValue() async {
-    //grab shared preference like before
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //set to the same as the boolean dataInit to ensure both values are updated
-    setState(() {
-      //set the shared preference to match the local variable
-      prefs.setBool('DataInitialized', _dataInit);
-    });
+  //add function to retrieve stored value
+  Future<bool> getDataPref() async {
+    //grab shared preference
+    SharedPreferences localPref = await SharedPreferences.getInstance();
+    //if data ref is null create it
+    if (localPref.getBool('DataInitialized') == null) {
+      //print('adding DataInitialized to local');
+      //store value in shared pref
+      localPref.setBool('DataInitialized', false);
+      //ensure both match up
+      dataInit = false;
+    } else {
+      //return current value if data ref exist
+      //print('pulling DataInitialized from local');
+      dataInit = localPref.getBool('DataInitialized') ?? false;
+    }
+    //update page after we grab the correct value for our shared pref
+    setState(() {});
+    return dataInit;
   }
 
   //overide the initial state to add in the shared preferences
   @override
   void initState() {
+    //initialize boolean into shared preference or vice versa if already exist
+    getDataPref();
     //run initial state of app
     super.initState();
-    //run to initialize the shared preference used
-    isInitialized();
-    //sync up data values
-    setDataValue();
   }
 
   //duplicate build method from example with changes noted below
@@ -138,7 +140,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     //add in code block to determine what to display
                     (() {
                   //if data is initialized then open up text field
-                  if (_dataInit) {
+                  if (dataInit == true) {
                     //add text field for password if data is
                     return TextField(
                       //key will be called in testing
@@ -163,6 +165,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           labelStyle: const TextStyle(color: Colors.white),
                           labelText: "Enter Your Password"),
                     );
+                    //if it is null or false then we display the start screen
                   } else {
                     //sized box  to display start button
                     return SizedBox(
@@ -189,10 +192,10 @@ class _WelcomePageState extends State<WelcomePage> {
                             ),
                           ),
                           //current on press event acts as if user set up database
-                          onPressed: () {
-                            //set DataInitialized to true and see if password field pops up
-                            _dataInit = true;
-                            setDataValue();
+                          onPressed: () async {
+                            //update the data preference to be true
+                            await setDataPref(true);
+                            //call to change the state to account creation page
                           },
                           child: const Text(
                             style: TextStyle(

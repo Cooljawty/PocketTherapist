@@ -1,3 +1,4 @@
+import 'package:app/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
 
@@ -23,7 +24,6 @@ class RootApp extends StatefulWidget {
 }
 
 class _RootAppState extends State<RootApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,7 +53,7 @@ class _RootAppState extends State<RootApp> {
                   color: Colors.deepOrangeAccent,
                   fontSize: 14,
                   fontWeight: FontWeight.bold))),
-      home: const DashboardPage(),
+      home: const WelcomePage(),
     );
   }
 }
