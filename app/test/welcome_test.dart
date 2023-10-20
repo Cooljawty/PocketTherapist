@@ -24,7 +24,9 @@ void main() {
   testWidgets('Test to see if shared preference is created',
       (widgetTester) async {
     //leave initial values empty for first time opening the app case
-    final Map<String, Object> mockValues = <String, Object>{};
+    final Map<String, Object> mockValues = <String, Object>{
+      'DataInitializedTest': false
+    };
     //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
     //expected behavior, start button is present
