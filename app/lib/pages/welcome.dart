@@ -97,10 +97,7 @@ class _WelcomePageState extends State<WelcomePage> {
               child: Text(
                 'Pocket Therapist',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.background,
-                  fontSize: 20,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
 
@@ -130,10 +127,7 @@ class _WelcomePageState extends State<WelcomePage> {
               child: Text(
                 'How are you "really" feeling today?',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.background,
-                    //14 by default
-                    fontSize: 16),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
             //spacer between qoute and password field
@@ -169,8 +163,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             bottom: 0.0,
                           ),
                           fillColor: Theme.of(context).colorScheme.primary,
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.background),
+                          labelStyle: Theme.of(context).textTheme.bodyLarge,
                           labelText: "Enter Your Password"),
                     );
                     //if it is null or false then we display the start screen
@@ -207,10 +200,8 @@ class _WelcomePageState extends State<WelcomePage> {
                             //call to change the state to account creation page
                           },
                           child: Text(
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.background,
-                              fontSize: 16,
-                            ),
+                            //slightly different theme for start button
+                            style: Theme.of(context).textTheme.headlineSmall,
                             'Start',
                           ),
                         ));
@@ -241,8 +232,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 //use commented out function to test shared preferences during run time
                 onPressed: null, //() {setDataPref(false);},
                 child: Text(
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.background),
+                  //use theme from main
+                  style: Theme.of(context).textTheme.bodyLarge,
                   'Reset Password',
                 ),
               ),
@@ -271,8 +262,8 @@ class _WelcomePageState extends State<WelcomePage> {
                     )),
                 onPressed: null,
                 child: Text(
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.background),
+                  //copy style from texttheme in main
+                  style: Theme.of(context).textTheme.bodyLarge,
                   'Erase everything',
                 ),
               ),
