@@ -53,7 +53,7 @@ class _RootAppState extends State<RootApp> {
                   color: Colors.deepOrangeAccent,
                   fontSize: 14,
                   fontWeight: FontWeight.bold))),
-      home: const WelcomePage(),
+      home: const DashboardPage(),
     );
   }
 }

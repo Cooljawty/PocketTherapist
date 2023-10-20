@@ -104,10 +104,15 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
             ),
 
-            //add image line to show logo place holder
-            const Image(
-              image: AssetImage('assets/logo.png'),
-              width: 100.0,
+            // add in expanded widget to create a dynamic image size and so
+            //test cases pass
+            const Expanded(
+              flex: 40,
+              //add image line to show logo place holder
+              child: Image(
+                image: AssetImage('assets/logo.png'),
+                width: 240.0,
+              ),
             ),
             //add another container instead of button for the welcome text
             Container(
