@@ -20,7 +20,24 @@ void main() {
     expect(find.text("Pocket Therapist"), findsOneWidget);
   });
 
-//create test for start button
+//case for when shared preference is null
+  testWidgets('Test to see if shared preference is created',
+      (widgetTester) async {
+    //leave initial values empty for first time opening the app case
+    final Map<String, Object> mockValues = <String, Object>{};
+    //set mock values
+    SharedPreferences.setMockInitialValues(mockValues);
+    //expected behavior, start button is present
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    await widgetTester.pumpWidget(myApp);
+    await widgetTester.pumpAndSettle();
+    expect(find.byKey(const Key('Start_Button')), findsOneWidget);
+    //now test on pressed event for button
+    await widgetTester.tap(find.byKey(const Key('Start_Button')));
+    expect(temp.getBool('DataInitialized'), true);
+  });
+
+//create test for new user with shared preference but no database ie shared pref is false
   testWidgets('Test to see if start button is displayed when new',
       (widgetTester) async {
     //for shared preferences we must declare their initial values if they will be used
@@ -30,14 +47,16 @@ void main() {
     //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
     //wait some time for them to be set
-    await SharedPreferences.getInstance();
+    SharedPreferences temp = await SharedPreferences.getInstance();
     //expected behavior, start button is present
     await widgetTester.pumpWidget(myApp);
     await widgetTester.pumpAndSettle();
     expect(find.byKey(const Key('Start_Button')), findsOneWidget);
     //now test on pressed event for button
+    await widgetTester.tap(find.byKey(const Key('Start_Button')));
+    expect(temp.getBool('DataInitialized'), true);
   });
-//create one more test for if the account is made then display password field
+//test for user with database
   testWidgets(
       'Test to see if password field is displayed when account is there',
       (widgetTester) async {

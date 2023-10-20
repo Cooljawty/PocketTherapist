@@ -31,6 +31,8 @@ class _WelcomePageState extends State<WelcomePage> {
     localPref.setBool('DataInitialized', setValue);
     //ensure both match up
     dataInit = setValue;
+    //update page after setting
+    setState(() {});
   }
 
   //add function to retrieve stored value
@@ -229,7 +231,8 @@ class _WelcomePageState extends State<WelcomePage> {
                       top: 0.0,
                       bottom: 0.0,
                     )),
-                onPressed: null,
+                //use commented out function to test shared preferences during run time
+                onPressed: null, //() {setDataPref(false);},
                 child: const Text(
                   style: TextStyle(color: Colors.white),
                   'Reset Password',
