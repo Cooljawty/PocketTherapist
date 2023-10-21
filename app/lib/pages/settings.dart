@@ -23,6 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
+    chosenTheme = provider.getTheme();
     return Scaffold(
         // Invisible app bar
         appBar: AppBar(

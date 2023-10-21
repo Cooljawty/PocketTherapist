@@ -34,7 +34,7 @@ class ThemeSettings extends ChangeNotifier {
   ThemeData _theme = lightTheme;
   ThemeData get theme => _theme;
 
-  String? currentTheme = 'system';
+  String? currentTheme = 'Light';
 
   ThemeMode get themeMode {
     if (currentTheme == 'Light') {
@@ -46,6 +46,16 @@ class ThemeSettings extends ChangeNotifier {
     return ThemeMode.system;
   }
 
+  getTheme(){
+    if (currentTheme == 'Light') {
+      return 'Light';
+    }
+    if (currentTheme == 'Dark') {
+      return 'Dark';
+    }
+  }
+
+
   changeTheme(String? theme) {
     currentTheme = theme;
     if (currentTheme == 'Light') {
@@ -54,8 +64,6 @@ class ThemeSettings extends ChangeNotifier {
     if (currentTheme == 'Dark') {
       _theme = darkTheme;
     }
-
-
 
     notifyListeners();
   }
