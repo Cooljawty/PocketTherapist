@@ -1,44 +1,26 @@
-import 'package:app/main.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:yaml/yaml.dart';
 import 'dart:math';
 
-class RandomQuoteGenerator extends StatefulWidget {
-  //final String _quoteFilePath;
-  late final List<String> _quotes = [];
-  RandomQuoteGenerator({super.key}){
+class QuoteContainer extends StatefulWidget {
+  final List<String> _quotes;
+  QuoteContainer({super.key}) {
     _loadQuotes();
+  };
+
+  List<String> _loadQuotes() async {
+    String quoteFileContent = await rootBundle.loadString('assets/quotes.yml');
+    var quoteYamlList = loadYaml(quoteFileContent);
+
   }
 
-  void _loadQuotes() async {
-    var settingsFile =
-    String contents = await settingsFile.readAsString();
-    var contentAsYml = loadYaml(contents);
-    _quotes.addAll(contentAsYml['Quotes']);
-  }
-
-  String _newQuote(){
-    var random = Random();
-    debugPrint('$_quotes.length');
-    int quoteIndex = random.nextInt(_quotes.length);
-    debugPrint('$quoteIndex');
-    return _quotes[quoteIndex];
-  }
 
   @override
-  State<RandomQuoteGenerator> createState() => _RandomQuoteGeneratorState();
+  State<QuoteContainer> createState() => _QuoteContainerState();
 }
 
-class _RandomQuoteGeneratorState extends State<RandomQuoteGenerator> {
-  late String _currentQuote;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _currentQuote = widget._quotes[Random().nextInt(widget._quotes.length)];
-  }
+class _QuoteContainerState extends State<QuoteContainer> {
 
   @override
   Widget build(BuildContext context) {
@@ -59,29 +41,47 @@ class _RandomQuoteGeneratorState extends State<RandomQuoteGenerator> {
                   style: TextStyle(color: Colors.white, fontSize: 20.0),
                 )),
             //extra container to hold the qoute
-            Container(
-              width: 310,
-              height: 150,
-              padding: const EdgeInsets.only(
-                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 3.0,
-                  ),
-                  borderRadius:
-                  const BorderRadius.all(Radius.circular(15.0))),
-              //now we only need a text widget for qoute
-              child: Text(
-                //qoute from app
-                _currentQuote,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            TextButton(onPressed: () => _currentQuote = widget._newQuote(), child: const Text("New Quote")),
+            
+            TextButton(onPressed: () {
+              setState(() {
+                widget._newQuote();
+              });
+            }, child: const Text("New Quote")),
           ],
         ),
       );
   }
 }
 
+class Quote extends StatefulWidget {
+  final String quote;
+  const Quote({super.key, required this.quote});
+
+  @override
+  State<Quote> createState() => _QuoteState();
+}
+
+class _QuoteState extends State<Quote> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 310,
+      height: 150,
+      padding: const EdgeInsets.only(
+          left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+            width: 3.0,
+          ),
+          borderRadius:
+          const BorderRadius.all(Radius.circular(15.0))),
+      //now we only need a text widget for qoute
+      child: Text(
+        //qoute from app
+        widget.quote,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
