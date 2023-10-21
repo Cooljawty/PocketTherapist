@@ -36,32 +36,6 @@ class _RootAppState extends State<RootApp> {
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.system,
           theme: provider.theme,
-              /*
-          ThemeData.light().copyWith(
-            useMaterial3: true,
-            colorScheme:
-            ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
-              brightness: Brightness.light,
-              background: Colors.white,
-            ),
-            textTheme: const TextTheme(
-              bodyMedium: TextStyle(
-                  color: Colors.deepPurpleAccent,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-                  .copyWith(
-                  brightness: Brightness.dark, background: Colors.black54),
-              textTheme: const TextTheme(
-                  bodyMedium: TextStyle(
-                      color: Colors.deepOrangeAccent,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold))),
-          */
           home: const DashboardPage(),
         );
       }
