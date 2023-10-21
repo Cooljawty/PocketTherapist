@@ -1,10 +1,12 @@
 import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
+//import ‘package:shared_preferences/shared_preferences.dart’;
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => const SettingsPage());
   }
+
   const SettingsPage({super.key});
 
   @override
@@ -12,25 +14,78 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  // Drop down menu items
+  List<String> themeStrings = ['Dark', 'Light'];
+  String? chosenTheme = 'Light';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
+        // Invisible app bar
+        appBar: AppBar(
+          centerTitle: true,
+          //foregroundColor: Colors.transparent,
+          //backgroundColor: Colors.transparent,
+          title: const Text("Settings"),
+        ),
+        body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Settings'),
+              // Create a drop down menu to choose a theme
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: Container(
+                      // Make the grey background
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+
+                          // Dropdown field
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              // Add icons based on theme
+                              prefixIcon: Icon(Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
+                            ),
+                            // Make the grey background
+                            dropdownColor: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(10.0),
+                            // Set up the dropdown menu items
+                            value: chosenTheme,
+                            items: themeStrings
+                                .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(color: Colors.black),
+                                    )))
+                                .toList(),
+                            // if changed set the new theme
+                            onChanged: (item) =>
+                                setState(() {
+                                  chosenTheme = item;
+                                  
+                                  Theme.of(context).brightness = (item == 'Light')? Brightness.light : Brightness.dark;
+                                }),
+                            // Use Cupertino to change the theme data for the other pages
+                          )
+                      )),
+              const Spacer(
+                flex: 1,
+              ),
+              /*
               ElevatedButton(onPressed: (){
-
                 Navigator.of(context).pushReplacement(CalendarPage.route());
-
-
               }, child: const Text('nextPageCalendar') )
+              */
             ],
           ),
-        )
-    );
+        ));
   }
 }
+
 //
 // class SettingsManager extends ChangeNotifier {
 //
