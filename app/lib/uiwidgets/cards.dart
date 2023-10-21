@@ -33,7 +33,7 @@ class _DisplayCardState extends State<DisplayCard> {
 			//Uses gesture detector to enable interactivity
 			child: GestureDetector(
 				onTap: () {
-					Navigator.of(context).pushReplacement(EntryPage.route(entry: widget.entry));
+					Navigator.of(context).push(EntryPage.route(entry: widget.entry));
 				},
 
 				child: Card( 
