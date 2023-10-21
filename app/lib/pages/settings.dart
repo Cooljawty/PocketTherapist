@@ -18,6 +18,7 @@ class _SettingsPageState extends State<SettingsPage> {
   // Drop down menu items
   List<String> themeStrings = ['Dark', 'Light'];
   String? chosenTheme = 'Light';
+  String dir = 'Dir';
 
   @override
   Widget build(BuildContext context) {
@@ -43,51 +44,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
 
-                          // Dropdown field
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              // Add icons based on theme
-                              prefixIcon: Icon(chosenTheme == 'Dark' ? Icons.brightness_2 : Icons.brightness_5_outlined),
-                                  //Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
-                            ),
-                            // Make the grey background
-                            dropdownColor: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(10.0),
-                            // Set up the dropdown menu items
-                            value: chosenTheme,
-                            items: themeStrings
-                                .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(color: Colors.black),
-                                    )))
-                                .toList(),
-                            // if changed set the new theme
-                            onChanged: (item) => setState(() {
-                              chosenTheme = item;
-                              provider.changeTheme(chosenTheme);
-                            }),
-                            // Use Cupertino to change the theme data for the other pages
-                          )
-                      )),
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
-              // Edit emotions list button
-              SizedBox(
-                // Fixed size to make it the same as main menu
-                  width: 240,
-                  child: ElevatedButton(onPressed: (){
-
-                  },
-                      child: const Text('nextPageDashboard'))
-
-                      )
-
-
-                      /*DropdownButtonFormField<String>(
+                      // Dropdown field
+                      child: DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           // Add icons based on theme
-                          prefixIcon: Icon(chosenTheme == 'Dark' ? Icons.brightness_2 : Icons.brightness_5_outlined),
+                          prefixIcon: Icon(chosenTheme == 'Dark'
+                              ? Icons.brightness_2
+                              : Icons.brightness_5_outlined),
                           //Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
                         ),
                         // Make the grey background
@@ -97,11 +60,11 @@ class _SettingsPageState extends State<SettingsPage> {
                         value: chosenTheme,
                         items: themeStrings
                             .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(color: Colors.black),
-                            )))
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(color: Colors.black),
+                                )))
                             .toList(),
                         // if changed set the new theme
                         onChanged: (item) => setState(() {
@@ -109,8 +72,61 @@ class _SettingsPageState extends State<SettingsPage> {
                           provider.changeTheme(chosenTheme);
                         }),
                         // Use Cupertino to change the theme data for the other pages
-                      )*/
-                  ),
+                      ))),
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+              // Edit emotions list button
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print("Clicked on edit emotions list");
+                      },
+                      child: const Text('Edit Emotion List'))),
+
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+              // Edit emotions list button
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print("Clicked on edit tag list");
+                      },
+                      child: const Text('Edit Tag List'))),
+
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+              // Edit emotions list button
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print("Clicked on enable/disable encryption");
+                      },
+                      child: const Text('Enable/Disable Encryption'))),
+
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+              // Edit emotions list button
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print("Clicked on pick Dir");
+                      },
+                      child: Text(dir))),
+
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+              // Edit emotions list button
+              SizedBox(
+                  // Fixed size to make it the same as main menu
+                  width: 240,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print("Clicked on Manage Data");
+                      },
+                      child: const Text('Manage Data'))),
 
               const Spacer(
                 flex: 1,
