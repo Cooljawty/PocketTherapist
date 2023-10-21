@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
+import 'package:provider/provider.dart';
+import 'package:app/provider/theme_settings.dart';
 
 void main() {
   //Things that need to be done before the application is ran.
@@ -26,34 +28,40 @@ class _RootAppState extends State<RootApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
-      theme: ThemeData.light().copyWith(
-        useMaterial3: true,
-        colorScheme:
+    return ChangeNotifierProvider(
+      create: (context) => ThemeSettings(),
+      builder: (context, child) {
+        final provider = Provider.of<ThemeSettings>(context);
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.system,
+          theme: ThemeData.light().copyWith(
+            useMaterial3: true,
+            colorScheme:
             ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
-          brightness: Brightness.light,
-          background: Colors.white,
-        ),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(
-              color: Colors.deepPurpleAccent,
-              fontSize: 14,
-              fontWeight: FontWeight.bold),
-        ),
-      ),
-      darkTheme: ThemeData.dark().copyWith(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-              .copyWith(
-                  brightness: Brightness.dark, background: Colors.black54),
-          textTheme: const TextTheme(
+              brightness: Brightness.light,
+              background: Colors.white,
+            ),
+            textTheme: const TextTheme(
               bodyMedium: TextStyle(
-                  color: Colors.deepOrangeAccent,
+                  color: Colors.deepPurpleAccent,
                   fontSize: 14,
-                  fontWeight: FontWeight.bold))),
-      home: const DashboardPage(),
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          darkTheme: ThemeData.dark().copyWith(
+              useMaterial3: true,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
+                  .copyWith(
+                  brightness: Brightness.dark, background: Colors.black54),
+              textTheme: const TextTheme(
+                  bodyMedium: TextStyle(
+                      color: Colors.deepOrangeAccent,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold))),
+          home: const DashboardPage(),
+        );
+      }
     );
   }
 }

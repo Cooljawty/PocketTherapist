@@ -1,6 +1,7 @@
 import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
-//import ‘package:shared_preferences/shared_preferences.dart’;
+import 'package:provider/provider.dart';
+import 'package:app/provider/theme_settings.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -20,12 +21,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ThemeSettings>(context);
     return Scaffold(
         // Invisible app bar
         appBar: AppBar(
           centerTitle: true,
-          //foregroundColor: Colors.transparent,
-          //backgroundColor: Colors.transparent,
           title: const Text("Settings"),
         ),
         body: Center(
@@ -47,7 +47,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: DropdownButtonFormField<String>(
                             decoration: InputDecoration(
                               // Add icons based on theme
-                              prefixIcon: Icon(Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
+                              prefixIcon: Icon(chosenTheme == 'Dark' ? Icons.brightness_2 : Icons.brightness_5_outlined),
+                                  //Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
                             ),
                             // Make the grey background
                             dropdownColor: Colors.grey.shade300,
@@ -63,12 +64,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     )))
                                 .toList(),
                             // if changed set the new theme
-                            onChanged: (item) =>
-                                setState(() {
-                                  chosenTheme = item;
-                                  
-                                  Theme.of(context).brightness = (item == 'Light')? Brightness.light : Brightness.dark;
-                                }),
+                            onChanged: (item) => setState(() => chosenTheme = item),
+                            onSaved: provider.changeTheme(chosenTheme),
                             // Use Cupertino to change the theme data for the other pages
                           )
                       )),
