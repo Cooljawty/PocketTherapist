@@ -31,7 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            //mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Create a drop down menu to choose a theme
               SizedBox(
@@ -129,14 +129,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                       child: const Text('Manage Data'))),
 
-              const Spacer(
-                flex: 1,
-              ),
-              /*
+              //const Spacer(
+              //  flex: 1,
+              //),
+
+              const Padding(padding: EdgeInsets.only(top: 40.0)),
+
               ElevatedButton(onPressed: (){
                 Navigator.of(context).pushReplacement(CalendarPage.route());
               }, child: const Text('nextPageCalendar') )
-              */
+
             ],
           ),
         ));
