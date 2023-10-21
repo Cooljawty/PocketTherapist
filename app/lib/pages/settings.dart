@@ -64,8 +64,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                     )))
                                 .toList(),
                             // if changed set the new theme
-                            onChanged: (item) => setState(() => chosenTheme = item),
-                            onSaved: provider.changeTheme(chosenTheme),
+                            onChanged: (item) => setState(() {
+                              chosenTheme = item;
+                              provider.changeTheme(chosenTheme);
+                            }),
                             // Use Cupertino to change the theme data for the other pages
                           )
                       )),

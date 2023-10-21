@@ -35,7 +35,9 @@ class _RootAppState extends State<RootApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.system,
-          theme: ThemeData.light().copyWith(
+          theme: provider.theme,
+              /*
+          ThemeData.light().copyWith(
             useMaterial3: true,
             colorScheme:
             ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
@@ -59,6 +61,7 @@ class _RootAppState extends State<RootApp> {
                       color: Colors.deepOrangeAccent,
                       fontSize: 14,
                       fontWeight: FontWeight.bold))),
+          */
           home: const DashboardPage(),
         );
       }
