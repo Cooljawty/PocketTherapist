@@ -7,10 +7,8 @@ import 'package:flutter/cupertino.dart';
 ///
 /// Returns the path to the file as a Future
 Future<FilePickerResult?> pickDatabaseFile() async {
-  debugPrint("1");
   FilePickerResult? filepath = await FilePicker.platform.pickFiles();
-  for (var element in filepath!.files) {debugPrint(element.toString());}
-  debugPrint("2");
+  // for (var element in filepath!.files) {debugPrint(element.toString());}
   return filepath;
 }
 
@@ -21,6 +19,8 @@ Future<String> openDatabaseFile(String filepath) async {
   return contents;
 }
 
+/// User picks a file, and once picked can read it
+/// After database, deserialize data in the file to be used
 void loadFile() async {
   var filepath = await pickDatabaseFile();
   if (filepath != null) {

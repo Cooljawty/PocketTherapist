@@ -19,7 +19,7 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle(const Duration(seconds: 5));
-    // found dashboard, find next thigns
+    // found dashboard, find next things
     expect(find.text('Dashboard'), findsOneWidget);
     Finder nextPageButton = find.text('nextPageEntries');
     expect(nextPageButton, findsOneWidget);
@@ -28,6 +28,9 @@ void main() {
      await testNextPage('Dashboard', 'nextPageEntries', tester);
      await testNextPage('Entries', 'nextPagePlans', tester);
      await testNextPage('Plans', 'nextPageSettings', tester);
+
+     // On settings page is additional vault button
+     expect(find.text("Open Vault File"), findsOneWidget);
      await testNextPage('Settings', 'nextPageCalendar', tester);
      await testNextPage('Calendar', 'nextPageDashboard', tester);
 
