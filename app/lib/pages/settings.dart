@@ -51,11 +51,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           prefixIcon: Icon(chosenTheme == 'Dark'
                               ? Icons.brightness_2
                               : Icons.brightness_5_outlined),
-                          //Theme.of(context).brightness == Brightness.dark? Icons.brightness_2 : Icons.brightness_5_outlined),
                         ),
+
                         // Make the grey background
                         dropdownColor: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(10.0),
+
                         // Set up the dropdown menu items
                         value: chosenTheme,
                         items: themeStrings
@@ -66,17 +67,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: const TextStyle(color: Colors.black),
                                 )))
                             .toList(),
+
                         // if changed set the new theme
                         onChanged: (item) => setState(() {
                           chosenTheme = item;
                           provider.changeTheme(chosenTheme);
                         }),
-                        // Use Cupertino to change the theme data for the other pages
                       ))),
+
               const Padding(padding: EdgeInsets.only(top: 40.0)),
               // Edit emotions list button
               SizedBox(
-                  // Fixed size to make it the same as main menu
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
@@ -85,9 +86,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Edit Emotion List'))),
 
               const Padding(padding: EdgeInsets.only(top: 40.0)),
-              // Edit emotions list button
+
+              // Edit Tag list button
               SizedBox(
-                  // Fixed size to make it the same as main menu
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
@@ -96,9 +97,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Edit Tag List'))),
 
               const Padding(padding: EdgeInsets.only(top: 40.0)),
-              // Edit emotions list button
+
+              // Enable/Disable encryption Button
               SizedBox(
-                  // Fixed size to make it the same as main menu
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
@@ -107,9 +108,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Enable/Disable Encryption'))),
 
               const Padding(padding: EdgeInsets.only(top: 40.0)),
-              // Edit emotions list button
+
+              // Choose a dir button
               SizedBox(
-                  // Fixed size to make it the same as main menu
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
@@ -118,9 +119,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(dir))),
 
               const Padding(padding: EdgeInsets.only(top: 40.0)),
-              // Edit emotions list button
+
+              // Manage Data Button
               SizedBox(
-                  // Fixed size to make it the same as main menu
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
