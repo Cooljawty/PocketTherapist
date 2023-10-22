@@ -80,45 +80,35 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {
-                        // On pressed code here
-                      },
+                      onPressed: () {},
                       child: const Text('Edit Emotion List'))),
 
               // Edit Tag list button
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {
-                        // On pressed code here
-                      },
+                      onPressed: () {},
                       child: const Text('Edit Tag List'))),
 
               // Enable/Disable encryption Button
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {
-                        // On pressed code here
-                      },
+                      onPressed: () {},
                       child: const Text('Enable/Disable Encryption'))),
 
               // Choose a dir button
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {
-                        // On pressed code here
-                      },
+                      onPressed: () {},
                       child: Text(dir))),
 
               // Manage Data Button
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {
-                        // On pressed code here
-                      },
+                      onPressed: () {},
                       child: const Text('Manage Data'))),
 
               // Next calender page button

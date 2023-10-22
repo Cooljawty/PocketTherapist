@@ -34,16 +34,6 @@ class ThemeSettings with ChangeNotifier {
 
   String? currentTheme = 'Light';
 
-  ThemeMode get themeMode {
-    if (currentTheme == 'Light') {
-      return ThemeMode.light;
-    }
-    if (currentTheme == 'Dark') {
-      return ThemeMode.dark;
-    }
-    return ThemeMode.system;
-  }
-
   getTheme(){
     if (currentTheme == 'Light') {
       return 'Light';
