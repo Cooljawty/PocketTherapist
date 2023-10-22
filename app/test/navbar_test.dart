@@ -23,6 +23,7 @@ void main() {
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
+		//Each navbar item's key is the same as it's label
 		var navbarItem = find.byKey(const Key("Page 2"));
 
 		await tester.tap(navbarItem);
@@ -62,6 +63,8 @@ class _TestPageState extends State<TestPage> {
 				),
 			),
 			bottomNavigationBar: NavBar(
+				//A NavigationBar must contian atlest two items, 
+				//thus the navbar includes the page itself
 				destinations: [
 					Destination(
 						label: "Page",
