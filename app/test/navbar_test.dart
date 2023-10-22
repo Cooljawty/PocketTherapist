@@ -8,14 +8,104 @@ void main() {
 
   setUp(() => {
 		myApp = const MaterialApp(
-			home: Scaffold(
-				body: SafeArea(
-				),
-			),
-		);
-	}
+			home: TestPage(),
+		)
+	});
+
   testWidgets('Test Navbar constructor', (tester) async {
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
+
+		expect(find.byType(NavBar), findsOneWidget);
   });
+
+  testWidgets('Navagate between pages', (tester) async {
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle();
+
+		var navbarItem = find.byKey(Key("Test Page 2"));
+
+		await tester.tap(navbarItem);
+		await tester.pumpAndSettle();
+		expect(find.text("Test Page 2"), findsOneWidget);
+		
+		navbarItem = find.byKey(Key("Test Page"));
+
+		await tester.tap(navbarItem);
+		await tester.pumpAndSettle();
+		expect(find.text("Test Page"), findsOneWidget);
+
+  });
+}
+
+class TestPage extends StatefulWidget{
+	static Route<dynamic> route(){
+		return MaterialPageRoute(builder: (context) => const TestPage());
+	}
+
+	const TestPage({super.key});
+
+	@override
+	State<TestPage> createState() => _TestPageState();
+
+}
+
+class _TestPageState extends State<TestPage> {
+	@override
+	Widget build(BuildContext context) {
+		return Scaffold(
+			body: SafeArea(
+				child: Column(
+					children: [
+						const Text('Test Page'),
+					],
+				),
+			),
+			bottomNavigationBar: NavBar(
+				destinations: [
+					Destination(
+						label: "Test Page 2",
+						icon: Icons.turn_right,
+						destination: TestPage2.route(),
+					),
+				],
+			),
+		);
+	}
+}
+
+class TestPage2 extends StatefulWidget{
+	static Route<dynamic> route(){
+		return MaterialPageRoute(builder: (context) => const TestPage2());
+	}
+
+	const TestPage2({super.key});
+
+	@override
+	State<TestPage2> createState() => _TestPage2State();
+
+}
+
+class _TestPage2State extends State<TestPage2> {
+	@override
+	Widget build(BuildContext context) {
+		return Scaffold(
+			body: SafeArea(
+				child: Column(
+					children: [
+						const Text('Test Page 2'),
+					],
+				),
+			),
+			bottomNavigationBar: NavBar(
+				destinations: [
+					Destination(
+						label: "Test Page",
+						icon: Icons.turn_right,
+						destination: TestPage.route(),
+					),
+				],
+			),
+		);
+	}
 }
