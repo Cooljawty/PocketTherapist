@@ -23,13 +23,13 @@ void main() {
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
-		var navbarItem = find.byKey(Key("Page 2"));
+		var navbarItem = find.byKey(const Key("Page 2"));
 
 		await tester.tap(navbarItem);
 		await tester.pumpAndSettle();
 		expect(find.text("Page 2"), findsOneWidget);
 		
-		navbarItem = find.byKey(Key("Page"));
+		navbarItem = find.byKey(const Key("Page"));
 
 		await tester.tap(navbarItem);
 		await tester.pumpAndSettle();
@@ -54,10 +54,10 @@ class _TestPageState extends State<TestPage> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Test Page'),
+						Text('Test Page'),
 					],
 				),
 			),
@@ -95,10 +95,10 @@ class _TestPage2State extends State<TestPage2> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Test Page 2'),
+						Text('Test Page 2'),
 					],
 				),
 			),

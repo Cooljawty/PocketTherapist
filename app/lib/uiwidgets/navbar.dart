@@ -26,9 +26,9 @@ class Destination {
 	
 	NavigationDestination toWidget() {
 		return NavigationDestination(
-			key: Key(this.label),
-			icon: Icon( this.icon ),
-			label: this.label,
+			key: Key(label),
+			icon: Icon(icon),
+			label: label,
 		);
 	}
 }
