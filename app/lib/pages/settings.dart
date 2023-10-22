@@ -81,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
-                        print("Clicked on edit emotions list");
+                        // On pressed code here
                       },
                       child: const Text('Edit Emotion List'))),
 
@@ -90,7 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
-                        print("Clicked on edit tag list");
+                        // On pressed code here
                       },
                       child: const Text('Edit Tag List'))),
 
@@ -99,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
-                        print("Clicked on enable/disable encryption");
+                        // On pressed code here
                       },
                       child: const Text('Enable/Disable Encryption'))),
 
@@ -108,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
-                        print("Clicked on pick Dir");
+                        // On pressed code here
                       },
                       child: Text(dir))),
 
@@ -117,18 +117,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 240,
                   child: ElevatedButton(
                       onPressed: () {
-                        print("Clicked on Manage Data");
+                        // On pressed code here
                       },
                       child: const Text('Manage Data'))),
 
-              //const Spacer(
-              //  flex: 1,
-              //),
-
+              // Next calender page button
               ElevatedButton(onPressed: (){
                 Navigator.of(context).pushReplacement(CalendarPage.route());
               }, child: const Text('nextPageCalendar') )
-
             ],
           ),
         ));
