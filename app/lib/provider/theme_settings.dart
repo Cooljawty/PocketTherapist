@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
-class ThemeSettings extends ChangeNotifier {
+class ThemeSettings with ChangeNotifier {
   // To change the theme
   static ThemeData darkTheme = ThemeData.dark().copyWith(
       useMaterial3: true,

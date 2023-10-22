@@ -32,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         body: Center(
           child: Column(
-            //mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // Create a drop down menu to choose a theme
               SizedBox(
@@ -47,6 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                       // Dropdown field
                       child: DropdownButtonFormField<String>(
+                        key: const ValueKey('StyleDropDown'),
                         decoration: InputDecoration(
                           // Add icons based on theme
                           prefixIcon: Icon(chosenTheme == 'Dark'
@@ -75,8 +76,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           provider.changeTheme(chosenTheme);
                         }),
                       ))),
-
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
               // Edit emotions list button
               SizedBox(
                   width: 240,
@@ -85,8 +84,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         print("Clicked on edit emotions list");
                       },
                       child: const Text('Edit Emotion List'))),
-
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
 
               // Edit Tag list button
               SizedBox(
@@ -97,8 +94,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                       child: const Text('Edit Tag List'))),
 
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
-
               // Enable/Disable encryption Button
               SizedBox(
                   width: 240,
@@ -108,8 +103,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                       child: const Text('Enable/Disable Encryption'))),
 
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
-
               // Choose a dir button
               SizedBox(
                   width: 240,
@@ -118,8 +111,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         print("Clicked on pick Dir");
                       },
                       child: Text(dir))),
-
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
 
               // Manage Data Button
               SizedBox(
@@ -133,8 +124,6 @@ class _SettingsPageState extends State<SettingsPage> {
               //const Spacer(
               //  flex: 1,
               //),
-
-              const Padding(padding: EdgeInsets.only(top: 40.0)),
 
               ElevatedButton(onPressed: (){
                 Navigator.of(context).pushReplacement(CalendarPage.route());

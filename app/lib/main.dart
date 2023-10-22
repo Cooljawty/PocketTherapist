@@ -29,16 +29,16 @@ class _RootAppState extends State<RootApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ThemeSettings(),
-      builder: (context, child) {
-        final provider = Provider.of<ThemeSettings>(context);
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          themeMode: ThemeMode.system,
-          theme: provider.theme,
-          home: const DashboardPage(),
-        );
-      }
+        create: (context) => ThemeSettings(),
+        builder: (context, child) {
+          final provider = Provider.of<ThemeSettings>(context);
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            themeMode: ThemeMode.system,
+            theme: provider.theme,
+            home: const DashboardPage(),
+          );
+        }
     );
   }
 }
