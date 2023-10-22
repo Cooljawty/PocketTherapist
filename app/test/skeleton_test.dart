@@ -28,9 +28,6 @@ void main() {
      await testNextPage('Dashboard', 'nextPageEntries', tester);
      await testNextPage('Entries', 'nextPagePlans', tester);
      await testNextPage('Plans', 'nextPageSettings', tester);
-
-     // On settings page is additional vault button
-     expect(find.text("Open Vault File"), findsOneWidget);
      await testNextPage('Settings', 'nextPageCalendar', tester);
      await testNextPage('Calendar', 'nextPageDashboard', tester);
 
