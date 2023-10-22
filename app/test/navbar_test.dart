@@ -23,17 +23,17 @@ void main() {
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
-		var navbarItem = find.byKey(Key("Test Page 2"));
+		var navbarItem = find.byKey(Key("Page 2"));
 
 		await tester.tap(navbarItem);
 		await tester.pumpAndSettle();
-		expect(find.text("Test Page 2"), findsOneWidget);
+		expect(find.text("Page 2"), findsOneWidget);
 		
-		navbarItem = find.byKey(Key("Test Page"));
+		navbarItem = find.byKey(Key("Page"));
 
 		await tester.tap(navbarItem);
 		await tester.pumpAndSettle();
-		expect(find.text("Test Page"), findsOneWidget);
+		expect(find.text("Page"), findsOneWidget);
 
   });
 }
@@ -64,7 +64,12 @@ class _TestPageState extends State<TestPage> {
 			bottomNavigationBar: NavBar(
 				destinations: [
 					Destination(
-						label: "Test Page 2",
+						label: "Page",
+						icon: Icons.turn_right,
+						destination: TestPage.route(),
+					),
+					Destination(
+						label: "Page 2",
 						icon: Icons.turn_right,
 						destination: TestPage2.route(),
 					),
@@ -100,9 +105,14 @@ class _TestPage2State extends State<TestPage2> {
 			bottomNavigationBar: NavBar(
 				destinations: [
 					Destination(
-						label: "Test Page",
+						label: "Page",
 						icon: Icons.turn_right,
 						destination: TestPage.route(),
+					),
+					Destination(
+						label: "Page 2",
+						icon: Icons.turn_right,
+						destination: TestPage2.route(),
 					),
 				],
 			),
