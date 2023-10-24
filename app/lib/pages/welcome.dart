@@ -1,5 +1,7 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
+//add line for field import
+import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
 //add line for shared preferences
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,19 +50,30 @@ class _WelcomePageState extends State<WelcomePage> {
 
     //if data ref is null create it
     if (_preferences?.getBool('DataInitialized') == null) {
-      //print('adding DataInitialized to local');
+      print('adding DataInitialized to local');
       //store value in shared pref
       _preferences?.setBool('DataInitialized', false);
       //ensure both match up
       dataInit = false;
     } else {
-      //return current value if data ref exist
-      //print('pulling DataInitialized from local');
+      //grab preference data for password
+      if (_preferences?.getString('Password') == null) {
+        //if no password is found then user chose to have no password
+        print('no Password Found');
+        isPasswordCorrect = true;
+      } else {
+        print('pulling Password from local');
+        //then there must be a password set and we must match it
+        isPasswordCorrect = false;
+      }
+      print('pulling DataInitialized from local');
+      print('current data in preferences is');
+      print(_preferences?.getKeys());
       dataInit = _preferences?.getBool('DataInitialized') ?? false;
     }
     //update page after we grab the correct value for our shared pref
     setState(() {});
-    _savePassword;
+    //_savePassword;
     return dataInit;
   }
 
@@ -84,7 +97,6 @@ class _WelcomePageState extends State<WelcomePage> {
 
   // erase the password in the text field
   void _erasePassword() {
-    _preferences?.setString('Password', "");
   }
 
   // get the saved password
@@ -101,14 +113,44 @@ class _WelcomePageState extends State<WelcomePage> {
 
   void _checkPassword() async {
     String textField = _passwordController.text;
+//modify the validation method to match validator type
+  String? mainValidator(String? fieldContent) {
+    String textField = fieldContent ?? "";
     String password = _getPassword();
 
     // if password matches
-    if(textField == password){
-      isPasswordCorrect =  true;
-    }else {
+    if (textField == password) {
+      //update isPasswordCorrect
+      isPasswordCorrect = true;
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const DashboardPage()));
+      return "You may enter";
+    } else {
       isPasswordCorrect = false;
+      return "You may not enter";
     }
+  }
+
+  //reset preferences for testing purposes
+  void resetPreferences() async {
+    bool allDeleted = false;
+    print('initial keys after erasure');
+    print(_preferences?.getKeys());
+    _preferences = await SharedPreferences.getInstance();
+    allDeleted = await _preferences?.remove('Password') ?? false;
+    if (!allDeleted) {
+      print("failed to delete password");
+    }
+    allDeleted = await _preferences?.remove('DataInitialized') ?? false;
+    if (!allDeleted) {
+      print("failed to delete dataInitialized");
+    }
+    print('final keys after erasure');
+    print(_preferences?.getKeys());
+    await getDataPref();
+    print('final keys after get DataPref');
+    print(_preferences?.getKeys());
+    setState(() {});
   }
 
   //duplicate build method from example with changes noted below
@@ -186,25 +228,35 @@ class _WelcomePageState extends State<WelcomePage> {
                 child:
                     //add in code block to determine what to display
                     (() {
-                  //if data is initialized then open up text field
-                  if (dataInit == true) {
+                  //if data is initialized and isPassword correct is false to indicate
+                  //there is a password
+                  if (dataInit == true && isPasswordCorrect == false) {
+                    //replace in favor of garrets password field
                     //add text field for password if data is
-                    return TextFormField(
+                    return PasswordField(
+                      key: const Key('Password_Field'),
+                      hintText: "Enter Your Password",
+                      //temperary validation method will just check if values are equal
+                      validator: mainValidator,
+                    );
+                    /*TextFormField(
                       //key will be called in testing
                       key: const Key('Password_Field'),
                       controller: _passwordController,
                       obscureText: true,
                       onFieldSubmitted: (value) {
-                        if(isSetting){
+                        if (isSetting) {
                           _savePassword();
                           isSetting = false;
                         }
                         _checkPassword();
                         if (isPasswordCorrect) {
                           // go to dashboard
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => const DashboardPage()));
-                        }else{
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const DashboardPage()));
+                        } else {
                           // clear text field
                           _passwordController.text = "";
                         }
@@ -227,7 +279,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           fillColor: Theme.of(context).colorScheme.primary,
                           labelStyle: Theme.of(context).textTheme.bodyLarge,
                           labelText: "Enter Your Password"),
-                    );
+                    );*/
                     //if it is null or false then we display the start screen
                   } else {
                     //sized box  to display start button
@@ -257,10 +309,21 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                           //current on press event acts as if user set up database
                           onPressed: () async {
-                            //update the data preference to be true
-                            await setDataPref(true);
-                            passwordPrompt();
-                            //call to change the state to account creation page
+                            //check first if account exist
+                            if (dataInit == false) {
+                              //update the data preference to be true
+                              await setDataPref(true);
+                              //prompt for password set up
+                              passwordPrompt();
+                            } else {
+                              //if the data is already initialized then user chose
+                              //no password and grant entry navigate to dashboard
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DashboardPage()));
+                            }
                           },
                           child: Text(
                             //slightly different theme for start button
@@ -292,13 +355,13 @@ class _WelcomePageState extends State<WelcomePage> {
                       top: 0.0,
                       bottom: 0.0,
                     )),
-                    //use commented out function to test shared preferences during run time
-                    onPressed: () async {
-                      //update the data preference to be true
-                      await setDataPref(false);
-                      //call to change the state to account creation page
-                    }, //() {setDataPref(false);},
-                    child: Text(
+                //use commented out function to test shared preferences during run time
+                onPressed: () async {
+                  //update to delete all data preferences
+                  resetPreferences();
+                  //call to change the state to account creation page
+                }, //() {setDataPref(false);},
+                child: Text(
                   //use theme from main
                   style: Theme.of(context).textTheme.bodyLarge,
                   'Reset Password',
@@ -327,12 +390,12 @@ class _WelcomePageState extends State<WelcomePage> {
                       top: 0.0,
                       bottom: 0.0,
                     )),
-                    onPressed: null,
-                    child: Text(
-                    //copy style from text theme in main
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    'Erase everything',
-                  ),
+                onPressed: null,
+                child: Text(
+                  //copy style from text theme in main
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  'Erase everything',
+                ),
               ),
             ),
             //spacer for after erase everything and quote of the day
@@ -408,24 +471,30 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   Future passwordPrompt() => showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("First time user?"),
-        content: const Text("Would you like to set a password?"),
-        actions: [
-          TextButton(
-              onPressed: (){
-                isSetting = true;
-                Navigator.of(context).pop();
-              },
-              child: const Text("Yes")),
-          TextButton(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => const DashboardPage()));
-              },
-              child: const Text("No")),
-        ],
-      ),
-  );
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("First time user?"),
+          content: const Text("Would you like to set a password?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  isSetting = true;
+                  isPasswordCorrect = false;
+                  _savePassword();
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Yes")),
+            TextButton(
+                onPressed: () {
+                  isSetting = true;
+                  isPasswordCorrect = true;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DashboardPage()));
+                },
+                child: const Text("No")),
+          ],
+        ),
+      );
 }
