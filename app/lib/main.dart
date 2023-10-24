@@ -1,3 +1,4 @@
+import 'package:app/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class _RootAppState extends State<RootApp> {
             debugShowCheckedModeBanner: false,
             themeMode: ThemeMode.system,
             theme: provider.theme,
-            home: const DashboardPage(),
+            home: const WelcomePage(),
           );
         }
     );

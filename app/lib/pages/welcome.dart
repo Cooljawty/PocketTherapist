@@ -1,3 +1,4 @@
+import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 //add line for shared preferences
 import 'package:shared_preferences/shared_preferences.dart';
@@ -325,7 +326,11 @@ class _WelcomePageState extends State<WelcomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () {
+            Navigator.push(     // Go to settings page
+              context, MaterialPageRoute(builder: (context) => const SettingsPage())
+            );
+        },
         tooltip: 'Settings',
         backgroundColor: Theme.of(context).colorScheme.onBackground,
         foregroundColor: Theme.of(context).colorScheme.background,
