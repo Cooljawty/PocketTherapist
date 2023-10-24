@@ -1,3 +1,4 @@
+import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 //add line for shared preferences
@@ -14,7 +15,7 @@ class WelcomePage extends StatefulWidget {
   //page we could change this
   const WelcomePage({super.key});
 
-  //overide the new state
+  //override the new state
   @override
   State<WelcomePage> createState() => _WelcomePageState();
 }
@@ -23,13 +24,17 @@ class _WelcomePageState extends State<WelcomePage> {
   //add in boolean that will be used to hold the shared preference and control
   //the display
   late bool dataInit = false;
+  late bool isPasswordCorrect = false;
+  late bool isSetting = false;
+  final TextEditingController _passwordController = TextEditingController();
+
+  // better to have var up here than to make a local one
+  SharedPreferences? _preferences;
 
   //add function to set shared preference
   Future setDataPref(bool setValue) async {
-    //grab global pref
-    SharedPreferences localPref = await SharedPreferences.getInstance();
     //store value in shared pref
-    localPref.setBool('DataInitialized', setValue);
+    _preferences?.setBool('DataInitialized', setValue);
     //ensure both match up
     dataInit = setValue;
     //update page after setting
@@ -38,32 +43,72 @@ class _WelcomePageState extends State<WelcomePage> {
 
   //add function to retrieve stored value
   Future<bool> getDataPref() async {
-    //grab shared preference
-    SharedPreferences localPref = await SharedPreferences.getInstance();
+    // get the instance
+    _preferences = await SharedPreferences.getInstance();
+
     //if data ref is null create it
-    if (localPref.getBool('DataInitialized') == null) {
+    if (_preferences?.getBool('DataInitialized') == null) {
       //print('adding DataInitialized to local');
       //store value in shared pref
-      localPref.setBool('DataInitialized', false);
+      _preferences?.setBool('DataInitialized', false);
       //ensure both match up
       dataInit = false;
     } else {
       //return current value if data ref exist
       //print('pulling DataInitialized from local');
-      dataInit = localPref.getBool('DataInitialized') ?? false;
+      dataInit = _preferences?.getBool('DataInitialized') ?? false;
     }
     //update page after we grab the correct value for our shared pref
     setState(() {});
+    _savePassword;
     return dataInit;
   }
 
-  //overide the initial state to add in the shared preferences
+  //override the initial state to add in the shared preferences
   @override
   void initState() {
     //initialize boolean into shared preference or vice versa if already exist
     getDataPref();
     //run initial state of app
     super.initState();
+  }
+
+  //save the password in the text field
+  void _savePassword() {
+    // get the text in the box
+    String password = _passwordController.text;
+
+    // save the password
+    _preferences?.setString('Password', password);
+  }
+
+  // erase the password in the text field
+  void _erasePassword() {
+    _preferences?.setString('Password', "");
+  }
+
+  // get the saved password
+  String _getPassword() {
+    // get the instance
+    String? password = _preferences?.getString('Password');
+
+    // check if null
+    password ??= "password";
+
+    // return the password
+    return password;
+  }
+
+  void _checkPassword() async {
+    String textField = _passwordController.text;
+    String password = _getPassword();
+
+    // if password matches
+    if(textField == password){
+      isPasswordCorrect =  true;
+    }else {
+      isPasswordCorrect = false;
+    }
   }
 
   //duplicate build method from example with changes noted below
@@ -81,12 +126,12 @@ class _WelcomePageState extends State<WelcomePage> {
             const Spacer(
               flex: 10,
             ),
-            //replace text btuton with container for cleaner code
+            //replace text button with container for cleaner code
             Container(
               //apply custom container properties for title
               //font length plus padding
               width: 350,
-              //minimum height is aquired from fontSize from top and bottom padding
+              //minimum height is acquired from fontSize from top and bottom padding
               //on edge for symmetry
               height: 35,
               padding: const EdgeInsets.only(
@@ -117,7 +162,7 @@ class _WelcomePageState extends State<WelcomePage> {
               //apply custom container properties for title
               //font length plus padding
               width: 280,
-              //minimum height is aquired from fontSize border radius
+              //minimum height is acquired from fontSize border radius
               height: 31,
               padding: const EdgeInsets.only(
                   left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
@@ -131,7 +176,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
-            //spacer between qoute and password field
+            //spacer between quote and password field
             const Spacer(
               flex: 1,
             ),
@@ -144,10 +189,26 @@ class _WelcomePageState extends State<WelcomePage> {
                   //if data is initialized then open up text field
                   if (dataInit == true) {
                     //add text field for password if data is
-                    return TextField(
+                    return TextFormField(
                       //key will be called in testing
                       key: const Key('Password_Field'),
+                      controller: _passwordController,
                       obscureText: true,
+                      onFieldSubmitted: (value) {
+                        if(isSetting){
+                          _savePassword();
+                          isSetting = false;
+                        }
+                        _checkPassword();
+                        if (isPasswordCorrect) {
+                          // go to dashboard
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => const DashboardPage()));
+                        }else{
+                          // clear text field
+                          _passwordController.text = "";
+                        }
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(45.0),
@@ -198,6 +259,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           onPressed: () async {
                             //update the data preference to be true
                             await setDataPref(true);
+                            passwordPrompt();
                             //call to change the state to account creation page
                           },
                           child: Text(
@@ -230,9 +292,13 @@ class _WelcomePageState extends State<WelcomePage> {
                       top: 0.0,
                       bottom: 0.0,
                     )),
-                //use commented out function to test shared preferences during run time
-                onPressed: null, //() {setDataPref(false);},
-                child: Text(
+                    //use commented out function to test shared preferences during run time
+                    onPressed: () async {
+                      //update the data preference to be true
+                      await setDataPref(false);
+                      //call to change the state to account creation page
+                    }, //() {setDataPref(false);},
+                    child: Text(
                   //use theme from main
                   style: Theme.of(context).textTheme.bodyLarge,
                   'Reset Password',
@@ -248,7 +314,7 @@ class _WelcomePageState extends State<WelcomePage> {
               width: 350,
               height: 60,
               child:
-                  //earase everything button
+                  //erase everything button
                   TextButton(
                 style: TextButton.styleFrom(
                     elevation: 10.0,
@@ -261,19 +327,19 @@ class _WelcomePageState extends State<WelcomePage> {
                       top: 0.0,
                       bottom: 0.0,
                     )),
-                onPressed: null,
-                child: Text(
-                  //copy style from texttheme in main
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  'Erase everything',
-                ),
+                    onPressed: null,
+                    child: Text(
+                    //copy style from text theme in main
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    'Erase everything',
+                  ),
               ),
             ),
-            //spacer for after erase everything and qoute of the day
+            //spacer for after erase everything and quote of the day
             const Spacer(
               flex: 1,
             ),
-            //use a container for the qoute of the day
+            //use a container for the quote of the day
             Container(
               width: 350,
               height: 240,
@@ -287,12 +353,12 @@ class _WelcomePageState extends State<WelcomePage> {
                       alignment: Alignment.topLeft,
                       widthFactor: 2,
                       child: Text(
-                        "Qoute of the Day:",
+                        "Quote of the Day:",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.background,
                             fontSize: 20.0),
                       )),
-                  //extra container to hold the qoute
+                  //extra container to hold the quote
                   Container(
                     width: 310,
                     height: 150,
@@ -307,18 +373,18 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(15.0))),
-                    //now we only need a text widget for qoute
+                    //now we only need a text widget for quote
                     child: const Text(
-                      //qoute from app
+                      // quote from app
                       "''Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?''",
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const TextButton(onPressed: null, child: Text("New Qoute")),
+                  const TextButton(onPressed: null, child: Text("New Quote")),
                 ],
               ),
             ),
-            //spacer for after erase everything and qoute of the day
+            //spacer for after erase everything and quote of the day
             const Spacer(
               flex: 1,
             ),
@@ -327,9 +393,10 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-            Navigator.push(     // Go to settings page
-              context, MaterialPageRoute(builder: (context) => const SettingsPage())
-            );
+          Navigator.push(
+              // Go to settings page
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsPage()));
         },
         tooltip: 'Settings',
         backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -339,4 +406,26 @@ class _WelcomePageState extends State<WelcomePage> {
       ),
     );
   }
+
+  Future passwordPrompt() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("First time user?"),
+        content: const Text("Would you like to set a password?"),
+        actions: [
+          TextButton(
+              onPressed: (){
+                isSetting = true;
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes")),
+          TextButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => const DashboardPage()));
+              },
+              child: const Text("No")),
+        ],
+      ),
+  );
 }
