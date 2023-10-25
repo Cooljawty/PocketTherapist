@@ -1,4 +1,3 @@
-import 'package:app/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/dashboard.dart';
 import 'package:provider/provider.dart';
