@@ -32,15 +32,6 @@ class SettingsManager with ChangeNotifier {
       await _preferences.setInt(accentColorKey, ThemeSettings.lightTheme.primaryColor.value);
       await _preferences.setBool(lightOrDarkKey, true);
     }
-
-  }
-  
-  static Object getSetting(String key) {
-    if(!reference is null)
-      throw StateError("No self reference found, please ensure you initialized \
-      SettingsManger");
-
-    reference._preferences.get(key);
   }
 
   //SettingManager.<setting>()

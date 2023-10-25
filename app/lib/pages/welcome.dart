@@ -1,3 +1,4 @@
+import 'package:app/provider/settings.dart';
 import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 //add line for shared preferences
@@ -19,7 +20,10 @@ class WelcomePage extends StatefulWidget {
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Image> _imageAnimation;
+
   //add in boolean that will be used to hold the shared preference and control
   //the display
   late bool dataInit = false;
@@ -37,33 +41,31 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   //add function to retrieve stored value
-  Future<bool> getDataPref() async {
+  getDataPref() async {
     //grab shared preference
     SharedPreferences localPref = await SharedPreferences.getInstance();
     //if data ref is null create it
-    if (localPref.getBool('DataInitialized') == null) {
+    if (localPref.getBool(SettingsManager.initKey) == null) {
       //print('adding DataInitialized to local');
       //store value in shared pref
-      localPref.setBool('DataInitialized', false);
+      localPref.setBool(SettingsManager.initKey, false);
       //ensure both match up
       dataInit = false;
     } else {
       //return current value if data ref exist
       //print('pulling DataInitialized from local');
-      dataInit = localPref.getBool('DataInitialized') ?? false;
+      dataInit = localPref.getBool(SettingsManager.initKey) ?? false;
     }
-    //update page after we grab the correct value for our shared pref
-    setState(() {});
-    return dataInit;
+
   }
 
   //overide the initial state to add in the shared preferences
   @override
   void initState() {
-    //initialize boolean into shared preference or vice versa if already exist
-    getDataPref();
     //run initial state of app
     super.initState();
+    //initialize boolean into shared preference or vice versa if already exist
+    getDataPref();
   }
 
   //duplicate build method from example with changes noted below
@@ -274,7 +276,7 @@ class _WelcomePageState extends State<WelcomePage> {
               flex: 1,
             ),
             //use a container for the qoute of the day
-            QuoteContainer(),
+            Quote(),
             //spacer for after erase everything and qoute of the day
             const Spacer(
               flex: 1,
