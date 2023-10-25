@@ -17,24 +17,24 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          const Text('Entries'),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(PlansPage.route());
-              },
-              child: const Text('nextPagePlans')),
-          //box SizedBox keeps the plan, tag, and save buttons on the bottom.
-          const Expanded(child: SizedBox(height: 1)),
-          //Row for overflow widget
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [Bar()],
+          child: Column(
+            children: [
+              const Text('Entries'),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(PlansPage.route());
+                  },
+                  child: const Text('nextPagePlans')),
+              //box SizedBox keeps the plan, tag, and save buttons on the bottom.
+              const Expanded(child: SizedBox(height: 1)),
+              //Row for overflow widget
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [Bar()],
+              ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 }
 
@@ -45,7 +45,7 @@ class Bar extends StatelessWidget {
   //Creates the OverflowBar for the plan, tag, and save buttons
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.grey,
+        color: Theme.of(context).colorScheme.background,
         child: Row(
           children: [
             OverflowBar(
