@@ -6,7 +6,7 @@ void main() {
   // await initialization(null);
   runApp(const RootApp());
 }
-//
+
 // Future initialization(BuildContext? context) async {
 //
 // }
