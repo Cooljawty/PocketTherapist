@@ -50,26 +50,40 @@ class _WelcomePageState extends State<WelcomePage> {
 
     //if data ref is null create it
     if (_preferences?.getBool('DataInitialized') == null) {
-      print('adding DataInitialized to local');
+      //case: new user
+      //print('adding DataInitialized to local, first time user');
       //store value in shared pref
       _preferences?.setBool('DataInitialized', false);
       //ensure both match up
       dataInit = false;
     } else {
+      //user has dataInitialized but no password set
       //grab preference data for password
       if (_preferences?.getString('Password') == null) {
-        //if no password is found then user chose to have no password
-        print('no Password Found');
+        //no password is found/ users first time using app
+        dataInit = false;
+        _preferences?.setBool('DataInitialized', dataInit);
+      } else if (_preferences?.getString('Password') == "") {
+        //if no password is used then user chose to have no password
+        //print('no Password used');
         isPasswordCorrect = true;
+        dataInit = _preferences?.getBool('DataInitialized') ?? false;
       } else {
-        print('pulling Password from local');
+        //print('pulling Password from local');
         //then there must be a password set and we must match it
-        isPasswordCorrect = false;
+        if (_preferences?.getString('Password') != null) {
+          isPasswordCorrect = false;
+          //update Data initialized in case it is false
+          dataInit = true;
+          _preferences?.setBool('DataInitialized', dataInit);
+          dataInit = _preferences?.getBool('DataInitialized') ?? false;
+        }
       }
-      print('pulling DataInitialized from local');
+      /*print('pulling DataInitialized from local');
       print('current data in preferences is');
       print(_preferences?.getKeys());
-      dataInit = _preferences?.getBool('DataInitialized') ?? false;
+      print(_preferences?.getBool('DataInitialized'));
+      print(_preferences?.getString('Password'));*/
     }
     //update page after we grab the correct value for our shared pref
     setState(() {});
@@ -90,13 +104,27 @@ class _WelcomePageState extends State<WelcomePage> {
   void _savePassword() {
     // get the text in the box
     String password = _passwordController.text;
-
+    if (password == "") {
+      isPasswordCorrect = true;
+    }
     // save the password
     _preferences?.setString('Password', password);
+    //call to set dataInitialized to true
+    setDataPref(true);
+    setState(() {});
+  }
+
+  void _saveEmptyPassword() async {
+    _preferences = await SharedPreferences.getInstance();
+    _preferences?.setString('Password', "");
+    await setDataPref(true);
+    isPasswordCorrect = true;
+    setState(() {});
   }
 
   // erase the password in the text field
   void _erasePassword() {
+    _preferences?.remove('Password');
   }
 
   // get the saved password
@@ -111,45 +139,48 @@ class _WelcomePageState extends State<WelcomePage> {
     return password;
   }
 
-  void _checkPassword() async {
-    String textField = _passwordController.text;
 //modify the validation method to match validator type
   String? mainValidator(String? fieldContent) {
     String textField = fieldContent ?? "";
     String password = _getPassword();
-
     // if password matches
     if (textField == password) {
       //update isPasswordCorrect
       isPasswordCorrect = true;
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const DashboardPage()));
-      return "You may enter";
+      isSetting = true;
+      return 'Access Granted';
+      //currently this works but does not update the screen after the correct
+      //password is inputed, hit reset everything to cause screen update
     } else {
       isPasswordCorrect = false;
-      return "You may not enter";
     }
+    return 'Password';
   }
 
   //reset preferences for testing purposes
   void resetPreferences() async {
-    bool allDeleted = false;
-    print('initial keys after erasure');
-    print(_preferences?.getKeys());
+    //bool allDeleted = false;
+    //print('initial keys before erasure');
+    //print(_preferences?.getKeys());
+    //print(_preferences?.getString('Password'));
     _preferences = await SharedPreferences.getInstance();
-    allDeleted = await _preferences?.remove('Password') ?? false;
-    if (!allDeleted) {
+    //allDeleted = await _preferences?.remove('Password') ?? false;
+    _erasePassword();
+    /*if (!allDeleted) {
       print("failed to delete password");
-    }
-    allDeleted = await _preferences?.remove('DataInitialized') ?? false;
-    if (!allDeleted) {
+    }*/
+    //allDeleted =
+    await _preferences?.remove('DataInitialized') ?? false;
+    /*if (!allDeleted) {
       print("failed to delete dataInitialized");
-    }
-    print('final keys after erasure');
-    print(_preferences?.getKeys());
+    }*/
+    //print('final keys after erasure');
+    //print(_preferences?.getKeys());
+    //reset data preferences
     await getDataPref();
-    print('final keys after get DataPref');
-    print(_preferences?.getKeys());
+    //print('final keys after get DataPref');
+    //print(_preferences?.getKeys());
+    //update widgets on screen
     setState(() {});
   }
 
@@ -236,7 +267,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     return PasswordField(
                       key: const Key('Password_Field'),
                       hintText: "Enter Your Password",
-                      //temperary validation method will just check if values are equal
+                      //temperary validation method without encryption
                       validator: mainValidator,
                     );
                     /*TextFormField(
@@ -311,8 +342,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           onPressed: () async {
                             //check first if account exist
                             if (dataInit == false) {
-                              //update the data preference to be true
-                              await setDataPref(true);
                               //prompt for password set up
                               passwordPrompt();
                             } else {
@@ -473,21 +502,24 @@ class _WelcomePageState extends State<WelcomePage> {
   Future passwordPrompt() => showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
           title: const Text("First time user?"),
           content: const Text("Would you like to set a password?"),
           actions: [
             TextButton(
                 onPressed: () {
-                  isSetting = true;
-                  isPasswordCorrect = false;
-                  _savePassword();
+                  //create situation to save password to local storage
                   Navigator.of(context).pop();
+                  createPassword();
                 },
                 child: const Text("Yes")),
             TextButton(
                 onPressed: () {
-                  isSetting = true;
-                  isPasswordCorrect = true;
+                  //save empty password
+                  _saveEmptyPassword();
+                  //pop dialouge window
+                  Navigator.of(context).pop();
+                  //go to dashboard
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -497,4 +529,34 @@ class _WelcomePageState extends State<WelcomePage> {
           ],
         ),
       );
+  //create a new prompt that prompts the user for a password and after hitting save
+  //runs the save password function to save either the password written or nothing
+  //if user did not write anything
+  Future createPassword() => showDialog(
+      context: context,
+      builder: ((context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            title: const Text("Enter your new Password"),
+            actions: [
+              TextField(
+                //using password controller to save new password
+                controller: _passwordController,
+              ),
+              TextButton(
+                onPressed: () {
+                  //new password is made so update to false
+                  isPasswordCorrect = false;
+                  //if password is empty isPasswordCorrect will be overwritten
+                  _savePassword();
+                  Navigator.of(context).pop();
+                  //go to dashboard
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DashboardPage()));
+                },
+                child: const Text('Save Password'),
+              )
+            ],
+          )));
 }

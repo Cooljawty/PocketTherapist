@@ -36,10 +36,9 @@ class _RootAppState extends State<RootApp> {
             debugShowCheckedModeBanner: false,
             themeMode: ThemeMode.system,
             theme: provider.theme,
-            home: const WelcomePage(),
+            home: const DashboardPage(),
           );
-        }
-    );
+        });
   }
 }
 
