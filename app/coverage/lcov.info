@@ -12,8 +12,8 @@ DA:42,2
 DA:43,2
 DA:45,1
 DA:46,3
-DA:48,1
-DA:50,2
+DA:48,2
+DA:50,1
 DA:52,1
 DA:54,1
 DA:55,1
@@ -27,7 +27,7 @@ DA:80,1
 DA:81,2
 DA:82,2
 DA:86,4
-DA:90,8
+DA:90,4
 LF:29
 LH:29
 end_of_record
@@ -50,7 +50,7 @@ end_of_record
 SF:lib\pages\dashboard.dart
 DA:5,1
 DA:6,2
-DA:9,11
+DA:9,10
 DA:11,2
 DA:12,2
 DA:17,2
@@ -98,7 +98,7 @@ end_of_record
 SF:lib\pages\settings.dart
 DA:7,1
 DA:8,2
-DA:11,8
+DA:11,7
 DA:13,2
 DA:14,2
 DA:23,2
@@ -171,7 +171,7 @@ end_of_record
 SF:lib\main.dart
 DA:6,0
 DA:9,0
-DA:19,3
+DA:19,2
 DA:23,1
 DA:24,1
 DA:28,1
@@ -255,7 +255,7 @@ DA:136,1
 DA:138,1
 DA:140,1
 DA:142,1
-DA:147,1
+DA:147,0
 DA:153,1
 DA:154,2
 DA:156,1
@@ -365,5 +365,5 @@ DA:500,1
 DA:502,1
 DA:503,1
 LF:161
-LH:156
+LH:155
 end_of_record

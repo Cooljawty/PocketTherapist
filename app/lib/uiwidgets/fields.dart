@@ -44,10 +44,10 @@ class _PasswordFieldState extends State<PasswordField> {
           //add in case for when user submits the form
           onFieldSubmitted: (value) {
             String? access = widget.validator!(value);
+            //clear text on any submission, whether its passed or not
+            passwordController.text = "";
             //if form has correct then direct to next page
             if (access == 'Access Granted') {
-              //clear text
-              passwordController.text = "";
               //go to dashboard
               Navigator.push(
                   context,
@@ -56,7 +56,7 @@ class _PasswordFieldState extends State<PasswordField> {
             }
           },
           //  This will only attempt to validate the field if user interacted
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          //autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: _isObscured,
           focusNode: passwordFocusNode,
           // changes the keybaord that the system displays to one that supports
