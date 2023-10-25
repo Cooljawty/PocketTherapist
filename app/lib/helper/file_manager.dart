@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:file/file.dart';
+import 'package:file/local.dart';
 
 
 /// Opens the file picker for the user to select a file
@@ -13,8 +14,8 @@ Future<FilePickerResult?> pickDatabaseFile() async {
 }
 
 /// Asks the user to open a file and then prints the contents
-Future<String> openDatabaseFile(String filepath) async {
-  File file = File(filepath);
+Future<String> openDatabaseFile(FileSystem fs, String filepath) async {
+  File file = fs.file(filepath);
   var contents = await file.readAsString();
   return contents;
 }
@@ -22,9 +23,10 @@ Future<String> openDatabaseFile(String filepath) async {
 /// User picks a file, and once picked can read it
 /// After database, deserialize data in the file to be used
 void loadFile() async {
+  const fileSystem = LocalFileSystem();
   var filepath = await pickDatabaseFile();
   if (filepath != null) {
-    openDatabaseFile(filepath.files.single.path!);
+    openDatabaseFile(fileSystem, filepath.files.single.path!);
   } else {
     debugPrint("No file");
   }

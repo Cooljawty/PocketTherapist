@@ -39,6 +39,7 @@ dependencies:
   file_picker: ^6.0.0
   mockito: ^5.4.2
   shared_preferences: ^2.2.2
+  file: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +54,6 @@ dev_dependencies:
   test: ^1.24.3
   coverage: ^1.0.3
   build_runner: ^2.1.7
-  file: ^7.0.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_native_splash:
