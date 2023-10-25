@@ -26,8 +26,8 @@ class _WelcomePageState extends State<WelcomePage> {
   //add in boolean that will be used to hold the shared preference and control
   //the display
   late bool dataInit = false;
-  late bool isPasswordCorrect = false;
-  late bool isSetting = false;
+  //update from late variable to regular bool for coverage
+  bool isPasswordCorrect = false;
   final TextEditingController _passwordController = TextEditingController();
 
   // better to have var up here than to make a local one
@@ -140,7 +140,6 @@ class _WelcomePageState extends State<WelcomePage> {
     if (textField == password) {
       //update isPasswordCorrect
       isPasswordCorrect = true;
-      isSetting = true;
       return 'Access Granted';
       //currently this works but does not update the screen after the correct
       //password is inputed. Only updates after form is submitted
