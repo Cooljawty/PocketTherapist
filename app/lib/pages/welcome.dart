@@ -141,7 +141,7 @@ class _WelcomePageState extends State<WelcomePage> {
       //update isPasswordCorrect
       isPasswordCorrect = true;
       return 'Access Granted';
-      //currently this works but does not update the screen after the correct
+      //currently this works and updates the screen after the correct
       //password is inputed. Only updates after form is submitted
     } else {
       isPasswordCorrect = false;

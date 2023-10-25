@@ -148,6 +148,14 @@ void main() {
     //try to log in to the field
     await widgetTester.tap(find.byKey(const Key('Password_Field')));
     await widgetTester.pumpAndSettle();
+    //try wrong password first then try correct password
+    await widgetTester.enterText(
+        find.byKey(const Key('Password_Field')), 'WrongPassword');
+    //wait for it to register
+    await widgetTester.testTextInput.receiveAction(TextInputAction.done);
+    await widgetTester.pumpAndSettle();
+    //expect the password field to still be there
+    await widgetTester.tap(find.byKey(const Key('Password_Field')));
     //update to field to match password
     await widgetTester.enterText(
         find.byKey(const Key('Password_Field')), 'Password');
