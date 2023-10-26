@@ -21,43 +21,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Image> _imageAnimation;
 
-  //add in boolean that will be used to hold the shared preference and control
-  //the display
-  late bool dataInit = false;
-
-  //add function to set shared preference
-  Future setDataPref(bool setValue) async {
-    //grab global pref
-    SharedPreferences localPref = await SharedPreferences.getInstance();
-    //store value in shared pref
-    localPref.setBool('DataInitialized', setValue);
-    //ensure both match up
-    dataInit = setValue;
-    //update page after setting
-    setState(() {});
-  }
-
-  //add function to retrieve stored value
-  getDataPref() async {
-    //grab shared preference
-    SharedPreferences localPref = await SharedPreferences.getInstance();
-    //if data ref is null create it
-    if (localPref.getBool(SettingsManager.initKey) == null) {
-      //print('adding DataInitialized to local');
-      //store value in shared pref
-      localPref.setBool(SettingsManager.initKey, false);
-      //ensure both match up
-      dataInit = false;
-    } else {
-      //return current value if data ref exist
-      //print('pulling DataInitialized from local');
-      dataInit = localPref.getBool(SettingsManager.initKey) ?? false;
-    }
-
-  }
 
   //overide the initial state to add in the shared preferences
   @override
@@ -65,12 +29,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
     //run initial state of app
     super.initState();
     //initialize boolean into shared preference or vice versa if already exist
-    getDataPref();
   }
 
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       //remove app bar entirely since it is not yet used
       body: Center(
