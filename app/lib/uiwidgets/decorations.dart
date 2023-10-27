@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:yaml/yaml.dart';
 
 
@@ -40,95 +38,90 @@ class _QuoteState extends State<Quote> {
         ),
         child: Column(
           children: <Widget>[
-            const Align(
-                alignment: Alignment.topLeft,
-                widthFactor: 2,
-                child: Text(
-                  "Quote of the Day:",
-                  style: TextStyle(color: Colors.white, fontSize: 20.0),
-                )),
-            //extra container to hold the qoute
-          Container(
-            width: 310,
-            height: 150,
-            padding: const EdgeInsets.only(
-                left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 3.0,
-                ),
-                borderRadius:
-                const BorderRadius.all(Radius.circular(15.0))),
-            //now we only need a text widget for qoute
-            child: Text(
-              //qoute from app
-              widget.currentQuote ?? "",
-              textAlign: TextAlign.center,
+            const Text(
+              "Quote of the Day:",
+              textAlign: TextAlign.left,
             ),
-          ),
+            //extra container to hold the qoute
+            Container(
+              width: 310,
+              height: 150,
+              padding: const EdgeInsets.only(
+                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 3.0,
+                  ),
+                  borderRadius:
+                  const BorderRadius.all(Radius.circular(15.0))),
+              //now we only need a text widget for qoute
+              child: Text(
+                //qoute from app
+                widget.currentQuote ?? "empty",
+                textAlign: TextAlign.center,
+              ),
+            ),
             TextButton(onPressed: () {
-              setState(widget.newQuote);
-            }, child: const Text("New Quote")),
+                setState(widget.newQuote);
+              }, child: const Text("New Quote")),
           ],
         ),
       );
   }
 }
 
-class LoadingAnimation extends StatefulWidget {
-  const LoadingAnimation({super.key});
-
-  @override
-  State<LoadingAnimation> createState() => _LoadingAnimationState();
-}
-
-class _LoadingAnimationState extends State<LoadingAnimation> {
-  late final Timer timer;
-  final frames = [Image.asset('assets/frame1.png'),
-    Image.asset('assets/frame2.png'),
-    Image.asset('assets/frame3.png'),
-    Image.asset('assets/frame4.png')];
-  int _index = 0;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      setState(() => (_index = (_index++ % 3)));
-    });
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Stack(
-        children: [
-          PageView.builder(itemBuilder: (context, index) {
-            return Stack (
-              children: [
-                Column(
-                  children: [
-                    Center(
-                      child: Container(
-                        decoration: const BoxDecoration(color: Colors.white),
-                        child: frames[index]
-                      )
-                  ),
-            ]
-                ),
-              ],
-            );
-          },)
-        ]
-      ),
-    );
-  }
-}
+//class LoadingAnimation extends StatefulWidget {
+//  const LoadingAnimation({super.key});
+//
+//  @override
+//  State<LoadingAnimation> createState() => _LoadingAnimationState();
+//}
+//
+//class _LoadingAnimationState extends State<LoadingAnimation> {
+//  late final Timer timer;
+//  final frames = [Image.asset('assets/frame1.png'),
+//    Image.asset('assets/frame2.png'),
+//    Image.asset('assets/frame3.png'),
+//    Image.asset('assets/frame4.png')];
+//  int _index = 0;
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+//      setState(() => (_index = (_index++ % 3)));
+//    });
+//  }
+//  @override
+//  void dispose() {
+//    timer.cancel();
+//    super.dispose();
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return MaterialApp(
+//      home: Stack(
+//        children: [
+//          PageView.builder(itemBuilder: (context, index) {
+//            return Stack (
+//              children: [
+//                Column(
+//                  children: [
+//                    Center(
+//                      child: Container(
+//                        decoration: const BoxDecoration(color: Colors.white),
+//                        child: frames[index]
+//                      )
+//                  ),
+//            ]
+//                ),
+//              ],
+//            );
+//          },)
+//        ]
+//      ),
+//    );
+//  }
+//}

@@ -59,25 +59,11 @@ class SettingsManager with ChangeNotifier {
     _reference!._preferences.setString(storageFileKey, x.path);
   }
 
-  static void setStorageFile(File file){
+  static void setStorageFile(File file) async {
     await file.exists();
     if(await Permission.storage.request().isGranted){
       
     }
-  }
-
-
-  static void setTheme(bool light){
-    _reference!._preferences.setBool(lightOrDarkKey, light);
-  }
-  static void setTheme(bool light){
-    _reference!._preferences.setBool(lightOrDarkKey, light);
-  }
-  static void setTheme(bool light){
-    _reference!._preferences.setBool(lightOrDarkKey, light);
-  }
-  static void setTheme(bool light){
-    _reference!._preferences.setBool(lightOrDarkKey, light);
   }
 
   /// this should be used to detemine if this is the first tiem the app was launched.
@@ -117,7 +103,7 @@ class SettingsManager with ChangeNotifier {
   /// [getAccentColor] returns the last used accent color for the application.
   static Color getAccentColor() {
     if(_reference == null) throw StateError("Settings were not initalized, cannot continue.");
-    int colorValue= _reference._preferences.getInt(accentColorKey)!;
+    int colorValue= _reference!._preferences.getInt(accentColorKey)!;
     return Color(colorValue);
   } 
 

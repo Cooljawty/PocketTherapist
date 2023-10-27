@@ -22,15 +22,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
 
-
-  //overide the initial state to add in the shared preferences
-  @override
-  void initState() {
-    //run initial state of app
-    super.initState();
-    //initialize boolean into shared preference or vice versa if already exist
-  }
-
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
@@ -108,7 +99,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                     //add in code block to determine what to display
                     (() {
                   //if data is initialized then open up text field
-                  if (dataInit == true) {
+                  if (SettingsManager.wasInitialized()) {
                     //add text field for password if data is
                     return TextField(
                       //key will be called in testing
@@ -161,11 +152,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                             ),
                           ),
                           //current on press event acts as if user set up database
-                          onPressed: () async {
-                            //update the data preference to be true
-                            await setDataPref(true);
-                            //call to change the state to account creation page
-                          },
+                          onPressed: null,
                           child: Text(
                             //slightly different theme for start button
                             style: Theme.of(context).textTheme.headlineSmall,
