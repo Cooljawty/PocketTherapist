@@ -1,3 +1,4 @@
+import 'package:app/pages/calendar.dart';
 import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -20,8 +21,8 @@ class _PlansPageState extends State<PlansPage> {
             children: [
               const Text('Plans'),
               ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(SettingsPage.route());
-              }, child: const Text('nextPageSettings') )
+                Navigator.of(context).pushReplacement(CalendarPage.route());
+              }, child: const Text('nextPageCalendar') )
             ],
           ),
         )

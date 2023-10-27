@@ -32,38 +32,45 @@ class _QuoteState extends State<Quote> {
       Container(
         width: 350,
         height: 240,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
         ),
         child: Column(
           children: <Widget>[
-            const Text(
-              "Quote of the Day:",
-              textAlign: TextAlign.left,
-            ),
-            //extra container to hold the qoute
+            Align(
+                alignment: Alignment.topLeft,
+                widthFactor: 2,
+                child: Text(
+                  "Quote of the Day:",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                )),
+            //extra container to hold the quote
             Container(
               width: 310,
               height: 150,
               padding: const EdgeInsets.only(
                   left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
               decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
                   border: Border.all(
+                    //left for now
                     color: Colors.black,
                     width: 3.0,
                   ),
                   borderRadius:
                   const BorderRadius.all(Radius.circular(15.0))),
-              //now we only need a text widget for qoute
+
+              //now we only need a text widget for quote
               child: Text(
-                //qoute from app
-                widget.newQuote(),
+                // quote from app
+                currentQuote,
                 textAlign: TextAlign.center,
               ),
             ),
             TextButton(onPressed: () {
-                setState(() => currentQuote = widget.newQuote());
-              }, child: const Text("New Quote")),
+              setState(() => currentQuote = widget.newQuote());
+              }, child: Text("New Quote", style: Theme.of(context).textTheme.bodyLarge)),
           ],
         ),
       );

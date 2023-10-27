@@ -112,9 +112,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Manage Data'))),
 
               // Next calender page button
-              ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(CalendarPage.route());
-              }, child: const Text('nextPageCalendar') )
+              // ElevatedButton(onPressed: (){
+              //   Navigator.of(context).pushReplacement(CalendarPage.route());
+              // }, child: const Text('nextPageCalendar') )
             ],
           ),
         ));

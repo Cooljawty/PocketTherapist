@@ -1,4 +1,6 @@
+import 'package:app/main.dart';
 import 'package:app/pages/welcome.dart';
+import 'package:app/uiwidgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +16,7 @@ void main() {
     //add test case for the title page
   });
   testWidgets('Test if welcome page works', (tester) async {
+    init();
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
@@ -21,8 +24,8 @@ void main() {
   });
 //case for when shared preference is null
   testWidgets('Test New user creating account with empty password',
-
           (widgetTester) async {
+    init();
         //leave initial values empty for first time opening the app case
         final Map<String, Object> mockValues = <String, Object>{
           'DataInitializedTest': false

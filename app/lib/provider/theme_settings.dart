@@ -8,7 +8,7 @@ class ThemeSettings with ChangeNotifier {
           .copyWith(brightness: Brightness.dark, background: Colors.black54),
       textTheme: const TextTheme(
           bodyMedium: TextStyle(
-              color: Colors.grey,
+              color: Colors.blueGrey,
               fontSize: 14,
               fontWeight: FontWeight.bold)),
       primaryColor: Colors.deepOrange
@@ -23,7 +23,7 @@ class ThemeSettings with ChangeNotifier {
     ),
     textTheme: const TextTheme(
       bodyMedium: TextStyle(
-          color: Colors.black,
+          color: Colors.blueGrey,
           fontSize: 14,
           fontWeight: FontWeight.bold),
     ),
