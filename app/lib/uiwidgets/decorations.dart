@@ -22,7 +22,7 @@ class _QuoteState extends State<Quote> {
   @override
   void initState() {
     super.initState();
-    if(quotes == null) throw StateError("Quotes were not properly initialized. Cannot continue.");
+    assert(quotes != null, throw StateError("Quotes were not properly initialized. Cannot continue."));
     currentQuote = widget.newQuote();
   }
 

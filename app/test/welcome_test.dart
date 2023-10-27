@@ -214,6 +214,7 @@ void main() {
     //check that dashboard is entered
     expect(find.text('Dashboard'), findsOneWidget);
   });
+
   //final test case for inputting password to unlock welcome screen
   testWidgets('Test user logging in', (widgetTester) async {
     //leave initial values empty for first time opening the app case
