@@ -1,5 +1,4 @@
 import 'package:app/pages/entries.dart';
-import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {

@@ -1,17 +1,14 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
-
+YamlList? quotes;
 
 class Quote extends StatefulWidget {
-  String? currentQuote;
-  static YamlList? quotes;
+  final Random rand = Random();
   Quote({super.key});
 
-  void newQuote(){
-    Random rand = Random();
-    currentQuote = quotes![rand.nextInt(quotes!.length)];
+  String newQuote(){
+    return quotes![rand.nextInt(quotes!.length)];
   }
 
   @override
@@ -19,12 +16,13 @@ class Quote extends StatefulWidget {
 }
 
 class _QuoteState extends State<Quote> {
+  late String currentQuote;
 
   @override
   void initState() {
     super.initState();
-    if(Quote.quotes == null) throw StateError("Quotes were not properly initialized. Cannot continue.");
-    widget.newQuote();
+    if(quotes == null) throw StateError("Quotes were not properly initialized. Cannot continue.");
+    currentQuote = widget.newQuote();
   }
 
   @override
@@ -58,12 +56,12 @@ class _QuoteState extends State<Quote> {
               //now we only need a text widget for qoute
               child: Text(
                 //qoute from app
-                widget.currentQuote ?? "empty",
+                widget.newQuote(),
                 textAlign: TextAlign.center,
               ),
             ),
             TextButton(onPressed: () {
-                setState(widget.newQuote);
+                setState(() => currentQuote = widget.newQuote());
               }, child: const Text("New Quote")),
           ],
         ),
