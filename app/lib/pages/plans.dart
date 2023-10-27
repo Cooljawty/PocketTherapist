@@ -1,5 +1,4 @@
 import 'package:app/pages/calendar.dart';
-import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 class PlansPage extends StatefulWidget {

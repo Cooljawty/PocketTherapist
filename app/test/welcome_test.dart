@@ -1,6 +1,5 @@
 import 'package:app/main.dart';
 import 'package:app/pages/welcome.dart';
-import 'package:app/uiwidgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

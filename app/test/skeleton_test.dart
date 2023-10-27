@@ -35,7 +35,6 @@ void main() {
     //set mock values
     SharedPreferences.setMockInitialValues(mockValues);
     //expected behavior, start button is present
-    SharedPreferences temp = await SharedPreferences.getInstance();
     await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle();
     await tester.enterText(
