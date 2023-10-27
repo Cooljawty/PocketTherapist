@@ -249,7 +249,7 @@ void main() {
     //ensure password made is same as example
     expect(temp.getString('Password'), "Password");
     //check that dashboard is entered
-    //expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Dashboard'), findsOneWidget);
 
   });
 }
