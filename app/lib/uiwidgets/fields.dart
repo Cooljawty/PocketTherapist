@@ -84,7 +84,6 @@ class _PasswordFieldState extends State<PasswordField> {
               },
             ),
             hintText: widget.hintText,
-            icon: const Icon(Icons.lock),
           ),
           // Call whatever function is supplied.
           validator: (value) => widget.validator!.call(value),
