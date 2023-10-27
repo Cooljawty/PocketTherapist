@@ -238,6 +238,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 child:
                 //add in code block to determine what to display
                 (() {
+
                   //if data is initialized and isPassword correct is false to indicate
                   //there is a password
                   if (dataInit == true && isPasswordCorrect == false) {
@@ -289,7 +290,9 @@ class _WelcomePageState extends State<WelcomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
+
                                       const DashboardPage()));
+
                             }
                           },
                           child: Text(
@@ -311,6 +314,7 @@ class _WelcomePageState extends State<WelcomePage> {
               child:
               //reset password button
               TextButton(
+
                 key: const Key('Reset_Button'),
                 style: TextButton.styleFrom(
                     elevation: 10.0,
@@ -347,6 +351,8 @@ class _WelcomePageState extends State<WelcomePage> {
               child:
               //erase everything button
               TextButton(
+
+
                 style: TextButton.styleFrom(
                     elevation: 10.0,
                     shadowColor: Theme.of(context).colorScheme.shadow,
@@ -404,6 +410,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         borderRadius:
                         const BorderRadius.all(Radius.circular(15.0))),
+
                     //now we only need a text widget for quote
                     child: const Text(
                       // quote from app
@@ -428,6 +435,7 @@ class _WelcomePageState extends State<WelcomePage> {
         onPressed: () {
           Navigator.push(
             // Go to settings page
+
               context,
               MaterialPageRoute(builder: (context) => const SettingsPage()));
         },
@@ -441,69 +449,69 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   Future passwordPrompt() => showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.onBackground,
-      title: const Text("First time user?"),
-      content: const Text("Would you like to set a password?"),
-      actions: [
-        TextButton(
-          //add key for testing
-            key: const Key('Require_Password_Option'),
-            onPressed: () {
-              //create situation to save password to local storage
-              Navigator.of(context).pop();
-              createPassword();
-            },
-            child: const Text("Yes")),
-        TextButton(
-          //add key for reference within code test
-            key: const Key('No_Password_Option'),
-            onPressed: () {
-              //save empty password
-              _saveEmptyPassword();
-              //pop dialouge window
-              Navigator.of(context).pop();
-              //go to dashboard
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DashboardPage()));
-            },
-            child: const Text("No")),
-      ],
-    ),
-  );
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
+          title: const Text("First time user?"),
+          content: const Text("Would you like to set a password?"),
+          actions: [
+            TextButton(
+                //add key for testing
+                key: const Key('Require_Password_Option'),
+                onPressed: () {
+                  //create situation to save password to local storage
+                  Navigator.of(context).pop();
+                  createPassword();
+                },
+                child: const Text("Yes")),
+            TextButton(
+                //add key for reference within code test
+                key: const Key('No_Password_Option'),
+                onPressed: () {
+                  //save empty password
+                  _saveEmptyPassword();
+                  //pop dialouge window
+                  Navigator.of(context).pop();
+                  //go to dashboard
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DashboardPage()));
+                },
+                child: const Text("No")),
+          ],
+        ),
+      );
   //create a new prompt that prompts the user for a password and after hitting save
   //runs the save password function to save either the password written or nothing
   //if user did not write anything
   Future createPassword() => showDialog(
       context: context,
       builder: ((context) => AlertDialog(
-        backgroundColor: Theme.of(context).colorScheme.onBackground,
-        title: const Text("Enter your new Password"),
-        actions: [
-          TextField(
-            //using password controller to save new password
-            controller: _passwordController,
-          ),
-          TextButton(
-            //add key for testing
-            key: const Key('Save_Password'),
-            onPressed: () {
-              //new password is made so update to false
-              isPasswordCorrect = false;
-              //if password is empty isPasswordCorrect will be overwritten
-              _savePassword();
-              Navigator.of(context).pop();
-              //go to dashboard
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DashboardPage()));
-            },
-            child: const Text('Save Password'),
-          )
-        ],
-      )));
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            title: const Text("Enter your new Password"),
+            actions: [
+              TextField(
+                //using password controller to save new password
+                controller: _passwordController,
+              ),
+              TextButton(
+                //add key for testing
+                key: const Key('Save_Password'),
+                onPressed: () {
+                  //new password is made so update to false
+                  isPasswordCorrect = false;
+                  //if password is empty isPasswordCorrect will be overwritten
+                  _savePassword();
+                  Navigator.of(context).pop();
+                  //go to dashboard
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DashboardPage()));
+                },
+                child: const Text('Save Password'),
+              )
+            ],
+          )));
 }

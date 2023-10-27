@@ -21,6 +21,7 @@ void main() {
   });
 //case for when shared preference is null
   testWidgets('Test New user creating account with empty password',
+
           (widgetTester) async {
         //leave initial values empty for first time opening the app case
         final Map<String, Object> mockValues = <String, Object>{
@@ -102,6 +103,87 @@ void main() {
       });
   //test for new user who creates an empty password (same end state as user who choses no password)
   testWidgets('Test new user creating empty password', (widgetTester) async {
+
+    //leave initial values empty for first time opening the app case
+    final Map<String, Object> mockValues = <String, Object>{
+      'DataInitialized': false
+    };
+    //set mock values
+    SharedPreferences.setMockInitialValues(mockValues);
+    //expected behavior, start button is present
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    await widgetTester.pumpWidget(myApp);
+    await widgetTester.pumpAndSettle();
+    //expect to find a start button
+    expect(find.byKey(const Key('Start_Button')), findsOneWidget);
+    //now test DataInitialized to see if values are set
+    expect(temp.getBool('DataInitialized'), false);
+    //create a account without a password
+    await widgetTester.tap(find.byKey(const Key('Start_Button')));
+    await widgetTester.pumpAndSettle();
+    //update to test to create empty password
+    await widgetTester.tap(find.byKey(const Key('No_Password_Option')));
+    await widgetTester.pumpAndSettle();
+    //check that data is initialized and that dashboard page is entered
+    expect(temp.getBool('DataInitialized'), true);
+    //ensure password made is empty
+    expect(temp.getString('Password'), "");
+    expect(find.text('Dashboard'), findsOneWidget);
+  });
+
+//create test for user getting password loaded from local memory
+//also will test reseting
+  testWidgets('Test Account with password set up and reset of account',
+      (widgetTester) async {
+    //for shared preferences simulate a fresh account
+    final Map<String, Object> mockValues = <String, Object>{
+      'DataInitialized': true,
+      'Password': "Password"
+    };
+    //set mock values
+    SharedPreferences.setMockInitialValues(mockValues);
+    //wait some time for them to be set
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    //expected behavior, start button is present
+    await widgetTester.pumpWidget(myApp);
+    await widgetTester.pumpAndSettle();
+    expect(find.byKey(const Key('Password_Field')), findsOneWidget);
+    //now we expect a password field
+    //hit reset button and test if data Initialized remains false after update
+    await widgetTester.tap(find.byKey(const Key('Reset_Button')));
+    await widgetTester.pumpAndSettle();
+    //now we would
+    expect(temp.getBool('DataInitialized'), false);
+  });
+//test for user with no password chosen
+  testWidgets(
+      'Test to see if user with no password chosen can use start button',
+      (widgetTester) async {
+    //for shared preferences we can declare their initial values if they will be used
+    final Map<String, Object> mockValues = <String, Object>{
+      'DataInitialized': true,
+      //update to include password shared preference to trigger password field
+      'Password': ""
+    };
+    //set mock values
+    SharedPreferences.setMockInitialValues(mockValues);
+    //wait some time for them to be set
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    //expected behavior, password field is present
+    await widgetTester.pumpWidget(myApp);
+    await widgetTester.pumpAndSettle();
+    //should see a start button
+    expect(find.byKey(const Key('Start_Button')), findsOneWidget);
+    await widgetTester.tap(find.byKey(const Key('Start_Button')));
+    await widgetTester.pumpAndSettle();
+    //check that valuesa re as expected and dashboard page is entered
+    expect(temp.getBool('DataInitialized'), true);
+    //ensure password made is empty
+    expect(temp.getString('Password'), "");
+    expect(find.text('Dashboard'), findsOneWidget);
+  });
+  //test for new user who creates an empty password (same end state as user who choses no password)
+  testWidgets('Test new user creating empty password', (widgetTester) async {
     //leave initial values empty for first time opening the app case
     final Map<String, Object> mockValues = <String, Object>{
       'DataInitialized': false
@@ -168,5 +250,6 @@ void main() {
     expect(temp.getString('Password'), "Password");
     //check that dashboard is entered
     //expect(find.text('Dashboard'), findsOneWidget);
+
   });
 }

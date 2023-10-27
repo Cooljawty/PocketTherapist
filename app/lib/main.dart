@@ -44,8 +44,7 @@ class _RootAppState extends State<RootApp> {
               theme: provider.theme,
               home: isLoading? const Placeholder() : const WelcomePage(),
           );
-        }
-    );
+        });
   }
 }
 
