@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/main.dart';
 
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/buttons.dart';
@@ -7,14 +6,6 @@ import 'package:app/uiwidgets/buttons.dart';
 
 
 void main() {
-  testNextPage(String textonPage, String textOnButton, WidgetTester tester)  async {
-      expect(find.text(textonPage), findsOneWidget);
-      Finder nextPageButton = find.text(textOnButton);
-      expect(nextPageButton, findsOneWidget);
-      await tester.tap(nextPageButton);
-      await tester.pumpAndSettle();
-  }
-
 
   testWidgets('Settings go to settings page', (WidgetTester tester) async {
 

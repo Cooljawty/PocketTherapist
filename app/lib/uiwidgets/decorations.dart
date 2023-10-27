@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 YamlList? quotes;

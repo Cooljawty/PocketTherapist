@@ -1,12 +1,10 @@
-import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/welcome.dart';
-import 'package:app/provider/settings.dart' as settings;
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:app/provider/theme_settings.dart';
 import 'package:yaml/yaml.dart';
-import 'package:app/uiwidgets/decorations.dart';
 
 void main() async {
   //Things that need to be done before the application is ran.
