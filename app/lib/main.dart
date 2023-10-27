@@ -1,4 +1,5 @@
 import 'package:app/pages/dashboard.dart';
+import 'package:app/pages/welcome.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +44,7 @@ class _RootAppState extends State<RootApp> {
           return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: provider.theme,
-              home: isLoading? const Placeholder() : const DashboardPage(),
+              home: isLoading? const Placeholder() : const WelcomePage(),
           );
         }
     );
