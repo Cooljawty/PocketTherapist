@@ -22,32 +22,6 @@ void main() {
   );
 
 
-  ThemeData darkTheme = ThemeData.dark().copyWith(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-          .copyWith(
-          brightness: Brightness.dark, background: Colors.black54),
-      textTheme: const TextTheme(
-          bodyMedium: TextStyle(
-              color: Colors.deepOrangeAccent,
-              fontSize: 14,
-              fontWeight: FontWeight.bold)));
-
-  ThemeData lightTheme = ThemeData.light().copyWith(
-    useMaterial3: true,
-    colorScheme:
-    ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
-      brightness: Brightness.light,
-      background: Colors.white,
-    ),
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(
-          color: Colors.deepPurpleAccent,
-          fontSize: 14,
-          fontWeight: FontWeight.bold),
-    ),
-  );
-
 
   testWidgets('We are at settings page', (WidgetTester tester) async {
     // Build our app and trigger a frame.
@@ -79,7 +53,7 @@ void main() {
     expect(find.text('Dark'), findsOneWidget);
 
     // Test if the Theme is dark
-    expect(darkTheme, testBG);
+    expect(ThemeSettings.darkTheme, testBG);
   });
 
   testWidgets('Select Light theme from dropdown', (tester) async {
@@ -116,7 +90,7 @@ void main() {
     expect(find.text('Light'), findsOneWidget);
 
     // Test if the Theme is dark
-    expect(lightTheme, testBG);
+    expect(ThemeSettings.lightTheme, testBG);
   });
 /*
   testWidgets('Tap the edit emotions list', (tester) async {

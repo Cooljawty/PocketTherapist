@@ -1,5 +1,5 @@
-import 'package:app/pages/welcome.dart';
-import 'package:app/provider/settings.dart';
+import 'package:app/pages/dashboard.dart';
+import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +43,7 @@ class _RootAppState extends State<RootApp> {
           return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: provider.theme,
-              home: isLoading? const Placeholder() : const WelcomePage(),
+              home: isLoading? const Placeholder() : const DashboardPage(),
           );
         }
     );
@@ -53,6 +53,6 @@ class _RootAppState extends State<RootApp> {
 Future<void> init() async {
   String quoteFileContent = await rootBundle.loadString('assets/quotes.yml');
   quotes = loadYaml(quoteFileContent)['Quotes'];
-  SettingsManager(); // init by default for settings
+  //settings.init(); // init by default for settings
   //Encryptor(); // Init by default for encryptor
 }
