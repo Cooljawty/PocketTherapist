@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:app/pages/entry.dart';
 
-/// A card that displays a journal entry with title and preview text
+/// A card that displays text with a title and main text bocy
 class DisplayCard extends StatefulWidget {
-	final Map<String,String> entry;
+	String title;
+	String body;
 
-  const DisplayCard({super.key, required this.entry});
+	Route<dynamic>? page;
+
+  DisplayCard({super.key, required this.title, required this.body, this.page});
 
 	@override
 	State<DisplayCard> createState() => _DisplayCardState();
@@ -33,7 +36,10 @@ class _DisplayCardState extends State<DisplayCard> {
 			//Uses gesture detector to enable interactivity
 			child: GestureDetector(
 				onTap: () {
-					Navigator.of(context).push(EntryPage.route(entry: widget.entry));
+					if(widget.page != null) {
+						final route = widget.page!;
+						Navigator.of(context).push(route);
+					}
 				},
 
 				child: Card( 
@@ -51,16 +57,26 @@ class _DisplayCardState extends State<DisplayCard> {
 						children: <Widget>[ 
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( "${widget.entry['title']}", style: titleStyle, ),
+								child: Text( "${widget.title}", style: titleStyle, ),
 							),
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( "${widget.entry['previewText']}", style: previewStyle, ), 
+								child: Text( "${widget.body}", style: previewStyle, ), 
 							),
 						],
 					),
 				),
 			),
 		);
+	}
+}
+
+mixin DisplayOnCard{
+	({String title, String body}) card = (title: "", body: "");
+
+	Route<dynamic>? pageRoute;
+
+	DisplayCard asDisplayCard() {
+		return DisplayCard(title: card.title, body: card.body, page: pageRoute);
 	}
 }
