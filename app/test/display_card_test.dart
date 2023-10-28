@@ -40,7 +40,7 @@ void main() {
 		await tester.pumpWidget(myApp);
 
 		final cardFinder = find.byType(DisplayCard);
-		expect(cardFinder, findsOneWidget);
+		expect(cardFinder, findsNWidgets(2));
 	});
 
 	testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
@@ -66,7 +66,7 @@ void main() {
 	testWidgets('Tapping on display card opens entry in new page', (tester) async {
 		await tester.pumpWidget(myApp);
 
-		final card = find.byType(DisplayCard);
+		final card = find.byType(DisplayCard).first;
 
 		//Tap on display card and wait for new page to open
 		await tester.tap(card);
