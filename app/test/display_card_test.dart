@@ -5,10 +5,9 @@ import 'package:app/uiwidgets/cards.dart';
 import 'package:app/pages/entry.dart';
 
 void main() {
-	const entry = ( 
-		title: "Title of entry", 
-		previewText: "Preview of entry",
-		entryText: "Actual text of entry"
+	final entry = JournalEntry( 
+		title: "Title of entry text", 
+		entryText: "Actual text of entry.\nMade long to test preview",
 	);
 
 	final testObj = TestObject(
@@ -24,8 +23,8 @@ void main() {
 					child: Column(
 						children: [
 							DisplayCard(
-								title: entry.title, 
-								body: entry.previewText,
+								title: entry.getTitle(), 
+								body: entry.getPreviewText(),
 								page: EntryPage.route(entry: entry)
 							),
 							testObj.asDisplayCard(),
@@ -46,8 +45,8 @@ void main() {
 	testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
 		await tester.pumpWidget(myApp);
 
-		final entryTitleFinder = find.text("Title of entry");
-		final entryPreviewFinder = find.text("Preview of entry");
+		final entryTitleFinder = find.text(entry.getTitle());
+		final entryPreviewFinder = find.text(entry.getPreviewText());
 
 		expect(entryTitleFinder, findsOneWidget);
 		expect(entryPreviewFinder, findsOneWidget);
@@ -72,8 +71,8 @@ void main() {
 		await tester.tap(card);
 		await tester.pumpAndSettle();
 
-		final title = find.text("Title of entry");
-		final text = find.text("Actual text of entry");
+		final title = find.text(entry.getTitle());
+		final text = find.text(entry.getEntryText());
 
 		expect(title, findsOneWidget);
 		expect(text, findsOneWidget);
