@@ -28,7 +28,7 @@ void main() {
 								body: entry.previewText,
 								page: EntryPage.route(entry: entry)
 							),
-							testObj.displayCard(),
+							testObj.asDisplayCard(),
 						],
 					),
 				)
@@ -85,7 +85,6 @@ class TestObject with DisplayOnCard{
 	String body;
 
 	TestObject({this.title = "", required this.body}){
-		card.title = title;
-		card.content = body;
+		card = (title: title, body: body);
 	}
 }
