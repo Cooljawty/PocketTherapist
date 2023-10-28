@@ -10,14 +10,20 @@ void main() {
 		"entryText": "Actual text of entry"
 	};
 
+	final testObj = TestObject(
+		title: "Test Object Title",
+		body: "Body text of Test Object"
+	);
+
 	late Widget myApp;
   setUp(() => {
-    myApp = const MaterialApp(
+    myApp = MaterialApp(
 			home: Scaffold(
 				body: SafeArea(
 					child: Column(
 						children: [
 							DisplayCard(entry: entry),
+							testObj.displayCard(),
 						],
 					),
 				)
@@ -42,6 +48,16 @@ void main() {
 		expect(entryPreviewFinder, findsOneWidget);
 	});
 
+	testWidgets('The asDisplayCard method displays an object in a DisplayCard', (tester) async {
+		await tester.pumpWidget(myApp);
+
+		final entryTitleFinder = find.text(testObj.title);
+		final entryPreviewFinder = find.text(testObj.body);
+
+		expect(entryTitleFinder, findsOneWidget);
+		expect(entryPreviewFinder, findsOneWidget);
+	});
+
 	testWidgets('Tapping on display card opens entry in new page', (tester) async {
 		await tester.pumpWidget(myApp);
 
@@ -57,4 +73,14 @@ void main() {
 		expect(title, findsOneWidget);
 		expect(text, findsOneWidget);
 	});
+}
+
+class TestObject with DisplayOnCard{
+	String title;
+	String body;
+
+	TestObject({this.title = "", required this.body}){
+		card.title = title;
+		card.content = body;
+	}
 }
