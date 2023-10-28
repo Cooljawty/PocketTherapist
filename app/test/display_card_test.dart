@@ -2,13 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/uiwidgets/cards.dart';
+import 'package:app/pages/entry.dart';
 
 void main() {
-	const entry = { 
-		"title": "Title of entry", 
-		"previewText": "Preview of entry",
-		"entryText": "Actual text of entry"
-	};
+	const entry = ( 
+		title: "Title of entry", 
+		previewText: "Preview of entry",
+		entryText: "Actual text of entry"
+	);
 
 	final testObj = TestObject(
 		title: "Test Object Title",
@@ -23,9 +24,10 @@ void main() {
 					child: Column(
 						children: [
 							DisplayCard(
-								title: entry['title'], 
-								body: entry['previewText'],
-								route: EntryPage.route(entry: entry)),
+								title: entry.title, 
+								body: entry.previewText,
+								page: EntryPage.route(entry: entry)
+							),
 							testObj.displayCard(),
 						],
 					),
