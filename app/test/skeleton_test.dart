@@ -19,7 +19,7 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle(const Duration(seconds: 5));
-    // found dashboard, find next thigns
+    // found dashboard, find next things
     expect(find.text('Dashboard'), findsOneWidget);
     Finder nextPageButton = find.text('nextPageEntries');
     expect(nextPageButton, findsOneWidget);
