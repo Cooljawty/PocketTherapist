@@ -1,10 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:app/uiwidgets/cards.dart';
 
-class EntryPage<T> extends StatefulWidget {
-	final ({String title, String previewText, String entryText}) entry;
+import 'dart:math';
+
+class JournalEntry with DisplayOnCard {
+	String _title = "";
+	String _previewText = "";
+	String _entryText = "";
+
+	static const previewLength = 25;
+
+	JournalEntry({required title, required entryText}){
+		_title = title;
+		_entryText = entryText;
+		
+		_previewText = getPreviewText();
+
+		card = (
+			title: this._title,
+			body: getPreviewText(),
+		);	
+
+		pageRoute = EntryPage.route(entry: this);
+	}
+	String getPreviewText() {
+		var preview = _entryText.split("\n").first;
+		return preview.substring(0, min(previewLength, preview.length));
+	} 
+
+	String getEntryText() => _entryText;
+	String getTitle() => _title;
+
+	/* TODO
+	int _id;
+	int getId();
+	DateTime _date;
+	List<Tag> tags;
+	List<Emotions> emotions;
+	List<Image> pictures;
+
+	DateTime getDate();
+	Tag getTagByTitle(String title);
+	List<Tags> getTags();
+	Emotion getStrongestEmotion();
+	List<Emotion> getEmotions();
+	List<Image> getPictures();
+	*/
+}
+
+class EntryPage extends StatefulWidget {
+	final JournalEntry entry;
 
 	/// Route for navigator to open page with a given entry
-  static Route<dynamic> route({entry}) {
+  static Route<dynamic> route({required JournalEntry entry}) {
     return MaterialPageRoute(builder: (context) => EntryPage(entry: entry));
   }
 
@@ -37,7 +85,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry.title}", style: titleStyle),
+										Text( "${widget.entry.getTitle()}", style: titleStyle),
 									],
 								),
 							),
@@ -47,7 +95,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry.entryText}", style: textStyle), 
+										Text( "${widget.entry.getEntryText()}", style: textStyle), 
 									],
 								),
 							),

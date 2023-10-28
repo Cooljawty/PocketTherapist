@@ -1,14 +1,22 @@
 import 'package:app/pages/plans.dart';
 import 'package:app/uiwidgets/cards.dart';
+import 'package:app/pages/entry.dart';
+
 import 'package:flutter/material.dart';
 
-
 class EntriesPage extends StatefulWidget {
+	List<JournalEntry> entries = [ 
+		JournalEntry(
+			title: "Title", 
+			entryText: "Test entry\nthis text should not be in preview"
+		),
+	];
+
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
+    return MaterialPageRoute(builder: (context) => EntriesPage());
   }
 
-  const EntriesPage({super.key});
+	EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -19,27 +27,22 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-          child: Column(
+          child: ListView(
             children: [
-              const Text('Entries'),
-							const DisplayCard(
-								entry: {
-									"title": "Entry1", 
-									"previewText": "The First entry",
-									"entryText": "The First entry has more words in it",
-								}, 
+              Container(
+								child: const Text('Entries'),
 							),
-							const DisplayCard(
-								entry: {
-										"title": "Entry2", 
-										"previewText": "And this is the second entry",
-										"entryText": "And this is the second entry also has more word",
-									},
+							ListView.builder(
+								shrinkWrap: true,
+								itemCount: widget.entries.length,
+								itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
 							),
-              ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(PlansPage.route());
-              }, 
-							child: const Text('nextPagePlans') ),
+              ElevatedButton(
+								onPressed: () {
+									Navigator.of(context).pushReplacement(PlansPage.route());
+								},
+								child: const Text('nextPagePlans'),
+							),
             ],
           ),
         )
