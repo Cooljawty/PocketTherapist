@@ -1,8 +1,7 @@
-import 'package:app/pages/entries.dart';
 import 'package:flutter/material.dart';
 
 class EntryPage<T> extends StatefulWidget {
-	final Map<String,String> entry;
+	final ({String title, String previewText, String entryText}) entry;
 
 	/// Route for navigator to open page with a given entry
   static Route<dynamic> route({entry}) {
@@ -38,7 +37,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry['title']}", style: titleStyle),
+										Text( "${widget.entry.title}", style: titleStyle),
 									],
 								),
 							),
@@ -48,7 +47,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry['entryText']}", style: textStyle), 
+										Text( "${widget.entry.entryText}", style: textStyle), 
 									],
 								),
 							),
