@@ -22,7 +22,10 @@ void main() {
 				body: SafeArea(
 					child: Column(
 						children: [
-							DisplayCard(entry: entry),
+							DisplayCard(
+								title: entry['title'], 
+								body: entry['previewText'],
+								route: EntryPage.route(entry: entry)),
 							testObj.displayCard(),
 						],
 					),
