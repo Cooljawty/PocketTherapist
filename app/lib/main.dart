@@ -1,5 +1,6 @@
 import 'package:app/pages/welcome.dart';
 import 'package:app/provider/settings.dart' as settings;
+import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,5 +49,4 @@ class _RootAppState extends State<RootApp> {
 Future<void> init() async {
   SharedPreferences.setPrefix(settings.prefrencesPrefix);
   await settings.init(); // init by default for settings
-  //Encryptor(); // Init by default for encryptor
 }

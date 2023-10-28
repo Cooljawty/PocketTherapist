@@ -16,9 +16,11 @@ void init(SharedPreferences preferences) {
 }
 
 void setPassword(String password) {
-
+  //Do hash things
+  _passwordHash = password;
 }
 
 bool validatePassword(String password){
+    // do hash things, then compare to hash
     return password == _passwordHash;
 }

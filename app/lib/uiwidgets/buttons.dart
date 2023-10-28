@@ -52,6 +52,61 @@ class SettingsButton extends StatelessWidget {
     );
   }
 }
+
+/// Button that can do something that is just there.
+class StandardButton extends StatelessWidget {
+  final Widget child;
+  final Function()? onPressed;
+  const StandardButton({
+    super.key,
+    required this.child,
+    required this.onPressed
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        width: 270,
+        height: 45,
+        child: TextButton(
+          onPressed: onPressed,
+          child:  child,
+        )
+    );
+  }
+
+}
+
+/// Button that can do something with an elevation component
+class StandardElevatedButton extends StandardButton {
+  final double elevation = 15.0;
+  const StandardElevatedButton({
+    super.key,
+    required super.child,
+    required super.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color shadowColor = Theme.of(context).colorScheme.shadow;
+    Color backgroundColor = Theme.of(context).colorScheme.primary;
+    return SizedBox(
+      width: 350,
+      height: 60,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          elevation: elevation,
+          shadowColor: shadowColor,
+          backgroundColor: backgroundColor,
+        ),
+        child:  child,
+      )
+    );
+  }
+}
+
+
 // class ToggleThemeButton extends StatelessWidget {
 //   const ToggleThemeButton({super.key });
 //

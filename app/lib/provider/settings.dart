@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
 
 const String prefrencesPrefix = "pocket-therapist"; // fixed prefix value
 const String lightOrDarkKey = 'theme'; // bool storage
@@ -35,7 +36,10 @@ Future<void> init() async {
         accentColorKey, ThemeSettings.lightTheme.primaryColor.value);
     //Theme key
     await _preferences!.setBool(lightOrDarkKey, true);
+    //
+    await _preferences!.setBool(encryptionToggleKey, false);
   }
+  encryptor.init(_preferences!);
   // Preferences are loaded by default inside of SharedPreferences.
 }
 
