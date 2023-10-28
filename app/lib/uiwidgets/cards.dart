@@ -46,16 +46,18 @@ class _DisplayCardState extends State<DisplayCard> {
 					),
 
 					//Here is where the content is displayed
-					child: Container(
-						padding: const EdgeInsets.all(12),
-						child: Wrap( 
-							direction: Axis.vertical,
-							spacing: 3.0,
-							children: <Widget>[ 
-								Text( "${widget.entry['title']}", style: titleStyle, ),
-								Text( "${widget.entry['previewText']}", style: previewStyle, ), 
-							],
-						),
+					child: Wrap( 
+						direction: Axis.vertical,
+						children: <Widget>[ 
+							Container(
+								padding: const EdgeInsets.all(6),
+								child: Text( "${widget.entry['title']}", style: titleStyle, ),
+							),
+							Container(
+								padding: const EdgeInsets.all(6),
+								child: Text( "${widget.entry['previewText']}", style: previewStyle, ), 
+							),
+						],
 					),
 				),
 			),

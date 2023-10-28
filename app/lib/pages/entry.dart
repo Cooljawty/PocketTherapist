@@ -18,18 +18,42 @@ class EntryPage<T> extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
+		//Text style is taken from app theme
+		final theme = Theme.of(context);
+		final titleStyle = theme.textTheme.titleMedium!.copyWith(
+			color: theme.colorScheme.onBackground,
+		);
+		final textStyle = theme.textTheme.bodyMedium!.copyWith(
+			color: theme.colorScheme.onBackground,
+		);
+
     return Scaffold(
 			body: SafeArea(
-				child: Column(
+				child: Center(
+					child: Column(
 						children: <Widget>[ 
-							Text( "${widget.entry['title']}"),
-							Text( "${widget.entry['entryText']}"), 
-
-							ElevatedButton(onPressed: (){
-								Navigator.of(context).pushReplacement(EntriesPage.route());
-
-							}, child: const Text('nextPageEntries') )
+							//Title
+							Container(
+								padding: const EdgeInsets.all(12),
+								child: Wrap( 
+									direction: Axis.vertical,
+									children: <Widget>[ 
+										Text( "${widget.entry['title']}", style: titleStyle),
+									],
+								),
+							),
+							//Content
+							Container(
+								padding: const EdgeInsets.all(12),
+								child: Wrap( 
+									direction: Axis.vertical,
+									children: <Widget>[ 
+										Text( "${widget.entry['entryText']}", style: textStyle), 
+									],
+								),
+							),
 						],
+					),
 				),
 			),
     );
