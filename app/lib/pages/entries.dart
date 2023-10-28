@@ -1,11 +1,10 @@
 import 'package:app/pages/plans.dart';
-import 'package:app/uiwidgets/cards.dart';
 import 'package:app/pages/entry.dart';
 
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
-	List<JournalEntry> entries = [ 
+	final List<JournalEntry> entries = [ 
 		JournalEntry(
 			title: "Title", 
 			entryText: "Test entry\nthis text should not be in preview"
@@ -30,6 +29,7 @@ class _EntriesPageState extends State<EntriesPage> {
           child: ListView(
             children: [
               Container(
+								padding: const EdgeInsets.all(2), 
 								child: const Text('Entries'),
 							),
 							ListView.builder(

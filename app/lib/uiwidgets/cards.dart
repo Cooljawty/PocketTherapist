@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:app/pages/entry.dart';
 
 /// A card that displays text with a title and main text bocy
 class DisplayCard extends StatefulWidget {
-	String title;
-	String body;
+	final String title;
+	final String body;
 
-	Route<dynamic>? page;
+	final Route<dynamic>? page;
 
-  DisplayCard({super.key, required this.title, required this.body, this.page});
+  const DisplayCard({super.key, required this.title, required this.body, this.page});
 
 	@override
 	State<DisplayCard> createState() => _DisplayCardState();
@@ -57,11 +56,11 @@ class _DisplayCardState extends State<DisplayCard> {
 						children: <Widget>[ 
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( "${widget.title}", style: titleStyle, ),
+								child: Text( widget.title, style: titleStyle, ),
 							),
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( "${widget.body}", style: previewStyle, ), 
+								child: Text( widget.body, style: previewStyle, ), 
 							),
 						],
 					),

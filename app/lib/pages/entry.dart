@@ -14,20 +14,17 @@ class JournalEntry with DisplayOnCard {
 		_title = title;
 		_entryText = entryText;
 		
-		_previewText = getPreviewText();
+		final preview = _entryText.split("\n").first;
+		_previewText = preview.substring(0, min(previewLength, preview.length));
 
 		card = (
-			title: this._title,
+			title: _title,
 			body: getPreviewText(),
 		);	
 
 		pageRoute = EntryPage.route(entry: this);
 	}
-	String getPreviewText() {
-		var preview = _entryText.split("\n").first;
-		return preview.substring(0, min(previewLength, preview.length));
-	} 
-
+	String getPreviewText() => _previewText;
 	String getEntryText() => _entryText;
 	String getTitle() => _title;
 
@@ -85,7 +82,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry.getTitle()}", style: titleStyle),
+										Text( widget.entry.getTitle(), style: titleStyle),
 									],
 								),
 							),
@@ -95,7 +92,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( "${widget.entry.getEntryText()}", style: textStyle), 
+										Text( widget.entry.getEntryText(), style: textStyle), 
 									],
 								),
 							),
