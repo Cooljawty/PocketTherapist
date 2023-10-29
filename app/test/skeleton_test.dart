@@ -3,6 +3,7 @@ import 'package:app/main.dart';
 
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -15,11 +16,33 @@ void main() {
       await tester.pumpAndSettle();
   }
 
+  // testWidgets('Test settings button', (widgetTester) async {
+  //   await widgetTester.pumpWidget(const RootApp());
+  //   await widgetTester.pumpAndSettle();
+  //   Finder settingsButton = find.byType(FloatingActionButton);
+  //   expect(settingsButton, findsOneWidget);
+  //   await widgetTester.tap(settingsButton);
+  //   await widgetTester.pumpAndSettle();
+  //   expect(find.text("Settings"), findsOneWidget);
+  // });
+
   testWidgets('Cycle through pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
+    final Map<String, Object> mockValues = <String, Object>{
+      'DataInitialized': true,
+      'Password': 'Password'
+    };
+    //set mock values
+    SharedPreferences.setMockInitialValues(mockValues);
+    //expected behavior, start button is present
     await tester.pumpWidget(const RootApp());
-    await tester.pumpAndSettle(const Duration(seconds: 5));
-    // found dashboard, find next things
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byKey(const Key('Password_Field')), 'Password');
+    //wait for field to be submitted before checking if we enter the dashboard
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    //check that dashboard is entered
     expect(find.text('Dashboard'), findsOneWidget);
     Finder nextPageButton = find.text('nextPageEntries');
     expect(nextPageButton, findsOneWidget);
@@ -27,8 +50,7 @@ void main() {
     // On Dashboard finding things
      await testNextPage('Dashboard', 'nextPageEntries', tester);
      await testNextPage('Entries', 'nextPagePlans', tester);
-     await testNextPage('Plans', 'nextPageSettings', tester);
-     await testNextPage('Settings', 'nextPageCalendar', tester);
+     await testNextPage('Plans', 'nextPageCalendar', tester);
      await testNextPage('Calendar', 'nextPageDashboard', tester);
 
        // Ensure no duplicates
