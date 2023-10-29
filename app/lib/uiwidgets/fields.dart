@@ -13,18 +13,11 @@ class PasswordField extends StatefulWidget {
   const PasswordField({
         super.key, 
         this.hintText = "Password", 
-        this.validator = defaultValidator,
+        this.validator = encryptor.defaultValidator,
       });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
-}
-
-String? defaultValidator(String? value) {
-  if(value == null || value.isEmpty || encryptor.validatePasswordField(value)){
-    return null;
-  }
-  return "";
 }
 
 class _PasswordFieldState extends State<PasswordField> {

@@ -302,7 +302,9 @@ class _WelcomePageState extends State<WelcomePage> {
                                 bool match = passwordFieldText == verificationPassword;
                                 if(match) {
                                   settings.setPassword(passwordFieldText);
+                                  settings.setEncryptionStatus(true);
                                   settings.setConfigured(true);
+                                  settings.save();
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pushReplacement(DashboardPage.route());
@@ -363,7 +365,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             key: const Key('Confirm_No_Password'),
                             onPressed: () {
                               settings.setPassword(""); // empty password no encryption
+                              settings.setEncryptionStatus(false);
                               settings.setConfigured(true);
+                              settings.save();
                               Navigator.of(context).pop(); // remove confirmation window
                               Navigator.of(context).pop(); // remove inital entry window
                               Navigator.pushReplacement(context, DashboardPage.route()); // Move to dashboard w/o encryption
@@ -390,6 +394,8 @@ class _WelcomePageState extends State<WelcomePage> {
       );
     }
   }
+
+
   void _handleResetPasswordPress(BuildContext context) async {
     String recoveryPhrase = "";
     if(settings.isConfigured()){

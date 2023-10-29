@@ -1,12 +1,8 @@
 import 'dart:io';
 
 import 'package:app/main.dart' as app;
-import 'package:app/pages/welcome.dart';
-import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yaml/yaml.dart';
 
 void main() {
 
@@ -14,8 +10,9 @@ void main() {
 
     app.main();
 
-    Finder startbutton = find.descendant(of: find.byKey(const Key('Start_Button')),
-    matching: find.byType(TextButton));
+    // Finder startbutton = find.descendant(of: find.byKey(const Key('Start_Button')),
+    Finder startbutton = find.text('Start');
+    // matching: find.byType(TextButton));
     expect(startbutton, findsOneWidget);
     await widgetTester.tap(startbutton);
     await widgetTester.pumpAndSettle();

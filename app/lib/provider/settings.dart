@@ -12,9 +12,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
-import 'package:yaml/yaml.dart';
 import 'package:app/provider/theme_settings.dart';
 
 /// Used for error messages
@@ -29,25 +27,20 @@ bool _unstable = false;
 
 const String configuredKey = "configured";
 /// true if the app has been setup before, false otherwise
-bool _configured = false;
 
-const String lightOrDarkKey = 'theme';
+const String themeKey = 'theme';
 /// Which theme is being used currently, load and saves as an integer.
-ThemeOption _currentTheme = ThemeOption.light;
 
 const String fontScaleKey = 'fontScale';
 /// Scale of all font sizes
-double _fontScale = 1.0;
 
 const String encryptionToggleKey = 'encryption';
 /// True if encryption is enabled, false otherwise
-bool _encryptionEnabled = true;
 
 const String accentColorKey = "accent";
 /// The color of all accents, like buttons and sizing.
-Color _accentColor = Colors.blueAccent;
 
-YamlMap? _cachedSettings;
+Map<String, dynamic>? _settings;
 Directory? _settingsStorageDirectory;
 File? _settingsFile;
 Directory? _externalStorageDirectory;
@@ -62,7 +55,6 @@ Future<void> load() async  {
     } else {
       _externalStorageDirectory = _settingsStorageDirectory;
     }
-    debugPrint("$_settingsFile");
     // first time setup
     if(!await _settingsFile!.exists()){
       // cannot create settings file
@@ -72,26 +64,48 @@ Future<void> load() async  {
       } on FileSystemException {
         debugPrint("Could not create settings file with path $_settingsFile!");
       }
+      _assignDefaults();
     }
     // Else settings exists, load them.
     else {
       String fileContent = await _settingsFile!.readAsString();
-      _cachedSettings = loadYaml(fileContent);
-      /// Loading saved settings over the defaults
-      if(_cachedSettings == null) { debugPrint("Settings failed to load. Maybe it was never saved?");};
-      {
-
+      if(fileContent.isEmpty){ // Settings file exists but empty, save the defaults
+        _assignDefaults();
+      } else {                 // settings file exists, load it
+        _settings = json.decode(fileContent);
+        if(_settings == null) {
+          debugPrint("Settings failed to load. Maybe it was never saved?");
+        }
+        // Load encryption settings
+        encryptor.load(_settings!['enc']);
+        // Erase from our reference, not used.
+        _settings!['enc'] = null;
       }
+      /// settings are loaded
     }
+    // Happens during testing
   } on MissingPlatformDirectoryException {
     debugPrint("Unable to get Support directory, settings will not be saved.");
     _unstable = true;
+    // Happens on IOS
   } on UnsupportedError {
     debugPrint("Unable to get external storage directory, not on IOS, standard storage will be in application support");
     _externalStorageDirectory = _settingsStorageDirectory;
   }
+  /// Settings - App is initialized
+  _init = true;
 }
 
+void _assignDefaults() async {// Enforce defaults
+  _settings = {
+  configuredKey: false,
+  themeKey: ThemeOption.light.index,
+  fontScaleKey: 1.0,
+  encryptionToggleKey: false,
+  accentColorKey: Colors.deepPurpleAccent[100]!.value,
+  };
+  await save();
+}
 
 /// The saving function [save], will save settings to [_settingsStorageDirectory]
 /// in a file called "settings.yml".
@@ -102,14 +116,8 @@ Future<void> save() async  {
 
   // Collect all the settings
   Map<String, dynamic> encrypted = encryptor.save();
-  Map<String, dynamic> settings = {
-    configuredKey: _configured,
-    lightOrDarkKey: _currentTheme.index,
-    fontScaleKey: _fontScale,
-    encryptionToggleKey: _encryptionEnabled,
-    accentColorKey: _accentColor.value,
-  };
-  settings.addAll(encrypted);
+  Map<String, dynamic> settings = Map.of(_settings!);
+  settings['enc'] = encrypted;
   // Save them to the file
   debugPrint("$settings");
   String jsonEncoding = json.encode(settings);
@@ -117,25 +125,42 @@ Future<void> save() async  {
   await _settingsFile!.writeAsString(jsonEncoding);
 }
 
+Future<void> reset() async {
+  _settings = {
+    configuredKey: false,
+    themeKey: ThemeOption.light.index,
+    fontScaleKey: 1.0,
+    encryptionToggleKey: false,
+    accentColorKey: Colors.deepPurpleAccent[100],
+  };
+  encryptor.reset();
+  // Probably message database to reset as well....
+  await save();
+}
 
 /// Setters --------------------------
-void setConfigured(bool value) => _configured = value;
+void setConfigured(bool value) => _settings![configuredKey] = value;
+void setTheme(ThemeOption theme) => _settings![themeKey] = theme.index;
+void setFontScale(double newFontScale) => _settings![fontScaleKey] = newFontScale;
+void setEncryptionStatus(bool newStatus) => _settings![encryptionToggleKey] = newStatus;
+void setAccentColor(Color newColor) => _settings![accentColorKey] = newColor.value;
 void setPassword(String newPassword) => encryptor.setPassword(newPassword);
 
 /// Getters --------------------------
 bool isInitialized() => _init;
-bool isConfigured() => _configured;
-ThemeData getCurrentTheme() => switch(_currentTheme){
-    ThemeOption.highContrastLight => ThemeSettings.lightTheme,
-    ThemeOption.light => ThemeSettings.lightTheme,
-    ThemeOption.highContrastDark => ThemeSettings.darkTheme,
-    ThemeOption.dark => ThemeSettings.darkTheme,
+bool isConfigured() => _settings![configuredKey];
+ThemeData getCurrentTheme() =>  switch(_settings![themeKey] as int) {
+    0 => ThemeSettings.lightTheme,
+    1 => ThemeSettings.lightTheme,
+    2 => ThemeSettings.darkTheme,
+    3 => ThemeSettings.darkTheme,
+    _ => throw StateError("Invalid ThemeSetting")
 };
-double getFontScale() => _fontScale;
-bool isEncryptionEnabled() => _encryptionEnabled;
-Color getAccentColor() => _accentColor;
+double getFontScale() => _settings![fontScaleKey];
+bool isEncryptionEnabled() => _settings![encryptionToggleKey];
+Color getAccentColor() => _settings![accentColorKey];
 Object? getOtherSetting(String key) {
-  Object? value = _cachedSettings![key];
+  Object? value = _settings![key];
   if(value == null) {
     debugPrint("Settings did not have value $key");
   }

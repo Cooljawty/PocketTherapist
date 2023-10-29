@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter/cupertino.dart';
 
 String? _passwordHash;
 String? _IVCipherText;
@@ -11,21 +10,20 @@ String? _KeyCipherText;
 
 void setPassword(String password) {
   //Do hash things
-  
+
   _passwordHash = password;
 }
 
 /// Password can be empty, this is only used if the password is supplied
-bool validatePasswordField(String password)
-  => (password.length >= 10 &&                       // length must be 10+      AND
+bool validatePasswordField(String password) => (password.length >= 10 &&                       // length must be 10+      AND
       password.contains(RegExp(r'[!@#$%^&*()]+')) &&  // contains special char   AND
       password.contains(RegExp(r'\d+')));           // contains at least 1 num
 
-
-
+String? defaultValidator(String? value) =>
+    (value == null || value.isEmpty || validatePasswordField(value)) ? null : "";
 
 bool verifyPassword(String password){
-    // do hash things, then compare to hash
+    // do hash things, then compare to hashing
     return password == _passwordHash;
 }
 
@@ -33,6 +31,7 @@ bool verifyPassword(String password){
 // Utilities --------------------------------------
 String _compress() =>
     _hexEncode(utf8.encode("$_passwordHash:$_IVCipherText:$_KeyCipherText"));
+
 bool load(Map<String, dynamic> map) {
   String data = map['data'];
   Digest? receivedSig = Digest(_hexDecode(map['sig']));
@@ -49,6 +48,13 @@ bool load(Map<String, dynamic> map) {
   dataSig = null;
   return verified;
 }
+
+void reset(){
+  _passwordHash = null;
+  _IVCipherText = null;
+  _KeyCipherText = null;
+}
+
 UnmodifiableMapView<String, dynamic> save() =>
   UnmodifiableMapView({
     "data": _compress(),
