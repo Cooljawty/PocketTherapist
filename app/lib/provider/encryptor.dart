@@ -20,7 +20,9 @@ bool validatePasswordField(String password) => (password.length >= 10 &&        
       password.contains(RegExp(r'\d+')));           // contains at least 1 num
 
 String? defaultValidator(String? value) =>
-    (value == null || value.isEmpty || validatePasswordField(value)) ? null : "";
+    (value == null || value.isEmpty || validatePasswordField(value)) ?
+    null :
+    "Passwords must have the following:\n1. 10 or more characters\n2. At least one special character\n3.at least one number (!@#\$%^&*())";
 
 bool verifyPassword(String password){
     // do hash things, then compare to hashing

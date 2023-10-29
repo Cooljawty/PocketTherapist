@@ -10,7 +10,7 @@ void main() {
     myApp = MaterialApp(
         home: Scaffold(
             body: SafeArea(
-              child: PasswordField(
+              child: ControlledTextField(
                 key: testKey,
                 hintText: "Password",
                 validator: (textInField) => (textInField?.isEmpty ?? true) ? 'Field is required' : null,

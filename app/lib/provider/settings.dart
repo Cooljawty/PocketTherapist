@@ -138,6 +138,17 @@ Future<void> reset() async {
   await save();
 }
 
+/// Used exclusively during testing, do not use this for any other purpose.
+void setMockValue([Map<String, dynamic>? values]) =>
+  _settings = values ?? {
+    configuredKey: false,
+    themeKey: ThemeOption.light.index,
+    fontScaleKey: 1.0,
+    encryptionToggleKey: false,
+    accentColorKey: Colors.deepPurpleAccent[100]!.value,
+  };
+
+
 /// Setters --------------------------
 void setConfigured(bool value) => _settings![configuredKey] = value;
 void setTheme(ThemeOption theme) => _settings![themeKey] = theme.index;

@@ -1,17 +1,17 @@
-import 'dart:io';
 
-import 'package:app/main.dart' as app;
+import 'package:app/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:app/provider/settings.dart' as settings;
 
 void main() {
 
   testWidgets("Password Account creation", (widgetTester) async {
-
-    app.main();
-
+    settings.setMockValue();
+    await widgetTester.pumpWidget(const MaterialApp(home: WelcomePage()));
+    await widgetTester.pumpAndSettle();
     // Finder startbutton = find.descendant(of: find.byKey(const Key('Start_Button')),
-    Finder startbutton = find.text('Start');
+    Finder startbutton = find.byKey(const Key("Start_Button"));
     // matching: find.byType(TextButton));
     expect(startbutton, findsOneWidget);
     await widgetTester.tap(startbutton);
@@ -24,12 +24,13 @@ void main() {
         matching: find.byType(TextFormField)
     );
     expect(passwordField, findsOneWidget);
-    await widgetTester.enterText(passwordField, "password");
+    await widgetTester.enterText(passwordField, "password123@");
     await widgetTester.pumpAndSettle();
-    Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
+    Finder enterPasswordButton = find.byKey(const Key('Enter_Password_Field'));
     await widgetTester.tap(enterPasswordButton);
     await widgetTester.pumpAndSettle();
     encryptionAlert = find.byType(AlertDialog);
+    Widget newAlert = widgetTester.widget(encryptionAlert);
     expect(encryptionAlert, findsNWidgets(2));
     Finder confirmPasswordAlert = find.ancestor(
         of: find.text("Confirm Password"),
@@ -46,7 +47,7 @@ void main() {
         of: find.byKey(const Key('Confirm_Password_Field')),
         matching: find.byType(TextFormField)
     );
-    await widgetTester.enterText(passwordField, "password");
+    await widgetTester.enterText(passwordField, "password123@");
     await widgetTester.tap(submitVerificationButton);
     expect(find.text("Dashboard"), findsOneWidget);
   });

@@ -21,7 +21,6 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
@@ -30,150 +29,153 @@ class _WelcomePageState extends State<WelcomePage> {
       body: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              // Title
-              Container(
-                width: 350,
-                height: 60,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                  boxShadow: ThemeSettings.defaultBoxShadow,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                // Title
+                Container(
+                  width: 350,
+                  height: 60,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                    boxShadow: ThemeSettings.defaultBoxShadow,
+                  ),
+                  //child is title text
+                  child: Text(
+                    'Pocket Therapist',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                 ),
-                //child is title text
-                child: Text(
-                  'Pocket Therapist',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                // Logo
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Container(
+                    height: 250,
+                        width: 250,
+                        decoration: BoxDecoration(
+                          boxShadow: ThemeSettings.defaultBoxShadow,
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Image(
+                          image: AssetImage('assets/logoSmall.png'),
+                        )
+                  ),
                 ),
-              ),
-              // Logo
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Container(
-                  height: 250,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        boxShadow: ThemeSettings.defaultBoxShadow,
-                        color: Theme.of(context).colorScheme.primary,
-                        shape: BoxShape.circle,
+                // Catch Phrase
+                Container(
+                  width: 280,
+                  height: 30,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                    boxShadow: ThemeSettings.defaultBoxShadow,
+                  ),
+                  //child is title text
+                  child: Text(
+                    'How are you "really" feeling today?',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                // Start Button
+                Padding(
+                  padding: const EdgeInsets.only(top: 25, bottom:  40),
+                  child: Column(
+                    children: [
+                      StandardElevatedButton(
+                          key: const Key("Start_Button"),
+                          onPressed: () => _handleStartPress(context),
+                          child: const Text(
+                            'Start',
+                            style: TextStyle(color: Colors.amber),
+                          ) ,
                       ),
-                      child: const Image(
-                        image: AssetImage('assets/logoSmall.png'),
-                      )
-                ),
-              ),
-              // Catch Phrase
-              Container(
-                width: 280,
-                height: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                  boxShadow: ThemeSettings.defaultBoxShadow,
-                ),
-                //child is title text
-                child: Text(
-                  'How are you "really" feeling today?',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-              // Start Button
-              Padding(
-                padding: const EdgeInsets.only(top: 25, bottom:  40),
-                child: Column(
-                  children: [
-                    StandardElevatedButton(
-                        key: const Key("Start_Button"),
-                        onPressed: () => _handleStartPress(context),
-                        child: const Text(
-                          'Start',
-                          style: TextStyle(color: Colors.amber),
-                        ) ,
-                    ),
-                    const SizedBox(height: 10),
-                    // Reset Password Button
-                    StandardElevatedButton(
-                      key: const Key("Reset_Button"),
-                      onPressed: () => _handleResetPasswordPress(context),
-                      child: Text(
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        'Reset Password',
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    // Erase everything
-                    StandardElevatedButton(
-                      key: const Key("Erase_Button"),
-                      onPressed: () => _handleResetEverythingPress(context),
-                      child: Text(
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        'Erase Everything',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              //use a container for the quote of the day
-              Container(
-                width: 350,
-                height: 230,
-                decoration: BoxDecoration(
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Align(
-                        alignment: Alignment.topLeft,
-                        widthFactor: 2,
+                      const SizedBox(height: 10),
+                      // Reset Password Button
+                      StandardElevatedButton(
+                        key: const Key("Reset_Button"),
+                        onPressed: () => _handleResetPasswordPress(context),
                         child: Text(
-                          "Quote of the Day:",
-                          style: TextStyle(
-                              color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .background,
-                              fontSize: 20.0),
-                        )),
-                    //extra container to hold the quote
-                    Container(
-                      width: 310,
-                      height: 150,
-                      padding: const EdgeInsets.only(
-                          left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-                      decoration: BoxDecoration(
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .background,
-                          border: Border.all(
-                            //left for now
-                            color: Colors.black,
-                            width: 3.0,
-                          ),
-                          borderRadius:
-                          const BorderRadius.all(Radius.circular(15.0))),
-                      //now we only need a text widget for quote
-                      child: const Text(
-                        // quote from app
-                        "''Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?''",
-                        textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          'Reset Password',
+                        ),
                       ),
-                    ),
-                    const TextButton(onPressed: null, child: Text("New Quote")),
-                  ],
+                      const SizedBox(height: 10),
+                      // Erase everything
+                      StandardElevatedButton(
+                        key: const Key("Erase_Button"),
+                        onPressed: () => _handleResetEverythingPress(context),
+                        child: Text(
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          'Erase Everything',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              //spacer for after erase everything and quote of the day
-            ],
+                //use a container for the quote of the day
+                Container(
+                  width: 350,
+                  height: 230,
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Align(
+                          alignment: Alignment.topLeft,
+                          widthFactor: 2,
+                          child: Text(
+                            "Quote of the Day:",
+                            style: TextStyle(
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .background,
+                                fontSize: 20.0),
+                          )),
+                      //extra container to hold the quote
+                      Container(
+                        width: 310,
+                        height: 150,
+                        padding: const EdgeInsets.only(
+                            left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+                        decoration: BoxDecoration(
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .background,
+                            border: Border.all(
+                              //left for now
+                              color: Colors.black,
+                              width: 3.0,
+                            ),
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(15.0))),
+                        //now we only need a text widget for quote
+                        child: const Text(
+                          // quote from app
+                          "''Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?''",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const TextButton(onPressed: null, child: Text("New Quote")),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -212,7 +214,7 @@ class _WelcomePageState extends State<WelcomePage> {
           builder: (context) => AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.onBackground,
             title: const Text("Welcome Back!"),
-            content: PasswordField(hintText: "Enter your password", validator: (value) {
+            content: ControlledTextField(hintText: "Enter your password", validator: (value) {
               passwordFieldText = value ?? "";
               if(value == null || value.isEmpty) {
                 return "Field is empty!";
@@ -249,7 +251,8 @@ class _WelcomePageState extends State<WelcomePage> {
                       }
                     }
                   },
-                  child: const Text("Enter")),
+                  child: const Text("Enter")
+              ),
             ],
           ),
         );
@@ -271,28 +274,32 @@ class _WelcomePageState extends State<WelcomePage> {
           title: const Text("Encryption?"),
           // User enters password, which is either empty (no encryption)
           // or is valid, and must be confirmed.
-          content: PasswordField(
+          content: ControlledTextField(
               key: const Key('Enter_Password_Field'),
               hintText: "Enter a password (Optional)",
-              validator: (value) { passwordFieldText = value ?? ""; return "";}),
+              validator: (value) {
+                String? message = encryptor.defaultValidator(value);
+                passwordFieldText = value ?? "";
+                return message;
+              }
+          ),
           actions: [
             TextButton(
                 key: const Key('Create_Password'),
                 onPressed: () async {
                   // if password supplied and valid
-                  if(passwordFieldText.isNotEmpty && encryptor.validatePasswordField(passwordFieldText)) {
+                  if(passwordFieldText.isNotEmpty) {
                       // begin confirmation loop (verification)
                     await showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
                           backgroundColor: Theme.of(context).colorScheme.onBackground,
                           title: const Text("Confirm your password"),
-                          content: PasswordField(
+                          content: ControlledTextField(
                               key: const Key('Confirm_Password_Field'),
                               hintText: "Confirm Password",
                               validator: (value) {
-                                verificationPassword = value ?? "";
-                                return;
+                                return passwordFieldText == value? "" : "Passwords do not match.";
                               }
                           ),
                           actions: [
@@ -308,21 +315,6 @@ class _WelcomePageState extends State<WelcomePage> {
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pushReplacement(DashboardPage.route());
-                                } else {
-                                  await showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        backgroundColor: Theme.of(context).colorScheme.onBackground,
-                                        title: const Text("Incorrect Password"),
-                                        actions: [
-                                          TextButton(
-                                            key: const Key('Confirm_Password_Mismatch'),
-                                            onPressed: () => Navigator.pop(context),
-                                            child: const Text('Ok')
-                                          )
-                                        ],
-                                      )
-                                  );
                                 }
                               },
                               child: const Text("Enter"),
@@ -331,26 +323,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         )
                     );
                   }
-                  // password was supplied, but invalid
-                  else if(passwordFieldText.isNotEmpty) {
-                    await showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: Theme.of(context).colorScheme.onBackground,
-                          title: const Text("Invalid Password"),
-                          content: const Text(
-                            "Password must be 10+ characters and have at least one special character and number (!@#\$%^&*())"
-                          ),
-                          actions: [
-                            TextButton(
-                                key: const Key('Confirm_Password_Invalid'),
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Ok')
-                            )
-                          ],
-                        )
-                    );
-                  }
+
                   // No password supplied
                   else {
                     //Password is empty, prompt for confirmation (ensure no encryption)
@@ -394,8 +367,6 @@ class _WelcomePageState extends State<WelcomePage> {
       );
     }
   }
-
-
   void _handleResetPasswordPress(BuildContext context) async {
     String recoveryPhrase = "";
     if(settings.isConfigured()){
@@ -405,7 +376,7 @@ class _WelcomePageState extends State<WelcomePage> {
           builder: (context) => AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.onBackground,
           title: const Text("Reset Password"),
-          content: PasswordField(
+          content: ControlledTextField(
             validator: (value) {
               return null;
             },
@@ -452,7 +423,6 @@ class _WelcomePageState extends State<WelcomePage> {
 
     }
   }
-
 }
 
 
