@@ -52,6 +52,7 @@ class SettingsButton extends StatelessWidget {
     );
   }
 }
+
 // class ToggleThemeButton extends StatelessWidget {
 //   const ToggleThemeButton({super.key });
 //
