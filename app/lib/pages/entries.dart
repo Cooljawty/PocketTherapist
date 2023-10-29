@@ -26,7 +26,7 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-          child: ListView(
+          child: Column(
             children: [
               Container(
 								padding: const EdgeInsets.all(2), 
@@ -37,11 +37,18 @@ class _EntriesPageState extends State<EntriesPage> {
 								itemCount: widget.entries.length,
 								itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
 							),
-              ElevatedButton(
+							ElevatedButton(
 								onPressed: () {
 									Navigator.of(context).pushReplacement(PlansPage.route());
 								},
-								child: const Text('nextPagePlans'),
+								child: const Text('nextPagePlans')
+							),
+							//box SizedBox keeps the plan, tag, and save buttons on the bottom.
+							const Expanded(child: SizedBox(height: 1)),
+							//Row for overflow widget
+							const Row(
+								mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+								children: [Bar()],
 							),
             ],
           ),

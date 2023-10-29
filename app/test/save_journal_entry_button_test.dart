@@ -11,7 +11,7 @@ void main() {
         final tagButton = find.byKey(const ValueKey("tagButton"));
 
         //Target the Entries page
-        await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
+        await tester.pumpWidget(MaterialApp(home: EntriesPage()));
 
         //Focus on the simulating tapping of the three buttons
         await tester.tap(saveButton);
