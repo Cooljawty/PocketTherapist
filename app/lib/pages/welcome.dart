@@ -32,7 +32,6 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              const SizedBox(height: 15),
               // Title
               Container(
                 width: 350,
@@ -51,10 +50,18 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
               // Logo
-              const Padding(
-                padding: EdgeInsets.all(15.0),
-                child: Image(
-                  image: AssetImage('assets/logoSmall.png'),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Container(
+                  height: 250,
+                      width: 250,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Image(
+                        image: AssetImage('assets/logoSmall.png'),
+                      )
                 ),
               ),
               // Catch Phrase
@@ -195,7 +202,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void _handleStartPress(BuildContext context) async {
     String passwordFieldText = "";
     String verificationPassword = "";
-    if (settings.wasInitialized()) {
+    if (settings.isConfigured()) {
       if(settings.isEncryptionEnabled()){
         await showDialog(
           context: context,
@@ -218,7 +225,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   onPressed: () async {
                     //create situation to save password to local storage
                     if(passwordFieldText.isNotEmpty) {
-                      if(validatePassword(passwordFieldText)) {
+                      if(verifyPassword(passwordFieldText)) {
                         passwordFieldText = "";
                         Navigator.of(context).pop();
                         Navigator.pushReplacement(context, DashboardPage.route());
@@ -270,8 +277,8 @@ class _WelcomePageState extends State<WelcomePage> {
             TextButton(
                 key: const Key('Create_Password'),
                 onPressed: () async {
-                  // if password field is empty we dont encrypt anything.
-                  if(passwordFieldText.isNotEmpty) {
+                  // if password supplied and valid
+                  if(passwordFieldText.isNotEmpty && encryptor.validatePasswordField(passwordFieldText)) {
                       // begin confirmation loop (verification)
                     await showDialog(
                       context: context,
@@ -281,7 +288,10 @@ class _WelcomePageState extends State<WelcomePage> {
                           content: PasswordField(
                               key: const Key('Confirm_Password_Field'),
                               hintText: "Confirm Password",
-                              validator: (value) { verificationPassword = value ?? ""; return;}
+                              validator: (value) {
+                                verificationPassword = value ?? "";
+                                return;
+                              }
                           ),
                           actions: [
                             TextButton(
@@ -290,7 +300,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                 bool match = passwordFieldText == verificationPassword;
                                 if(match) {
                                   settings.setPassword(passwordFieldText);
-                                  settings.setInitState(true);
+                                  settings.setConfigured(true);
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pushReplacement(DashboardPage.route());
@@ -317,7 +327,27 @@ class _WelcomePageState extends State<WelcomePage> {
                         )
                     );
                   }
-                  // Otherwise we do.
+                  // password was supplied, but invalid
+                  else if(passwordFieldText.isNotEmpty) {
+                    await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Theme.of(context).colorScheme.onBackground,
+                          title: const Text("Invalid Password"),
+                          content: const Text(
+                            "Password must be 10+ characters and have at least one special character and number (!@#\$%^&*())"
+                          ),
+                          actions: [
+                            TextButton(
+                                key: const Key('Confirm_Password_Invalid'),
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Ok')
+                            )
+                          ],
+                        )
+                    );
+                  }
+                  // No password supplied
                   else {
                     //Password is empty, prompt for confirmation (ensure no encryption)
                     await showDialog(
@@ -331,7 +361,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             key: const Key('Confirm_No_Password'),
                             onPressed: () {
                               settings.setPassword(""); // empty password no encryption
-                              settings.setInitState(true);
+                              settings.setConfigured(true);
                               Navigator.of(context).pop(); // remove confirmation window
                               Navigator.of(context).pop(); // remove inital entry window
                               Navigator.pushReplacement(context, DashboardPage.route()); // Move to dashboard w/o encryption
@@ -360,7 +390,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
   void _handleResetPasswordPress(BuildContext context) async {
     String recoveryPhrase = "";
-    if(settings.wasInitialized()){
+    if(settings.isConfigured()){
       await showDialog(
           context: context,
           // Display prompt for password entry. it must be set.
@@ -388,7 +418,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   }
   void _handleResetEverythingPress(BuildContext context) async {
-    if(settings.wasInitialized()){
+    if(settings.isConfigured()){
       await showDialog(
         context: context,
         // Display prompt for password entry. it must be set.

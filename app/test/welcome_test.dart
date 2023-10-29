@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:app/main.dart' as app;
 import 'package:app/pages/welcome.dart';
@@ -5,6 +6,7 @@ import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yaml/yaml.dart';
 
 void main() {
 

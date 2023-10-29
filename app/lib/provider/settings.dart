@@ -1,130 +1,143 @@
+// TODO: Convert to rootBundle.loadAssets()
+/// load bundle
+/// parse yml
+/// store values to variables
+/// access via exposed methods
+/// probably try isolates for scheduling background saving of settings
+/// save on close.
+
 import 'dart:io';
-import 'dart:ui';
+import 'dart:convert';
 
-import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path_provider_android/path_provider_android.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:yaml/yaml.dart';
+import 'package:app/provider/theme_settings.dart';
 
-const String prefrencesPrefix = "pocket-therapist"; // fixed prefix value
-const String lightOrDarkKey = 'theme'; // bool storage
-const String storageFileKey = 'storage'; // String storage
-const String fontScaleKey = 'fontScale'; // double storage
-const String encryptionToggleKey = 'encryption'; // bool storage
-const String accentColorKey = "accent"; // int storage
-const String initKey = "init";   // bool storage
-const String passwordKey = "password"; // String hash storage
-const String ivHashKey = "IV"; // String hash storage
-const String storageKey = "KEY"; // String hash storage
+/// Used for error messages
+const String prefrencesPrefix = "pocket-therapist";
+/// True if loading has been completed, false otherwise.
+bool _init = false;
 
-SharedPreferences? _preferences;
+/// True if saving is not possible.
+bool _unstable = false;
 
-/// Loads saved preferences, or enforces the defaults, loading them either way.
-Future<void> init() async {
-  _preferences = await SharedPreferences.getInstance();
-  bool init = _preferences!.containsKey(initKey);
-  if (!init) {
-    //Storage File name
+/// These are the default settings and will be overwritten when laoded.
 
-    Directory defaultStorageDir = await getApplicationDocumentsDirectory();
-    String defaultPath = defaultStorageDir.path;
-    await _preferences!.setString(storageFileKey, "$defaultPath/data.db");
-    //Font scaling
-    await _preferences!.setDouble(fontScaleKey, 1.0);
-    //Accent color
-    await _preferences!.setInt(
-        accentColorKey, ThemeSettings.lightTheme.primaryColor.value);
-    //Theme key
-    await _preferences!.setBool(lightOrDarkKey, true);
-    //
-    await _preferences!.setBool(encryptionToggleKey, false);
+const String configuredKey = "configured";
+/// true if the app has been setup before, false otherwise
+bool _configured = false;
+
+const String lightOrDarkKey = 'theme';
+/// Which theme is being used currently, load and saves as an integer.
+ThemeOption _currentTheme = ThemeOption.light;
+
+const String fontScaleKey = 'fontScale';
+/// Scale of all font sizes
+double _fontScale = 1.0;
+
+const String encryptionToggleKey = 'encryption';
+/// True if encryption is enabled, false otherwise
+bool _encryptionEnabled = true;
+
+const String accentColorKey = "accent";
+/// The color of all accents, like buttons and sizing.
+Color _accentColor = Colors.blueAccent;
+
+YamlMap? _cachedSettings;
+Directory? _settingsStorageDirectory;
+File? _settingsFile;
+Directory? _externalStorageDirectory;
+
+Future<void> load() async  {
+  try {
+    _settingsStorageDirectory = await getApplicationSupportDirectory();
+    _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
+    if(!Platform.isIOS){
+      // IOS doesn't allow this to work.
+      _externalStorageDirectory = await getExternalStorageDirectory();
+    } else {
+      _externalStorageDirectory = _settingsStorageDirectory;
+    }
+    debugPrint("$_settingsFile");
+    // first time setup
+    if(!await _settingsFile!.exists()){
+      // cannot create settings file
+      try {
+        // attempt to create the whole directory path if it doesnt exist.
+        await _settingsFile!.create();
+      } on FileSystemException {
+        debugPrint("Could not create settings file with path $_settingsFile!");
+      }
+    }
+    // Else settings exists, load them.
+    else {
+      String fileContent = await _settingsFile!.readAsString();
+      _cachedSettings = loadYaml(fileContent);
+      /// Loading saved settings over the defaults
+      if(_cachedSettings == null) { debugPrint("Settings failed to load. Maybe it was never saved?");};
+      {
+
+      }
+    }
+  } on MissingPlatformDirectoryException {
+    debugPrint("Unable to get Support directory, settings will not be saved.");
+    _unstable = true;
+  } on UnsupportedError {
+    debugPrint("Unable to get external storage directory, not on IOS, standard storage will be in application support");
+    _externalStorageDirectory = _settingsStorageDirectory;
   }
-  encryptor.init(_preferences!);
-  // Preferences are loaded by default inside of SharedPreferences.
 }
 
-Future<void> reset() async {
-  assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  _preferences!.clear();
+
+/// The saving function [save], will save settings to [_settingsStorageDirectory]
+/// in a file called "settings.yml".
+/// This will not happen if the system in unable to provide a storage location.
+Future<void> save() async  {
+  // This should only happen if we cannot get the required directories or access.
+  if(_unstable){ return; }
+
+  // Collect all the settings
+  Map<String, dynamic> encrypted = encryptor.save();
+  Map<String, dynamic> settings = {
+    configuredKey: _configured,
+    lightOrDarkKey: _currentTheme.index,
+    fontScaleKey: _fontScale,
+    encryptionToggleKey: _encryptionEnabled,
+    accentColorKey: _accentColor.value,
+  };
+  settings.addAll(encrypted);
+  // Save them to the file
+  debugPrint("$settings");
+  String jsonEncoding = json.encode(settings);
+  debugPrint(jsonEncoding);
+  await _settingsFile!.writeAsString(jsonEncoding);
 }
 
-void setPassword(String password) {
-  assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  _preferences!.setString(passwordKey, password);
-  if(password.isEmpty) {
-    _preferences!.setBool(encryptionToggleKey, false);
-    _preferences!.setString(ivHashKey, "");
-    _preferences!.setString(storageKey, "");
-  } else {
-    _preferences!.setBool(encryptionToggleKey, true);
-    _preferences!.setString(ivHashKey, "");
-    _preferences!.setString(storageKey, "");
+
+/// Setters --------------------------
+void setConfigured(bool value) => _configured = value;
+void setPassword(String newPassword) => encryptor.setPassword(newPassword);
+
+/// Getters --------------------------
+bool isInitialized() => _init;
+bool isConfigured() => _configured;
+ThemeData getCurrentTheme() => switch(_currentTheme){
+    ThemeOption.highContrastLight => ThemeSettings.lightTheme,
+    ThemeOption.light => ThemeSettings.lightTheme,
+    ThemeOption.highContrastDark => ThemeSettings.darkTheme,
+    ThemeOption.dark => ThemeSettings.darkTheme,
+};
+double getFontScale() => _fontScale;
+bool isEncryptionEnabled() => _encryptionEnabled;
+Color getAccentColor() => _accentColor;
+Object? getOtherSetting(String key) {
+  Object? value = _cachedSettings![key];
+  if(value == null) {
+    debugPrint("Settings did not have value $key");
   }
-}
-
-void setTheme(bool light) {
-  assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  _preferences!.setBool(lightOrDarkKey, light);
-}
-
-/// [setStorageFile] requires
-void setStorageFileFromString(String pathToFile) {
-  assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  File x = File(pathToFile);
-  _preferences!.setString(storageFileKey, x.path);
-}
-
-void setStorageFile(File file) async {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  await file.exists();
-  if (await Permission.storage.request().isGranted) {}
-}
-
-/// this should be used to detemine if this is the first tiem the app was launched.
-bool wasInitialized() {
-  assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  bool? initialized = _preferences!.getBool(initKey);
-  return (initialized == null) ? false : initialized;
-}
-
-void setInitState(bool initialized) {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  _preferences!.setBool(initKey, initialized);
-}
-
-/// [getTheme] returns a reference to the last used theme.
-ThemeData getTheme() {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  bool light = _preferences!.getBool(lightOrDarkKey)!;
-  return light ? ThemeSettings.lightTheme : ThemeSettings.darkTheme;
-}
-
-/// [getStorageFile] returns a reference to the Storage File used by the app.
-Future<String> getStorageFile() async {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  String storageFile = _preferences!.getString(storageFileKey)!;
-  return storageFile;
-}
-
-/// [getFontScale] returns the last used text scaling,
-//TODO: Integrate with native text settings
-double getFontScale() {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  return _preferences!.getDouble(fontScaleKey)!;
-}
-
-/// [isEncryptionEnabled] returns true if encryption is enabled (default)
-bool isEncryptionEnabled() {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  return _preferences!.getBool(encryptionToggleKey)!;
-}
-
-/// [getAccentColor] returns the last used accent color for the application.
-Color getAccentColor() {
-assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
-  int colorValue = _preferences!.getInt(accentColorKey)!;
-  return Color(colorValue);
+  return value;
 }

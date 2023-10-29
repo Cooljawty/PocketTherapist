@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 
+enum ThemeOption {
+  light,
+  dark,
+  highContrastLight,
+  highContrastDark,
+}
+
+
 class ThemeSettings with ChangeNotifier {
+
   // To change the theme
   static ThemeData darkTheme = ThemeData.dark().copyWith(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-        .copyWith(brightness: Brightness.dark, background: Colors.black54),
+    primaryColor: Colors.deepPurpleAccent,
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
+        .copyWith(
+        brightness: Brightness.dark,
+        background: Colors.black,
+        primary: Colors.deepPurpleAccent
+    ),
     // textTheme: TextTheme(
     //   displayLarge: defaultTextStyle(),
     //   displayMedium: defaultTextStyle(),
@@ -25,9 +39,10 @@ class ThemeSettings with ChangeNotifier {
 
   static ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
+    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF) ).copyWith(
       brightness: Brightness.light,
       background: Colors.white,
+      primary:  Colors.deepPurpleAccent[100]
     ),
     // textTheme: TextTheme(
     //   displayLarge: defaultTextStyle(),

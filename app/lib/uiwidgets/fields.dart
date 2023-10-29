@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-//add new line for dashboard import
-import 'package:app/pages/dashboard.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
 
 /// This is used as a password field, but can be used for any generic secrets
 /// It supports hintText from the TextFormField widget, and will display
@@ -10,12 +9,22 @@ import 'package:app/pages/dashboard.dart';
 /// and returns null if valid.
 class PasswordField extends StatefulWidget {
   final String hintText;
-  final String? Function(String?)? validator;
-  const PasswordField(
-      {super.key, this.hintText = "Password", required this.validator});
+  final String? Function(String?) validator;
+  const PasswordField({
+        super.key, 
+        this.hintText = "Password", 
+        this.validator = defaultValidator,
+      });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
+}
+
+String? defaultValidator(String? value) {
+  if(value == null || value.isEmpty || encryptor.validatePasswordField(value)){
+    return null;
+  }
+  return "";
 }
 
 class _PasswordFieldState extends State<PasswordField> {
@@ -41,12 +50,6 @@ class _PasswordFieldState extends State<PasswordField> {
     return Form(
         key: _formKey,
         child: TextFormField(
-          //add in case for when user submits the form
-          onFieldSubmitted: (value) {
-            String? access = widget.validator!(value);
-            //clear text on any submission, whether its passed or not
-            passwordController.text = "";
-          },
           //  This will only attempt to validate the field if user interacted
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: _isObscured,
@@ -78,7 +81,7 @@ class _PasswordFieldState extends State<PasswordField> {
             hintText: widget.hintText,
           ),
           // Call whatever function is supplied.
-          validator: (value) => widget.validator!.call(value),
+          validator: (value) => widget.validator.call(value),
         ));
   }
 }
