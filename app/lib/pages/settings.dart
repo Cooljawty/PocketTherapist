@@ -2,6 +2,7 @@ import 'package:app/pages/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/theme_settings.dart';
+import 'package:app/helper/file_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -103,6 +104,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: ElevatedButton(
                       onPressed: () {},
                       child: Text(dir))),
+
+              const SizedBox(
+                width: 240,
+                child: ElevatedButton(
+                  onPressed: loadFile,
+                  child: Text("Open Vault File")
+                )
+              ),
 
               // Manage Data Button
               SizedBox(
