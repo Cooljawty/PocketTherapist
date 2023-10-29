@@ -106,4 +106,17 @@ void main() {
 
   });
   */
+
+  testWidgets("Ensure each button is on page", (tester) async {
+    // Pump the app till settings
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Edit Emotion List"), findsOneWidget);
+    expect(find.text("Edit Tag List"), findsOneWidget);
+    expect(find.text("Enable/Disable Encryption"), findsOneWidget);
+    expect(find.text("Dir"), findsOneWidget);
+    expect(find.text("Open Vault File"), findsOneWidget);
+    expect(find.text("Manage Data"), findsOneWidget);
+  });
 }
