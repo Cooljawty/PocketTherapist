@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path_provider_android/path_provider_android.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
@@ -26,6 +28,7 @@ Future<void> init() async {
   bool init = _preferences!.containsKey(initKey);
   if (!init) {
     //Storage File name
+
     Directory defaultStorageDir = await getApplicationDocumentsDirectory();
     String defaultPath = defaultStorageDir.path;
     await _preferences!.setString(storageFileKey, "$defaultPath/data.db");
@@ -46,7 +49,6 @@ Future<void> init() async {
 Future<void> reset() async {
   assert(_preferences != null, throw StateError("Settings was not initialized, Cannot continue."));
   _preferences!.clear();
-  await init();
 }
 
 void setPassword(String password) {

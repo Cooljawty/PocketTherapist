@@ -8,29 +8,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   //Things that need to be done before the application is ran.
+
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const RootApp());
 }
 
 /// This is the root application
 /// It contains the main functions and loading that will be necessary for
 /// the rest of the application to run.
-class RootApp extends StatefulWidget {
+class RootApp extends StatelessWidget {
   const RootApp({super.key}) ;
 
-  @override
-  State<RootApp> createState() => _RootAppState();
-}
-
-class _RootAppState extends State<RootApp> {
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    init().then((value) {setState(() {
-      isLoading = false;
-    });});
-  }
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -40,13 +28,34 @@ class _RootAppState extends State<RootApp> {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: provider.theme,
-            home: isLoading? const Placeholder() : const WelcomePage(),
+            routes: {
+              'splash': (_) => const Splash(),
+              'app': (_) => const WelcomePage(),
+            },
+            initialRoute: 'splash',
           );
         });
   }
 }
 
-Future<void> init() async {
-  SharedPreferences.setPrefix(settings.prefrencesPrefix);
-  await settings.init(); // init by default for settings
+class Splash extends StatefulWidget {
+  const Splash({super.key});
+
+  @override
+  State<Splash> createState() => _SplashState();
+}
+
+class _SplashState extends State<Splash> {
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.setPrefix(settings.prefrencesPrefix);
+    settings.init().then((_) => Navigator.pushReplacementNamed(context, 'app'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('somewhereovertherainbow'));
+  }
 }

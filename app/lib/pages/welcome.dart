@@ -1,6 +1,7 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/provider/encryptor.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'package:app/uiwidgets/buttons.dart';
 //add line for field import
 import 'package:app/uiwidgets/fields.dart';
@@ -21,14 +22,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-  }
-
-
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
@@ -39,14 +32,17 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              const SizedBox(height: 15),
               // Title
               Container(
                 width: 350,
                 height: 60,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: const BorderRadius.all(Radius.circular(15.0))),
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                  boxShadow: ThemeSettings.defaultBoxShadow,
+                ),
                 //child is title text
                 child: Text(
                   'Pocket Therapist',
@@ -67,8 +63,9 @@ class _WelcomePageState extends State<WelcomePage> {
                 height: 30,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: const BorderRadius.all(Radius.circular(15.0))
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                  boxShadow: ThemeSettings.defaultBoxShadow,
                 ),
                 //child is title text
                 child: Text(
@@ -77,78 +74,45 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
               // Start Button
-              StandardElevatedButton(
-                  key: const Key("Start_Button"),
-                  onPressed: () => _handleStartPress(context),
-                  child: const Text(
-                    'Start',
-                  ) ,
-              ),
-
-              // Reset Password Button
-              SizedBox(
-                width: 350,
-                height: 60,
-                child:
-                //reset password button
-                TextButton(
-                  key: const Key('Reset_Button'),
-                  style: TextButton.styleFrom(
-                      elevation: 10.0,
-                      shadowColor: Theme.of(context).colorScheme.shadow,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                  ),
-                  onPressed: () async {
-                    await settings.reset();
-                  },
-                  child: Text(
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    'Reset Password',
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25, bottom:  40),
+                child: Column(
+                  children: [
+                    StandardElevatedButton(
+                        key: const Key("Start_Button"),
+                        onPressed: () => _handleStartPress(context),
+                        child: const Text(
+                          'Start',
+                          style: TextStyle(color: Colors.amber),
+                        ) ,
+                    ),
+                    const SizedBox(height: 10),
+                    // Reset Password Button
+                    StandardElevatedButton(
+                      key: const Key("Reset_Button"),
+                      onPressed: () => _handleResetPasswordPress(context),
+                      child: Text(
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        'Reset Password',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Erase everything
+                    StandardElevatedButton(
+                      key: const Key("Erase_Button"),
+                      onPressed: () => _handleResetEverythingPress(context),
+                      child: Text(
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        'Erase Everything',
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                width: 350,
-                height: 60,
-                child:
-                //erase everything button
-                TextButton(
-                  style: TextButton.styleFrom(
-                      elevation: 10.0,
-                      shadowColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .shadow,
-                      backgroundColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary,
-                      //add padding to shape the button
-                      padding: const EdgeInsets.only(
-                        left: 0.0,
-                        right: 0.0,
-                        top: 0.0,
-                        bottom: 0.0,
-                      )),
-                  onPressed: null,
-                  child: Text(
-                    //copy style from text theme in main
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodyLarge,
-                    'Erase everything',
-                  ),
-                ),
-              ),
-              //spacer for after erase everything and quote of the day
-              const SizedBox(
-                height: 1,
               ),
               //use a container for the quote of the day
               Container(
                 width: 350,
-                height: 240,
+                height: 230,
                 decoration: BoxDecoration(
                   color: Theme
                       .of(context)
@@ -200,9 +164,6 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
               //spacer for after erase everything and quote of the day
-              const SizedBox(
-                height: 1,
-              ),
             ],
           ),
         ),
@@ -253,7 +214,7 @@ class _WelcomePageState extends State<WelcomePage> {
               // Entering the password, verify, and then report to user.
               TextButton(
                 //add key for testing
-                  key: const Key('Require_Password_Option'),
+                  key: const Key('Submit_Password'),
                   onPressed: () async {
                     //create situation to save password to local storage
                     if(passwordFieldText.isNotEmpty) {
@@ -269,11 +230,13 @@ class _WelcomePageState extends State<WelcomePage> {
                               title: const Text("Incorrect Password"),
                               actions: [
                                 TextButton(
+                                    key: const Key('Confirm_Incorrect_Password'),
                                     onPressed: Navigator.of(context).pop,
                                     child: const Text("Ok"),
                                 )
                               ],
-                            ));
+                            )
+                        );
                       }
                     }
                   },
@@ -299,10 +262,13 @@ class _WelcomePageState extends State<WelcomePage> {
           title: const Text("Encryption?"),
           // User enters password, which is either empty (no encryption)
           // or is valid, and must be confirmed.
-          content: PasswordField(hintText: "Enter a password (Optional)", validator: (value) { passwordFieldText = value ?? ""; return "";}),
+          content: PasswordField(
+              key: const Key('Enter_Password_Field'),
+              hintText: "Enter a password (Optional)",
+              validator: (value) { passwordFieldText = value ?? ""; return "";}),
           actions: [
             TextButton(
-                key: const Key('Require_Password_Option'),
+                key: const Key('Create_Password'),
                 onPressed: () async {
                   // if password field is empty we dont encrypt anything.
                   if(passwordFieldText.isNotEmpty) {
@@ -312,9 +278,14 @@ class _WelcomePageState extends State<WelcomePage> {
                       builder: (context) => AlertDialog(
                           backgroundColor: Theme.of(context).colorScheme.onBackground,
                           title: const Text("Confirm your password"),
-                          content: PasswordField(hintText: "Password", validator: (value) { verificationPassword = value ?? ""; return;}),
+                          content: PasswordField(
+                              key: const Key('Confirm_Password_Field'),
+                              hintText: "Confirm Password",
+                              validator: (value) { verificationPassword = value ?? ""; return;}
+                          ),
                           actions: [
                             TextButton(
+                              key: const Key('Verify_Password'),
                               onPressed: () async {
                                 bool match = passwordFieldText == verificationPassword;
                                 if(match) {
@@ -329,7 +300,13 @@ class _WelcomePageState extends State<WelcomePage> {
                                       builder: (context) => AlertDialog(
                                         backgroundColor: Theme.of(context).colorScheme.onBackground,
                                         title: const Text("Incorrect Password"),
-                                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Ok'))],
+                                        actions: [
+                                          TextButton(
+                                            key: const Key('Confirm_Password_Mismatch'),
+                                            onPressed: () => Navigator.pop(context),
+                                            child: const Text('Ok')
+                                          )
+                                        ],
                                       )
                                   );
                                 }
@@ -351,6 +328,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         content: const Text('Encryption can keep your private thoughts, private. Continue?'),
                         actions: [
                           TextButton(
+                            key: const Key('Confirm_No_Password'),
                             onPressed: () {
                               settings.setPassword(""); // empty password no encryption
                               settings.setInitState(true);
@@ -361,6 +339,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             child: const Text("Yes")
                           ),
                           TextButton(
+                            key: const Key('Cancel_No_Password'),
                             onPressed: () {
                               Navigator.of(context).pop(); // remove confirmation window to entry password.
                             }, 
@@ -377,6 +356,62 @@ class _WelcomePageState extends State<WelcomePage> {
           ],
         ),
       );
+    }
+  }
+  void _handleResetPasswordPress(BuildContext context) async {
+    String recoveryPhrase = "";
+    if(settings.wasInitialized()){
+      await showDialog(
+          context: context,
+          // Display prompt for password entry. it must be set.
+          builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
+          title: const Text("Reset Password"),
+          content: PasswordField(
+            validator: (value) {
+              return null;
+            },
+          ),
+          actions: [
+            TextButton(
+                key: const Key('Reset_Password'),
+                onPressed: () async {
+                    //Reset the password
+
+                },
+                child: const Text("Enter")),
+          ],
+          ),
+      );
+
+    }
+
+  }
+  void _handleResetEverythingPress(BuildContext context) async {
+    if(settings.wasInitialized()){
+      await showDialog(
+        context: context,
+        // Display prompt for password entry. it must be set.
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
+          title: const Text("Reset Everything"),
+          actions: [
+            TextButton(
+                key: const Key('Reset_Everything'),
+                onPressed: () async {
+                  //Reset the password
+                },
+                child: const Text("Yes")),
+            TextButton(
+                key: const Key('Dont_Reset_Everything'),
+                onPressed: () async {
+                  //Reset the password
+                },
+                child: const Text("No")),
+          ],
+        ),
+      );
+
     }
   }
 

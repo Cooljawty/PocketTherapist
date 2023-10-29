@@ -3,113 +3,69 @@ import 'package:flutter/material.dart';
 class ThemeSettings with ChangeNotifier {
   // To change the theme
   static ThemeData darkTheme = ThemeData.dark().copyWith(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-          .copyWith(
-          brightness: Brightness.dark, background: Colors.black54),
-      textTheme: const TextTheme(
-        bodySmall:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.bold
-        ),
-        displaySmall: TextStyle(
-          color: Colors.blueGrey,
-          fontSize: 12,
-          fontWeight: FontWeight.bold
-        ),
-        bodyMedium: TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-        ),
-        displayMedium: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 14,
-            fontWeight: FontWeight.bold
-        ),
-        bodyLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-        ),
-        displayLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 20,
-            fontWeight: FontWeight.bold
-        ),
-        labelLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 20,
-            fontWeight: FontWeight.bold
-        ),
-        titleLarge: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-        ),
-      )
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
+        .copyWith(brightness: Brightness.dark, background: Colors.black54),
+    // textTheme: TextTheme(
+    //   displayLarge: defaultTextStyle(),
+    //   displayMedium: defaultTextStyle(),
+    //   displaySmall: defaultTextStyle(),
+    //   headlineMedium: defaultTextStyle(),
+    //   headlineSmall: defaultTextStyle(),
+    //   titleLarge: defaultTextStyle(),
+    //   titleMedium: defaultTextStyle(),
+    //   titleSmall: defaultTextStyle(),
+    //   bodyLarge: defaultTextStyle(),
+    //   bodyMedium: defaultTextStyle(),
+    //   bodySmall: defaultTextStyle(),
+    //   labelLarge: defaultTextStyle(),
+    //   labelSmall: defaultTextStyle(),
+    // )
   );
 
   static ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
-    colorScheme:
-    ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
       brightness: Brightness.light,
       background: Colors.white,
     ),
-      textTheme: const TextTheme(
-        bodySmall:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.bold
-        ),
-        displaySmall: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.bold
-        ),
-        bodyMedium: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 14,
-            fontWeight: FontWeight.bold
-        ),
-        displayMedium: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 14,
-            fontWeight: FontWeight.bold
-        ),
-        bodyLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-        ),
-        displayLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 20,
-            fontWeight: FontWeight.bold
-        ),
-        labelLarge:  TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 20,
-            fontWeight: FontWeight.bold
-        ),
-        titleLarge: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-        ),
-      )
+    // textTheme: TextTheme(
+    //   displayLarge: defaultTextStyle(),
+    //   displayMedium: defaultTextStyle(),
+    //   displaySmall: defaultTextStyle(),
+    //   headlineMedium: defaultTextStyle(),
+    //   headlineSmall: defaultTextStyle(),
+    //   titleLarge: defaultTextStyle(),
+    //   titleMedium: defaultTextStyle(),
+    //   titleSmall: defaultTextStyle(),
+    //   bodyLarge: defaultTextStyle(),
+    //   bodyMedium: defaultTextStyle(),
+    //   bodySmall: defaultTextStyle(),
+    //   labelLarge: defaultTextStyle(),
+    //   labelSmall: defaultTextStyle(),
+    // )
   );
 
+  static TextStyle defaultTextStyle(
+          [Color color = Colors.white,
+          double fontSize = 14.0,
+          FontWeight fontWeight = FontWeight.bold]) =>
+      TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight);
 
+  static List<BoxShadow> defaultBoxShadow = [
+    BoxShadow(
+      color: Colors.black,
+      blurRadius: 10,
+      offset: Offset.fromDirection(2.5),
+    ),
+  ];
 
   ThemeData _theme = lightTheme;
   ThemeData get theme => _theme;
 
   String? currentTheme = 'Light';
 
-  getTheme(){
+  getTheme() {
     if (currentTheme == 'Light') {
       return 'Light';
     }
@@ -117,7 +73,6 @@ class ThemeSettings with ChangeNotifier {
       return 'Dark';
     }
   }
-
 
   changeTheme(String? theme) {
     currentTheme = theme;

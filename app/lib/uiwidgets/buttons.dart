@@ -79,7 +79,7 @@ class StandardButton extends StatelessWidget {
 
 /// Button that can do something with an elevation component
 class StandardElevatedButton extends StandardButton {
-  final double elevation = 15.0;
+  final double elevation = 20.0;
   const StandardElevatedButton({
     super.key,
     required super.child,
@@ -92,7 +92,7 @@ class StandardElevatedButton extends StandardButton {
     Color backgroundColor = Theme.of(context).colorScheme.primary;
     return SizedBox(
       width: 350,
-      height: 60,
+      height: 50,
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
