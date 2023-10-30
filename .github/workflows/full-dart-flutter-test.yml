@@ -24,6 +24,8 @@ jobs:
       - name: Find test folders
         id: check-folder
         run: |
+          ls -la
+          pwd
           if [ -d "./pocket_therapist/test" ]; then
             echo "::set-output name=unit_test_folder::true"
           else
