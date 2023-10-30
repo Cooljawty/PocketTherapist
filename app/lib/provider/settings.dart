@@ -138,15 +138,23 @@ Future<void> reset() async {
   await save();
 }
 
-/// Used exclusively during testing, do not use this for any other purpose.
-void setMockValue([Map<String, dynamic>? values]) =>
-  _settings = values ?? {
+void setMockDefaults() {
+  _unstable = true;
+  _settings = {
     configuredKey: false,
     themeKey: ThemeOption.light.index,
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
     accentColorKey: Colors.deepPurpleAccent[100]!.value,
   };
+}
+
+/// Used exclusively during testing, do not use this for any other purpose.
+void setMockValues([Map<String, dynamic>? values]) {
+  setMockDefaults();
+  _settings!.addAll(values?? {});
+}
+
 
 
 /// Setters --------------------------

@@ -55,7 +55,7 @@ class _RootAppState extends State<RootApp>  {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    return ChangeNotifierProvider<ThemeSettings>(
         create: (context) => ThemeSettings(),
         builder: (context, child) {
           final provider = Provider.of<ThemeSettings>(context);
@@ -78,9 +78,8 @@ class _RootAppState extends State<RootApp>  {
     case 'inactive': break;
     case 'hide': break;
     case 'pause':
-      settings.save().then((value) => null);
-      debugPrint("Saving settings");
-      break; break;
+      settings.save().whenComplete(() => null);
+      break;
     case 'detach': break;
     case 'restart': break;
     }
@@ -103,8 +102,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.setPrefix(settings.prefrencesPrefix);
-    settings.load().then((_) => Navigator.pushReplacementNamed(context, 'app'));
+    settings.load().whenComplete(() => Navigator.pushReplacementNamed(context, 'app'));
   }
 
   @override
