@@ -1,10 +1,7 @@
-import 'package:integration_test/common.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:pocket_therapist/pages/settings.dart';
 import 'package:pocket_therapist/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:pocket_therapist/main.dart' as app;
 import 'package:pocket_therapist/provider/settings.dart' as settings;
 
