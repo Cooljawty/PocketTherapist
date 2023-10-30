@@ -6,14 +6,13 @@
 /// probably try isolates for scheduling background saving of settings
 /// save on close.
 
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/theme_settings.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Used for error messages
 const String prefrencesPrefix = "pocket-therapist";
@@ -43,7 +42,7 @@ const String accentColorKey = "accent";
 Map<String, dynamic>? _settings;
 Directory? _settingsStorageDirectory;
 File? _settingsFile;
-Directory? _externalStorageDirectory;
+//Directory? _externalStorageDirectory;
 
 Future<void> load() async  {
   try {
@@ -51,9 +50,9 @@ Future<void> load() async  {
     _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
     if(!Platform.isIOS){
       // IOS doesn't allow this to work.
-      _externalStorageDirectory = await getExternalStorageDirectory();
+  //    _externalStorageDirectory = await getExternalStorageDirectory();
     } else {
-      _externalStorageDirectory = _settingsStorageDirectory;
+    //  _externalStorageDirectory = _settingsStorageDirectory;
     }
     // first time setup
     if(!await _settingsFile!.exists()){
@@ -90,7 +89,8 @@ Future<void> load() async  {
     // Happens on IOS
   } on UnsupportedError {
     debugPrint("Unable to get external storage directory, not on IOS, standard storage will be in application support");
-    _externalStorageDirectory = _settingsStorageDirectory;
+    //_externalStorageDirectory = _settingsStorageDirectory;
+
   }
   /// Settings - App is initialized
   _init = true;

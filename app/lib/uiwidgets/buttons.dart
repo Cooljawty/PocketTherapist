@@ -1,4 +1,3 @@
-import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 /// Button that can do something that is just there.

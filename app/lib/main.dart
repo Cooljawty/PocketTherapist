@@ -1,11 +1,8 @@
 import 'package:app/pages/welcome.dart';
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   //Things that need to be done before the application is ran.
@@ -26,12 +23,10 @@ class RootApp extends StatefulWidget {
 
 class _RootAppState extends State<RootApp>  {
   late final AppLifecycleListener _listener;
-  late AppLifecycleState? _state;
 
   @override
   void initState() {
     super.initState();
-    _state = SchedulerBinding.instance.lifecycleState;
     _listener = AppLifecycleListener(
       onShow: () => _handleTransition('show'),
       onResume: () => _handleTransition('resume'),
@@ -48,7 +43,6 @@ class _RootAppState extends State<RootApp>  {
 
   @override
   void dispose() {
-    _state = null;
     _listener.dispose();
     super.dispose();
   }

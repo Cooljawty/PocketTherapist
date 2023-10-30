@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 String? _passwordHash;
-String? _IVCipherText;
-String? _KeyCipherText;
+String? _ivCipherText;
+String? _keyCipherText;
 
 void setPassword(String password) {
   //Do hash things
@@ -32,7 +32,7 @@ bool verifyPassword(String password){
 
 // Utilities --------------------------------------
 String _compress() =>
-    _hexEncode(utf8.encode("$_passwordHash:$_IVCipherText:$_KeyCipherText"));
+    _hexEncode(utf8.encode("$_passwordHash:$_ivCipherText:$_keyCipherText"));
 
 bool load(Map<String, dynamic> map) {
   String data = map['data'];
@@ -41,8 +41,8 @@ bool load(Map<String, dynamic> map) {
   bool verified = dataSig == receivedSig;
   List<String> actualData = utf8.decode(_hexDecode(data)).split(':');
   _passwordHash = actualData[0];
-  _IVCipherText = actualData[1];
-  _KeyCipherText = actualData[2];
+  _ivCipherText = actualData[1];
+  _keyCipherText = actualData[2];
   /// eventually do something with IV and key, then toss the hashes from memory.
   data = "";
   map = {};
@@ -53,8 +53,8 @@ bool load(Map<String, dynamic> map) {
 
 void reset(){
   _passwordHash = null;
-  _IVCipherText = null;
-  _KeyCipherText = null;
+  _ivCipherText = null;
+  _keyCipherText = null;
 }
 
 UnmodifiableMapView<String, dynamic> save() =>

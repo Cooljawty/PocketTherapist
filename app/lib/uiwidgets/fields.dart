@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:flutter/material.dart';
 
 /// This is used as a password field, but can be used for any generic secrets
 /// It supports hintText from the TextFormField widget, and will display

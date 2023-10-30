@@ -1,16 +1,13 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/provider/encryptor.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/provider/settings.dart' as settings;
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/uiwidgets/buttons.dart';
 //add line for field import
 import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
-//add line for shared preferences
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:app/provider/settings.dart' as settings;
-import 'package:app/provider/encryptor.dart' as encryptor;
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
@@ -257,11 +254,9 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                             If successful will start the [_createPassword]
   ///                             Process.
   void _handleResetPasswordPress(BuildContext context) async {
-    String recoveryPhrase = "";
     if (settings.isConfigured()) {
       await showDialog(
         context: context,
-        // Display prompt for password entry. it must be set.
         builder: (context) =>
             AlertDialog(
               backgroundColor: Theme
@@ -425,7 +420,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   void _finishConfiguraton(BuildContext context, String password) async {
-    settings.setPassword(password ?? ""); // empty password no encryption
+    settings.setPassword(password); // empty password no encryption
     settings.setEncryptionStatus(password.isNotEmpty);
     settings.setConfigured(true);
     settings.save();

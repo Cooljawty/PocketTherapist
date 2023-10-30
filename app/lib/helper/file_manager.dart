@@ -1,7 +1,7 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 
 
 /// Opens the file picker for the user to select a file

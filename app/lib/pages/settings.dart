@@ -1,8 +1,8 @@
+import 'package:app/helper/file_manager.dart';
 import 'package:app/pages/calendar.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/provider/theme_settings.dart';
-import 'package:app/helper/file_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
