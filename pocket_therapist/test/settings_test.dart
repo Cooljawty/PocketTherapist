@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-
   ThemeData testBG = ThemeData.light();
   var myApp = ChangeNotifierProvider(
       create: (context) => ThemeSettings(),

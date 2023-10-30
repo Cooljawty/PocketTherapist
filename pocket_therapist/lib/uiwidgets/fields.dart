@@ -43,6 +43,7 @@ class _ControlledTextFieldState extends State<ControlledTextField> {
     return Form(
         key: _formKey,
         child: TextFormField(
+          onFieldSubmitted: (_) => textController.clear,
           //  This will only attempt to validate the field if user interacted
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: _isObscured,

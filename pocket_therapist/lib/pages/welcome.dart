@@ -442,6 +442,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 .onBackground,
             title: const Text("Welcome Back!"),
             content: ControlledTextField(
+              key: const Key("Login_Password_Field"),
               hintText: "Enter your password", validator: (value) {
               passwordFieldText = value ?? "";
               if (value == null || value.isEmpty) {

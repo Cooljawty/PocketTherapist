@@ -4,9 +4,9 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 
-String? _passwordHash;
-String? _ivCipherText;
-String? _keyCipherText;
+String _passwordHash = "";
+String _ivCipherText= "";
+String _keyCipherText= "";
 
 void setPassword(String password) {
   //Do hash things
@@ -52,9 +52,9 @@ bool load(Map<String, dynamic> map) {
 }
 
 void reset(){
-  _passwordHash = null;
-  _ivCipherText = null;
-  _keyCipherText = null;
+  _passwordHash = "";
+  _ivCipherText = "";
+  _keyCipherText = "";
 }
 
 UnmodifiableMapView<String, dynamic> save() =>

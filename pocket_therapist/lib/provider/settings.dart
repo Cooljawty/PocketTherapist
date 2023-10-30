@@ -104,7 +104,6 @@ void _assignDefaults() async {// Enforce defaults
   encryptionToggleKey: false,
   accentColorKey: Colors.deepPurpleAccent[100]!.value,
   };
-  await save();
 }
 
 /// The saving function [save], will save settings to [_settingsStorageDirectory]
@@ -112,7 +111,6 @@ void _assignDefaults() async {// Enforce defaults
 /// This will not happen if the system in unable to provide a storage location.
 Future<void> save() async  {
   // This should only happen if we cannot get the required directories or access.
-  if(_unstable){ return; }
 
   // Collect all the settings
   Map<String, dynamic> encrypted = encryptor.save();
@@ -129,31 +127,12 @@ Future<void> reset() async {
     themeKey: ThemeOption.light.index,
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
-    accentColorKey: Colors.deepPurpleAccent[100],
+    accentColorKey: const Color(0xFFB388FF).value,
   };
   encryptor.reset();
   // Probably message database to reset as well....
   await save();
 }
-
-void setMockDefaults() {
-  _unstable = true;
-  _settings = {
-    configuredKey: false,
-    themeKey: ThemeOption.light.index,
-    fontScaleKey: 1.0,
-    encryptionToggleKey: false,
-    accentColorKey: Colors.deepPurpleAccent[100]!.value,
-  };
-}
-
-/// Used exclusively during testing, do not use this for any other purpose.
-void setMockValues([Map<String, dynamic>? values]) {
-  setMockDefaults();
-  _settings!.addAll(values?? {});
-}
-
-
 
 /// Setters --------------------------
 void setConfigured(bool value) => _settings![configuredKey] = value;
@@ -162,6 +141,11 @@ void setFontScale(double newFontScale) => _settings![fontScaleKey] = newFontScal
 void setEncryptionStatus(bool newStatus) => _settings![encryptionToggleKey] = newStatus;
 void setAccentColor(Color newColor) => _settings![accentColorKey] = newColor.value;
 void setPassword(String newPassword) => encryptor.setPassword(newPassword);
+void setMockValues(Map<String, dynamic> value) async {
+  await load();
+  _settings!.addAll(value);
+  await save();
+}
 
 /// Getters --------------------------
 bool isInitialized() => _init;

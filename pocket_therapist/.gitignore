@@ -57,3 +57,5 @@ app.*.map.json
 /linux
 # macos builds here
 /macos
+#ios
+/ios
