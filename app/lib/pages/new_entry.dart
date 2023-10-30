@@ -11,6 +11,7 @@ class NewEntryPage extends StatefulWidget {
 }
 
 class _NewEntryPageState extends State<NewEntryPage> {
+  // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
 
@@ -29,6 +30,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
           child: Column(
             children: [
               const Text('New Entry'),
+
+              // Title input textfield
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: TextField(
@@ -42,6 +45,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 ),
               ),
 
+              // Journal input textfield
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: TextField(
@@ -57,6 +61,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 ),
               ),
 
+              // Button for tags
+              // make tag input
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
@@ -65,9 +71,14 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       child: const Text("Tags")
                   )
               ),
+
+              // Add emotion wheel
             ],
           ),
         ),
+
+      // Save button
+      // Make save functionality
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pop(context);
