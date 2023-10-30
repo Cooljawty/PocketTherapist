@@ -1,4 +1,4 @@
-import 'package:app/pages/entries.dart';
+import 'package:pocket_therapist/pages/entries.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {

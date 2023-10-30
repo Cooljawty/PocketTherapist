@@ -1,12 +1,12 @@
-import 'package:app/pages/dashboard.dart';
-import 'package:app/pages/settings.dart';
-import 'package:app/provider/encryptor.dart';
-import 'package:app/provider/encryptor.dart' as encryptor;
-import 'package:app/provider/settings.dart' as settings;
-import 'package:app/provider/theme_settings.dart';
-import 'package:app/uiwidgets/buttons.dart';
+import 'package:pocket_therapist/pages/dashboard.dart';
+import 'package:pocket_therapist/pages/settings.dart';
+import 'package:pocket_therapist/provider/encryptor.dart';
+import 'package:pocket_therapist/provider/encryptor.dart' as encryptor;
+import 'package:pocket_therapist/provider/settings.dart' as settings;
+import 'package:pocket_therapist/provider/theme_settings.dart';
+import 'package:pocket_therapist/uiwidgets/buttons.dart';
 //add line for field import
-import 'package:app/uiwidgets/fields.dart';
+import 'package:pocket_therapist/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
 
 //create welcome page class like in app example starting with stateful widget
@@ -254,66 +254,66 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                             If successful will start the [_createPassword]
   ///                             Process.
   void _handleResetPasswordPress(BuildContext context) async {
-    if (settings.isConfigured()) {
-      await showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .onBackground,
-              title: const Text("Reset Password"),
-              content: ControlledTextField(
-                validator: (value) {
-                  return null;
-                },
-              ),
-              actions: [
-                TextButton(
-                    key: const Key('Reset_Password'),
-                    onPressed: () async {
-                      //Reset the password
-
-                    },
-                    child: const Text("Enter")),
-              ],
-            ),
-      );
-    }
+    // if (settings.isConfigured()) {
+    //   await showDialog(
+    //     context: context,
+    //     builder: (context) =>
+    //         AlertDialog(
+    //           backgroundColor: Theme
+    //               .of(context)
+    //               .colorScheme
+    //               .onBackground,
+    //           title: const Text("Reset Password"),
+    //           content: ControlledTextField(
+    //             validator: (value) {
+    //               return null;
+    //             },
+    //           ),
+    //           actions: [
+    //             TextButton(
+    //                 key: const Key('Reset_Password'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //
+    //                 },
+    //                 child: const Text("Enter")),
+    //           ],
+    //         ),
+    //   );
+    // }
   }
 
   /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
   ///                                 all user data & passwords securely.
   void _handleResetEverythingPress(BuildContext context) async {
-    if (settings.isConfigured()) {
-      await showDialog(
-        context: context,
-        // Display prompt for password entry. it must be set.
-        builder: (context) =>
-            AlertDialog(
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .onBackground,
-              title: const Text("Reset Everything"),
-              actions: [
-                TextButton(
-                    key: const Key('Reset_Everything'),
-                    onPressed: () async {
-                      //Reset the password
-                    },
-                    child: const Text("Yes")),
-                TextButton(
-                    key: const Key('Dont_Reset_Everything'),
-                    onPressed: () async {
-                      //Reset the password
-                    },
-                    child: const Text("No")),
-              ],
-            ),
-      );
-    }
+    // if (settings.isConfigured()) {
+    //   await showDialog(
+    //     context: context,
+    //     // Display prompt for password entry. it must be set.
+    //     builder: (context) =>
+    //         AlertDialog(
+    //           backgroundColor: Theme
+    //               .of(context)
+    //               .colorScheme
+    //               .onBackground,
+    //           title: const Text("Reset Everything"),
+    //           actions: [
+    //             TextButton(
+    //                 key: const Key('Reset_Everything'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //                 },
+    //                 child: const Text("Yes")),
+    //             TextButton(
+    //                 key: const Key('Dont_Reset_Everything'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //                 },
+    //                 child: const Text("No")),
+    //           ],
+    //         ),
+    //   );
+    // }
   }
 
 
@@ -428,7 +428,6 @@ class _WelcomePageState extends State<WelcomePage> {
     Navigator.of(context).pop(); // remove inital entry window
     Navigator.pushReplacement(
         context, DashboardPage.route()); // Move to dashboard w/o encryption
-    debugPrint("finish Config");
   }
 
   void _attemptLogin(BuildContext context) async {

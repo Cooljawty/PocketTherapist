@@ -1,4 +1,4 @@
-import 'package:app/pages/dashboard.dart';
+import 'package:pocket_therapist/pages/dashboard.dart';
 import 'package:flutter/material.dart';
 
 class CalendarPage extends StatefulWidget {

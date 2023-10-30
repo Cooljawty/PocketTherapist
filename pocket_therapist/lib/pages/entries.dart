@@ -1,4 +1,4 @@
-import 'package:app/pages/plans.dart';
+import 'package:pocket_therapist/pages/plans.dart';
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {

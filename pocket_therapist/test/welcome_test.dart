@@ -1,8 +1,10 @@
 
-import 'package:app/pages/welcome.dart';
+import 'package:pocket_therapist/main.dart';
+import 'package:pocket_therapist/pages/dashboard.dart';
+import 'package:pocket_therapist/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/provider/settings.dart' as settings;
+import 'package:pocket_therapist/provider/settings.dart' as settings;
 
 void main() {
 
@@ -97,5 +99,7 @@ void main() {
     await widgetTester.tap(confirmNoPasswordButton);
     await widgetTester.pumpAndSettle();
   });
+
+
 
 }

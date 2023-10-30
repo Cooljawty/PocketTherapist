@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/pages/entries.dart';
+import 'package:pocket_therapist/pages/entries.dart';
 
 void main() {
   testWidgets('Test the save, plan, and tag buttons',

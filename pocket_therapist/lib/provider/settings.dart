@@ -9,8 +9,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app/provider/encryptor.dart' as encryptor;
-import 'package:app/provider/theme_settings.dart';
+import 'package:pocket_therapist/provider/encryptor.dart' as encryptor;
+import 'package:pocket_therapist/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -119,9 +119,7 @@ Future<void> save() async  {
   Map<String, dynamic> settings = Map.of(_settings!);
   settings['enc'] = encrypted;
   // Save them to the file
-  debugPrint("$settings");
   String jsonEncoding = json.encode(settings);
-  debugPrint(jsonEncoding);
   await _settingsFile!.writeAsString(jsonEncoding);
 }
 

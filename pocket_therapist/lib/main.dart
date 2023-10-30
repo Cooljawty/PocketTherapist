@@ -1,6 +1,6 @@
-import 'package:app/pages/welcome.dart';
-import 'package:app/provider/settings.dart' as settings;
-import 'package:app/provider/theme_settings.dart';
+import 'package:pocket_therapist/pages/welcome.dart';
+import 'package:pocket_therapist/provider/settings.dart' as settings;
+import 'package:pocket_therapist/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
