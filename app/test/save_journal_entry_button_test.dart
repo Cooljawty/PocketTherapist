@@ -28,5 +28,6 @@ void main() {
         expect(find.text('Save'), findsOneWidget);
         expect(find.text('Tag'), findsOneWidget);
         expect(find.text('Plan'), findsOneWidget);
+        expect(find.byKey(const ValueKey("New Entry Button")), findsOneWidget);
       });
 }
