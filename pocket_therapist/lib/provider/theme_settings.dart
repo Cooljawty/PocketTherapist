@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:pocket_therapist/provider/settings.dart' as settings;
 
 enum ThemeOption {
   light,
-  dark,
   highContrastLight,
+  dark,
   highContrastDark,
 }
 
@@ -75,28 +77,17 @@ class ThemeSettings with ChangeNotifier {
     ),
   ];
 
-  ThemeData _theme = lightTheme;
-  ThemeData get theme => _theme;
+  String currentThemeName = settings.getCurrentTheme().brightness == Brightness.dark? 'Dark' : 'Light';
+  ThemeData get theme => settings.getCurrentTheme();
 
-  String? currentTheme = 'Light';
 
-  getTheme() {
-    if (currentTheme == 'Light') {
-      return 'Light';
-    }
-    if (currentTheme == 'Dark') {
-      return 'Dark';
-    }
-  }
-
-  changeTheme(String? theme) {
-    currentTheme = theme;
-    if (currentTheme == 'Light') {
-      _theme = lightTheme;
-    }
-    if (currentTheme == 'Dark') {
-      _theme = darkTheme;
-    }
+  changeTheme(String theme) {
+    ThemeOption selectedtheme = switch(theme){
+      "Light" => ThemeOption.light,
+      "Dark" => ThemeOption.dark,
+        _ => ThemeOption.dark,
+    };
+    settings.setTheme(selectedtheme);
 
     notifyListeners();
   }

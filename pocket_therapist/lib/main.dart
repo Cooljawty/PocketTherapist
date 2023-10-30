@@ -39,6 +39,8 @@ class _RootAppState extends State<RootApp>  {
       // specific state transitions.
       onStateChange: _handleStateChange,
     );
+
+    settings.load().whenComplete(() => null);
   }
 
   @override
@@ -56,11 +58,8 @@ class _RootAppState extends State<RootApp>  {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: provider.theme,
-            routes: {
-              'splash': (_) => const Splash(),
-              'app': (_) => const WelcomePage(),
-            },
-            initialRoute: 'splash',
+            home: const WelcomePage(),
+
           );
         });
   }
@@ -84,23 +83,3 @@ class _RootAppState extends State<RootApp>  {
   }
 }
 
-class Splash extends StatefulWidget {
-  const Splash({super.key});
-
-  @override
-  State<Splash> createState() => _SplashState();
-}
-
-class _SplashState extends State<Splash> {
-
-  @override
-  void initState() {
-    super.initState();
-    settings.load().whenComplete(() => Navigator.pushReplacementNamed(context, 'app'));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('somewhereovertherainbow'));
-  }
-}

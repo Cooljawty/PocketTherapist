@@ -1,3 +1,5 @@
+import 'package:integration_test/common.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:pocket_therapist/pages/settings.dart';
 import 'package:pocket_therapist/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,33 @@ void main() {
 
 
   tearDown(() async => await settings.reset());
+
+
+  test("Settings works...", () async {
+    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+    const String password = "password123@";
+    await settings.load();
+    settings.setMockValues({});
+    settings.setFontScale(1.5);
+    settings.setTheme(ThemeOption.dark);
+    settings.setAccentColor(Colors.blueAccent);
+    settings.setConfigured(true);
+    settings.setPassword(password);
+    settings.setEncryptionStatus(true);
+    await settings.save();
+
+    app.main();
+    expect(settings.isInitialized(), true);
+    expect(settings.getCurrentTheme().brightness, ThemeSettings.darkTheme.brightness);
+    expect(settings.getFontScale(), 1.5);
+    expect(settings.getAccentColor().value, Colors.blueAccent.value);
+    expect(settings.isConfigured(), true);
+    expect(settings.isEncryptionEnabled(), true);
+
+    expect(settings.getOtherSetting(settings.prefrencesPrefix), null);
+    expect(settings.getOtherSetting(settings.fontScaleKey), 1.5);
+  });
 
   testWidgets("Theme changes with different selections", (widgetTester) async {
     settings.setMockValues({
@@ -78,6 +107,28 @@ void main() {
     expect(Brightness.light, appState.theme?.brightness);
     expect(ThemeSettings.lightTheme.brightness, appState.theme?.brightness);
 
+    await widgetTester.tap(find.text('Edit Emotion List'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Edit Tag List'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Enable/Disable Encryption'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Open Vault File'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
+    await widgetTester.pumpAndSettle();
+    //Tap next
+    startbutton = find.text("nextPageCalendar");
+    await widgetTester.tap(startbutton);
+    await widgetTester.pumpAndSettle();
+    //Tap next
+    startbutton = find.text("nextPageDashboard");
+    await widgetTester.tap(startbutton);
+    await widgetTester.pumpAndSettle();
   });
 
 

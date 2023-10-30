@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
-    chosenTheme = provider.getTheme();
+    chosenTheme = provider.currentThemeName;
     return Scaffold(
         // Invisible app bar
         appBar: AppBar(
@@ -74,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         // if changed set the new theme
                         onChanged: (item) => setState(() {
                           chosenTheme = item;
-                          provider.changeTheme(chosenTheme);
+                          provider.changeTheme(chosenTheme!);
                         }),
                       ))),
               // Edit emotions list button
@@ -102,6 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
+                    key: const Key('Select_New_Vault'),
                       onPressed: () {},
                       child: Text(dir))),
 

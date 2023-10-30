@@ -1,7 +1,7 @@
 name: full-test-suite
 on: [push, pull_request]
 jobs:
-  testing:
+  widget-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -9,20 +9,32 @@ jobs:
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1      
       - name: Install Flutter Deps
-        working-directory: ./app
+        working-directory: ./pocket_therapist
         run:  flutter pub get
       - name: Run Flutter analysis
-        working-directory: ./app
+        working-directory: ./pocket_therapist
         run:  flutter analyze
       - name: Run Flutter Tests
-        working-directory: ./app
+        working-directory: ./pocket_therapist
         run: flutter test --branch-coverage
       - name: Codecov
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          files: ./app/coverage/lcov.info
+          files: ./pocket_therapist/coverage/lcov.info
           name: code-coverage
-          verbose: true
-          
+
+  integraton-tests:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          ndk: 21.0.6113669
+          cmake: 3.10.2.4988404
+          script: ./gradlew connectedCheck

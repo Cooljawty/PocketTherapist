@@ -19,9 +19,6 @@ const String prefrencesPrefix = "pocket-therapist";
 /// True if loading has been completed, false otherwise.
 bool _init = false;
 
-/// True if saving is not possible.
-bool _unstable = false;
-
 /// These are the default settings and will be overwritten when laoded.
 
 const String configuredKey = "configured";
@@ -39,30 +36,28 @@ const String encryptionToggleKey = 'encryption';
 const String accentColorKey = "accent";
 /// The color of all accents, like buttons and sizing.
 
-Map<String, dynamic>? _settings;
+Map<String, dynamic> _settings = {
+  configuredKey: false,
+  themeKey: ThemeOption.light.index,
+  fontScaleKey: 1.0,
+  encryptionToggleKey: false,
+  accentColorKey: Colors.deepPurpleAccent[100]!.value,
+};
+
+
+
 Directory? _settingsStorageDirectory;
 File? _settingsFile;
 //Directory? _externalStorageDirectory;
 
 Future<void> load() async  {
-  try {
     _settingsStorageDirectory = await getApplicationSupportDirectory();
     _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
-    if(!Platform.isIOS){
-      // IOS doesn't allow this to work.
-  //    _externalStorageDirectory = await getExternalStorageDirectory();
-    } else {
-    //  _externalStorageDirectory = _settingsStorageDirectory;
-    }
     // first time setup
     if(!await _settingsFile!.exists()){
       // cannot create settings file
-      try {
         // attempt to create the whole directory path if it doesnt exist.
         await _settingsFile!.create();
-      } on FileSystemException {
-        debugPrint("Could not create settings file with path $_settingsFile!");
-      }
       _assignDefaults();
     }
     // Else settings exists, load them.
@@ -72,26 +67,13 @@ Future<void> load() async  {
         _assignDefaults();
       } else {                 // settings file exists, load it
         _settings = json.decode(fileContent);
-        if(_settings == null) {
-          debugPrint("Settings failed to load. Maybe it was never saved?");
-        }
         // Load encryption settings
-        encryptor.load(_settings!['enc']);
+        encryptor.load(_settings['enc']);
         // Erase from our reference, not used.
-        _settings!['enc'] = null;
+        _settings['enc'] = null;
       }
       /// settings are loaded
     }
-    // Happens during testing
-  } on MissingPlatformDirectoryException {
-    debugPrint("Unable to get Support directory, settings will not be saved.");
-    _unstable = true;
-    // Happens on IOS
-  } on UnsupportedError {
-    debugPrint("Unable to get external storage directory, not on IOS, standard storage will be in application support");
-    //_externalStorageDirectory = _settingsStorageDirectory;
-
-  }
   /// Settings - App is initialized
   _init = true;
 }
@@ -110,11 +92,17 @@ void _assignDefaults() async {// Enforce defaults
 /// in a file called "settings.yml".
 /// This will not happen if the system in unable to provide a storage location.
 Future<void> save() async  {
-  // This should only happen if we cannot get the required directories or access.
-
+  _settingsStorageDirectory = await getApplicationSupportDirectory();
+  _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
+  // first time setup
+  if(!await _settingsFile!.exists()){
+    // cannot create settings file
+    // attempt to create the whole directory path if it doesnt exist.
+    await _settingsFile!.create();
+  }
   // Collect all the settings
   Map<String, dynamic> encrypted = encryptor.save();
-  Map<String, dynamic> settings = Map.of(_settings!);
+  Map<String, dynamic> settings = Map.of(_settings);
   settings['enc'] = encrypted;
   // Save them to the file
   String jsonEncoding = json.encode(settings);
@@ -135,33 +123,32 @@ Future<void> reset() async {
 }
 
 /// Setters --------------------------
-void setConfigured(bool value) => _settings![configuredKey] = value;
-void setTheme(ThemeOption theme) => _settings![themeKey] = theme.index;
-void setFontScale(double newFontScale) => _settings![fontScaleKey] = newFontScale;
-void setEncryptionStatus(bool newStatus) => _settings![encryptionToggleKey] = newStatus;
-void setAccentColor(Color newColor) => _settings![accentColorKey] = newColor.value;
+void setConfigured(bool value) => _settings[configuredKey] = value;
+void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
+void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
+void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
+void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
 void setPassword(String newPassword) => encryptor.setPassword(newPassword);
-void setMockValues(Map<String, dynamic> value) async {
-  await load();
-  _settings!.addAll(value);
-  await save();
+void setMockValues(Map<String, dynamic> value) {
+  reset();
+  _settings.addAll(value);
 }
 
 /// Getters --------------------------
 bool isInitialized() => _init;
-bool isConfigured() => _settings![configuredKey];
-ThemeData getCurrentTheme() =>  switch(_settings![themeKey] as int) {
+bool isConfigured() => _settings[configuredKey];
+ThemeData getCurrentTheme() =>  switch(_settings[themeKey] as int) {
     0 => ThemeSettings.lightTheme,
     1 => ThemeSettings.lightTheme,
     2 => ThemeSettings.darkTheme,
     3 => ThemeSettings.darkTheme,
     _ => throw StateError("Invalid ThemeSetting")
 };
-double getFontScale() => _settings![fontScaleKey];
-bool isEncryptionEnabled() => _settings![encryptionToggleKey];
-Color getAccentColor() => _settings![accentColorKey];
+double getFontScale() => _settings[fontScaleKey];
+bool isEncryptionEnabled() => _settings[encryptionToggleKey];
+Color getAccentColor() => Color(_settings[accentColorKey]);
 Object? getOtherSetting(String key) {
-  Object? value = _settings![key];
+  Object? value = _settings[key];
   if(value == null) {
     debugPrint("Settings did not have value $key");
   }

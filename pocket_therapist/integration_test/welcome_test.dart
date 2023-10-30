@@ -12,21 +12,6 @@ void main() {
     await settings.reset();
   });
 
-  test("Settings works...", () async {
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-    const String password = "password123@";
-    await settings.load();
-    settings.setMockValues({});
-    settings.setTheme(ThemeOption.dark);
-    settings.setAccentColor(Colors.blueAccent);
-    settings.setConfigured(true);
-    settings.setPassword(password);
-    settings.setEncryptionStatus(true);
-    await settings.save();
-
-    app.main();
-  });
 
   testWidgets("Password Account creation", (widgetTester) async {
     app.main();
