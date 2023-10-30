@@ -1,8 +1,15 @@
 name: full-test-suite
 on: [push, pull_request]
+
 jobs:
   widget-tests:
     runs-on: ubuntu-latest
+    strategy:      
+      matrix:
+        api-level: 
+          - 34
+      fail-fast: true
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -14,9 +21,33 @@ jobs:
       - name: Run Flutter analysis
         working-directory: ./pocket_therapist
         run:  flutter analyze
-      - name: Run Flutter Tests
-        working-directory: ./pocket_therapist
-        run: flutter test --branch-coverage
+      - name: Find test folders
+        id: check-folder
+        run: |
+          if [ -d "./pocket_therapist/test" ]; then
+            echo "::set-output name=unit_test_folder::true"
+          else
+            echo "::set-output name=unit_test_folder::false"
+          if [ -d "./pocket_therapist/integraton_test" ]; then
+            echo "::set-output name=integraton_test_folder::true"
+          else
+            echo "::set-output name=integration_test_folder::false"
+
+      - name: Run Widget Tests
+        if: steps.check-folder.outputs.unit_test_folder == 'true'
+        run: |
+          cd ./Pocket-Therapist/pocket_therapist/
+          flutter test --branch-coverage
+          echo "Running tests..."
+      - name: Run integration tests
+        if: steps.check-folder.outputs.integration_test_folder == 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:          
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64          
+          profile: Pixel 7
+          script: flutter test integration_test --branch-coverage --merge-coverage
+
       - name: Codecov
         uses: codecov/codecov-action@v3
         env:
@@ -24,17 +55,3 @@ jobs:
         with:
           files: ./pocket_therapist/coverage/lcov.info
           name: code-coverage
-
-  integraton-tests:
-    runs-on: macos-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          ndk: 21.0.6113669
-          cmake: 3.10.2.4988404
-          script: ./gradlew connectedCheck
