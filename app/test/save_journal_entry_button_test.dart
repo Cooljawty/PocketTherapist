@@ -9,6 +9,7 @@ void main() {
         final saveButton = find.byKey(const ValueKey("saveButton"));
         final planButton = find.byKey(const ValueKey("planButton"));
         final tagButton = find.byKey(const ValueKey("tagButton"));
+        final newEntryButton = find.byKey(const ValueKey("New Entry Button"));
 
         //Target the Entries page
         await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
@@ -28,6 +29,10 @@ void main() {
         expect(find.text('Save'), findsOneWidget);
         expect(find.text('Tag'), findsOneWidget);
         expect(find.text('Plan'), findsOneWidget);
-        expect(find.byKey(const ValueKey("New Entry Button")), findsOneWidget);
+        expect(newEntryButton, findsOneWidget);
+
+        await tester.tap(newEntryButton);
+        await tester.pumpAndSettle();
+
       });
 }

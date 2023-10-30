@@ -8,6 +8,7 @@ void main() {
         final tagButton = find.byKey(const ValueKey("tagButton"));
         final journalInput = find.byKey(const ValueKey("journalInput"));
         final titleInput = find.byKey(const ValueKey("titleInput"));
+        final saveButton = find.byKey(const ValueKey("SaveButton"));
 
         //Target the New Entry page
         await tester.pumpWidget(const MaterialApp(home: NewEntryPage()));
@@ -36,5 +37,8 @@ void main() {
         // Test pressing the tag button
         await tester.tap(tagButton);
         await tester.pump();
+
+        await tester.tap(saveButton);
+        await tester.pumpAndSettle();
       });
 }

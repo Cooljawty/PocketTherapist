@@ -80,6 +80,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       // Save button
       // Make save functionality
       floatingActionButton: FloatingActionButton(
+        key: const Key("SaveButton"),
         onPressed: () {
           Navigator.pop(context);
         },

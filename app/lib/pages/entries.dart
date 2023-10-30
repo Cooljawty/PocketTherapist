@@ -37,9 +37,9 @@ class _EntriesPageState extends State<EntriesPage> {
           ),
         ),
       floatingActionButton: Padding(
+        key: const Key("New Entry Button"),
         padding: const EdgeInsets.only(bottom: 50),
         child: FloatingActionButton(
-          key: const Key("New Entry Button"),
           onPressed: () {
             Navigator.push(context, NewEntryPage.route());
           },
