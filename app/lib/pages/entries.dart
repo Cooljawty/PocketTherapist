@@ -1,4 +1,5 @@
 import 'package:app/pages/plans.dart';
+import 'package:app/pages/new_entry.dart';
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
@@ -34,7 +35,17 @@ class _EntriesPageState extends State<EntriesPage> {
               ),
             ],
           ),
-        ));
+        ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, NewEntryPage.route());
+          },
+          child: const Icon(Icons.add),
+        ),
+      )
+    );
   }
 }
 
