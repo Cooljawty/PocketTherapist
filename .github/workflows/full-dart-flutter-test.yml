@@ -30,10 +30,13 @@ jobs:
             echo "::set-output name=unit_test_folder::true"
           else
             echo "::set-output name=unit_test_folder::false"
+          fi
+
           if [ -d "./pocket_therapist/integraton_test" ]; then
             echo "::set-output name=integraton_test_folder::true"
           else
             echo "::set-output name=integration_test_folder::false"
+          fi
 
       - name: Run Widget Tests
         if: steps.check-folder.outputs.unit_test_folder == 'true'
@@ -41,6 +44,7 @@ jobs:
           cd ./Pocket-Therapist/pocket_therapist/
           flutter test --branch-coverage
           echo "Running tests..."
+
       - name: Run integration tests
         if: steps.check-folder.outputs.integration_test_folder == 'true'
         uses: reactivecircus/android-emulator-runner@v2
