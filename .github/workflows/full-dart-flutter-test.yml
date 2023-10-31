@@ -27,23 +27,27 @@ jobs:
           ls -la
           pwd
           if [ -d "./pocket_therapist/test" ]; then
-            echo "::set-output name=unit_test_folder::true"
+            echo "unit_test_folder=true" >> "$GITHUB_ENV"
           else
-            echo "::set-output name=unit_test_folder::false"
+            echo "unit_test_folder=false" >> "$GITHUB_ENV"
           fi
 
           if [ -d "./pocket_therapist/integraton_test" ]; then
-            echo "::set-output name=integraton_test_folder::true"
+            echo "integraton_test_folder=true" >> "$GITHUB_ENV"
           else
-            echo "::set-output name=integration_test_folder::false"
+            echo "integraton_test_folder=false" >> "$GITHUB_ENV"
           fi
 
       - name: Run Widget Tests
-        if: steps.check-folder.outputs.unit_test_folder == 'true'
         run: |
-          cd ./Pocket-Therapist/pocket_therapist/
-          flutter test --branch-coverage
-          echo "Running tests..."
+          cd ./pocket_therapist/
+          if $unit_test_folder; then
+            flutter test --branch-coverage
+            echo "Running tests..."
+          else 
+            echo "No tests found, not running."
+          fi
+          cd ..
 
       - name: Run integration tests
         if: steps.check-folder.outputs.integration_test_folder == 'true'
