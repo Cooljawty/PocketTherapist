@@ -50,13 +50,12 @@ jobs:
           cd ..
 
       - name: Run integration tests
-        if: ${{ integration_test_folder == 'true' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:          
           api-level: ${{ matrix.api-level }}
           arch: x86_64          
           profile: Pixel 7
-          script: flutter test integration_test --branch-coverage --merge-coverage
+          script: if $integration_test_folder; then flutter test integration_test --branch-coverage --merge-coverage; fi
 
       - name: Codecov
         uses: codecov/codecov-action@v3
