@@ -53,8 +53,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:          
           api-level: ${{ matrix.api-level }}
-          arch: x86_64          
-          profile: Pixel 7
+          arch: x86_64
+          disable-linux-hw-accel: true
+          working-directory: ./pocket_therapist
+          profile: Nexus 6
           script: if $integration_test_folder; then flutter test integration_test --branch-coverage --merge-coverage; fi
 
       - name: Codecov
