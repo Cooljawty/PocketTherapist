@@ -50,7 +50,7 @@ jobs:
           cd ..
 
       - name: Run integration tests
-        if: steps.check-folder.outputs.integration_test_folder == 'true'
+        if: ${{ integration_test_folder == 'true' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:          
           api-level: ${{ matrix.api-level }}
