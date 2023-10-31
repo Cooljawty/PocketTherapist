@@ -32,8 +32,8 @@ jobs:
             echo "::set-output name=unit_test_folder::false"
           fi
 
-          if [ -d "./pocket_therapist/integraton_test" ]; then
-            echo "::set-output name=integraton_test_folder::true"
+          if [ -d "./pocket_therapist/integration_test" ]; then
+            echo "::set-output name=integration_test_folder::true"
           else
             echo "::set-output name=integration_test_folder::false"
           fi
