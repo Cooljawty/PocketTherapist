@@ -7,34 +7,33 @@ import 'package:app/uiwidgets/buttons.dart';
 
 
 void main() {
-  testNextPage(String textonPage, String textOnButton, WidgetTester tester)  async {
-      expect(find.text(textonPage), findsOneWidget);
-      Finder nextPageButton = find.text(textOnButton);
-      expect(nextPageButton, findsOneWidget);
-      await tester.tap(nextPageButton);
+  testNextPage(String textonPage, String label, WidgetTester tester)  async {
+			//Page name is shown as page title and on the navigation bar
+      Finder navigationButton = find.byKey(Key(label));
+      await tester.tap(navigationButton);
       await tester.pumpAndSettle();
+
+      expect(navigationButton, findsOneWidget);
+      expect(find.text(textonPage), findsNWidgets(2));
   }
 
   testWidgets('Cycle through pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle(const Duration(seconds: 5));
+
     // found dashboard, find next thigns
-    expect(find.text('Dashboard'), findsOneWidget);
-    Finder nextPageButton = find.text('nextPageEntries');
-    expect(nextPageButton, findsOneWidget);
+		//Dashbord is shown as page title and on the navigation bar
+    expect(find.text('Dashboard'), findsNWidgets(2)); 
 
     // On Dashboard finding things
-     await testNextPage('Dashboard', 'nextPageEntries', tester);
-     await testNextPage('Entries', 'nextPagePlans', tester);
-     await testNextPage('Plans', 'nextPageSettings', tester);
-     await testNextPage('Settings', 'nextPageCalendar', tester);
-     await testNextPage('Calendar', 'nextPageDashboard', tester);
+    await testNextPage('Entries',   'Entries',   tester);
+    await testNextPage('Settings',  'Settings',  tester);
+    await testNextPage('Calendar',  'Calendar',  tester);
+    await testNextPage('Dashboard', 'Dashboard', tester);
 
-       // Ensure no duplicates
-      expect(find.text('Dashboard'), findsOneWidget);
-      nextPageButton = find.text('nextPageEntries');
-      expect(nextPageButton, findsOneWidget);
+		// Ensure no duplicates
+		expect(find.text('Dashboard'), findsNWidgets(2)); 
   });
 
   testWidgets('Settings go to settings page', (WidgetTester tester) async {
