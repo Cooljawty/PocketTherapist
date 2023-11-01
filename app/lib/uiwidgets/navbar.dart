@@ -1,3 +1,8 @@
+import 'package:app/pages/dashboard.dart';
+import 'package:app/pages/entries.dart';
+import 'package:app/pages/calendar.dart';
+import 'package:app/pages/settings.dart';
+
 import 'package:flutter/material.dart';
 
 /// NavBar provieds a navigation bar at the bottom of the screen that contains links to diffrent pages.
@@ -35,3 +40,26 @@ class Destination {
 		);
 	}
 }
+
+Map<String, Destination> Destinations = {
+	"dashboard": Destination( 
+		label: "Dashboard", 
+		icon: Icons.dashboard,       
+		destination: DashboardPage.route(),
+	),
+	"entries": Destination( 
+		label: "Entries", 
+		icon: Icons.feed,            
+		destination: EntriesPage.route(),
+	),
+	"calendar": Destination( 
+		label: "Calendar", 
+		icon: Icons.calendar_month, 
+		destination: CalendarPage.route(),
+	),
+	"settings": Destination( 
+		label: "Settings", 
+		icon: Icons.settings,        
+		destination: SettingsPage.route(),
+	),
+};
