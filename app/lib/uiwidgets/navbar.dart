@@ -20,7 +20,9 @@ class NavBar extends StatelessWidget{
 			destinations: destinations.map((destination) => destination.toWidget()).toList(),
 			selectedIndex: this.selectedIndex,
 			onDestinationSelected: (int index) {
-				Navigator.of(context).pushReplacement(destinations[index].destination);
+				if( index != selectedIndex ) {
+					Navigator.of(context).pushReplacement(destinations[index].destination);
+				}
 			},
 		);
 	}
