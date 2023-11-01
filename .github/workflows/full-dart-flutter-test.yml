@@ -28,8 +28,7 @@ jobs:
 
       - name: Run the emulators
         run: |
-          ls -la $ANDROID_HOME/emulator
-          .$ANDROID_HOME/emulator/emulator @runner -noaudio -no-sim -no-boot-anim
+          sh -c $ANDROID_HOME/emulator/emulator @runner -noaudio -no-sim -no-boot-anim&
 
       - name: Kill the emulator
         run: |
