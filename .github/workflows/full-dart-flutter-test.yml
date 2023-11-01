@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Android system.img
         run: |
-          sdkmanager --instal 'system-images;android-34;google_apis;x86_64'
+          sdkmanager --install 'system-images;android-34;google_apis;x86_64'
 
 # Configure android emulator
       - name: Create an Emulator
