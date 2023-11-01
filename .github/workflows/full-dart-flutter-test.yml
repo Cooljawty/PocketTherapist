@@ -19,7 +19,7 @@ jobs:
 # Configure android emulator
       - name: Create an Emulator
         run: |
-          echo no | avdmanager create avd --name TestRunner --package 'system-images;android-34;google_apis;x86'
+          echo no | avdmanager create avd --name TestRunner --package 'system-images;android-34;google_apis;x86_64'
 #
 #
 #      - name: Install Flutter
