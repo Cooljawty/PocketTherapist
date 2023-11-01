@@ -49,7 +49,7 @@ void main() {
         expect(temp.getBool('DataInitialized'), true);
         //ensure password made is empty
         expect(temp.getString('Password'), "");
-        expect(find.text('Dashboard'), findsOneWidget);
+        expect(find.text('Dashboard'), findsNWidgets(2));
       });
 
 //create test for user getting password loaded from local memory
@@ -101,7 +101,7 @@ void main() {
         expect(temp.getBool('DataInitialized'), true);
         //ensure password made is empty
         expect(temp.getString('Password'), "");
-        expect(find.text('Dashboard'), findsOneWidget);
+        expect(find.text('Dashboard'), findsNWidgets(2));
       });
   //test for new user who creates an empty password (same end state as user who choses no password)
   testWidgets('Test new user creating empty password', (widgetTester) async {
@@ -130,7 +130,7 @@ void main() {
     expect(temp.getBool('DataInitialized'), true);
     //ensure password made is empty
     expect(temp.getString('Password'), "");
-    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Dashboard'), findsNWidgets(2));
   });
 
 //create test for user getting password loaded from local memory
@@ -182,7 +182,7 @@ void main() {
     expect(temp.getBool('DataInitialized'), true);
     //ensure password made is empty
     expect(temp.getString('Password'), "");
-    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Dashboard'), findsNWidgets(2));
   });
   //test for new user who creates an empty password (same end state as user who choses no password)
   testWidgets('Test new user creating empty password', (widgetTester) async {
@@ -212,7 +212,7 @@ void main() {
     //ensure password made is empty
     expect(temp.getString('Password'), "");
     //check that dashboard is entered
-    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Dashboard'), findsNWidgets(2));
   });
 
   //final test case for inputting password to unlock welcome screen
@@ -252,7 +252,7 @@ void main() {
     //ensure password made is same as example
     expect(temp.getString('Password'), "Password");
     //check that dashboard is entered
-    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Dashboard'), findsNWidgets(2));
 
   });
 }
