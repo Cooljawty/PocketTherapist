@@ -16,34 +16,31 @@ class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
+        body: const SafeArea(
           child: Column(
             children: [
-              const Text('Entries'),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(PlansPage.route());
-                  },
-                  child: const Text('nextPagePlans')),
+              Text('Entries'),
+
               //box SizedBox keeps the plan, tag, and save buttons on the bottom.
-              const Expanded(child: SizedBox(height: 1)),
+              Expanded(child: SizedBox(height: 1)),
               //Row for overflow widget
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [Bar()],
               ),
             ],
           ),
-          bottomNavigationBar: NavBar(
-				    selectedIndex: 1,
-				    destinations: [
-					    destinations['dashboard']!,
-					    destinations['entries']!,
-					    destinations['calendar']!,
-					    destinations['settings']!,
-				    ],
-			    ),
-        ));
+        ),
+				bottomNavigationBar: NavBar(
+					selectedIndex: 1,
+					destinations: [
+						destinations['dashboard']!,
+						destinations['entries']!,
+						destinations['calendar']!,
+						destinations['settings']!,
+					],
+				),
+			);
   }
 }
 
