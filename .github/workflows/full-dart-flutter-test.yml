@@ -27,7 +27,7 @@ jobs:
       - name: List stuff
         run: |
           echo "Find android"
-          find $HOME/.android -type f -iname *.ini 
+          ls -laR $HOME/.android 
 
           #      - name: Run the emulators
           #        run: $ANDROID_HOME/emulator/emulator -avd @testrunner \
