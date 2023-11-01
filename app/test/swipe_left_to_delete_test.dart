@@ -10,7 +10,7 @@ void main() {
     //confirm that entry exist
     expect(find.text('Entry 0'), findsOneWidget);
     //drag the entry
-    await tester.drag(find.byType(Dismissible), const Offset(500, 0));
+    await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
     await tester.pumpAndSettle();
     //confirm that the entry was deleted.
     expect(find.text('Entry 0'), findsNothing);
