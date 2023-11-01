@@ -28,7 +28,7 @@ jobs:
 
       - name: Run the emulator
         run: |
-          emulator @runner
+          emulator @runner -noaudio -no-sim -no-boot-anim
 
       - name: Kill the emulator
         run: |
