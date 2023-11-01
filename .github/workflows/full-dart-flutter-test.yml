@@ -26,10 +26,7 @@ jobs:
       
       - name: List stuff
         run: |
-          ls -la $HOME
-          pwd
-          ls -la $ANDROID_SDK_ROOT
-          ls -la $ANDROID_HOME
+          echo "Find android"
           find $HOME/.android -type f -iname *.ini 
 
           #      - name: Run the emulators
