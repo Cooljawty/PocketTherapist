@@ -11,6 +11,7 @@ class NavBar extends StatelessWidget{
 	Widget build(BuildContext context) {
 		return NavigationBar(
 			destinations: destinations.map((destination) => destination.toWidget()).toList(),
+			selectedIndex: -1,
 			onDestinationSelected: (int index) {
 				Navigator.of(context).pushReplacement(destinations[index].destination);
 			},
