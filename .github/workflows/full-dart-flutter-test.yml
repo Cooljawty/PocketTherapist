@@ -30,7 +30,9 @@ jobs:
         run: |
           emulator @runner
 
-
+      - name: Kill the emulator
+        run: |
+          adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
 
           #      - name: Install Flutter
           #        uses: britannio/action-install-flutter@v1.1
