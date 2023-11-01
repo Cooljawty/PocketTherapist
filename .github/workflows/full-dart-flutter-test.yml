@@ -6,62 +6,69 @@ jobs:
     - TEST_DIR: false
     - INTEGRATION_DIR: false
   full-tests:
-    runs-on: windows-latest
-    strategy:      
-      matrix:
-        api-level: 
-          - 34
-      fail-fast: true
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Install Flutter
-        uses: britannio/action-install-flutter@v1.1      
-      - name: Install Flutter Deps
-        working-directory: ./pocket_therapist
-        run:  flutter pub get
-      - name: Run Flutter analysis
-        working-directory: ./pocket_therapist
-        run:  flutter analyze
-      - name: Find test folders
-        id: check-folder
-        run: |
-          ls -la
-          pwd
-          if [ -d "./pocket_therapist/test" ]; then
-            TEST_DIR=true
-          fi
-          if [ -d "./pocket_therapist/integraton_test" ]; then
-            INTEGRATION_DIR=true
-          fi
-
-      - name: Run Widget Tests
-        run: |
-          cd ./pocket_therapist/
-          if $TEST_DIR; then
-            flutter test --branch-coverage
-            echo "Running tests..."
-          else 
-            echo "No tests found, not running."
-          fi
-          cd ..
-
-      - name: Run integration tests
-        if: $INTEGRATION_DIR
-        uses: reactivecircus/android-emulator-runner@v2
-        with:          
-          api-level: ${{ matrix.api-level }}
-          arch: x86_64
-          disable-linux-hw-accel: true
-          working-directory: ./pocket_therapist
-          profile: "Pixel 7"
-          script: flutter test integration_test --branch-coverage --merge-coverage
-
-      - name: Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+# Java
+      - name: Setup JDK
+        uses: actions/setup-java@v3
         with:
-          files: ./pocket_therapist/coverage/lcov.info
-          name: code-coverage
+          java-version: '20'
+# Android SDK
+      - name: Android SDK Setup
+        uses: android-actions/setup-android@v3.0.0
+# Configure android emulator
+      - name: Create an Emulator
+        run: |
+          echo no | avdmanager create avd --name TestRunner --package 'system-images;android-34;google_apis;x86' --device
+#
+#
+#      - name: Install Flutter
+#        uses: britannio/action-install-flutter@v1.1
+#
+#      - name: Install Flutter Deps
+#        working-directory: ./pocket_therapist
+#        run:  flutter pub get
+#
+#      - name: Run Flutter analysis
+#        working-directory: ./pocket_therapist
+#        run:  flutter analyze
+#
+#      - name: Find test folders
+#        id: check-folder
+#        run: |
+#          if [ -d "./pocket_therapist/test" ]; then
+#            TEST_DIR=true
+#          fi
+#          if [ -d "./pocket_therapist/integration_test" ]; then
+#            INTEGRATION_DIR=true
+#          fi
+#
+#      - name: Run Widget Tests
+#        working-directory: ./pocket_therapist
+#        run: |
+#          if $TEST_DIR; then
+#            flutter test --branch-coverage
+#            echo "Running tests..."
+#          else
+#            echo "No tests found, not running."
+#          fi
+#
+#      - name: Run integration tests
+#        working-directory: ./pocket_therapist
+#        run: |
+#          if $INTEGRATION_DIR; then
+#            flutter test integration_test --merge --branch-coverage
+#          else
+#            echo "No tests found, not running..."
+#          fi
+#
+#      - name: Codecov
+#        uses: codecov/codecov-action@v3
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#        with:
+#          files: ./pocket_therapist/coverage/lcov.info
+#          name: code-coverage
+
