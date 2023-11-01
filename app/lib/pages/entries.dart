@@ -13,12 +13,12 @@ class EntriesPage extends StatefulWidget {
 }
 
 class _EntriesPageState extends State<EntriesPage> {
+  //Generated list of strings
   final items = List<String>.generate(1, (i) => 'Entry $i');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //appBar: AppBar(title: const Text('Dismissible Sample')),
         body: SafeArea(
       child: Column(
         children: [
@@ -42,6 +42,8 @@ class _EntriesPageState extends State<EntriesPage> {
                 // Each Dismissible must contain a Key. Keys allow Flutter to
                 // uniquely identify widgets.
                 key: Key(item),
+                //prevents right swipes
+                direction: DismissDirection.endToStart,
 
                 // Provide a function that tells the app
                 // what to do after an item has been swiped away.
@@ -56,7 +58,8 @@ class _EntriesPageState extends State<EntriesPage> {
                       .showSnackBar(SnackBar(content: Text('$item dismissed')));
                 },
                 // Show a red background as the item is swiped away.
-                background: Container(color: Colors.red),
+                background:
+                    Container(color: Theme.of(context).colorScheme.primary),
                 child: ListTile(
                   title: Text(item),
                 ),

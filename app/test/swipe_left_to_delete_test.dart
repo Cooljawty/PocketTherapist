@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app/pages/entries.dart';
 
 void main() {
-  testWidgets('Remove an entry from the list.',
-      (WidgetTester tester) async {
+  testWidgets('Remove an entry from the list.', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
 
     await tester.pump();
