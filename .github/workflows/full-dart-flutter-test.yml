@@ -2,9 +2,6 @@ name: full-test-suite
 on: [push, pull_request]
 
 jobs:
-  variables:
-    - TEST_DIR: false
-    - INTEGRATION_DIR: false
   full-tests:
     runs-on: ubuntu-latest
     steps:
