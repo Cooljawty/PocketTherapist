@@ -1,4 +1,4 @@
-import 'package:app/pages/dashboard.dart';
+import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -17,17 +17,22 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Text('Calendar'),
-              ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(DashboardPage.route());
-              },
-              child: const Text('nextPageDashboard'))
-            ],
-          ),
-        )
+			body: SafeArea(
+				child: Column(
+					children: [
+						const Text('Calendar'),
+					],
+				),
+			),
+			bottomNavigationBar: NavBar(
+				selectedIndex: 2,
+				destinations: [
+					Destinations['dashboard']!,
+					Destinations['entries']!,
+					Destinations['calendar']!,
+					Destinations['settings']!,
+				],
+			),
     );
   }
 }
