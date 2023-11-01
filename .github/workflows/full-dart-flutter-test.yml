@@ -22,7 +22,7 @@ jobs:
 
 # Configure android emulator
       - name: Create an Emulator
-        run: echo -e "\n" | avdmanager --force --verbose create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
+        run: echo -e "\n" | avdmanager  --verbose create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
       
       - name: List stuff
         run: |
