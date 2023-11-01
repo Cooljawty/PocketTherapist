@@ -26,10 +26,10 @@ jobs:
         run: |
           echo no | avdmanager create avd --name runner --package 'system-images;android-34;google_apis;x86_64'
 
-      - name: Run the emulator
+      - name: Run the emulators
         run: |
-          ls -la $ANDROID_HOME/
-          ./$ANDROID_HOME/emulator/emulator @runner -noaudio -no-sim -no-boot-anim
+          ls -la $ANDROID_HOME/emulator
+          .$ANDROID_HOME/emulator/emulator @runner -noaudio -no-sim -no-boot-anim
 
       - name: Kill the emulator
         run: |
