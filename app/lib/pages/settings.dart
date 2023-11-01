@@ -130,15 +130,16 @@ class _SettingsPageState extends State<SettingsPage> {
               // }, child: const Text('nextPageCalendar') )
             ],
           ),
-          bottomNavigationBar: NavBar(
-				    selectedIndex: 3,
-				    destinations: [
-					    destinations['dashboard']!,
-					    destinations['entries']!,
-					    destinations['calendar']!,
-					    destinations['settings']!,
-				    ],
-			    ),
-        ));
+        ),
+				bottomNavigationBar: NavBar(
+					selectedIndex: 3,
+					destinations: [
+						destinations['dashboard']!,
+						destinations['entries']!,
+						destinations['calendar']!,
+						destinations['settings']!,
+					],
+				),
+			);
   }
 }
