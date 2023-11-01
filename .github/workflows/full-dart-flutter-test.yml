@@ -24,7 +24,7 @@ jobs:
 # Configure android emulator
       - name: Create an Emulator
         run: |
-          echo no | avdmanager create avd --name runner --package 'system-images;android-34;google_apis;x86_64' --skin "pixel_7"
+          echo no | avdmanager create avd --name runner --package 'system-images;android-34;google_apis;x86_64'
 
       - name: Run the emulator
         run: |
