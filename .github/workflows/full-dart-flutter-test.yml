@@ -24,54 +24,59 @@ jobs:
 # Configure android emulator
       - name: Create an Emulator
         run: |
-          echo no | avdmanager create avd --name TestRunner --package 'system-images;android-34;google_apis;x86_64'
-#
-#
-#      - name: Install Flutter
-#        uses: britannio/action-install-flutter@v1.1
-#
-#      - name: Install Flutter Deps
-#        working-directory: ./pocket_therapist
-#        run:  flutter pub get
-#
-#      - name: Run Flutter analysis
-#        working-directory: ./pocket_therapist
-#        run:  flutter analyze
-#
-#      - name: Find test folders
-#        id: check-folder
-#        run: |
-#          if [ -d "./pocket_therapist/test" ]; then
-#            TEST_DIR=true
-#          fi
-#          if [ -d "./pocket_therapist/integration_test" ]; then
-#            INTEGRATION_DIR=true
-#          fi
-#
-#      - name: Run Widget Tests
-#        working-directory: ./pocket_therapist
-#        run: |
-#          if $TEST_DIR; then
-#            flutter test --branch-coverage
-#            echo "Running tests..."
-#          else
-#            echo "No tests found, not running."
-#          fi
-#
-#      - name: Run integration tests
-#        working-directory: ./pocket_therapist
-#        run: |
-#          if $INTEGRATION_DIR; then
-#            flutter test integration_test --merge --branch-coverage
-#          else
-#            echo "No tests found, not running..."
-#          fi
-#
-#      - name: Codecov
-#        uses: codecov/codecov-action@v3
-#        env:
-#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-#        with:
-#          files: ./pocket_therapist/coverage/lcov.info
-#          name: code-coverage
+          echo no | avdmanager create avd --name runner --package 'system-images;android-34;google_apis;x86_64' --skin "pixel_7"
 
+      - name: Run the emulator
+        run: |
+          emulator @runner
+
+
+
+          #      - name: Install Flutter
+          #        uses: britannio/action-install-flutter@v1.1
+          #
+          #      - name: Install Flutter Deps
+          #        working-directory: ./pocket_therapist
+          #        run:  flutter pub get
+          #
+          #      - name: Run Flutter analysis
+          #        working-directory: ./pocket_therapist
+          #        run:  flutter analyze
+          #
+          #      - name: Find test folders
+          #        id: check-folder
+          #        run: |
+          #          if [ -d "./pocket_therapist/test" ]; then
+          #            TEST_DIR=true
+          #          fi
+          #          if [ -d "./pocket_therapist/integration_test" ]; then
+          #            INTEGRATION_DIR=true
+          #          fi
+          #
+          #      - name: Run Widget Tests
+          #        working-directory: ./pocket_therapist
+          #        run: |
+          #          if $TEST_DIR; then
+          #            flutter test --branch-coverage
+          #            echo "Running tests..."
+          #          else
+          #            echo "No tests found, not running."
+          #          fi
+          #
+          #      - name: Run integration tests
+          #        working-directory: ./pocket_therapist
+          #        run: |
+          #          if $INTEGRATION_DIR; then
+          #            flutter test integration_test --merge --branch-coverage
+          #          else
+          #            echo "No tests found, not running..."
+          #          fi
+          #
+          #      - name: Codecov
+          #        uses: codecov/codecov-action@v3
+          #        env:
+          #          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          #        with:
+          #          files: ./pocket_therapist/coverage/lcov.info
+          #          name: code-coverage
+          #
