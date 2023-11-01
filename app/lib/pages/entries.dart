@@ -16,20 +16,20 @@ class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Entries'),
+						Text('Entries'),
 					],
 				),
 			),
 			bottomNavigationBar: NavBar(
 				selectedIndex: 1,
 				destinations: [
-					Destinations['dashboard']!,
-					Destinations['entries']!,
-					Destinations['calendar']!,
-					Destinations['settings']!,
+					destinations['dashboard']!,
+					destinations['entries']!,
+					destinations['calendar']!,
+					destinations['settings']!,
 				],
 			),
     );

@@ -17,20 +17,20 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Calendar'),
+						Text('Calendar'),
 					],
 				),
 			),
 			bottomNavigationBar: NavBar(
 				selectedIndex: 2,
 				destinations: [
-					Destinations['dashboard']!,
-					Destinations['entries']!,
-					Destinations['calendar']!,
-					Destinations['settings']!,
+					destinations['dashboard']!,
+					destinations['entries']!,
+					destinations['calendar']!,
+					destinations['settings']!,
 				],
 			),
     );

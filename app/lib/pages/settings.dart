@@ -15,20 +15,20 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Settings'),
+						Text('Settings'),
 					],
 				),
 			),
 			bottomNavigationBar: NavBar(
 				selectedIndex: 3,
 				destinations: [
-					Destinations['dashboard']!,
-					Destinations['entries']!,
-					Destinations['calendar']!,
-					Destinations['settings']!,
+					destinations['dashboard']!,
+					destinations['entries']!,
+					destinations['calendar']!,
+					destinations['settings']!,
 				],
 			),
     );
