@@ -29,6 +29,8 @@ class NavBar extends StatelessWidget{
 
 }
 
+///Defines a destinaton on the NavBar. Comes with an icon and a route to the page, and a label.
+///The label also works as a key to the widget.
 class Destination {
 	final String label;
 	final IconData icon;
@@ -45,6 +47,7 @@ class Destination {
 	}
 }
 
+///List of common destinations.
 Map<String, Destination> destinations = {
 	"dashboard": Destination( 
 		label: "Dashboard", 
