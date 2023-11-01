@@ -16,6 +16,11 @@ jobs:
 # Android SDK
       - name: Android SDK Setup
         uses: android-actions/setup-android@v3.0.0
+
+      - name: Install Android system.img
+        run: |
+          sdkmanager --instal 'system-images;android-34;google_apis;x86_64'
+
 # Configure android emulator
       - name: Create an Emulator
         run: |
