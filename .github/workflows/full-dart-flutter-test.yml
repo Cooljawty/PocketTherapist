@@ -25,8 +25,8 @@ jobs:
         run: avdmanager -s create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
 
       - name: Run the emulators
-        run: |
-          $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim
+        run:  $ANDROID_HOME/emulator/emulator -list-avds
+          # $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim
 
       - name: Kill the emulator
         run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
