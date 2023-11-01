@@ -14,7 +14,7 @@ class EntriesPage extends StatefulWidget {
 
 class _EntriesPageState extends State<EntriesPage> {
   //Generated list of strings
-  final items = List<String>.generate(1, (i) => 'Entry $i');
+  final items = List<String>.generate(5, (i) => 'Entry $i');
 
   @override
   Widget build(BuildContext context) {
