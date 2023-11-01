@@ -23,7 +23,13 @@ jobs:
 # Configure android emulator
       - name: Create an Emulator
         run: echo "no" | avdmanager  --verbose create avd --force --name testrunner --package 'system-images;android-34;google_apis;x86_64' --device "pixel_7"
-      
+     
+      - name: Find the Emulator
+        run: |
+          ls -laR $HOME
+          ls -laR $ANDROID_HOME
+          ls -laR $ANDROID_SDK_ROOT
+
       - name: Run the emulators
         run: $ANDROID_HOME/emulator/emulator -avd @testrunner -noaudio -no-sim -no-boot-anim -no-snapshot 2>&1 & 
 
