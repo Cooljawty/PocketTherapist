@@ -22,10 +22,11 @@ jobs:
 
 # Configure android emulator
       - name: Create an Emulator
-        run: echo no | avdmanager create avd --name runner --package 'system-images;android-34;google_apis;x86_64' | echo
+        run: echo no | avdmanager create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
 
       - name: Run the emulators
-        run: $ANDROID_HOME/emulator/emulator @runner -noaudio -no-sim -no-boot-anim
+        run: |
+          $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim
 
       - name: Kill the emulator
         run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
