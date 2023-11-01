@@ -10,13 +10,15 @@ import 'package:flutter/material.dart';
 class NavBar extends StatelessWidget{
 	final List<Destination> destinations;
 
-	const NavBar({Key? key, required this.destinations}) : super(key: key);
+	final selectedIndex;
+
+	const NavBar({Key? key, required this.destinations, this.selectedIndex = 0}) : super(key: key);
 
 	@override
 	Widget build(BuildContext context) {
 		return NavigationBar(
 			destinations: destinations.map((destination) => destination.toWidget()).toList(),
-			selectedIndex: -1,
+			selectedIndex: this.selectedIndex,
 			onDestinationSelected: (int index) {
 				Navigator.of(context).pushReplacement(destinations[index].destination);
 			},
