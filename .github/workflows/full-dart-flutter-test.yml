@@ -22,11 +22,23 @@ jobs:
 
 # Configure android emulator
       - name: Create an Emulator
-        run: echo -e "\n" | avdmanager --verbose create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
+        run: echo -e "\n" | avdmanager --force --verbose create avd --name testrunner --package 'system-images;android-34;google_apis;x86_64'
+      
+      - name: List stuff
+        run: |
+          ls -la $HOME
+          pwd
+          ls -la $ANDROID_SDK_ROOT
+          ls -la $ANDROID_HOME
+          find $ANDROID_HOME -type f -iname *.ini 
 
       - name: Run the emulators
-        run:  $ANDROID_HOME/emulator/emulator -list-avds
-          # $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim
+        run: $ANDROID_HOME/emulator/emulator -avd @testrunner \
+          -noaudio \
+          -no-sim \
+          -no-boot-anim \
+          -no-snapshot 2>&1 & \
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done' $ANDROID_HOME/platform-tools/adb devices echo "Emulator started"
 
       - name: Kill the emulator
         run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
