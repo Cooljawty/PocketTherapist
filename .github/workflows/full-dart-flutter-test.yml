@@ -30,18 +30,18 @@ jobs:
           pwd
           ls -la $ANDROID_SDK_ROOT
           ls -la $ANDROID_HOME
-          find $ANDROID_HOME -type f -iname *.ini 
+          find $HOME/.android -type f -iname *.ini 
 
-      - name: Run the emulators
-        run: $ANDROID_HOME/emulator/emulator -avd @testrunner \
-          -noaudio \
-          -no-sim \
-          -no-boot-anim \
-          -no-snapshot 2>&1 & \
-          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done' $ANDROID_HOME/platform-tools/adb devices echo "Emulator started"
+          #      - name: Run the emulators
+          #        run: $ANDROID_HOME/emulator/emulator -avd @testrunner \
+          #          -noaudio \
+          #          -no-sim \
+          #          -no-boot-anim \
+          #          -no-snapshot 2>&1 & \
+          #          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done' $ANDROID_HOME/platform-tools/adb devices echo "Emulator started"
 
-      - name: Kill the emulator
-        run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
+          # - name: Kill the emulator
+          #   run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
 
           #      - name: Install Flutter
           #        uses: britannio/action-install-flutter@v1.1
