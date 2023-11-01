@@ -12,6 +12,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '20'
+          distribution: oracle
 # Android SDK
       - name: Android SDK Setup
         uses: android-actions/setup-android@v3.0.0
