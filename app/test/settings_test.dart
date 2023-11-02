@@ -29,7 +29,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that we have moved to the settings
-    expect(find.text('Settings'), findsNWidgets(2));
+    expect(find.text('Settings'), findsOneWidget);
   });
 
   testWidgets('Select Dark theme from dropdown', (tester) async {

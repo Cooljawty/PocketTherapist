@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/main.dart';
+import 'package:app/pages/dashboard.dart';
 
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:app/provider/theme_settings.dart';
 
 
 
@@ -52,7 +55,6 @@ void main() {
 
     // On Dashboard finding things
     await testNextPage('Entries',   'Entries',   tester);
-    await testNextPage('Settings',  'Settings',  tester);
     await testNextPage('Calendar',  'Calendar',  tester);
     await testNextPage('Dashboard', 'Dashboard', tester);
 
@@ -61,22 +63,28 @@ void main() {
   });
 
   testWidgets('Settings go to settings page', (WidgetTester tester) async {
+		ThemeData testBG = ThemeData.light();
+		var myApp = ChangeNotifierProvider(
+				create: (context) => ThemeSettings(),
+				builder: (context, child) {
+					final provider = Provider.of<ThemeSettings>(context);
+					testBG = provider.theme;
+					return MaterialApp(
+						debugShowCheckedModeBanner: false,
+						themeMode: ThemeMode.system,
+						theme: provider.theme,
+						home: const DashboardPage(),
+					);
+				}
+		);
 
-      var myApp = const MaterialApp(
-          home: Scaffold(
-              body: SafeArea(
-                child: SettingsButton(),
-              )
-          )
-      );
-
-
-    // Build our app and trigger a frame.
     await tester.pumpWidget(myApp);
-
+    await tester.pumpAndSettle();
+    
     // Tap the settings button
-    await tester.tap(find.byType(SettingsButton));
-    await tester.pump();
+		Finder navigationButton = find.byKey(Key('Settings'));
+		await tester.tap(navigationButton);
+		await tester.pumpAndSettle();
 
     // Verify that we have moved to the settings
     expect(find.text('Settings'), findsOneWidget);
