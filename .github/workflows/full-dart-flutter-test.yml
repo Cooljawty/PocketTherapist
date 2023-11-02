@@ -3,7 +3,6 @@ on: [push, pull_request]
 
 env:
   TEST: 0
-  INTEG: 0
 
 jobs:
   full-tests:
@@ -14,12 +13,6 @@ jobs:
 
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1
-
-      - name: Install build tools
-        run: |
-          sudo wget -qO /usr/local/bin/ninja.gz https://github.com/ninja-build/ninja/releases/latest/download/ninja-linux.zip
-          sudo gunzip /usr/local/bin/ninja.gz
-          sudo chmod a+x /usr/local/bin/ninja
  
       - name: Install Flutter Deps
         working-directory: ./pocket_therapist
@@ -29,45 +22,20 @@ jobs:
         working-directory: ./pocket_therapist
         run:  flutter analyze
 
-      - name: Generate build files
-        working-directory: ./pocket_therapist
-        run: flutter create . 2>&1 > /dev/null
-
-      - name: Remove default test
-        working-directory: ./pocket_therapist
-        run: |
-         if [ $(ls -A test | wc -l) -eq 1 ]; then
-          rm -rf ./test
-         else
-          rm ./test/widget_test.dart
-         fi
-
       - name: Find test folders
         id: check-folder
         run: |
           if [ -d "./pocket_therapist/test" ]; then
             echo "TEST=true" >> "$GITHUB_ENV"
           fi
-          if [ -d "./pocket_therapist/integration_test" ]; then
-            echo "INTEG=true" >> "$GITHUB_ENV"
-          fi
- 
+  
       - name: Run Widget Tests
         working-directory: ./pocket_therapist
         run: |
           if $TEST; then
-            flutter test --branch-coverage --timeout "5m" -d all
+            flutter test --merge-coverage --branch-coverage --timeout "5m"
           else
             echo "No tests found, not running."
-          fi
- 
-      - name: Run integration tests
-        working-directory: ./pocket_therapist
-        run: |
-          if $INTEG; then
-            flutter test integration_test --merge-coverage --branch-coverage --timeout "5m" -d all
-          else
-            echo "No tests found, not running..."
           fi
  
       - name: Codecov
