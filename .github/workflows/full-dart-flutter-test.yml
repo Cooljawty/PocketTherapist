@@ -62,6 +62,7 @@ jobs:
       - name: Find test folders
         id: check-folder
         run: |
+          ls -la ./pocket_therapist
           if [ -d "./pocket_therapist/test" ]; then
             TEST=1
           fi
