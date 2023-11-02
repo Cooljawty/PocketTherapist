@@ -12,42 +12,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-# Java
-#      - name: Setup JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '20'
-#          distribution: oracle
-#
-## Android SDK
-#      - name: Android SDK Setup
-#        uses: android-actions/setup-android@v3.0.0
-#
-#      - name: Install required emulator deps
-#        run: |
-#          sudo apt-get install libpulse0
-#          egrep -c '(vmx|svm)' /proc/cpuinfo
-#          exit 0
-#
-#      - name: Install Android system.img
-#        run: sdkmanager --install 'system-images;android-34;google_apis;x86_64'
-#
-## Configure android emulator
-#      - name: Create an Emulator
-#        run: echo "no" | avdmanager  --verbose create avd --force --name testrunner --package 'system-images;android-34;google_apis;x86_64' --device "pixel_7"
-#      
-#      - name: Make sym link for avd
-#        run: ln -s $HOME/.config/.android/avd $HOME/.android
-#     
-#      - name: Run the emulators
-#        run: $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim -no-snapshot 2>&1 & 
-#
-#      - name: Wait for boot
-#        run: $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done' $ANDROID_HOME/platform-tools/adb devices echo "Emulator started"
-#
-#      - name: Kill the emulator
-#        run: adb devices | grep emulator | cut -f1 | while read line; do adb -s $line emu kill; done
-
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1
  
@@ -58,7 +22,11 @@ jobs:
       - name: Run Flutter analysis
         working-directory: ./pocket_therapist
         run:  flutter analyze
- 
+
+      - name: Generate build files
+        working-directory: ./pocket_therapist
+        run: flutter create .
+
       - name: Find test folders
         id: check-folder
         run: |
