@@ -1,16 +1,8 @@
-// TODO: Convert to rootBundle.loadAssets()
-/// load bundle
-/// parse yml
-/// store values to variables
-/// access via exposed methods
-/// probably try isolates for scheduling background saving of settings
-/// save on close.
-
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:pocket_therapist/provider/encryptor.dart' as encryptor;
-import 'package:pocket_therapist/provider/theme_settings.dart';
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -51,6 +43,7 @@ File? _settingsFile;
 //Directory? _externalStorageDirectory;
 
 Future<void> load() async  {
+
     _settingsStorageDirectory = await getApplicationSupportDirectory();
     _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
     // first time setup
@@ -69,6 +62,7 @@ Future<void> load() async  {
         _settings = json.decode(fileContent);
         // Load encryption settings
         encryptor.load(_settings['enc']);
+
         // Erase from our reference, not used.
         _settings['enc'] = null;
       }

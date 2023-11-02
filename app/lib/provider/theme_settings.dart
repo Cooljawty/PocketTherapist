@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_therapist/provider/settings.dart' as settings;
+import 'package:app/provider/settings.dart' as settings;
 
 enum ThemeOption {
   light,

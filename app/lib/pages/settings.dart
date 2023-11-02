@@ -1,8 +1,8 @@
-import 'package:pocket_therapist/helper/file_manager.dart';
-import 'package:pocket_therapist/pages/calendar.dart';
-import 'package:pocket_therapist/provider/theme_settings.dart';
+import 'package:app/helper/file_manager.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -122,24 +122,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Manage Data'))),
 
               // Next calender page button
-              ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(CalendarPage.route());
-              }, child: const Text('nextPageCalendar') )
+              // ElevatedButton(onPressed: (){
+              //   Navigator.of(context).pushReplacement(CalendarPage.route());
+              // }, child: const Text('nextPageCalendar') )
             ],
           ),
         ));
   }
 }
-
-//
-// class SettingsManager extends ChangeNotifier {
-//
-//     // This will be changed to load and parse the settings.yml file with dart.yml
-//     static Future<void> loadSettings([String fileName= "settings.yml"]) {
-//       return Future.delayed (
-//         const Duration(seconds: 5),
-//           () => {"This": 0}
-//       );
-//     }
-//
-// }

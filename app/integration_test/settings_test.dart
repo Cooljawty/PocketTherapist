@@ -1,9 +1,9 @@
 import 'package:integration_test/integration_test.dart';
-import 'package:pocket_therapist/provider/theme_settings.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pocket_therapist/main.dart' as app;
-import 'package:pocket_therapist/provider/settings.dart' as settings;
+import 'package:app/main.dart' as app;
+import 'package:app/provider/settings.dart' as settings;
 
 void main() {
 
@@ -45,25 +45,9 @@ void main() {
     app.main();
     await widgetTester.pumpAndSettle();
 
-    //Tap start
-    Finder startbutton = find.byKey(const Key("Start_Button"));
-    expect(startbutton, findsOneWidget);
-    await widgetTester.tap(startbutton);
+    await widgetTester.tap(find.byKey(const Key("Settings_Button")));
     await widgetTester.pumpAndSettle();
-  
-    //Tap next
-    startbutton = find.text("nextPageEntries");
-    await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
-    //Tap next
-    startbutton = find.text("nextPagePlans");
-    await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
-    //Tap next
-    startbutton = find.text("nextPageSettings");
-    await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
-    //On settings PAge
+
     // Find the drop down
     
     final dropdown = find.byKey(const ValueKey('StyleDropDown'));
@@ -117,14 +101,6 @@ void main() {
     await widgetTester.pumpAndSettle();
 
     await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
-    await widgetTester.pumpAndSettle();
-    //Tap next
-    startbutton = find.text("nextPageCalendar");
-    await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
-    //Tap next
-    startbutton = find.text("nextPageDashboard");
-    await widgetTester.tap(startbutton);
     await widgetTester.pumpAndSettle();
   });
 

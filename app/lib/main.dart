@@ -1,8 +1,9 @@
-import 'package:pocket_therapist/pages/welcome.dart';
-import 'package:pocket_therapist/provider/settings.dart' as settings;
-import 'package:pocket_therapist/provider/theme_settings.dart';
+import 'package:app/pages/welcome.dart';
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 
 void main() async {
   //Things that need to be done before the application is ran.
@@ -15,7 +16,7 @@ void main() async {
 /// It contains the main functions and loading that will be necessary for
 /// the rest of the application to run.
 class RootApp extends StatefulWidget {
-  const RootApp({super.key }) ;
+  const RootApp({super.key}) ;
 
   @override
   State<RootApp> createState() => _RootAppState();

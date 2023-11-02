@@ -1,13 +1,15 @@
-import 'package:pocket_therapist/pages/dashboard.dart';
-import 'package:pocket_therapist/pages/settings.dart';
-import 'package:pocket_therapist/provider/encryptor.dart';
-import 'package:pocket_therapist/provider/encryptor.dart' as encryptor;
-import 'package:pocket_therapist/provider/settings.dart' as settings;
-import 'package:pocket_therapist/provider/theme_settings.dart';
-import 'package:pocket_therapist/uiwidgets/buttons.dart';
+import 'package:app/pages/dashboard.dart';
+import 'package:app/pages/settings.dart';
+import 'package:app/provider/encryptor.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/provider/settings.dart' as settings;
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/uiwidgets/buttons.dart';
 //add line for field import
-import 'package:pocket_therapist/uiwidgets/fields.dart';
+import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
+
+import '../uiwidgets/decorations.dart';
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
@@ -23,10 +25,9 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Center(
-          child: SingleChildScrollView(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -138,66 +139,11 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 ),
                 //use a container for the quote of the day
-                Container(
-                  width: 350,
-                  height: 230,
-                  decoration: BoxDecoration(
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .primary,
-                    borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Align(
-                          alignment: Alignment.topLeft,
-                          widthFactor: 2,
-                          child: Text(
-                            "Quote of the Day:",
-                            style: TextStyle(
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .background,
-                                fontSize: 20.0),
-                          )),
-                      //extra container to hold the quote
-                      Container(
-                        width: 310,
-                        height: 150,
-                        padding: const EdgeInsets.only(
-                            left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-                        decoration: BoxDecoration(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .background,
-                            border: Border.all(
-                              //left for now
-                              color: Colors.black,
-                              width: 3.0,
-                            ),
-                            borderRadius:
-                            const BorderRadius.all(Radius.circular(15.0))),
-                        //now we only need a text widget for quote
-                        child: const Text(
-                          // quote from app
-                          "''Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?''",
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const TextButton(
-                          onPressed: null, child: Text("New Quote")),
-                    ],
-                  ),
-                ),
+                Quote(),
               ],
             ),
           ),
         ),
-      ),
       floatingActionButton: FloatingActionButton(
         //add key for testing
         key: const Key('Settings_Button'),

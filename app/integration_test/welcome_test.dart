@@ -1,7 +1,7 @@
-import 'package:pocket_therapist/main.dart' as app;
+import 'package:app/main.dart' as app;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pocket_therapist/provider/settings.dart' as settings;
+import 'package:app/provider/settings.dart' as settings;
 
 
 void main() {
@@ -192,6 +192,13 @@ void main() {
 
     //Successful login, on dashboard
     expect(find.text("Dashboard"), findsOneWidget);
+
+    await widgetTester.tap(find.text("nextPageEntries"));
+    await  widgetTester.pumpAndSettle();
+    await widgetTester.tap(find.text("nextPagePlans"));
+    await  widgetTester.pumpAndSettle();
+    await widgetTester.tap(find.text("nextPageCalendar"));
+    await  widgetTester.pumpAndSettle();
   });
 
 }

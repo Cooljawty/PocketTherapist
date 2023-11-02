@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pocket_therapist/pages/entries.dart';
+import 'package:app/pages/entries.dart';
 
 void main () {
 

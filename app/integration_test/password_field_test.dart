@@ -1,4 +1,4 @@
-import 'package:pocket_therapist/uiwidgets/fields.dart';
+import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

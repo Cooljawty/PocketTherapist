@@ -52,4 +52,4 @@ app.*.map.json
 # macos builds here
 /macos
 #ios
-/ios
+
