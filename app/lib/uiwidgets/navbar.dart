@@ -21,7 +21,12 @@ class NavBar extends StatelessWidget{
 			selectedIndex: selectedIndex,
 			onDestinationSelected: (int index) {
 				if( index != selectedIndex ) {
-					Navigator.of(context).pushReplacement(destinations[index].destination);
+					switch (destinations[index].destinationMethod) {
+						case DestinationMethod.push:
+							Navigator.of(context).push(destinations[index].destination);
+						case DestinationMethod.pushReplacement:
+							Navigator.of(context).pushReplacement(destinations[index].destination);
+					};
 				}
 			},
 		);
@@ -35,8 +40,14 @@ class Destination {
 	final String label;
 	final IconData icon;
 	final Route<dynamic> destination;
+	final DestinationMethod destinationMethod;
 
-	Destination({required this.label, required this.icon, required this.destination});
+	Destination({
+		required this.label, 
+		required this.icon, 
+		required this.destination, 
+		this.destinationMethod = DestinationMethod.pushReplacement
+	});
 	
 	NavigationDestination toWidget() {
 		return NavigationDestination(
@@ -46,6 +57,8 @@ class Destination {
 		);
 	}
 }
+
+enum DestinationMethod { push, pushReplacement }
 
 ///List of common destinations.
 Map<String, Destination> destinations = {
@@ -68,5 +81,6 @@ Map<String, Destination> destinations = {
 		label: "Settings", 
 		icon: Icons.settings,        
 		destination: SettingsPage.route(),
+		destinationMethod: DestinationMethod.push,
 	),
 };
