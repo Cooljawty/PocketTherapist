@@ -74,6 +74,7 @@ jobs:
       - name: Run Widget Tests
         working-directory: ./pocket_therapist
         run: |
+          echo "$TEST / $INTEG"
           if [ "$TEST" -eq 1 ]; then
             flutter test --branch-coverage
             echo "Running tests..."
@@ -84,6 +85,7 @@ jobs:
       - name: Run integration tests
         working-directory: ./pocket_therapist
         run: |
+          echo "$TEST / $INTEG"
           if [ "$INTEG" -eq 1 ]; then
             flutter test integration_test --merge --branch-coverage
           else
