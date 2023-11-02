@@ -26,6 +26,9 @@ jobs:
       
       - name: Fix AVD_HOME
         run: ANDROID_AVD_HOME="/home/runner/.config/.android/avd"
+
+      - name: Enumerate .android
+        run: ls -laR $HOME/.android/
       
       - name: Run the emulators
         run: $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim -no-snapshot 2>&1 & 
