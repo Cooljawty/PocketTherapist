@@ -1,36 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Button that can do something that is just there.
-class StandardButton extends StatelessWidget {
-  final Widget child;
-  final Function()? onPressed;
-  const StandardButton({
-    super.key,
-    required this.child,
-    required this.onPressed
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: 270,
-        height: 45,
-        child: TextButton(
-          onPressed: onPressed,
-          child:  child,
-        )
-    );
-  }
-
-}
 
 /// Button that can do something with an elevation component
-class StandardElevatedButton extends StandardButton {
+class StandardElevatedButton extends StatelessWidget {
+  final Widget child;
+  final Function()? onPressed;
   final double elevation = 20.0;
   const StandardElevatedButton({
     super.key,
-    required super.child,
-    required super.onPressed,
+    required this.child,
+    required this.onPressed,
   });
 
   @override
