@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "$TEST / $INTEG"
           if $TEST; then
-            flutter test --branch-coverage
+            flutter test --branch-coverage --timeout "5m" -d all
             echo "Running tests..."
           else
             echo "No tests found, not running."
@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "$TEST / $INTEG"
           if $INTEG; then
-            flutter test integration_test --merge-coverage --branch-coverage
+            flutter test integration_test --merge-coverage --branch-coverage --timeout "5m" -d all
           else
             echo "No tests found, not running..."
           fi
