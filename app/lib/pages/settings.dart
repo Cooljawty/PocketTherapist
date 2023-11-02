@@ -1,5 +1,4 @@
 import 'package:app/provider/theme_settings.dart';
-import 'package:app/uiwidgets/navbar.dart';
 
 import 'package:flutter/material.dart';
 

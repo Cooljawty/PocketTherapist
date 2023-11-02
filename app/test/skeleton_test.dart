@@ -3,7 +3,6 @@ import 'package:app/main.dart';
 import 'package:app/pages/dashboard.dart';
 
 import 'package:flutter/material.dart';
-import 'package:app/uiwidgets/buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/theme_settings.dart';
@@ -63,12 +62,10 @@ void main() {
   });
 
   testWidgets('Settings go to settings page', (WidgetTester tester) async {
-		ThemeData testBG = ThemeData.light();
 		var myApp = ChangeNotifierProvider(
 				create: (context) => ThemeSettings(),
 				builder: (context, child) {
 					final provider = Provider.of<ThemeSettings>(context);
-					testBG = provider.theme;
 					return MaterialApp(
 						debugShowCheckedModeBanner: false,
 						themeMode: ThemeMode.system,
@@ -82,7 +79,7 @@ void main() {
     await tester.pumpAndSettle();
     
     // Tap the settings button
-		Finder navigationButton = find.byKey(Key('Settings'));
+		Finder navigationButton = find.byKey(const Key('Settings'));
 		await tester.tap(navigationButton);
 		await tester.pumpAndSettle();
 

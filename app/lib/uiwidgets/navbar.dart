@@ -26,7 +26,7 @@ class NavBar extends StatelessWidget{
 							Navigator.of(context).push(destinations[index].destination);
 						case DestinationMethod.pushReplacement:
 							Navigator.of(context).pushReplacement(destinations[index].destination);
-					};
+					}
 				}
 			},
 		);
