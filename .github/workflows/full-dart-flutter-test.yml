@@ -24,9 +24,12 @@ jobs:
       - name: Create an Emulator
         run: echo "no" | avdmanager  --verbose create avd --force --name testrunner --package 'system-images;android-34;google_apis;x86_64' --device "pixel_7"
       
-      - name: Enumerate .android
-        run: ln -s $HOME/.config/.android/avd $ANDROID_SDK_HOME
-      
+      - name: Make sym link for avd
+        run: ln -s $HOME/.config/.android/avd $HOME/.android
+     
+      - name: Check Symlink for avd
+        run: ls -la $HOME/.android/
+
       - name: Run the emulators
         run: $ANDROID_HOME/emulator/emulator @testrunner -noaudio -no-sim -no-boot-anim -no-snapshot 2>&1 & 
 
