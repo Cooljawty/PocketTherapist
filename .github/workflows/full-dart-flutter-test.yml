@@ -69,6 +69,7 @@ jobs:
           if [ -d "./pocket_therapist/integration_test" ]; then
             INTEG=1
           fi
+          echo "$TEST / $INTEG"
  
       - name: Run Widget Tests
         working-directory: ./pocket_therapist
