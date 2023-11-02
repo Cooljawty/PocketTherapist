@@ -15,22 +15,22 @@ jobs:
         uses: britannio/action-install-flutter@v1.1
  
       - name: Install Flutter Deps
-        working-directory: ./pocket_therapist
+        working-directory: ./app
         run:  flutter pub get > /dev/null
  
       - name: Run Flutter analysis
-        working-directory: ./pocket_therapist
+        working-directory: ./app
         run:  flutter analyze
 
       - name: Find test folders
         id: check-folder
         run: |
-          if [ -d "./pocket_therapist/test" ]; then
+          if [ -d "./app/test" ]; then
             echo "TEST=true" >> "$GITHUB_ENV"
           fi
   
       - name: Run Widget Tests
-        working-directory: ./pocket_therapist
+        working-directory: ./app
         run: |
           if $TEST; then
             flutter test --merge-coverage --branch-coverage --timeout "5m"
@@ -43,6 +43,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          files: ./pocket_therapist/coverage/lcov.info
+          files: ./app/coverage/lcov.info
           name: code-coverage
  
