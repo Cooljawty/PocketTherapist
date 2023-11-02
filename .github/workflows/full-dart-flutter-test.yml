@@ -21,8 +21,8 @@ jobs:
 
       - name: Install required emulator deps
         run: |
-          sudo apt-get install libpulse0 kvm-ok
-          kvm-ok
+          sudo apt-get install libpulse0
+          egrep -c '(vmx|svm)' /proc/cpuinfo
           exit 0
 
       - name: Install Android system.img
