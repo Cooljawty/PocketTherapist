@@ -1,4 +1,4 @@
-package org.pocket.therapist
+package com.example.myapp
 
 import androidx.test.rule.ActivityTestRule
 import dev.flutter.plugins.integration_test.FlutterTestRunner
