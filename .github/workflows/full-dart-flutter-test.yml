@@ -21,7 +21,9 @@ jobs:
 
       - name: Install required emulator deps
         run: |
-          sudo apt-get install libpulse0
+          sudo apt-get install libpulse0 kvm-ok
+          kvm-ok
+          exit 0
 
       - name: Install Android system.img
         run: sdkmanager --install 'system-images;android-34;google_apis;x86_64'
