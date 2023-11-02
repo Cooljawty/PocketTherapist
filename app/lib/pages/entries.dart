@@ -1,4 +1,3 @@
-import 'package:app/pages/plans.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
 
