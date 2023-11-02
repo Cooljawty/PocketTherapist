@@ -14,10 +14,13 @@ jobs:
 
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1
+
+      - name: Install build tools
+        run: sudo apt-get install build-essential
  
       - name: Install Flutter Deps
         working-directory: ./pocket_therapist
-        run:  flutter pub get
+        run:  flutter pub get > /dev/null
  
       - name: Run Flutter analysis
         working-directory: ./pocket_therapist
@@ -25,7 +28,7 @@ jobs:
 
       - name: Generate build files
         working-directory: ./pocket_therapist
-        run: flutter create .
+        run: flutter create . 2>&1 > /dev/null
 
       - name: Remove default test
         working-directory: ./pocket_therapist
@@ -45,15 +48,12 @@ jobs:
           if [ -d "./pocket_therapist/integration_test" ]; then
             echo "INTEG=true" >> "$GITHUB_ENV"
           fi
-          echo "$TEST / $INTEG"
  
       - name: Run Widget Tests
         working-directory: ./pocket_therapist
         run: |
-          echo "$TEST / $INTEG"
           if $TEST; then
             flutter test --branch-coverage --timeout "5m" -d all
-            echo "Running tests..."
           else
             echo "No tests found, not running."
           fi
@@ -61,7 +61,6 @@ jobs:
       - name: Run integration tests
         working-directory: ./pocket_therapist
         run: |
-          echo "$TEST / $INTEG"
           if $INTEG; then
             flutter test integration_test --merge-coverage --branch-coverage --timeout "5m" -d all
           else
