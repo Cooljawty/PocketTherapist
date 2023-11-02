@@ -16,7 +16,10 @@ jobs:
         uses: britannio/action-install-flutter@v1.1
 
       - name: Install build tools
-        run: sudo apt-get install build-essential
+        run: |
+          sudo wget -qO /usr/local/bin/ninja.gz https://github.com/ninja-build/ninja/releases/latest/download/ninja-linux.zip
+          sudo gunzip /usr/local/bin/ninja.gz
+          sudo chmod a+x /usr/local/bin/ninja
  
       - name: Install Flutter Deps
         working-directory: ./pocket_therapist
