@@ -1,10 +1,6 @@
 name: full-test-suite
 on: [push, pull_request]
 
-env:
-  TEST: 0
-  INTEG: 0
-
 jobs:
   full-tests:
     runs-on: ubuntu-latest
@@ -86,7 +82,7 @@ jobs:
         run: |
           echo "$TEST / $INTEG"
           if $INTEG; then
-            flutter test integration_test --merge --branch-coverage
+            flutter test integration_test --merge-coverage --branch-coverage
           else
             echo "No tests found, not running..."
           fi
