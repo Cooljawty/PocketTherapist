@@ -131,15 +131,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
         ),
-				bottomNavigationBar: NavBar(
-					selectedIndex: 3,
-					destinations: [
-						destinations['dashboard']!,
-						destinations['entries']!,
-						destinations['calendar']!,
-						destinations['settings']!,
-					],
-				),
 			);
   }
 }
