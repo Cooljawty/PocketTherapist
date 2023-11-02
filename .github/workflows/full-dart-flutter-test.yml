@@ -62,12 +62,11 @@ jobs:
       - name: Find test folders
         id: check-folder
         run: |
-          ls -la ./pocket_therapist
           if [ -d "./pocket_therapist/test" ]; then
-            TEST=1
+            echo "TEST=true" >> "$GITHUB_ENV"
           fi
           if [ -d "./pocket_therapist/integration_test" ]; then
-            INTEG=1
+            echo "INTEG=true" >> "$GITHUB_ENV"
           fi
           echo "$TEST / $INTEG"
  
@@ -75,7 +74,7 @@ jobs:
         working-directory: ./pocket_therapist
         run: |
           echo "$TEST / $INTEG"
-          if [ "$TEST" -eq 1 ]; then
+          if $TEST; then
             flutter test --branch-coverage
             echo "Running tests..."
           else
@@ -86,7 +85,7 @@ jobs:
         working-directory: ./pocket_therapist
         run: |
           echo "$TEST / $INTEG"
-          if [ "$INTEG" -eq 1 ]; then
+          if $INTEG; then
             flutter test integration_test --merge --branch-coverage
           else
             echo "No tests found, not running..."
