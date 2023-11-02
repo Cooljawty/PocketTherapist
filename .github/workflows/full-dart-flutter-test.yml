@@ -69,6 +69,7 @@ jobs:
         working-directory: ./pocket_therapist
         run: |
           if $TEST_DIR; then
+            echo "$TEST_DIR"
             flutter test --branch-coverage
             echo "Running tests..."
           else
