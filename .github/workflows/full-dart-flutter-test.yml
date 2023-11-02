@@ -27,6 +27,15 @@ jobs:
         working-directory: ./pocket_therapist
         run: flutter create .
 
+      - name: Remove default test
+        working-directory: ./pocket_therapist
+        run: |
+         if [ $(ls -A test | wc -l) -eq 1 ]; then
+          rm -rf ./test
+         else
+          rm ./test/widget_test.dart
+         fi
+
       - name: Find test folders
         id: check-folder
         run: |
