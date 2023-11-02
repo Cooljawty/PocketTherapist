@@ -24,11 +24,6 @@ class _EntriesPageState extends State<EntriesPage> {
       child: Column(
         children: [
           const Text('Entries'),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(PlansPage.route());
-              },
-              child: const Text('nextPagePlans')),
           //holds the list of entries
           Expanded(
               child: ListView.builder(
