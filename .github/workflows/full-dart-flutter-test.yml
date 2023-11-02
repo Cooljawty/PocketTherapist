@@ -2,8 +2,8 @@ name: full-test-suite
 on: [push, pull_request]
 
 env:
-  TEST: false
-  INTEG: false
+  TEST: 0
+  INTEG: 0
 
 jobs:
   full-tests:
@@ -63,17 +63,16 @@ jobs:
         id: check-folder
         run: |
           if [ -d "./pocket_therapist/test" ]; then
-            TEST=true
+            TEST=1
           fi
           if [ -d "./pocket_therapist/integration_test" ]; then
-            INTEG=true
+            INTEG=1
           fi
  
       - name: Run Widget Tests
         working-directory: ./pocket_therapist
         run: |
-          if $TEST; then
-            echo "$TEST"
+          if [ "$TEST" = 1 ]; then
             flutter test --branch-coverage
             echo "Running tests..."
           else
@@ -83,7 +82,7 @@ jobs:
       - name: Run integration tests
         working-directory: ./pocket_therapist
         run: |
-          if $INTEG; then
+          if [ "$INTEG" = 1 ]; then
             flutter test integration_test --merge --branch-coverage
           else
             echo "No tests found, not running..."
