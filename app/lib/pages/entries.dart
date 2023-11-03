@@ -1,13 +1,21 @@
 import 'package:app/pages/plans.dart';
-import 'package:app/pages/new_entry.dart';
+import 'package:app/pages/entry.dart';
+
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
+	final List<JournalEntry> entries = [ 
+		JournalEntry(
+			title: "Title", 
+			entryText: "Test entry\nthis text should not be in preview"
+		),
+	];
+
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
+    return MaterialPageRoute(builder: (context) => EntriesPage());
   }
 
-  const EntriesPage({super.key});
+	EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -20,33 +28,31 @@ class _EntriesPageState extends State<EntriesPage> {
         body: SafeArea(
           child: Column(
             children: [
-              const Text('Entries'),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(PlansPage.route());
-                  },
-                  child: const Text('nextPagePlans')),
-              //box SizedBox keeps the plan, tag, and save buttons on the bottom.
-              const Expanded(child: SizedBox(height: 1)),
-              //Row for overflow widget
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [Bar()],
-              ),
+              Container(
+								padding: const EdgeInsets.all(2), 
+								child: const Text('Entries'),
+							),
+							ListView.builder(
+								shrinkWrap: true,
+								itemCount: widget.entries.length,
+								itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
+							),
+							ElevatedButton(
+								onPressed: () {
+									Navigator.of(context).pushReplacement(PlansPage.route());
+								},
+								child: const Text('nextPagePlans')
+							),
+							//box SizedBox keeps the plan, tag, and save buttons on the bottom.
+							const Expanded(child: SizedBox(height: 1)),
+							//Row for overflow widget
+							const Row(
+								mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+								children: [Bar()],
+							),
             ],
           ),
-        ),
-      floatingActionButton: Padding(
-        key: const Key("New Entry Button"),
-        padding: const EdgeInsets.only(bottom: 50),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, NewEntryPage.route());
-          },
-          child: const Icon(Icons.add),
-        ),
-      )
-    );
+        ));
   }
 }
 

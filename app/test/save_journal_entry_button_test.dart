@@ -12,7 +12,7 @@ void main() {
         final newEntryButton = find.byKey(const ValueKey("New Entry Button"));
 
         //Target the Entries page
-        await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
+        await tester.pumpWidget(MaterialApp(home: EntriesPage()));
 
         //Focus on the simulating tapping of the three buttons
         await tester.tap(saveButton);

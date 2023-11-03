@@ -5,13 +5,14 @@ class ThemeSettings with ChangeNotifier {
   static ThemeData darkTheme = ThemeData.dark().copyWith(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)
-          .copyWith(
-          brightness: Brightness.dark, background: Colors.black54),
+          .copyWith(brightness: Brightness.dark, background: Colors.black54),
       textTheme: const TextTheme(
           bodyMedium: TextStyle(
-              color: Colors.deepOrangeAccent,
+              color: Colors.blueGrey,
               fontSize: 14,
-              fontWeight: FontWeight.bold)));
+              fontWeight: FontWeight.bold)),
+      primaryColor: Colors.deepOrange
+  );
 
   static ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
@@ -22,10 +23,12 @@ class ThemeSettings with ChangeNotifier {
     ),
     textTheme: const TextTheme(
       bodyMedium: TextStyle(
-          color: Colors.deepPurpleAccent,
+          color: Colors.blueGrey,
           fontSize: 14,
           fontWeight: FontWeight.bold),
     ),
+    primaryColor: Colors.deepPurple
+
   );
 
 
