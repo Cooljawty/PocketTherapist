@@ -63,14 +63,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Button for tags
-            // make tag input
-            SizedBox(
-                width: 240,
-                child: ElevatedButton(
-                    key: const Key("tagButton"),
-                    onPressed: () {},
-                    child: const Text("Tags"))),
 
             // Add emotion wheel
 

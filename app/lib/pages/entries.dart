@@ -54,6 +54,7 @@ class _EntriesPageState extends State<EntriesPage> {
                   onPressed: () {
                     makeNewEntry();
                   },
+                  key: const Key("New Entry"),
                   child: const Text('New Entry')
               ),
 							//box SizedBox keeps the plan, tag, and save buttons on the bottom.
