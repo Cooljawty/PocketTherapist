@@ -1,3 +1,4 @@
+import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:flutter/material.dart';
 
 /// This is used as a password field, but can be used for any generic secrets
@@ -6,70 +7,127 @@ import 'package:flutter/material.dart';
 ///
 /// Use the validator to provide validation to your field, this is required
 /// and returns null if valid.
-class PasswordField extends StatefulWidget {
+class ControlledTextField extends StatefulWidget {
   final String hintText;
-  final String? Function(String?)? validator;
-  const PasswordField({
-        super.key,
-        this.hintText = "Password",
-        required this.validator
-  });
+  final String? Function(String?) validator;
+  const ControlledTextField({
+        super.key, 
+        this.hintText = "Password", 
+        this.validator = encryptor.defaultValidator,
+      });
 
   @override
-  State<PasswordField> createState() => _PasswordFieldState();
+  State<ControlledTextField> createState() => _ControlledTextFieldState();
 }
 
-class _PasswordFieldState extends State<PasswordField> {
+class _ControlledTextFieldState extends State<ControlledTextField> {
   // This key is used only to differentiate it from everything else in the widget
   // tree
   final _formKey = GlobalKey<FormState>();
   // this is used to control and track the text that is in the field
-  final passwordController = TextEditingController();
+  final textController = TextEditingController();
   // This is used to requrest focus on the field
-  final passwordFocusNode = FocusNode();
+  final textFocusNode = FocusNode();
   // We obscure text by default
   bool _isObscured = true;
 
   @override
   void dispose() {
-    passwordController.dispose();
-    passwordFocusNode.dispose();
+    textController.dispose();
+    textFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
-      child: TextFormField(
-        //  This will only attempt to validate the field if user interacted
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            obscureText: _isObscured,
-            focusNode: passwordFocusNode,
-        // changes the keybaord that the system displays to one that supports
-        // email addressing with the @.
-            keyboardType: TextInputType.emailAddress,
-            controller: passwordController,
-            decoration: InputDecoration(
-              errorBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red),
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              ),
-              border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              ),
-              suffixIcon: IconButton(
-                padding: const EdgeInsetsDirectional.only(end: 12.0),
-                icon: _isObscured ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
-                // Updates the staet of the widget, requests a redraw.
-                onPressed: () {setState(() { _isObscured = ! _isObscured; }); },
-              ),
-              hintText: widget.hintText,
-              icon: const Icon(Icons.lock),
+        key: _formKey,
+        child: TextFormField(
+          onFieldSubmitted: (_) => textController.clear,
+          //  This will only attempt to validate the field if user interacted
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          obscureText: _isObscured,
+          focusNode: textFocusNode,
+          // changes the keybaord that the system displays to one that supports
+          // email addressing with the @.
+          keyboardType: TextInputType.emailAddress,
+          controller: textController,
+          decoration: InputDecoration(
+            errorBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
             ),
-            // Call whatever function is supplied.
-            validator: (value) => widget.validator!.call(value),
-          )
-    );
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            suffixIcon: IconButton(
+              padding: const EdgeInsetsDirectional.only(end: 12.0),
+              icon: _isObscured
+                  ? const Icon(Icons.visibility)
+                  : const Icon(Icons.visibility_off),
+              // Updates the state of the widget, requests a redraw.
+              onPressed: () => setState(() => _isObscured = !_isObscured),
+            ),
+            hintText: widget.hintText,
+          ),
+          // Call whatever function is supplied.
+          validator: widget.validator,
+        ));
   }
 }
+
+//
+// class ControlledInputDialog extends StatefulWidget  {
+//   final Widget? title;
+//   final Widget? content;
+//   final Key inputFieldKey;
+//   final String inputHintText;
+//   final String? Function(String?) validator;
+//   final List<ButtonStyleButton> actions;
+//   final List<void Function()> actionsOnPressedList;
+//
+//
+//   const ControlledInputDialog({
+//     super.key,
+//     required this.title,
+//     required this.content,
+//     required this.inputFieldKey,
+//     required this.inputHintText,
+//     required this.validator,
+//     required this.actions,
+//     required this.actionsOnPressedList
+//   });
+//
+//   @override
+//   State<ControlledInputDialog> createState() => _ControlledInputDialogState();
+// }
+//
+// class _ControlledInputDialogState extends State<ControlledInputDialog> {
+//   bool isInputValid = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return AlertDialog(
+//         backgroundColor: Theme.of(context).colorScheme.onBackground,
+//         title: widget.title,
+//         content: ControlledTextField(
+//             key: widget.inputFieldKey,
+//             hintText: widget.inputHintText,
+//             validator: (value) {
+//                 String? result = widget.validator.call(value);
+//                 if(result == null || result.isEmpty){
+//                    setState(() {
+//                      isInputValid  = true;
+//                    });
+//                 } else {
+//                   setState(() {
+//                     isInputValid = false;
+//                   });
+//                 }
+//                 return result;
+//             },
+//     ),
+//     actions: [
+//     );
+//   }
+//}
