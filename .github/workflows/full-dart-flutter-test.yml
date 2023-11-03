@@ -1,22 +1,43 @@
 name: full-test-suite
 on: [push, pull_request]
+
+env:
+  TEST: 0
+
 jobs:
-  testing:
+  full-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
       - name: Install Flutter
-        uses: britannio/action-install-flutter@v1.1      
+        uses: britannio/action-install-flutter@v1.1
+ 
       - name: Install Flutter Deps
         working-directory: ./app
-        run:  flutter pub get
+        run:  flutter pub get > /dev/null
+ 
       - name: Run Flutter analysis
         working-directory: ./app
         run:  flutter analyze
-      - name: Run Flutter Tests
+
+      - name: Find test folders
+        id: check-folder
+        run: |
+          if [ -d "./app/test" ]; then
+            echo "TEST=true" >> "$GITHUB_ENV"
+          fi
+  
+      - name: Run Widget Tests
         working-directory: ./app
-        run: flutter test --branch-coverage
+        run: |
+          if $TEST; then
+            flutter test --merge-coverage --branch-coverage --timeout "5m"
+          else
+            echo "No tests found, not running."
+          fi
+ 
       - name: Codecov
         uses: codecov/codecov-action@v3
         env:
@@ -24,5 +45,4 @@ jobs:
         with:
           files: ./app/coverage/lcov.info
           name: code-coverage
-          verbose: true
-          
+ 

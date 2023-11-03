@@ -1,14 +1,16 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/pages/entries.dart';
 
-void main() {
+void main () {
+
   testWidgets('Test the save, plan, and tag buttons',
           (WidgetTester tester) async {
         //Create values for keys
-        final saveButton = find.byKey(const ValueKey("saveButton"));
-        final planButton = find.byKey(const ValueKey("planButton"));
-        final tagButton = find.byKey(const ValueKey("tagButton"));
+        final saveButton = find.byKey(const Key("saveButton"));
+        final planButton = find.byKey(const Key("planButton"));
+        final tagButton = find.byKey(const Key("tagButton"));
 
         //Target the Entries page
         await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
