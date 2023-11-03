@@ -12,9 +12,6 @@ class ThemeSettings with ChangeNotifier {
               fontSize: 14,
               fontWeight: FontWeight.bold)),
       primaryColor: Colors.deepOrange,
-			navigationBarTheme: const NavigationBarThemeData(
-				labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-			),
   );
 
   static ThemeData lightTheme = ThemeData.light().copyWith(
@@ -31,9 +28,6 @@ class ThemeSettings with ChangeNotifier {
           fontWeight: FontWeight.bold),
     ),
     primaryColor: Colors.deepPurple,
-			navigationBarTheme: const NavigationBarThemeData(
-				labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-			),
   );
 
 

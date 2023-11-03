@@ -18,6 +18,7 @@ class NavBar extends StatelessWidget{
 	Widget build(BuildContext context) {
 		return NavigationBar(
 			destinations: destinations.map((destination) => destination.toWidget()).toList(),
+			labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
 			selectedIndex: selectedIndex,
 			onDestinationSelected: (int index) {
 				if( index != selectedIndex ) {
