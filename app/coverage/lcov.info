@@ -577,7 +577,6 @@ DA:21,1
 DA:22,1
 DA:24,1
 DA:25,0
->>>>>>> main
 LF:12
 LH:11
 BRDA:6,0,0,1
@@ -672,6 +671,9 @@ BRDA:87,0,0,3
 BRDA:101,0,0,1
 BRDA:105,0,0,1
 BRDA:109,0,0,1
+=======
+LH:12
+>>>>>>> refs/remotes/origin/29-display-card
 end_of_record
 SF:lib/pages/plans.dart
 DA:5,1
