@@ -4,12 +4,6 @@ import 'package:app/pages/entry.dart';
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
-	final List<JournalEntry> entries = [ 
-		JournalEntry(
-			title: "Title", 
-			entryText: "Test entry\nthis text should not be in preview"
-		),
-	];
 
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => EntriesPage());
