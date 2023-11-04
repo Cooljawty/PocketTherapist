@@ -1,55 +1,89 @@
-import 'package:app/pages/new_entry.dart';
 import 'package:app/pages/plans.dart';
-import 'package:app/pages/entry.dart';
-
 import 'package:flutter/material.dart';
+import 'package:app/pages/entry.dart';
+import 'new_entry.dart';
 
 class EntriesPage extends StatefulWidget {
-	final List<JournalEntry> entries = [ 
-		JournalEntry(
-			title: "Title", 
-			entryText: "Test entry\nthis text should not be in preview"
-		),
-	];
-
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => EntriesPage());
   }
 
-	EntriesPage({super.key});
+  final List<JournalEntry> entries = [
+    JournalEntry(
+        title: "Title",
+        entryText: "Test entry\nthis text should not be in preview"
+    ),
+  ];
+
+  EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
 }
 
 class _EntriesPageState extends State<EntriesPage> {
+  //Generated list of strings
+  final items = List<String>.generate(5, (i) => 'Entry $i');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
           child: Column(
             children: [
-              Container(
-								padding: const EdgeInsets.all(2), 
-								child: const Text('Entries'),
-							),
-
+              const Text('Entries'),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(PlansPage.route());
+                  },
+                  child: const Text('nextPagePlans')),
+              //holds the list of entries
               // List of entries
-							ListView.builder(
-								shrinkWrap: true,
-								itemCount: widget.entries.length,
-								itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
-							),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.entries.length,
+                itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
+              ),
 
-              // Temporary navigation button
-							ElevatedButton(
-								onPressed: () {
-									Navigator.of(context).pushReplacement(PlansPage.route());
-								},
-								child: const Text('nextPagePlans')
-							),
+              Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    /*prototypeItem: ListTile(
+                  title: Text(items.first),
+                ),*/
+                    itemBuilder: (context, index) {
+                      final item = items[index];
 
-              // Button to add a new Entry
+                      return Dismissible(
+                        // Each Dismissible must contain a Key. Keys allow Flutter to
+                        // uniquely identify widgets.
+                        key: Key(item),
+                        //prevents right swipes
+                        direction: DismissDirection.endToStart,
+
+                        // Provide a function that tells the app
+                        // what to do after an item has been swiped away.
+                        onDismissed: (direction) {
+                          // Remove the item from the data source.
+                          setState(() {
+                            items.removeAt(index);
+                          });
+
+                          // Then show a snackbar.
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text('$item dismissed')));
+                        },
+                        // Show a red background as the item is swiped away.
+                        background:
+                        Container(color: Theme.of(context).colorScheme.primary),
+                        child: ListTile(
+                          title: Text(item),
+                        ),
+                      );
+                    },
+                  )
+                //ListViewBuilder(),
+              ),
               ElevatedButton(
                   onPressed: () {
                     makeNewEntry();
@@ -57,13 +91,8 @@ class _EntriesPageState extends State<EntriesPage> {
                   key: const Key("New Entry"),
                   child: const Text('New Entry')
               ),
-							//box SizedBox keeps the plan, tag, and save buttons on the bottom.
-							const Expanded(child: SizedBox(height: 1)),
-							//Row for overflow widget
-							const Row(
-								mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-								children: [Bar()],
-							),
+              //box SizedBox keeps the plan, tag, and save buttons on the bottom.
+              const Expanded(child: SizedBox(height: 1)),
 
 
             ],
