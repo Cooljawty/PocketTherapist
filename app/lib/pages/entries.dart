@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 class EntriesPage extends StatefulWidget {
 
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => EntriesPage());
+    return MaterialPageRoute(builder: (context) => const EntriesPage());
   }
 
-	EntriesPage({super.key});
+	const EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
