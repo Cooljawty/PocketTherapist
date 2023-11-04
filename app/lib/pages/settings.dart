@@ -1,9 +1,9 @@
+import 'package:app/helper/file_manager.dart';
 import 'package:app/provider/theme_settings.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:app/helper/file_manager.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
-    chosenTheme = provider.getTheme();
+    chosenTheme = provider.currentThemeName;
     return Scaffold(
       
         // Invisible app bar
@@ -77,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         // if changed set the new theme
                         onChanged: (item) => setState(() {
                           chosenTheme = item;
-                          provider.changeTheme(chosenTheme);
+                          provider.changeTheme(chosenTheme!);
                         }),
                       ))),
               // Edit emotions list button
@@ -105,6 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
+                    key: const Key('Select_New_Vault'),
                       onPressed: () {},
                       child: Text(dir))),
 
