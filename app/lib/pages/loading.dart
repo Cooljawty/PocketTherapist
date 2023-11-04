@@ -22,7 +22,7 @@
 //             )
 //         ),
 //         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-//           Image.asset('assets/logo.png', scale: 4),
+//           Image.asset('assets/logoLarge.png', scale: 4),
 //           const SizedBox(height: 20.0),
 //           Text(
 //             'Pocket Therapist is loading',

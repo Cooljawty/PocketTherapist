@@ -1,8 +1,8 @@
-import 'package:app/pages/calendar.dart';
+import 'package:app/helper/file_manager.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/provider/theme_settings.dart';
-import 'package:app/helper/file_manager.dart';
+
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
-    chosenTheme = provider.getTheme();
+    chosenTheme = provider.currentThemeName;
     return Scaffold(
         // Invisible app bar
         appBar: AppBar(
@@ -74,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         // if changed set the new theme
                         onChanged: (item) => setState(() {
                           chosenTheme = item;
-                          provider.changeTheme(chosenTheme);
+                          provider.changeTheme(chosenTheme!);
                         }),
                       ))),
               // Edit emotions list button
@@ -102,6 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
+                    key: const Key('Select_New_Vault'),
                       onPressed: () {},
                       child: Text(dir))),
 
@@ -121,24 +122,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const Text('Manage Data'))),
 
               // Next calender page button
-              ElevatedButton(onPressed: (){
-                Navigator.of(context).pushReplacement(CalendarPage.route());
-              }, child: const Text('nextPageCalendar') )
+              // ElevatedButton(onPressed: (){
+              //   Navigator.of(context).pushReplacement(CalendarPage.route());
+              // }, child: const Text('nextPageCalendar') )
             ],
           ),
         ));
   }
 }
-
-//
-// class SettingsManager extends ChangeNotifier {
-//
-//     // This will be changed to load and parse the settings.yml file with dart.yml
-//     static Future<void> loadSettings([String fileName= "settings.yml"]) {
-//       return Future.delayed (
-//         const Duration(seconds: 5),
-//           () => {"This": 0}
-//       );
-//     }
-//
-// }

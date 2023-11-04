@@ -1,509 +1,442 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
+import 'package:app/provider/encryptor.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/provider/settings.dart' as settings;
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/uiwidgets/buttons.dart';
 //add line for field import
 import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
-//add line for shared preferences
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../uiwidgets/decorations.dart';
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
-  //add route for later use
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const WelcomePage());
-  }
-
-  //for now it requires a title but since the welcome page is always the welcome
-  //page we could change this
   const WelcomePage({super.key});
 
-  //override the new state
   @override
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  //add in boolean that will be used to hold the shared preference and control
-  //the display
-  late bool dataInit = false;
-  //update from late variable to regular bool for coverage
-  bool isPasswordCorrect = false;
-  final TextEditingController _passwordController = TextEditingController();
-
-  // better to have var up here than to make a local one
-  SharedPreferences? _preferences;
-
-  //add function to set shared preference
-  Future setDataPref(bool setValue) async {
-    //store value in shared pref
-    _preferences?.setBool('DataInitialized', setValue);
-    //ensure both match up
-    dataInit = setValue;
-    //update page after setting
-    setState(() {});
-  }
-
-  //add function to retrieve stored value
-  Future<bool> getDataPref() async {
-    // get the instance
-    _preferences = await SharedPreferences.getInstance();
-
-    //if data ref is null create it
-    if (_preferences?.getBool('DataInitialized') == null) {
-      //case: new user
-      //initialize shared preference
-      _preferences?.setBool('DataInitialized', false);
-      //ensure both match up
-      dataInit = false;
-    } else {
-      //user has dataInitialized but no password set
-      //grab preference data for password
-      if (_preferences?.getString('Password') == null) {
-        //no password is found/ users first time using app
-        dataInit = false;
-        _preferences?.setBool('DataInitialized', dataInit);
-      } else if (_preferences?.getString('Password') == "") {
-        //if no password is used then user chose to have no password
-        isPasswordCorrect = true;
-        dataInit = _preferences?.getBool('DataInitialized') ?? false;
-      } else {
-        //then there must be a password set and we must match it
-        if (_preferences?.getString('Password') != null) {
-          isPasswordCorrect = false;
-          //update Data initialized in case it is false
-          dataInit = true;
-          _preferences?.setBool('DataInitialized', dataInit);
-          dataInit = _preferences?.getBool('DataInitialized') ?? false;
-        }
-      }
-    }
-    //update page after we grab the correct value for our shared pref
-    setState(() {});
-    return dataInit;
-  }
-
-  //override the initial state to add in the shared preferences
-  @override
-  void initState() {
-    //initialize boolean into shared preference or vice versa if already exist
-    getDataPref();
-    //run initial state of app
-    super.initState();
-  }
-
-  //save the password in the text field
-  void _savePassword() {
-    // get the text in the box
-    String password = _passwordController.text;
-    if (password == "") {
-      isPasswordCorrect = true;
-    }
-    // save the password
-    _preferences?.setString('Password', password);
-    //call to set dataInitialized and update state
-    setDataPref(true);
-    setState(() {});
-  }
-
-  //in the case of empty password we set isPasswordCorrect to true so only the
-  //start button is displayed on the welcome page
-  void _saveEmptyPassword() async {
-    _preferences = await SharedPreferences.getInstance();
-    _preferences?.setString('Password', "");
-    await setDataPref(true);
-    isPasswordCorrect = true;
-    setState(() {});
-  }
-
-  // erase the password in the text field
-  void _erasePassword() {
-    _preferences?.remove('Password');
-  }
-
-  // get the saved password
-  String _getPassword() {
-    // get the instance
-    String? password = _preferences?.getString('Password');
-
-    // check if null
-    password ??= "password";
-
-    // return the password
-    return password;
-  }
-
-//modify the validation method to match validator type
-  String? mainValidator(String? fieldContent) {
-    String textField = fieldContent ?? "";
-    String password = _getPassword();
-    // if password matches
-    if (textField == password) {
-      //update isPasswordCorrect
-      isPasswordCorrect = true;
-      return 'Access Granted';
-      //currently this works and updates the screen after the correct
-      //password is inputed. Only updates after form is submitted
-    } else {
-      isPasswordCorrect = false;
-    }
-    return 'Password';
-  }
-
-  //reset preferences for testing purposes and later can be used for reseting password
-  void resetPreferences() async {
-    _preferences = await SharedPreferences.getInstance();
-    //delete the password if there is one
-    _erasePassword();
-    //remove dataInitialized
-    await _preferences?.remove('DataInitialized') ?? false;
-    //reInitialize the data with DataInitialized being false so we have a valid
-    //new user state
-    await getDataPref();
-    //update widgets on screen
-    setState(() {});
-  }
-
   //duplicate build method from example with changes noted below
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //remove app bar entirely since it is not yet used
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //add spacer widget for the top of the page
-            const Spacer(
-              flex: 10,
-            ),
-            //replace text button with container for cleaner code
-            Container(
-              //apply custom container properties for title
-              //font length plus padding
-              width: 350,
-              //minimum height is acquired from fontSize from top and bottom padding
-              //on edge for symmetry
-              height: 35,
-              padding: const EdgeInsets.only(
-                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(15.0))),
-              //child is title text
-              child: Text(
-                'Pocket Therapist',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-
-            // add in expanded widget to create a dynamic image size and so
-            //test cases pass
-            const Expanded(
-              flex: 40,
-              //add image line to show logo place holder
-              child: Image(
-                image: AssetImage('assets/logo.png'),
-                width: 240.0,
-              ),
-            ),
-            //add another container instead of button for the welcome text
-            Container(
-              //apply custom container properties for title
-              //font length plus padding
-              width: 280,
-              //minimum height is acquired from fontSize border radius
-              height: 31,
-              padding: const EdgeInsets.only(
-                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(15.0))),
-              //child is title text
-              child: Text(
-                'How are you "really" feeling today?',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-            //spacer between quote and password field
-            const Spacer(
-              flex: 1,
-            ),
-            //to limit the text fields with we add a sized box
-            SizedBox(
-                width: 350,
-                child:
-                    //add in code block to determine what to display
-                    (() {
-                  //if data is initialized and isPassword correct is false to indicate
-                  //there is a password
-                  if (dataInit == true && isPasswordCorrect == false) {
-                    //replace in favor of garrets password field
-                    return PasswordField(
-                      //key used in test case
-                      key: const Key('Password_Field'),
-                      hintText: "Enter Your Password",
-                      //temperary validation method without encryption
-                      validator: mainValidator,
-                    );
-                    //if it is null or false then we display the start button
-                  } else {
-                    //sized box  to display start button
-                    return SizedBox(
-                        width: 270,
-                        height: 45,
-                        child:
-                            //start button
-                            TextButton(
-                          //key is called in testing
-                          key: const Key("Start_Button"),
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 10.0,
-                            shadowColor: Theme.of(context).colorScheme.shadow,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            //add padding to shape the button
-                            padding: const EdgeInsets.only(
-                              left: 0.0,
-                              right: 0.0,
-                              top: 0.0,
-                              bottom: 0.0,
-                            ),
-                          ),
-                          //current on press event acts as if user set up database
-                          onPressed: () async {
-                            //check first if account exist
-                            if (dataInit == false) {
-                              //prompt for password set up
-                              passwordPrompt();
-                            } else {
-                              //if the data is already initialized then user chose
-                              //no password and grant entry ie navigate to dashboard
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DashboardPage()));
-                            }
-                          },
-                          child: Text(
-                            //slightly different theme for start button
-                            style: Theme.of(context).textTheme.headlineSmall,
-                            'Start',
-                          ),
-                        ));
-                  }
-                }())),
-            //for spacing between password field and reset password add a spacer widget
-            const Spacer(
-              flex: 1,
-            ),
-            //using sized box for standardized sizing
-            SizedBox(
-              width: 350,
-              height: 60,
-              child:
-                  //reset password button
-                  TextButton(
-                key: const Key('Reset_Button'),
-                style: TextButton.styleFrom(
-                    elevation: 10.0,
-                    shadowColor: Theme.of(context).colorScheme.shadow,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    //add padding to shape the button
-                    padding: const EdgeInsets.only(
-                      left: 0.0,
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                    )),
-                //use commented out function to test shared preferences during run time
-                onPressed: () async {
-                  //update to delete all data preferences
-                  resetPreferences();
-                  //call to change the state to account creation page
-                },
-                child: Text(
-                  //use theme from main
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  'Reset Password',
-                ),
-              ),
-            ),
-            //spacer between reset and erase everything
-            const Spacer(
-              flex: 1,
-            ),
-            //add sized box button for erase everything
-            SizedBox(
-              width: 350,
-              height: 60,
-              child:
-                  //erase everything button
-                  TextButton(
-                style: TextButton.styleFrom(
-                    elevation: 10.0,
-                    shadowColor: Theme.of(context).colorScheme.shadow,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    //add padding to shape the button
-                    padding: const EdgeInsets.only(
-                      left: 0.0,
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                    )),
-                onPressed: null,
-                child: Text(
-                  //copy style from text theme in main
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  'Erase everything',
-                ),
-              ),
-            ),
-            //spacer for after erase everything and quote of the day
-            const Spacer(
-              flex: 1,
-            ),
-            //use a container for the quote of the day
-            Container(
-              width: 350,
-              height: 240,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Align(
-                      alignment: Alignment.topLeft,
-                      widthFactor: 2,
-                      child: Text(
-                        "Quote of the Day:",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize: 20.0),
-                      )),
-                  //extra container to hold the quote
-                  Container(
-                    width: 310,
-                    height: 150,
-                    padding: const EdgeInsets.only(
-                        left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        border: Border.all(
-                          //left for now
-                          color: Colors.black,
-                          width: 3.0,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(15.0))),
-                    //now we only need a text widget for quote
-                    child: const Text(
-                      // quote from app
-                      "''Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?''",
-                      textAlign: TextAlign.center,
-                    ),
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                // Title
+                Container(
+                  width: 350,
+                  height: 60,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                    boxShadow: ThemeSettings.defaultBoxShadow,
                   ),
-                  const TextButton(onPressed: null, child: Text("New Quote")),
-                ],
-              ),
+                  //child is title text
+                  child: Text(
+                    'Pocket Therapist',
+                    textAlign: TextAlign.center,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headlineSmall,
+                  ),
+                ),
+                // Logo
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Container(
+                      height: 250,
+                      width: 250,
+                      decoration: BoxDecoration(
+                        boxShadow: ThemeSettings.defaultBoxShadow,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Image(
+                        image: AssetImage('assets/logoSmall.png'),
+                      )
+                  ),
+                ),
+                // Catch Phrase
+                Container(
+                  width: 280,
+                  height: 30,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                    boxShadow: ThemeSettings.defaultBoxShadow,
+                  ),
+                  //child is title text
+                  child: Text(
+                    'How are you "really" feeling today?',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyLarge,
+                  ),
+                ),
+                // Start Button
+                Padding(
+                  padding: const EdgeInsets.only(top: 25, bottom: 40),
+                  child: Column(
+                    children: [
+                      StandardElevatedButton(
+                        key: const Key("Start_Button"),
+                        onPressed: () => _handleStartPress(context),
+                        child: const Text(
+                          'Start',
+                          style: TextStyle(color: Colors.amber),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Reset Password Button
+                      StandardElevatedButton(
+                        key: const Key("Reset_Button"),
+                        onPressed: () => _handleResetPasswordPress(context),
+                        child: Text(
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyLarge,
+                          'Reset Password',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Erase everything
+                      StandardElevatedButton(
+                        key: const Key("Erase_Button"),
+                        onPressed: () => _handleResetEverythingPress(context),
+                        child: Text(
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyLarge,
+                          'Erase Everything',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //use a container for the quote of the day
+                Quote(),
+              ],
             ),
-            //spacer for after erase everything and quote of the day
-            const Spacer(
-              flex: 1,
-            ),
-          ],
+          ),
         ),
-      ),
       floatingActionButton: FloatingActionButton(
         //add key for testing
         key: const Key('Settings_Button'),
         onPressed: () {
           Navigator.push(
-              // Go to settings page
+            // Go to settings page
               context,
               MaterialPageRoute(builder: (context) => const SettingsPage()));
         },
         tooltip: 'Settings',
-        backgroundColor: Theme.of(context).colorScheme.onBackground,
-        foregroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .onBackground,
+        foregroundColor: Theme
+            .of(context)
+            .colorScheme
+            .background,
         shape: const CircleBorder(eccentricity: 1.0),
         child: const Icon(Icons.settings),
       ),
     );
   }
 
-  Future passwordPrompt() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.onBackground,
-          title: const Text("First time user?"),
-          content: const Text("Would you like to set a password?"),
-          actions: [
-            TextButton(
-                //add key for testing
-                key: const Key('Require_Password_Option'),
-                onPressed: () {
-                  //create situation to save password to local storage
-                  Navigator.of(context).pop();
-                  createPassword();
-                },
-                child: const Text("Yes")),
-            TextButton(
-                //add key for reference within code test
-                key: const Key('No_Password_Option'),
-                onPressed: () {
-                  //save empty password
-                  _saveEmptyPassword();
-                  //pop dialouge window
-                  Navigator.of(context).pop();
-                  //go to dashboard
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const DashboardPage()));
-                },
-                child: const Text("No")),
-          ],
-        ),
-      );
-  //create a new prompt that prompts the user for a password and after hitting save
-  //runs the save password function to save either the password written or nothing
-  //if user did not write anything
-  Future createPassword() => showDialog(
+  /// [_handleStartPress] handles taps of the start button, it uses the next 5
+  /// methods
+  /// - [_createPassword] - Creates the password if we are in that state
+  /// - [_confirmPassword] - Accepts a 2nd password to compare to the 1st
+  /// - [_finishConfiguraton] - Completes the configuraiton process for passwords
+  ///                           and recovery phrases
+  /// - [_attemptLogin] - Attempts to the log the user in after receiving the
+  ///                     credentials
+  /// - [_verifyPassword] - Displays the errors or completes the transition to
+  ///                       the DashboardPage
+  void _handleStartPress(BuildContext context) async {
+    if (settings.isConfigured()) {
+      if (settings.isEncryptionEnabled()) {
+        _attemptLogin(context);
+      }
+      else {
+        // Password not set, but initialized, no check, just entry to dashboard.
+        Navigator.pushReplacement(
+            context,
+            DashboardPage.route());
+      }
+    }
+    else {
+      _createPassword(context);
+    }
+  }
+
+  /// [_handleResetPasswordPress] - Requests the users 5 word phrase and interacts
+  ///                             with [encryptor] to perform verification and reset
+  ///                             If successful will start the [_createPassword]
+  ///                             Process.
+  void _handleResetPasswordPress(BuildContext context) async {
+    // if (settings.isConfigured()) {
+    //   await showDialog(
+    //     context: context,
+    //     builder: (context) =>
+    //         AlertDialog(
+    //           backgroundColor: Theme
+    //               .of(context)
+    //               .colorScheme
+    //               .onBackground,
+    //           title: const Text("Reset Password"),
+    //           content: ControlledTextField(
+    //             validator: (value) {
+    //               return null;
+    //             },
+    //           ),
+    //           actions: [
+    //             TextButton(
+    //                 key: const Key('Reset_Password'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //
+    //                 },
+    //                 child: const Text("Enter")),
+    //           ],
+    //         ),
+    //   );
+    // }
+  }
+
+  /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
+  ///                                 all user data & passwords securely.
+  void _handleResetEverythingPress(BuildContext context) async {
+    // if (settings.isConfigured()) {
+    //   await showDialog(
+    //     context: context,
+    //     // Display prompt for password entry. it must be set.
+    //     builder: (context) =>
+    //         AlertDialog(
+    //           backgroundColor: Theme
+    //               .of(context)
+    //               .colorScheme
+    //               .onBackground,
+    //           title: const Text("Reset Everything"),
+    //           actions: [
+    //             TextButton(
+    //                 key: const Key('Reset_Everything'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //                 },
+    //                 child: const Text("Yes")),
+    //             TextButton(
+    //                 key: const Key('Dont_Reset_Everything'),
+    //                 onPressed: () async {
+    //                   //Reset the password
+    //                 },
+    //                 child: const Text("No")),
+    //           ],
+    //         ),
+    //   );
+    // }
+  }
+
+
+  void _createPassword(BuildContext context) async {
+    String password = "";
+    // Not initialized
+    await showDialog(
       context: context,
-      builder: ((context) => AlertDialog(
-            backgroundColor: Theme.of(context).colorScheme.onBackground,
-            title: const Text("Enter your new Password"),
+      // Start user creation process.
+      builder: (context) =>
+          AlertDialog(
+            backgroundColor: Theme
+                .of(context)
+                .colorScheme
+                .onBackground,
+            title: const Text("Encryption?"),
+            // User enters password, which is either empty (no encryption)
+            // or is valid, and must be confirmed.
+            content: ControlledTextField(
+                key: const Key('Enter_Password_Field'),
+                hintText: "Enter a password (Optional)",
+                validator: (value) {
+                  String? message = encryptor.defaultValidator(value);
+                  password = value ?? "";
+                  return message;
+                }
+            ),
             actions: [
-              TextField(
-                //using password controller to save new password
-                controller: _passwordController,
-              ),
+              TextButton(
+                  key: const Key('Create_Password'),
+                  onPressed: () => _confirmPassword(context, password),
+                  child: const Text("Enter")),
+            ],
+          ),
+    );
+  }
+
+  void _confirmPassword(BuildContext context, String password) async {
+    bool match = false;
+    // if password supplied and valid
+    if (password.isNotEmpty) {
+      // begin confirmation loop (verification)
+      await showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                backgroundColor: Theme
+                    .of(context)
+                    .colorScheme
+                    .onBackground,
+                title: const Text("Confirm your password"),
+                content: ControlledTextField(
+                    key: const Key('Confirm_Password_Field'),
+                    hintText: "Confirm Password",
+                    validator: (value) {
+                      match = password == value;
+                      return match ? null : "Passwords do not match.";
+                    }
+                ),
+                actions: [
+                  TextButton(
+                    key: const Key('Verify_Password'),
+                    onPressed: () => match? _finishConfiguraton(context, password): null,
+                    child: const Text("Enter"),
+                  ),
+                ],
+              )
+      );
+    }
+    // No password supplied
+    else {
+      //Password is empty, prompt for confirmation (ensure no encryption)
+      await showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                backgroundColor: Theme
+                    .of(context)
+                    .colorScheme
+                    .onBackground,
+                title: const Text("No Encryption?"),
+                content: const Text(
+                    'Encryption can keep your private thoughts, private. Continue?'),
+                actions: [
+                  TextButton(
+                      key: const Key('Confirm_No_Password'),
+                      onPressed: () => _finishConfiguraton(context, password),
+                      child: const Text("Yes")
+                  ),
+                  TextButton(
+                      key: const Key('Cancel_No_Password'),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(); // remove confirmation window to entry password.
+                      },
+                      child: const Text("No")
+                  ),
+                ],
+              ));
+    }
+    // This is vital to security. must sanitize these fields.
+    password = "";
+    match = false;
+  }
+
+  void _finishConfiguraton(BuildContext context, String password) async {
+    settings.setPassword(password); // empty password no encryption
+    settings.setEncryptionStatus(password.isNotEmpty);
+    settings.setConfigured(true);
+    settings.save();
+    Navigator.of(context).pop(); // remove confirmation window
+    Navigator.of(context).pop(); // remove inital entry window
+    Navigator.pushReplacement(
+        context, DashboardPage.route()); // Move to dashboard w/o encryption
+  }
+
+  void _attemptLogin(BuildContext context) async {
+    String passwordFieldText = "";
+    await showDialog(
+      context: context,
+      builder: (context) =>
+          AlertDialog(
+            backgroundColor: Theme
+                .of(context)
+                .colorScheme
+                .onBackground,
+            title: const Text("Welcome Back!"),
+            content: ControlledTextField(
+              key: const Key("Login_Password_Field"),
+              hintText: "Enter your password", validator: (value) {
+              passwordFieldText = value ?? "";
+              if (value == null || value.isEmpty) {
+                return "Field is empty!";
+              }
+              return null;
+            },),
+            actions: [
+              // Entering the password, verify, and then report to user.
               TextButton(
                 //add key for testing
-                key: const Key('Save_Password'),
-                onPressed: () {
-                  //new password is made so update to false
-                  isPasswordCorrect = false;
-                  //if password is empty isPasswordCorrect will be overwritten
-                  _savePassword();
-                  Navigator.of(context).pop();
-                  //go to dashboard
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const DashboardPage()));
-                },
-                child: const Text('Save Password'),
-              )
+                  key: const Key('Submit_Password'),
+                  onPressed: () => _verifyPassword(context, passwordFieldText),
+                  child: const Text("Enter")
+              ),
             ],
-          )));
+          ),
+    );
+  }
+
+  void _verifyPassword(BuildContext context, String password) async {
+    if (verifyPassword(password)) {
+      password = "";
+      Navigator.of(context).pop();
+      Navigator.pushReplacement(context, DashboardPage.route());
+    }
+    else {
+      await showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                backgroundColor: Theme
+                    .of(context)
+                    .colorScheme
+                    .onBackground,
+                title: const Text("Incorrect Password"),
+                actions: [
+                  TextButton(
+                    key: const Key(
+                        'Confirm_Incorrect_Password'),
+                    onPressed: Navigator
+                        .of(context)
+                        .pop,
+                    child: const Text("Ok"),
+                  )
+                ],
+              )
+      );
+    }
+  }
 }

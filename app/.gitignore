@@ -43,12 +43,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Limit coverage
-/coverage
-
-# Only track lcov.info from coverage
-!lcov.info
-
 # Windows builds here
 /windows
 # Web Builds here
@@ -57,3 +51,5 @@ app.*.map.json
 /linux
 # macos builds here
 /macos
+#ios
+
