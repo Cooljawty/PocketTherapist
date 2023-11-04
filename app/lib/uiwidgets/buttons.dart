@@ -1,54 +1,33 @@
-import 'package:app/pages/settings.dart';
 import 'package:flutter/material.dart';
 
-// Button for settings
-class SettingsButton extends StatelessWidget {
-  const SettingsButton({Key? key}) : super(key: key);
+
+/// Button that can do something with an elevation component
+class StandardElevatedButton extends StatelessWidget {
+  final Widget child;
+  final Function()? onPressed;
+  final double elevation = 20.0;
+  const StandardElevatedButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Welcome Screen"),
-          backgroundColor: Colors.deepPurpleAccent,
-          shadowColor: Colors.orangeAccent,
+    Color shadowColor = Theme.of(context).colorScheme.shadow;
+    Color backgroundColor = Theme.of(context).colorScheme.primary;
+    return SizedBox(
+      width: 350,
+      height: 50,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          elevation: elevation,
+          shadowColor: shadowColor,
+          backgroundColor: backgroundColor,
         ),
-        body: Container(
-            color: Colors.white54,
-            child: Center(
-              child: GestureDetector(   // Detect if pushed
-                  onTap: () {
-                    Navigator.push(     // Go to settings page
-                        context, MaterialPageRoute(builder: (context) => const SettingsPage())
-                    );
-                  },
-                  child: Container(     // Decoration
-                    height: 50,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.deepPurpleAccent,
-                          spreadRadius: 3,
-                          blurRadius: 13,
-                          offset: Offset(5, 10),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Text("Settings",
-                          style: TextStyle(
-                              color: Colors.deepPurple,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18)
-                      ),
-                    ),
-                  )
-              ),
-            )
-        )
+        child:  child,
+      )
     );
   }
 }

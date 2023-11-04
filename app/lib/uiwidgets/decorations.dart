@@ -1,15 +1,18 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:yaml/yaml.dart';
-YamlList? quotes;
+List<String> quotes = [
+  "Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?",
+  "I have love in me the likes of which you can scarcely imagine and rage the likes of which you would not believe. If I cannot satisfy the one, I will indulge the other.",
+  "There is no good or evil, just men trying to control the world.",
+];
 
 class Quote extends StatefulWidget {
   final Random rand = Random();
   Quote({super.key});
 
   String newQuote(){
-    return quotes![rand.nextInt(quotes!.length)];
+    return quotes[rand.nextInt(quotes.length)];
   }
 
   @override
@@ -22,7 +25,6 @@ class _QuoteState extends State<Quote> {
   @override
   void initState() {
     super.initState();
-    assert(quotes != null, throw StateError("Quotes were not properly initialized. Cannot continue."));
     currentQuote = widget.newQuote();
   }
 
@@ -31,7 +33,7 @@ class _QuoteState extends State<Quote> {
     return
       Container(
         width: 350,
-        height: 240,
+        height: 225,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: const BorderRadius.all(Radius.circular(30.0)),
@@ -49,8 +51,7 @@ class _QuoteState extends State<Quote> {
             Container(
               width: 310,
               height: 150,
-              padding: const EdgeInsets.only(
-                  left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+              padding: const EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                   border: Border.all(
