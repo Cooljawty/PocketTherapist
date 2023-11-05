@@ -117,15 +117,14 @@ class _TagSettingsState extends State<TagSettingsPage> {
                   );
                   return finalColumn;
                 } else {
-                  //final column starts will text wigdet displayed
-                  Column finalColumn = Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [const Text("List of compatable tags: ")]);
+                  List<Widget> childofColumn = [
+                    const Text("List of compatable tags: ")
+                  ];
                   //if comptable list is still null nothing has been searched
                   List<String> compList = compatableTagList ?? tagList;
                   for (int index = 0; index < compList.length; index++) {
                     //generate 1 row for each name in list
-                    finalColumn.children.add(Row(
+                    childofColumn.add(Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         //first child is tag
@@ -138,6 +137,10 @@ class _TagSettingsState extends State<TagSettingsPage> {
                       ],
                     ));
                   }
+                  //final column starts will text wigdet displayed
+                  Column finalColumn = Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: childofColumn);
                   return finalColumn;
                 }
               })()),
