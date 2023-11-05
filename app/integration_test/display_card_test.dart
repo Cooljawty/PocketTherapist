@@ -8,11 +8,13 @@ void main() {
 	final entry = JournalEntry( 
 		title: "Title of entry text", 
 		entryText: "Actual text of entry.\nMade long to test preview",
+		date: DateTime(2023, 11, 4),
 	);
 
 	final testObj = TestObject(
 		title: "Test Object Title",
-		body: "Body text of Test Object"
+		body: "Body text of Test Object",
+		date: DateTime(2023, 11, 5),
 	);
 
 	late Widget myApp;
@@ -25,7 +27,8 @@ void main() {
 							DisplayCard(
 								title: entry.getTitle(), 
 								body: entry.getPreviewText(),
-								page: EntryPage.route(entry: entry)
+								page: EntryPage.route(entry: entry),
+								date: entry.getDate(),
 							),
 							testObj.asDisplayCard(),
 						],
@@ -82,8 +85,9 @@ void main() {
 class TestObject with DisplayOnCard{
 	String title;
 	String body;
+	DateTime date;
 
-	TestObject({this.title = "", required this.body}){
-		card = (title: title, body: body);
+	TestObject({this.title = "", required this.body, required this.date}){
+		card = (title: title, body: body, date: date);
 	}
 }
