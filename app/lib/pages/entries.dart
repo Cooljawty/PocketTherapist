@@ -23,43 +23,36 @@ class EntriesPage extends StatefulWidget {
 
 class _EntriesPageState extends State<EntriesPage> {
   //Generated list of strings
-  final items = List<String>.generate(5, (i) => 'Entry $i');
+  final items = List<JournalEntry>.generate(5, (i) => JournalEntry(
+		title: "Entry $i",
+		entryText: "This is the ${i}th entry",
+	));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-          child: Column(
-            children: [
-              const Text('Entries'),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(PlansPage.route());
-                  },
-                  child: const Text('nextPagePlans')),
-              //holds the list of entries
-              // List of entries
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.entries.length,
-                itemBuilder: (context, index) => widget.entries[index].asDisplayCard(),
-              ),
+      child: Column(
+        children: [
+          const Text('Entries'),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(PlansPage.route());
+              },
+              child: const Text('nextPagePlans')),
+          //holds the list of entries
+          Expanded(
+              child: ListView.builder(
+							itemCount: items.length,
+							itemBuilder: (context, index) {
+              final item = items[index];
 
-              Expanded(
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    /*prototypeItem: ListTile(
-                  title: Text(items.first),
-                ),*/
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-
-                      return Dismissible(
-                        // Each Dismissible must contain a Key. Keys allow Flutter to
-                        // uniquely identify widgets.
-                        key: Key(item),
-                        //prevents right swipes
-                        direction: DismissDirection.endToStart,
+              return Dismissible(
+                // Each Dismissible must contain a Key. Keys allow Flutter to
+                // uniquely identify widgets.
+                key: Key(item.getTitle()),
+                //prevents right swipes
+                direction: DismissDirection.endToStart,
 
                         // Provide a function that tells the app
                         // what to do after an item has been swiped away.
@@ -69,20 +62,19 @@ class _EntriesPageState extends State<EntriesPage> {
                             items.removeAt(index);
                           });
 
-                          // Then show a snackbar.
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text('$item dismissed')));
-                        },
-                        // Show a red background as the item is swiped away.
-                        background:
-                        Container(color: Theme.of(context).colorScheme.primary),
-                        child: ListTile(
-                          title: Text(item),
-                        ),
-                      );
-                    },
-                  )
-                //ListViewBuilder(),
+                  // Then show a snackbar.
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('$item dismissed')));
+                },
+                // Show a red background as the item is swiped away.
+                background: Container(
+									color: Theme.of(context).colorScheme.primary
+								),
+                child: item.asDisplayCard(),
+              );
+            },
+          )
+              //ListViewBuilder(),
               ),
               ElevatedButton(
                   onPressed: () {

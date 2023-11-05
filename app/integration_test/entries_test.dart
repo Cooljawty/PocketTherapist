@@ -9,7 +9,7 @@ void main() {
         final newEntryButton = find.byKey(const ValueKey("New Entry"));
 
         //Target the Entries page
-        await tester.pumpWidget(MaterialApp(home: EntriesPage()));
+        await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
 
         expect(newEntryButton, findsOneWidget);
 
