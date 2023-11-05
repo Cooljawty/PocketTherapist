@@ -7,12 +7,16 @@ class JournalEntry with DisplayOnCard {
 	String _title = "";
 	String _previewText = "";
 	String _entryText = "";
+	// year, month, day
+	DateTime current = DateTime.now();
+	DateTime _date = DateTime(1970, 12, 31);
 
 	static const previewLength = 25;
 
-	JournalEntry({required title, required entryText}){
+	JournalEntry({required title, required entryText, required date}){
 		_title = title;
 		_entryText = entryText;
+		_date = date;
 		
 		final preview = _entryText.split("\n").first;
 		_previewText = preview.substring(0, min(previewLength, preview.length));
@@ -20,6 +24,7 @@ class JournalEntry with DisplayOnCard {
 		card = (
 			title: _title,
 			body: getPreviewText(),
+		  date: _date,
 		);	
 
 		pageRoute = EntryPage.route(entry: this);
@@ -27,6 +32,7 @@ class JournalEntry with DisplayOnCard {
 	String getPreviewText() => _previewText;
 	String getEntryText() => _entryText;
 	String getTitle() => _title;
+	DateTime getDate() => _date;
 
 	/* TODO
 	int _id;
@@ -62,15 +68,6 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
-		//Text style is taken from app theme
-		final theme = Theme.of(context);
-		final titleStyle = theme.textTheme.titleMedium!.copyWith(
-			color: theme.colorScheme.onBackground,
-		);
-		final textStyle = theme.textTheme.bodyMedium!.copyWith(
-			color: theme.colorScheme.onBackground,
-		);
-
     return Scaffold(
 			body: SafeArea(
 				child: Center(
@@ -82,7 +79,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( widget.entry.getTitle(), style: titleStyle),
+										Text( widget.entry.getTitle()),
 									],
 								),
 							),
@@ -92,7 +89,7 @@ class _EntryPageState extends State<EntryPage> {
 								child: Wrap( 
 									direction: Axis.vertical,
 									children: <Widget>[ 
-										Text( widget.entry.getEntryText(), style: textStyle), 
+										Text( widget.entry.getEntryText()),
 									],
 								),
 							),

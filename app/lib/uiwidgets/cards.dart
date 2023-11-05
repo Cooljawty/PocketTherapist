@@ -1,13 +1,17 @@
+import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:app/pages/settings.dart';
+import 'package:app/provider/theme_settings.dart';
 
 /// A card that displays text with a title and main text bocy
 class DisplayCard extends StatefulWidget {
 	final String title;
 	final String body;
+	final DateTime date;
 
 	final Route<dynamic>? page;
 
-  const DisplayCard({super.key, required this.title, required this.body, this.page});
+  const DisplayCard({super.key, required this.title, required this.body, required this.date, this.page});
 
 	@override
 	State<DisplayCard> createState() => _DisplayCardState();
@@ -16,15 +20,6 @@ class DisplayCard extends StatefulWidget {
 class _DisplayCardState extends State<DisplayCard> {
 	@override
   Widget build(BuildContext context) {
-
-		//Text style is taken from app theme
-		final theme = Theme.of(context);
-		final titleStyle = theme.textTheme.titleMedium!.copyWith(
-			color: theme.colorScheme.onBackground,
-		);
-		final previewStyle = theme.textTheme.bodyMedium!.copyWith(
-			color: theme.colorScheme.onBackground,
-		);
 
 		return  Container(
 			//The card should take the full width of the screen (with some padding)
@@ -42,12 +37,12 @@ class _DisplayCardState extends State<DisplayCard> {
 				},
 
 				child: Card( 
-					color: theme.colorScheme.background, 
+					color: getCurrentTheme().colorScheme.background,
 					shape: RoundedRectangleBorder(
 						side: BorderSide(
-							color: Theme.of(context).colorScheme.outline,
+							color: getCurrentTheme().colorScheme.outline,
 						),
-						borderRadius: const BorderRadius.all(Radius.circular(4)),
+						 borderRadius: const BorderRadius.all(Radius.circular(4)),
 					),
 
 					//Here is where the content is displayed
@@ -56,11 +51,15 @@ class _DisplayCardState extends State<DisplayCard> {
 						children: <Widget>[ 
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( widget.title, style: titleStyle, ),
+								child: Text( widget.title,),
 							),
 							Container(
 								padding: const EdgeInsets.all(6),
-								child: Text( widget.body, style: previewStyle, ), 
+								child: Text( widget.body,),
+							),
+							Container(
+								padding: const EdgeInsets.all(6),
+								child: Text( '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',),
 							),
 						],
 					),
@@ -71,11 +70,11 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 mixin DisplayOnCard{
-	({String title, String body}) card = (title: "", body: "");
+	({String title, String body, DateTime date}) card = (title: "", body: "", date: DateTime.now());
 
 	Route<dynamic>? pageRoute;
 
 	DisplayCard asDisplayCard() {
-		return DisplayCard(title: card.title, body: card.body, page: pageRoute);
+		return DisplayCard(title: card.title, body: card.body, date: card.date, page: pageRoute);
 	}
 }

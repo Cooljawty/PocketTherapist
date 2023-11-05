@@ -18,7 +18,7 @@ class ThemeSettings with ChangeNotifier {
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
         .copyWith(
         brightness: Brightness.dark,
-        background: Colors.black,
+        background: Colors.deepPurple.shade700,
         primary: Colors.deepPurpleAccent
     ),
     // textTheme: TextTheme(
