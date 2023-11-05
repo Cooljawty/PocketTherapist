@@ -91,9 +91,6 @@ void main() {
     await widgetTester.tap(find.text('Edit Emotion List'));
     await widgetTester.pumpAndSettle();
 
-    await widgetTester.tap(find.text('Edit Tag List'));
-    await widgetTester.pumpAndSettle();
-
     await widgetTester.tap(find.text('Enable/Disable Encryption'));
     await widgetTester.pumpAndSettle();
 
@@ -102,7 +99,8 @@ void main() {
 
     await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
     await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Edit Tag List'));
+    await widgetTester.pumpAndSettle();
   });
-
-
 }

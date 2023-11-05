@@ -2,7 +2,7 @@ import 'package:app/helper/file_manager.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'settings_tag.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -88,7 +88,13 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            // Go to settings page
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TagSettingsPage()));
+                      },
                       child: const Text('Edit Tag List'))),
 
               // Enable/Disable encryption Button
