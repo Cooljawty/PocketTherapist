@@ -5,17 +5,10 @@ import 'new_entry.dart';
 
 class EntriesPage extends StatefulWidget {
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => EntriesPage());
+    return MaterialPageRoute(builder: (context) => const EntriesPage());
   }
 
-  final List<JournalEntry> entries = [
-    JournalEntry(
-        title: "Title",
-        entryText: "Test entry\nthis text should not be in preview"
-    ),
-  ];
-
-  EntriesPage({super.key});
+  const EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -97,7 +90,7 @@ class _EntriesPageState extends State<EntriesPage> {
   makeNewEntry() async {
     final result = await Navigator.push(context, NewEntryPage.route());
     setState(() {
-      widget.entries.add(result);
+      items.add(result);
     });
   }
 }
