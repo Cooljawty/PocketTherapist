@@ -16,5 +16,9 @@ void main() {
         await tester.tap(newEntryButton);
         await tester.pumpAndSettle();
 
+        final saveButton = find.byKey(const ValueKey("saveButton"));
+        await tester.tap(saveButton);
+        await tester.pumpAndSettle();
+
       });
 }
