@@ -5,7 +5,7 @@ import 'package:app/pages/entries.dart';
 void main() {
   testWidgets('Remove an entry from the list.', (WidgetTester tester) async {
     final entryKey = find.byKey(const ValueKey("Entry 0"));
-    await tester.pumpWidget(MaterialApp(home: EntriesPage()));
+    await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
 
     await tester.pump();
     //confirm that entry exist
