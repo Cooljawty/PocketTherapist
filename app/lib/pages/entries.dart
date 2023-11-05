@@ -58,7 +58,7 @@ class _EntriesPageState extends State<EntriesPage> {
 
                   // Then show a snackbar.
                   ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('$item dismissed')));
+                      .showSnackBar(SnackBar(content: Text('${item.getTitle()} dismissed')));
                 },
                 // Show a red background as the item is swiped away.
                 background: Container(
