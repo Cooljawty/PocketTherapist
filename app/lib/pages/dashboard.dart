@@ -30,6 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
 					destinations['dashboard']!,
 					destinations['entries']!,
 					destinations['calendar']!,
+					destinations['plans']!,
 					destinations['settings']!,
 				],
 			),

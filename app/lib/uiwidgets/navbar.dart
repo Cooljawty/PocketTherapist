@@ -1,6 +1,7 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
 import 'package:app/pages/calendar.dart';
+import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class Destination {
 	
 	NavigationDestination toWidget() {
 		return NavigationDestination(
-			key: Key(label),
+			key: Key("Navbar_Destination_$label"),
 			icon: Icon(icon),
 			label: label,
 		);
@@ -77,6 +78,11 @@ Map<String, Destination> destinations = {
 		label: "Calendar", 
 		icon: Icons.calendar_month, 
 		destination: CalendarPage.route(),
+	),
+	"plans": Destination( 
+		label: "Plans", 
+		icon: Icons.event_note, 
+		destination: PlansPage.route(),
 	),
 	"settings": Destination( 
 		label: "Settings", 

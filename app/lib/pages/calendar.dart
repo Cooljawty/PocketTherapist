@@ -30,6 +30,7 @@ class _CalendarPageState extends State<CalendarPage> {
 					destinations['dashboard']!,
 					destinations['entries']!,
 					destinations['calendar']!,
+					destinations['plans']!,
 					destinations['settings']!,
 				],
 			),

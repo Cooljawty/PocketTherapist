@@ -79,6 +79,7 @@ class _EntriesPageState extends State<EntriesPage> {
 				destinations['dashboard']!,
 				destinations['entries']!,
 				destinations['calendar']!,
+				destinations['plans']!,
 				destinations['settings']!,
 			],
 		),
