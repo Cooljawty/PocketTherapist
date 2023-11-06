@@ -1,124 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app/uiwidgets/navbar.dart';
+import 'package:app/main.dart';
 
 void main() {
-  late Widget myApp;
-
-  setUp(() => {
-		myApp = const MaterialApp(
-			home: TestPage(),
-		)
-	});
-
-  testWidgets('Test Navbar constructor', (tester) async {
-    await tester.pumpWidget(myApp);
+  testWidgets('Navagation between pages', (tester) async {
+    await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle();
 
-		expect(find.byType(NavBar), findsOneWidget);
-  });
-
-  testWidgets('Navagate between pages', (tester) async {
-    await tester.pumpWidget(myApp);
+    Finder startbutton = find.byKey(const Key("Start_Button"));
+    expect(startbutton, findsOneWidget);
+    await tester.tap(startbutton);
     await tester.pumpAndSettle();
 
-		//Each navbar item's key is the same as it's label
-		var navbarItem = find.byKey(const Key("Page 2"));
+    Finder encryptionAlert = find.byType(AlertDialog);
+    expect(encryptionAlert, findsOneWidget);
 
-		await tester.tap(navbarItem);
-		await tester.pumpAndSettle();
-		expect(find.text("Page 2"), findsOneWidget);
+    Finder enterPasswordButton = find.byKey(const Key('Create_Password'));
+
+    await tester.tap(enterPasswordButton);
+    await tester.pumpAndSettle();
+    encryptionAlert = find.byType(AlertDialog);
+    expect(encryptionAlert, findsNWidgets(2)); 
+
+    Finder confirmPasswordButton = find.text("Yes");
+    expect(confirmPasswordButton, findsOneWidget);
+    await tester.tap(confirmPasswordButton);
+    await tester.pumpAndSettle();
 		
-		navbarItem = find.byKey(const Key("Page"));
+		expect(find.text("Dashboard"), findsNWidgets(2));
+		
+		//Navigate to each page
+		for (var page in ["Dashboard", "Entries", "Calendar", "Settings"]){
+			await tester.tap(find.byKey(Key("Navbar_Destination_${page}")));
+			await tester.pumpAndSettle();
 
-		await tester.tap(navbarItem);
+			expect(find.text(page), findsNWidgets(2));
+		}
+
+		//Back out of settings page
+		await tester.pageBack();
 		await tester.pumpAndSettle();
-		expect(find.text("Page"), findsOneWidget);
+		expect(find.text("Calendar"), findsNWidgets(2));
 
   });
 }
 
-class TestPage extends StatefulWidget{
-	static Route<dynamic> route(){
-		return MaterialPageRoute(builder: (context) => const TestPage());
-	}
-
-	const TestPage({super.key});
-
-	@override
-	State<TestPage> createState() => _TestPageState();
-
-}
-
-class _TestPageState extends State<TestPage> {
-	@override
-	Widget build(BuildContext context) {
-		return Scaffold(
-			body: const SafeArea(
-				child: Column(
-					children: [
-						Text('Test Page'),
-					],
-				),
-			),
-			bottomNavigationBar: NavBar(
-				//A NavigationBar must contian atlest two items, 
-				//thus the navbar includes the page itself
-				destinations: [
-					Destination(
-						label: "Page",
-						icon: Icons.turn_right,
-						destination: TestPage.route(),
-					),
-					Destination(
-						label: "Page 2",
-						icon: Icons.turn_right,
-						destination: TestPage2.route(),
-					),
-				],
-			),
-		);
-	}
-}
-
-class TestPage2 extends StatefulWidget{
-	static Route<dynamic> route(){
-		return MaterialPageRoute(builder: (context) => const TestPage2());
-	}
-
-	const TestPage2({super.key});
-
-	@override
-	State<TestPage2> createState() => _TestPage2State();
-
-}
-
-class _TestPage2State extends State<TestPage2> {
-	@override
-	Widget build(BuildContext context) {
-		return Scaffold(
-			body: const SafeArea(
-				child: Column(
-					children: [
-						Text('Test Page 2'),
-					],
-				),
-			),
-			bottomNavigationBar: NavBar(
-				destinations: [
-					Destination(
-						label: "Page",
-						icon: Icons.turn_right,
-						destination: TestPage.route(),
-					),
-					Destination(
-						label: "Page 2",
-						icon: Icons.turn_right,
-						destination: TestPage2.route(),
-					),
-				],
-			),
-		);
-	}
-}
