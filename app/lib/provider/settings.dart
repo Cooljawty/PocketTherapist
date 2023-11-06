@@ -74,13 +74,13 @@ Future<void> load() async {
       // Erase from our reference, not used.
       _settings['enc'] = null;
 
-      Map<String, dynamic> tagstorage;
+      List<dynamic> dynamicList;
       //load tags
       if (_settings['tags'] != null) {
-        tagstorage = _settings['tags'];
+        dynamicList = _settings['tags'];
         tagList = [];
-        for (int i = 0; i < tagstorage.length; i++) {
-          tagList.add(tagstorage[i] as String);
+        for (int i = 0; i < dynamicList.length; i++) {
+          tagList.add(dynamicList[i] as String);
         }
       }
     }
@@ -133,7 +133,7 @@ Future<void> save() async {
   settings['enc'] = encrypted;
 
   //add lines to update tags
-  _settings['tags'] = tagList;
+  settings['tags'] = tagList;
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);
