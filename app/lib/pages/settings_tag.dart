@@ -32,7 +32,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
       prov.tagList.add(name);
       //call save
       prov.save();
-      //declare compatable list and add new name
+      //declare compatible list and add new name
       compatableTagList ??= [];
       compatableTagList?.add(name);
     }

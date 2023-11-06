@@ -25,9 +25,9 @@ class NavBar extends StatelessWidget{
 				if( index != selectedIndex ) {
 					switch (destinations[index].destinationMethod) {
 						case DestinationMethod.push:
-							Navigator.of(context).push(destinations[index].destination);
+							Navigator.of(context).push(destinations[index].destination());
 						case DestinationMethod.pushReplacement:
-							Navigator.of(context).pushReplacement(destinations[index].destination);
+							Navigator.of(context).pushReplacement(destinations[index].destination());
 					}
 				}
 			},
@@ -41,7 +41,7 @@ class NavBar extends StatelessWidget{
 class Destination {
 	final String label;
 	final IconData icon;
-	final Route<dynamic> destination;
+	final dynamic destination;
 	final DestinationMethod destinationMethod;
 
 	Destination({
@@ -67,27 +67,27 @@ Map<String, Destination> destinations = {
 	"dashboard": Destination( 
 		label: "Dashboard", 
 		icon: Icons.dashboard,       
-		destination: DashboardPage.route(),
+		destination: (() => DashboardPage.route()),
 	),
 	"entries": Destination( 
 		label: "Entries", 
 		icon: Icons.feed,            
-		destination: EntriesPage.route(),
+		destination: (() => EntriesPage.route()),
 	),
 	"calendar": Destination( 
 		label: "Calendar", 
 		icon: Icons.calendar_month, 
-		destination: CalendarPage.route(),
+		destination: (() => CalendarPage.route()),
 	),
 	"plans": Destination( 
 		label: "Plans", 
 		icon: Icons.event_note, 
-		destination: PlansPage.route(),
+		destination: (() => PlansPage.route()),
 	),
 	"settings": Destination( 
 		label: "Settings", 
 		icon: Icons.settings,        
-		destination: SettingsPage.route(),
+		destination: (() => SettingsPage.route()),
 		destinationMethod: DestinationMethod.push,
 	),
 };
