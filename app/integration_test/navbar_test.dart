@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+
+import 'package:integration_test/integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app/main.dart';
+import 'package:app/main.dart' as app;
 
 void main() {
   testWidgets('Navagation between pages', (tester) async {
-    await tester.pumpWidget(const RootApp());
+    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+    app.main();
     await tester.pumpAndSettle();
 
 		//Press start
