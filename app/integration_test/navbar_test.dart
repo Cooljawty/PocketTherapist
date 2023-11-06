@@ -36,7 +36,7 @@ void main() {
 		
 		//Navigate to each page
 		for (var page in ["Dashboard", "Entries", "Calendar", "Plans", "Settings"]){
-			await tester.tap(find.byKey(Key("Navbar_Destination_${page}")));
+			await tester.tap(find.byKey(Key("Navbar_Destination_$page")));
 			await tester.pumpAndSettle();
 
 			expect(find.text(page), findsWidgets);

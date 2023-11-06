@@ -15,10 +15,10 @@ class _PlansPageState extends State<PlansPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-			body: SafeArea(
+			body: const SafeArea(
 				child: Column(
 					children: [
-						const Text('Plans'),
+						Text('Plans'),
 					],
 				),
 			),
