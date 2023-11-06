@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app/pages/entries.dart';
 
 void main() {
-  testWidgets('Test the save, plan, and tag buttons',
+  testWidgets('Test the entries page',
           (WidgetTester tester) async {
         //Create values for keys
         final newEntryButton = find.byKey(const ValueKey("New Entry"));
