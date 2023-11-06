@@ -1,6 +1,8 @@
 import 'package:app/helper/file_manager.dart';
 import 'package:app/provider/theme_settings.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 
@@ -26,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final provider = Provider.of<ThemeSettings>(context);
     chosenTheme = provider.currentThemeName;
     return Scaffold(
+      
         // Invisible app bar
         appBar: AppBar(
           centerTitle: true,
@@ -127,6 +130,7 @@ class _SettingsPageState extends State<SettingsPage> {
               // }, child: const Text('nextPageCalendar') )
             ],
           ),
-        ));
+        ),
+			);
   }
 }
