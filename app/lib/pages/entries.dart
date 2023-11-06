@@ -63,7 +63,30 @@ class _EntriesPageState extends State<EntriesPage> {
                 background: Container(
 									color: Theme.of(context).colorScheme.primary
 								),
-                child: item.asDisplayCard(),
+
+                confirmDismiss: (DismissDirection direction) async {
+                return await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Delete Entry?"),
+                      content: const Text("Are you sure you wish to delete this entry?"),
+                      actions: <Widget>[
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text("DELETE")
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text("CANCEL"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+
+                  child: item.asDisplayCard(),
               );
             },
           )
@@ -92,5 +115,38 @@ class _EntriesPageState extends State<EntriesPage> {
     setState(() {
       items.add(result);
     });
+  }
+}
+
+class Bar extends StatelessWidget {
+  const Bar({super.key});
+
+  @override
+  //Creates the OverflowBar for the plan, tag, and save buttons
+  Widget build(BuildContext context) {
+    return Container(
+        color: Theme.of(context).colorScheme.background,
+        child: Row(
+          children: [
+            OverflowBar(
+              spacing: 50,
+              overflowAlignment: OverflowBarAlignment.center,
+              children: <Widget>[
+                TextButton(
+                    key: const Key("planButton"),
+                    child: const Text('Plan'),
+                    onPressed: () {}),
+                TextButton(
+                    key: const Key("tagButton"),
+                    child: const Text('Tag'),
+                    onPressed: () {}),
+                TextButton(
+                    key: const Key("saveButton"),
+                    child: const Text('Save'),
+                    onPressed: () {}),
+              ],
+            )
+          ],
+        ));
   }
 }
