@@ -74,9 +74,14 @@ Future<void> load() async {
       // Erase from our reference, not used.
       _settings['enc'] = null;
 
+      Map<String, dynamic> tagstorage;
       //load tags
       if (_settings['tags'] != null) {
-        tagList = _settings['tags'];
+        tagstorage = _settings['tags'];
+        tagList = [];
+        for (int i = 0; i < tagstorage.length; i++) {
+          tagList.add(tagstorage[i] as String);
+        }
       }
     }
 
