@@ -1,4 +1,4 @@
-import 'package:app/pages/plans.dart';
+import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/entry.dart';
 import 'new_entry.dart';
@@ -30,11 +30,6 @@ class _EntriesPageState extends State<EntriesPage> {
       child: Column(
         children: [
           const Text('Entries'),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(PlansPage.route());
-              },
-              child: const Text('nextPagePlans')),
           //holds the list of entries
           Expanded(
               child: ListView.builder(
@@ -103,7 +98,18 @@ class _EntriesPageState extends State<EntriesPage> {
           const Expanded(child: SizedBox(height: 1)),
         ],
       ),
-    ));
+    ),
+		bottomNavigationBar: NavBar(
+			selectedIndex: 1,
+			destinations: [
+				destinations['dashboard']!,
+				destinations['entries']!,
+				destinations['calendar']!,
+				destinations['plans']!,
+				destinations['settings']!,
+			],
+		),
+	);
   }
 
   /// When the user presses New Entry, will bring user to the page for adding a

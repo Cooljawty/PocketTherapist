@@ -191,14 +191,7 @@ void main() {
     await widgetTester.pumpAndSettle();
 
     //Successful login, on dashboard
-    expect(find.text("Dashboard"), findsOneWidget);
-
-    await widgetTester.tap(find.text("nextPageEntries"));
-    await  widgetTester.pumpAndSettle();
-    await widgetTester.tap(find.text("nextPagePlans"));
-    await  widgetTester.pumpAndSettle();
-    await widgetTester.tap(find.text("nextPageCalendar"));
-    await  widgetTester.pumpAndSettle();
+    expect(find.text("Dashboard"), findsNWidgets(2));
   });
 
 }
