@@ -11,13 +11,18 @@ void main() {
     //confirm that entry exist
     expect(find.text('Entry 0'), findsOneWidget);
 
+    //Drag the entry, then tap cancel button
+    await tester.drag(entryKey, const Offset(-500, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("CANCEL"));
+    await tester.pumpAndSettle();
+    expect(find.text('Entry 0'), findsOneWidget);
+
     //Drag the entry, then tap delete button
     await tester.drag(entryKey, const Offset(-500, 0));
     await tester.pumpAndSettle();
     await tester.tap(find.text("DELETE"));
     await tester.pumpAndSettle();
-
-    //confirm that the entry was deleted.
     expect(find.text('Entry 0'), findsNothing);
   });
 }
