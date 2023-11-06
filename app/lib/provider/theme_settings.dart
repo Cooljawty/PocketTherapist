@@ -76,9 +76,8 @@ class ThemeSettings with ChangeNotifier {
     ),
   ];
 
-  String currentThemeName = settings.getCurrentTheme().brightness == Brightness.dark? 'Dark' : 'Light';
+  String currentThemeName = settings.getCurrentTheme() == ThemeSettings.lightTheme? 'Light' : 'Dark';
   ThemeData get theme => settings.getCurrentTheme();
-
 
   changeTheme(String theme) {
     ThemeOption selectedtheme = switch(theme){

@@ -37,12 +37,10 @@ class JournalEntry with DisplayOnCard {
 	/* TODO
 	int _id;
 	int getId();
-	DateTime _date;
 	List<Tag> tags;
 	List<Emotions> emotions;
 	List<Image> pictures;
 
-	DateTime getDate();
 	Tag getTagByTitle(String title);
 	List<Tags> getTags();
 	Emotion getStrongestEmotion();

@@ -2,7 +2,6 @@ import 'package:app/pages/plans.dart';
 import 'package:app/pages/entry.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/provider/settings.dart';
-import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 
 class EntriesPage extends StatefulWidget {
@@ -19,13 +18,13 @@ class EntriesPage extends StatefulWidget {
 
 class _EntriesPageState extends State<EntriesPage> {
   //Generated list of strings
-  final items = List<JournalEntry>.generate(7, (i) => JournalEntry(
-		title: "Entry $i",
-		entryText: "This is the ${i}th entry",
-    date: DateTime.now().add(Duration(days: i)),
-	));
-
-
+  static List<JournalEntry> entries = [
+    JournalEntry(title: "This is the first Entry", entryText: "This isn't empty", date: DateTime(2020, 2, 26)),
+    JournalEntry(title: "My personal entry", entryText: "Weeeee", date: DateTime(2021, 2, 26)),
+    JournalEntry(title: "I love this app :3", entryText: "", date: DateTime(2019, 2, 26)),
+    JournalEntry(title: "Another entry?!?", entryText: "This is crazy!", date: DateTime(2023, 2, 26)),
+  ];
+  final items = entries;
 
   @override
   Widget build(BuildContext context) {
