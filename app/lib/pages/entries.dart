@@ -1,5 +1,7 @@
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:app/pages/entry.dart';
+import 'new_entry.dart';
 
 class EntriesPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -14,7 +16,12 @@ class EntriesPage extends StatefulWidget {
 
 class _EntriesPageState extends State<EntriesPage> {
   //Generated list of strings
-  final items = List<String>.generate(5, (i) => 'Entry $i');
+  final items = List<JournalEntry>.generate(
+      5,
+      (i) => JournalEntry(
+            title: "Entry $i",
+            entryText: "This is the ${i}th entry",
+          ));
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +34,13 @@ class _EntriesPageState extends State<EntriesPage> {
           Expanded(
               child: ListView.builder(
             itemCount: items.length,
-            /*prototypeItem: ListTile(
-                  title: Text(items.first),
-                ),*/
             itemBuilder: (context, index) {
               final item = items[index];
 
               return Dismissible(
                 // Each Dismissible must contain a Key. Keys allow Flutter to
                 // uniquely identify widgets.
-                key: Key(item),
+                key: Key(item.getTitle()),
                 //prevents right swipes
                 direction: DismissDirection.endToStart,
 
@@ -55,21 +59,43 @@ class _EntriesPageState extends State<EntriesPage> {
                 // Show a red background as the item is swiped away.
                 background:
                     Container(color: Theme.of(context).colorScheme.primary),
-                child: ListTile(
-                  title: Text(item),
-                ),
+
+                confirmDismiss: (DismissDirection direction) async {
+                  return await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Delete Entry?"),
+                        content: const Text(
+                            "Are you sure you wish to delete this entry?"),
+                        actions: <Widget>[
+                          TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text("DELETE")),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text("CANCEL"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+
+                child: item.asDisplayCard(),
               );
             },
           )
               //ListViewBuilder(),
               ),
+          ElevatedButton(
+              onPressed: () {
+                makeNewEntry();
+              },
+              key: const Key("New Entry"),
+              child: const Text('New Entry')),
           //box SizedBox keeps the plan, tag, and save buttons on the bottom.
           const Expanded(child: SizedBox(height: 1)),
-          //Row for overflow widget
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [Bar()],
-          )
         ],
       ),
     ),
@@ -85,37 +111,13 @@ class _EntriesPageState extends State<EntriesPage> {
 		),
 	);
   }
-}
 
-class Bar extends StatelessWidget {
-  const Bar({super.key});
-
-  @override
-  //Creates the OverflowBar for the plan, tag, and save buttons
-  Widget build(BuildContext context) {
-    return Container(
-        color: Theme.of(context).colorScheme.background,
-        child: Row(
-          children: [
-            OverflowBar(
-              spacing: 50,
-              overflowAlignment: OverflowBarAlignment.center,
-              children: <Widget>[
-                TextButton(
-                    key: const Key("planButton"),
-                    child: const Text('Plan'),
-                    onPressed: () {}),
-                TextButton(
-                    key: const Key("tagButton"),
-                    child: const Text('Tag'),
-                    onPressed: () {}),
-                TextButton(
-                    key: const Key("saveButton"),
-                    child: const Text('Save'),
-                    onPressed: () {}),
-              ],
-            )
-          ],
-        ));
+  /// When the user presses New Entry, will bring user to the page for adding a
+  /// journal entry. Upon completion, adds to the list of displayed entries.
+  makeNewEntry() async {
+    final result = await Navigator.push(context, NewEntryPage.route());
+    setState(() {
+      items.add(result);
+    });
   }
 }
