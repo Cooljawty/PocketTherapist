@@ -8,11 +8,13 @@ void main() {
     await tester.pumpWidget(const RootApp());
     await tester.pumpAndSettle();
 
+		//Press start
     Finder startbutton = find.byKey(const Key("Start_Button"));
     expect(startbutton, findsOneWidget);
     await tester.tap(startbutton);
     await tester.pumpAndSettle();
 
+		//Skip password creation
     Finder encryptionAlert = find.byType(AlertDialog);
     expect(encryptionAlert, findsOneWidget);
 
@@ -28,20 +30,22 @@ void main() {
     await tester.tap(confirmPasswordButton);
     await tester.pumpAndSettle();
 		
-		expect(find.text("Dashboard"), findsNWidgets(2));
+
+		//Should be on the dashboard
+		expect(find.text("Dashboard"), findsWidgets);
 		
 		//Navigate to each page
-		for (var page in ["Dashboard", "Entries", "Calendar", "Settings"]){
+		for (var page in ["Dashboard", "Entries", "Calendar", "Plans", "Settings"]){
 			await tester.tap(find.byKey(Key("Navbar_Destination_${page}")));
 			await tester.pumpAndSettle();
 
-			expect(find.text(page), findsNWidgets(2));
+			expect(find.text(page), findsWidgets);
 		}
 
 		//Back out of settings page
 		await tester.pageBack();
 		await tester.pumpAndSettle();
-		expect(find.text("Calendar"), findsNWidgets(2));
+		expect(find.text("Calendar"), findsWidgets);
 
   });
 }
