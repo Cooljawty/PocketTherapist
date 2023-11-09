@@ -63,7 +63,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-
             // Add emotion wheel
 
             //box SizedBox keeps the plan, tag, and save buttons on the bottom.
@@ -108,6 +107,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   getEntry() {
     return JournalEntry(
-        title: titleController.text, entryText: journalController.text);
+        title: titleController.text, entryText: journalController.text, date: DateTime.now());
   }
 }

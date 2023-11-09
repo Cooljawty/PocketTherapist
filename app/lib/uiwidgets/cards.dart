@@ -55,7 +55,7 @@ class _DisplayCardState extends State<DisplayCard> {
                   children: <Widget>[
                     // Title
                     Container(
-                      padding: const EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(5),
                       child: Text(
                         widget.title,
                         style: DefaultTextStyle.of(context).style.apply(
@@ -66,7 +66,7 @@ class _DisplayCardState extends State<DisplayCard> {
                     ),
                     // preview text
                     Container(
-                      padding: const EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(5),
                       child: Text(
                         widget.body,
                         style: const TextStyle(fontStyle: FontStyle.italic),
@@ -78,7 +78,7 @@ class _DisplayCardState extends State<DisplayCard> {
 
               // Date
               Container(
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(7),
                 child: Text(
                   '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
                 ),

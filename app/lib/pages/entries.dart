@@ -1,8 +1,9 @@
 import 'package:app/pages/plans.dart';
 import 'package:app/pages/entry.dart';
-import 'package:app/pages/settings.dart';
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:app/pages/new_entry.dart';
+import 'package:app/uiwidgets/navbar.dart';
 
 class EntriesPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -51,52 +52,26 @@ class _EntriesPageState extends State<EntriesPage> {
         child: Column(
           children: [
             const Text('Entries'),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(250, 20, 20, 20),
+              // Dropdown for filter by date
+              child: DropdownButtonFormField<String>(
+                key: const Key("SortByDateDropDown"),
+                // Make the grey background
+                dropdownColor: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10.0),
 
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacement(PlansPage.route());
-                        },
-                        child: const Text('nextPagePlans')),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    // Dropdown for filter by date
-                    child: DropdownButtonFormField<String>(
-                      key: const Key("SortByDateDropDown"),
-                      // Make the grey background
-                      dropdownColor: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(10.0),
-
-                      // Set up the dropdown menu items
-                      value: chosenDisplay,
-                      items: displayOptions
-                          .map((item) =>
-                          DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(color: Colors.black),
-                              )))
-                          .toList(),
-
-                      // if changed set new display option
-                      onChanged: (item) =>
-                          setState(() {
-                            chosenDisplay = item;
-                          }),
-                    ),
-                  ),
-                ),
-              ],
+                // Set up the dropdown menu items
+                value: chosenDisplay,
+                items: displayOptions.map((item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item, style: const TextStyle(color: Colors.black),)
+                )).toList(),
+                // if changed set new display option
+                onChanged: (item) => setState(() {
+                  chosenDisplay = item;
+                }),
+              ),
             ),
 
             //holds the list of entries
@@ -113,34 +88,24 @@ class _EntriesPageState extends State<EntriesPage> {
                     if (index == 0) { // if first in list
                       isSameDate = false;
                     } else { // else check if same date by filters
-                      isSameDate = time.isSameDate(
-                          sortedItems[index - 1].getDate(), chosenDisplay!);
+                      isSameDate = time.isSameDate(sortedItems[index - 1].getDate(), chosenDisplay!);
                     }
-                    if (index == 0 ||
-                        !(isSameDate)) { // if not same date or first in list make new list
+                    if (index == 0 || !(isSameDate)) { // if not same date or first in list make new list
                       return Column(
                         children: [
                           Text((() {
                             // If weekly view, then calculate weeks of the year and display range in header
                             if (chosenDisplay == 'Week') {
-                              DateTime firstOfYear = DateTime(DateTime
-                                  .now()
-                                  .year, 1, 1);
-                              int weekNum = firstOfYear.getWeekNumber(
-                                  firstOfYear, time);
-                              DateTime upper = firstOfYear.add(
-                                  Duration(days: (weekNum * 7)));
-                              DateTime lower = upper.subtract(
-                                  const Duration(days: 6));
+                              DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+                              int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
+                              DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
+                              DateTime lower = upper.subtract(const Duration(days: 6));
 
                               // Range for the week
-                              return '${lower.formatDate()} ${lower.day
-                                  .toString()} - ${upper.formatDate()} ${upper
-                                  .day.toString()}';
+                              return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}';
                             } else if (chosenDisplay == 'Month') {
                               // If monthly, only display month and year
-                              return '${time.formatDate()} ${time.year
-                                  .toString()}';
+                              return '${time.formatDate()} ${time.year.toString()}';
                             } else {
                               // If yearly, only display year
                               return time.year.toString();
@@ -165,9 +130,7 @@ class _EntriesPageState extends State<EntriesPage> {
 
                               // Then show a snackBar w/ item name as dismissed message
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          '${item.getTitle()} dismissed')));
+                                  SnackBar(content: Text('${item.getTitle()} deleted')));
                             },
                             confirmDismiss: (DismissDirection direction) async {
                               return await showDialog(
@@ -175,16 +138,13 @@ class _EntriesPageState extends State<EntriesPage> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("Delete Entry?"),
-                                    content: const Text(
-                                        "Are you sure you wish to delete this entry?"),
+                                    content: const Text("Are you sure you wish to delete this entry?"),
                                     actions: <Widget>[
                                       TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(true),
+                                          onPressed: () => Navigator.of(context).pop(true),
                                           child: const Text("DELETE")),
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
+                                        onPressed: () => Navigator.of(context).pop(false),
                                         child: const Text("CANCEL"),
                                       ),
                                     ],
@@ -192,7 +152,6 @@ class _EntriesPageState extends State<EntriesPage> {
                                 },
                               );
                             },
-
                             child: item.asDisplayCard(),
                           ),
                         ],
@@ -206,7 +165,7 @@ class _EntriesPageState extends State<EntriesPage> {
                             items.removeAt(index);
                           });
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('${item.getTitle()} dismissed')));
+                              content: Text('${item.getTitle()} deleted')));
                         },
                         confirmDismiss: (DismissDirection direction) async {
                           return await showDialog(
@@ -214,16 +173,13 @@ class _EntriesPageState extends State<EntriesPage> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text("Delete Entry?"),
-                                content: const Text(
-                                    "Are you sure you wish to delete this entry?"),
+                                content: const Text("Are you sure you wish to delete this entry?"),
                                 actions: <Widget>[
                                   TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
+                                      onPressed: () => Navigator.of(context).pop(true),
                                       child: const Text("DELETE")),
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
+                                    onPressed: () => Navigator.of(context).pop(false),
                                     child: const Text("CANCEL"),
                                   ),
                                 ],
@@ -231,7 +187,6 @@ class _EntriesPageState extends State<EntriesPage> {
                             },
                           );
                         },
-
                         child: item.asDisplayCard(),
                       );
                     }
