@@ -47,13 +47,14 @@ class _DisplayCardState extends State<DisplayCard> {
             ),
 
 
-            child: Row(
+            child: Row( // row to hold all information
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
 
-              Column(
+              Column( // Column to hold title and preview text
                 crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // Title
                     Container(
                       padding: const EdgeInsets.all(2),
                       child: Text(
@@ -64,6 +65,7 @@ class _DisplayCardState extends State<DisplayCard> {
                             ),
                       ),
                     ),
+                    // preview text
                     Container(
                       padding: const EdgeInsets.all(2),
                       child: Text(
@@ -72,8 +74,10 @@ class _DisplayCardState extends State<DisplayCard> {
                       ),
                     ),
                   ]),
+              // spacer to push the date to the right and the text to the left
               const Spacer(),
 
+              // Date
               Container(
                 padding: const EdgeInsets.all(2),
                 child: Text(
@@ -87,8 +91,7 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 mixin DisplayOnCard {
-  ({String title, String body, DateTime date}) card =
-      (title: "", body: "", date: DateTime.now());
+  ({String title, String body, DateTime date}) card = (title: "", body: "", date: DateTime.now());
 
   Route<dynamic>? pageRoute;
 

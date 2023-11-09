@@ -15,28 +15,37 @@ class EntriesPage extends StatefulWidget {
   State<EntriesPage> createState() => _EntriesPageState();
 }
 
-class _EntriesPageState extends State<EntriesPage> {
+List<JournalEntry> entries = [
+  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2020, 2, 5)),
+  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2020, 2, 15)),
+  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2020, 2, 18)),
+  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2020, 2, 19)),
+  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2020, 2, 21)),
+  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2020, 2, 25)),
+  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2020, 2, 27)),
+  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2020, 5, 5)),
+  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 5, 29)),
+];
+
 //Generated list of journal entries
-  static List<JournalEntry> entries = [
-    JournalEntry(title: "Entry 1", entryText: 'This is a text entry', date: DateTime(2020, 2, 15)),
-    JournalEntry(title: "Entry 2", entryText: 'This is a text entry', date: DateTime(2020, 2, 18)),
-    JournalEntry(title: "Entry 3", entryText: 'This is a text entry', date: DateTime(2020, 2, 19)),
-    JournalEntry(title: "Entry 4", entryText: 'This is a text entry', date: DateTime(2020, 2, 21)),
-    JournalEntry(title: "Entry 5", entryText: 'This is a text entry', date: DateTime(2020, 2, 25)),
-    JournalEntry(title: "Entry 6", entryText: 'This is a text entry', date: DateTime(2020, 2, 27)),
-    JournalEntry(title: "Entry 7", entryText: 'This is a text entry', date: DateTime(2020, 5, 5)),
-    JournalEntry(title: "Entry 8", entryText: 'This is a text entry', date: DateTime(2020, 5, 29)),
-  ];
-  final items = entries;
+final items = entries;
 
 // Display options
-  List<String> displayOptions = ['Week', 'Month', 'Year'];
-  String? chosenDisplay = 'Week';
+List<String> displayOptions = ['Week', 'Month', 'Year'];
+String? chosenDisplay = 'Week';
+
+// Sort the Journal entries by most recent date
+late List<JournalEntry> sortedItems;
+late bool showAllItems;
+
+class _EntriesPageState extends State<EntriesPage> {
 
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    final sortedItems = getFilteredList(items, chosenDisplay, true);
+    showAllItems = true;
+    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
+
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -62,6 +71,7 @@ class _EntriesPageState extends State<EntriesPage> {
                   padding: const EdgeInsets.all(20.0),
                   // Dropdown for filter by date
                   child: DropdownButtonFormField<String>(
+                    key: const Key("SortByDateDropDown"),
                     // Make the grey background
                     dropdownColor: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(10.0),
@@ -211,14 +221,14 @@ List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDispl
     if (getCompleteList) {
       filteredList.add(sortedItems[i]);
     }else {
-      final firstItem = sortedItems[0];
-      final item = sortedItems[i];
-      final time = firstItem.getDate();
+      final firstItem = sortedItems[0]; // get the most recent entry
+      final item = sortedItems[i];      // get the next item
+      final time = firstItem.getDate(); // get the date for the first item
 
-      // else check if same date by filters
+      // check to see if the item is in the filter
       bool isSameDate = time.isSameDate(item.getDate(), chosenDisplay!);
 
-      if (isSameDate) { // if only want the most recent section
+      if (isSameDate) { // if item is in the filter, add it to the return list
         filteredList.add(sortedItems[i]);
       }
     }
