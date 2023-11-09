@@ -47,167 +47,227 @@ class _EntriesPageState extends State<EntriesPage> {
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
 
     return Scaffold(
-        body: SafeArea(
-      child: Column(
-        children: [
-          const Text('Entries'),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Text('Entries'),
 
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushReplacement(PlansPage.route());
-                      },
-                      child: const Text('nextPagePlans')),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  // Dropdown for filter by date
-                  child: DropdownButtonFormField<String>(
-                    key: const Key("SortByDateDropDown"),
-                    // Make the grey background
-                    dropdownColor: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10.0),
-
-                    // Set up the dropdown menu items
-                    value: chosenDisplay,
-                    items: displayOptions
-                        .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(color: Colors.black),
-                            )))
-                        .toList(),
-
-                    // if changed set new display option
-                    onChanged: (item) => setState(() {
-                      chosenDisplay = item;
-                    }),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushReplacement(PlansPage.route());
+                        },
+                        child: const Text('nextPagePlans')),
                   ),
                 ),
-              ),
-            ],
-          ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    // Dropdown for filter by date
+                    child: DropdownButtonFormField<String>(
+                      key: const Key("SortByDateDropDown"),
+                      // Make the grey background
+                      dropdownColor: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10.0),
 
-          //holds the list of entries
-          Expanded(
-              child: ListView.builder(
-            itemCount: sortedItems.length,
-            itemBuilder: (context, index) {
-              // get one item
-              final item = sortedItems[index];
-              final time = item.getDate();
+                      // Set up the dropdown menu items
+                      value: chosenDisplay,
+                      items: displayOptions
+                          .map((item) =>
+                          DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(color: Colors.black),
+                              )))
+                          .toList(),
 
-              // Dividers by filter
-              bool isSameDate = true;
-              if (index == 0) {       // if first in list
-                isSameDate = false;
-              } else {                // else check if same date by filters
-                isSameDate = time.isSameDate(sortedItems[index - 1].getDate(), chosenDisplay!);
-              }
-              if (index == 0 || !(isSameDate)) {    // if not same date or first in list make new list
-                return Column(
-                  children: [
-                    Text((() {
-                      // If weekly view, then calculate weeks of the year and display range in header
-                      if (chosenDisplay == 'Week') {
-                        DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
-                        int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
-                        DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
-                        DateTime lower = upper.subtract(const Duration(days: 6));
-
-                        // Range for the week
-                        return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}';
-                      } else if (chosenDisplay == 'Month') {
-                        // If monthly, only display month and year
-                        return '${time.formatDate()} ${time.year.toString()}';
-                      } else {
-                        // If yearly, only display year
-                        return time.year.toString();
-                      }
-                    })()),
-                    // Make Dismissible card per journal entry
-                    Dismissible(
-                      // Each Dismissible must contain a Key. Keys allow Flutter to
-                      // uniquely identify widgets.
-                      key: Key(item.getTitle()),  // this has to change later
-                      //prevents right swipes
-                      direction: DismissDirection.endToStart,
-
-                      // Provide a function that tells the app
-                      // what to do after an item has been swiped away.
-                      onDismissed: (direction) {
-                        // Remove the item from the data source.
-                        setState(() {
-                          items.removeAt(index);
-                        });
-
-                        // Then show a snackBar w/ item name as dismissed message
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('${item.getTitle()} dismissed')));
-                      },
-                      // Show a red background as the item is swiped away.
-                      // background: Container(
-                      // 	color: Colors.red,
-                      // ),
-                      child: item.asDisplayCard(),
+                      // if changed set new display option
+                      onChanged: (item) =>
+                          setState(() {
+                            chosenDisplay = item;
+                          }),
                     ),
-                  ],
-                );
-              } else {  // if in the same filter header list, then just make a new entry
-                return Dismissible(
-                  key: Key(item.getTitle()),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (direction) {
-                    setState(() {
-                      items.removeAt(index);
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('${item.getTitle()} dismissed')));
-                  },
-                  child: item.asDisplayCard(),
-                );
-              }
-            },
-          )
-              //ListViewBuilder(),
-              ),
-          //Row for overflow widget
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Plan, tag, save bar
-              const Bar(),
+                  ),
+                ),
+              ],
+            ),
 
-              // temp settings button
-              FloatingActionButton(
-                //add key for testing
+            //holds the list of entries
+            Expanded(
+                child: ListView.builder(
+                  itemCount: sortedItems.length,
+                  itemBuilder: (context, index) {
+                    // get one item
+                    final item = sortedItems[index];
+                    final time = item.getDate();
+
+                    // Dividers by filter
+                    bool isSameDate = true;
+                    if (index == 0) { // if first in list
+                      isSameDate = false;
+                    } else { // else check if same date by filters
+                      isSameDate = time.isSameDate(
+                          sortedItems[index - 1].getDate(), chosenDisplay!);
+                    }
+                    if (index == 0 ||
+                        !(isSameDate)) { // if not same date or first in list make new list
+                      return Column(
+                        children: [
+                          Text((() {
+                            // If weekly view, then calculate weeks of the year and display range in header
+                            if (chosenDisplay == 'Week') {
+                              DateTime firstOfYear = DateTime(DateTime
+                                  .now()
+                                  .year, 1, 1);
+                              int weekNum = firstOfYear.getWeekNumber(
+                                  firstOfYear, time);
+                              DateTime upper = firstOfYear.add(
+                                  Duration(days: (weekNum * 7)));
+                              DateTime lower = upper.subtract(
+                                  const Duration(days: 6));
+
+                              // Range for the week
+                              return '${lower.formatDate()} ${lower.day
+                                  .toString()} - ${upper.formatDate()} ${upper
+                                  .day.toString()}';
+                            } else if (chosenDisplay == 'Month') {
+                              // If monthly, only display month and year
+                              return '${time.formatDate()} ${time.year
+                                  .toString()}';
+                            } else {
+                              // If yearly, only display year
+                              return time.year.toString();
+                            }
+                          })()),
+                          // Make Dismissible card per journal entry
+                          Dismissible(
+                            // Each Dismissible must contain a Key. Keys allow Flutter to
+                            // uniquely identify widgets.
+                            key: Key(item.getTitle()),
+                            // this has to change later
+                            //prevents right swipes
+                            direction: DismissDirection.endToStart,
+
+                            // Provide a function that tells the app
+                            // what to do after an item has been swiped away.
+                            onDismissed: (direction) {
+                              // Remove the item from the data source.
+                              setState(() {
+                                items.removeAt(index);
+                              });
+
+                              // Then show a snackBar w/ item name as dismissed message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          '${item.getTitle()} dismissed')));
+                            },
+                            confirmDismiss: (DismissDirection direction) async {
+                              return await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Delete Entry?"),
+                                    content: const Text(
+                                        "Are you sure you wish to delete this entry?"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text("DELETE")),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: const Text("CANCEL"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+
+                            child: item.asDisplayCard(),
+                          ),
+                        ],
+                      );
+                    } else { // if in the same filter header list, then just make a new entry
+                      return Dismissible(
+                        key: Key(item.getTitle()),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            items.removeAt(index);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('${item.getTitle()} dismissed')));
+                        },
+                        confirmDismiss: (DismissDirection direction) async {
+                          return await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Delete Entry?"),
+                                content: const Text(
+                                    "Are you sure you wish to delete this entry?"),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: const Text("DELETE")),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text("CANCEL"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+
+                        child: item.asDisplayCard(),
+                      );
+                    }
+                  },
+                )),
+            ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                      // Go to settings page
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SettingsPage()));
+                  makeNewEntry();
                 },
-                tooltip: 'Settings',
-                shape: const CircleBorder(eccentricity: 1.0),
-                child: const Icon(Icons.settings),
-              ),
-            ],
-          ),
+                key: const Key("New Entry"),
+                child: const Text('New Entry')
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: NavBar(
+        selectedIndex: 1,
+        destinations: [
+          destinations['dashboard']!,
+          destinations['entries']!,
+          destinations['calendar']!,
+          destinations['plans']!,
+          destinations['settings']!,
         ],
       ),
-    ));
+    );
+  }
+  makeNewEntry() async {
+    final result = await Navigator.push(context, NewEntryPage.route());
+    setState(() {
+      items.add(result);
+    });
   }
 }
+
+
 
 // items = journal entry list;
 // chosenDisplay = 'Week', 'Month', 'Year';

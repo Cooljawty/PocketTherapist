@@ -7,7 +7,7 @@ class DisplayCard extends StatefulWidget {
   final String body;
   final DateTime date;
 
-  final Route<dynamic>? page;
+	final dynamic page;
 
   const DisplayCard(
       {super.key,
@@ -45,7 +45,6 @@ class _DisplayCardState extends State<DisplayCard> {
               ),
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
-
 
             child: Row( // row to hold all information
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +92,7 @@ class _DisplayCardState extends State<DisplayCard> {
 mixin DisplayOnCard {
   ({String title, String body, DateTime date}) card = (title: "", body: "", date: DateTime.now());
 
-  Route<dynamic>? pageRoute;
+	dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(

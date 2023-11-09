@@ -1,4 +1,4 @@
-import 'package:app/pages/entries.dart';
+import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -16,21 +16,25 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Text('Dashboard'),
-              ElevatedButton(
-                onPressed: (){
-                  Navigator.of(context).pushReplacement(EntriesPage.route());
-                }, 
-                child: const Text('nextPageEntries') 
-              ),
-            ],
-          ),
-        )
-    );
+		return Scaffold(
+			body: const SafeArea(
+				child: Column(
+					children: [
+						Text('Dashboard'),
+					],
+				),
+			),
+			bottomNavigationBar: NavBar(
+				selectedIndex: 0,
+				destinations: [
+					destinations['dashboard']!,
+					destinations['entries']!,
+					destinations['calendar']!,
+					destinations['plans']!,
+					destinations['settings']!,
+				],
+			),
+		);
   }
 }
 
