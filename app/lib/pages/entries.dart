@@ -1,5 +1,4 @@
 import 'package:app/pages/entry.dart';
-import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
@@ -222,39 +221,41 @@ List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDispl
   }
   return filteredList;
 }
-
-class Bar extends StatelessWidget {
-  const Bar({super.key});
-
-  @override
-  //Creates the OverflowBar for the plan, tag, and save buttons
-  Widget build(BuildContext context) {
-    return Container(
-        color: getCurrentTheme().colorScheme.onBackground,
-        child: Row(
-          children: [
-            OverflowBar(
-              spacing: 50,
-              overflowAlignment: OverflowBarAlignment.center,
-              children: <Widget>[
-                TextButton(
-                    key: const Key("planButton"),
-                    child: const Text('Plan'),
-                    onPressed: () {}),
-                TextButton(
-                    key: const Key("tagButton"),
-                    child: const Text('Tag'),
-                    onPressed: () {}),
-                TextButton(
-                    key: const Key("saveButton"),
-                    child: const Text('Save'),
-                    onPressed: () {}),
-              ],
-            )
-          ],
-        ));
-  }
-}
+// Are we not using this anymore?
+// Shouldn't this be in new_entry.dart?
+//
+// class Bar extends StatelessWidget {
+//   const Bar({super.key});
+//
+//   @override
+//   //Creates the OverflowBar for the plan, tag, and save buttons
+//   Widget build(BuildContext context) {
+//     return Container(
+//         color: getCurrentTheme().colorScheme.onBackground,
+//         child: Row(
+//           children: [
+//             OverflowBar(
+//               spacing: 50,
+//               overflowAlignment: OverflowBarAlignment.center,
+//               children: <Widget>[
+//                 TextButton(
+//                     key: const Key("planButton"),
+//                     child: const Text('Plan'),
+//                     onPressed: () {}),
+//                 TextButton(
+//                     key: const Key("tagButton"),
+//                     child: const Text('Tag'),
+//                     onPressed: () {}),
+//                 TextButton(
+//                     key: const Key("saveButton"),
+//                     child: const Text('Save'),
+//                     onPressed: () {}),
+//               ],
+//             )
+//           ],
+//         ));
+//   }
+// }
 
 extension Formatter on DateTime {
   // Get the month string
