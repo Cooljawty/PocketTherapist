@@ -25,7 +25,7 @@ void main() {
 							DisplayCard(
 								title: entry.getTitle(), 
 								body: entry.getPreviewText(),
-								page: EntryPage.route(entry: entry)
+								page: () => EntryPage.route(entry: entry)
 							),
 							testObj.asDisplayCard(),
 						],

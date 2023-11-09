@@ -5,7 +5,7 @@ class DisplayCard extends StatefulWidget {
 	final String title;
 	final String body;
 
-	final Route<dynamic>? page;
+	final dynamic page;
 
   const DisplayCard({super.key, required this.title, required this.body, this.page});
 
@@ -37,7 +37,7 @@ class _DisplayCardState extends State<DisplayCard> {
 				onTap: () {
 					if(widget.page != null) {
 						final route = widget.page!;
-						Navigator.of(context).push(route);
+						Navigator.of(context).push(route());
 					}
 				},
 
@@ -73,7 +73,7 @@ class _DisplayCardState extends State<DisplayCard> {
 mixin DisplayOnCard{
 	({String title, String body}) card = (title: "", body: "");
 
-	Route<dynamic>? pageRoute;
+	dynamic pageRoute;
 
 	DisplayCard asDisplayCard() {
 		return DisplayCard(title: card.title, body: card.body, page: pageRoute);
