@@ -1,6 +1,8 @@
 import 'package:app/provider/settings.dart' as prov;
 import 'package:flutter/material.dart';
 
+///Each tag can be associated to diffrent journal entries and events.
+///Tags can also have an optinal color, with grey as the default.
 class Tag {
 	final String name;
 	Color color;

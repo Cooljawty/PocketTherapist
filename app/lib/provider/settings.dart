@@ -76,8 +76,8 @@ Future<void> load() async {
       // Erase from our reference, not used.
       _settings['enc'] = null;
 
-      List<dynamic> dynamicList;
       //load tags
+      List<dynamic> dynamicList;
       if (_settings['tags'] != null) {
         dynamicList = _settings['tags'];
         tagList = [];
@@ -134,7 +134,7 @@ Future<void> save() async {
   Map<String, dynamic> settings = Map.of(_settings);
   settings['enc'] = encrypted;
 
-  //add lines to update tags
+  //Add each tag as a map with its name and color
 	for (final tag in tagList) {
 		settings['tags'] = {'name': tag.getName(), 'color': tag.getColor().hashCode};
 	}
