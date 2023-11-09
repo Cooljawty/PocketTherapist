@@ -16,15 +16,15 @@ class EntriesPage extends StatefulWidget {
 }
 
 List<JournalEntry> entries = [
-  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2020, 2, 5)),
-  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2020, 2, 15)),
-  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2020, 2, 18)),
-  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2020, 2, 19)),
-  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2020, 2, 21)),
-  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2020, 2, 25)),
-  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2020, 2, 27)),
-  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2020, 5, 5)),
-  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 5, 29)),
+  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
+  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
+  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
+  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
+  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
+  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 5, 5)),
+  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 12, 29)),
+  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
+  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
 ];
 
 //Generated list of journal entries
@@ -43,7 +43,7 @@ class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    showAllItems = true;
+    showAllItems = false;
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
 
     return Scaffold(
@@ -101,7 +101,7 @@ class _EntriesPageState extends State<EntriesPage> {
                               DateTime lower = upper.subtract(const Duration(days: 6));
 
                               // Range for the week
-                              return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}';
+                              return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
                             } else if (chosenDisplay == 'Month') {
                               // If monthly, only display month and year
                               return '${time.formatDate()} ${time.year.toString()}';
