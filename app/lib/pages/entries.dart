@@ -16,19 +16,40 @@ class EntriesPage extends StatefulWidget {
 }
 
 class _EntriesPageState extends State<EntriesPage> {
-  //Generated list of journal entries
+//Generated list of journal entries
   static List<JournalEntry> entries = [
-    JournalEntry(title: "Entry 1", entryText: '', date: DateTime(2020, 2, 15)),
-    JournalEntry(title: "Entry 2", entryText: '', date: DateTime(2020, 2, 18)),
-    JournalEntry(title: "Entry 3", entryText: '', date: DateTime(2020, 2, 19)),
-    JournalEntry(title: "Entry 4", entryText: '', date: DateTime(2020, 2, 21)),
-    JournalEntry(title: "Entry 5", entryText: '', date: DateTime(2020, 2, 25)),
-    JournalEntry(title: "Entry 6", entryText: '', date: DateTime(2020, 2, 27)),
-    JournalEntry(title: "Entry 7", entryText: '', date: DateTime(2020, 2, 29)),
+    JournalEntry(
+        title: "Entry 1",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 15)),
+    JournalEntry(
+        title: "Entry 2",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 18)),
+    JournalEntry(
+        title: "Entry 3",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 19)),
+    JournalEntry(
+        title: "Entry 4",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 21)),
+    JournalEntry(
+        title: "Entry 5",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 25)),
+    JournalEntry(
+        title: "Entry 6",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 27)),
+    JournalEntry(
+        title: "Entry 7",
+        entryText: 'This is a text entry',
+        date: DateTime(2020, 2, 29)),
   ];
   final items = entries;
 
-  // Display options
+// Display options
   List<String> displayOptions = ['Week', 'Month', 'Year'];
   String? chosenDisplay = 'Week';
 
@@ -36,7 +57,7 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-        child: Column(
+      child: Column(
         children: [
           const Text('Entries'),
 
@@ -87,11 +108,10 @@ class _EntriesPageState extends State<EntriesPage> {
           //holds the list of entries
           Expanded(
               child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
+            itemCount: items.length,
+            itemBuilder: (context, index) {
               // Sort the Journal entries by most recent date
-              final sortedItems = items
-                ..sort((item1, item2) => item2.getDate().compareTo(item1.getDate()));
+              final sortedItems = getFilteredList(items, chosenDisplay, true);
 
               final item = sortedItems[index];
               final time = item.getDate();
@@ -199,6 +219,33 @@ class _EntriesPageState extends State<EntriesPage> {
   }
 }
 
+// items = journal entry list;
+// chosenDisplay = 'Week', 'Month', 'Year';
+// getCompletedList = print the completed list
+List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
+// Sort the Journal entries by most recent date
+  final sortedItems = items..sort((item1, item2) => item2.getDate().compareTo(item1.getDate()));
+  List<JournalEntry> filteredList = [];
+
+  for (int i = 0; i < sortedItems.length; i++) {
+    final item = sortedItems[i];
+    final time = item.getDate();
+
+    // else check if same date by filters
+    bool isSameDate = time.isSameDate(sortedItems[i - 1].getDate(), chosenDisplay!);
+    if (getCompleteList) {
+      filteredList.add(sortedItems[i]);
+    }else{
+      if (i == 0) { // if not same date or first in list make new list
+        filteredList.add(sortedItems[i]);
+      } else if(isSameDate) { // if in the same filter header list, then just make a new entry
+        filteredList.add(sortedItems[i]);
+      }
+    }
+  }
+  return filteredList;
+}
+
 class Bar extends StatelessWidget {
   const Bar({super.key});
 
@@ -233,23 +280,35 @@ class Bar extends StatelessWidget {
 }
 
 extension Formatter on DateTime {
-
   // Get the month string
   String formatDate() {
     switch (month) {
-      case 1: return 'January';
-      case 2: return 'February';
-      case 3: return 'March';
-      case 4: return 'April';
-      case 5: return 'May';
-      case 6: return 'June';
-      case 7: return 'July';
-      case 8: return 'August';
-      case 9: return 'September';
-      case 10: return 'October';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return 'Date is Wrong';  // This should never happen
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return 'Date is Wrong'; // This should never happen
     }
   }
 
@@ -259,13 +318,19 @@ extension Formatter on DateTime {
       // If week filter, then check if in the same year, month, and week
       case 'Week':
         final firstWeek = DateTime(DateTime.now().year, 1, 1);
-        return (year == other.year && month == other.month && (getWeekNumber(firstWeek, this) == getWeekNumber(firstWeek, other)));
-     // if month filter, then check for same year and month
-      case 'Month': return (year == other.year && month == other.month);
+        return (year == other.year &&
+            month == other.month &&
+            (getWeekNumber(firstWeek, this) ==
+                getWeekNumber(firstWeek, other)));
+      // if month filter, then check for same year and month
+      case 'Month':
+        return (year == other.year && month == other.month);
       // if year filter, then check for same year
-      case 'Year': return (year == other.year);
+      case 'Year':
+        return (year == other.year);
       // This should never happen
-      default: return false;
+      default:
+        return false;
     }
   }
 
