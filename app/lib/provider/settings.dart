@@ -6,6 +6,8 @@ import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:app/pages/settings_tag.dart';
+
 /// Used for error messages
 const String prefrencesPrefix = "pocket-therapist";
 
@@ -33,7 +35,7 @@ const String encryptionToggleKey = 'encryption';
 const String accentColorKey = "accent";
 
 //add tag list
-List<String> tagList = [];
+List<Tag> tagList = [];
 
 /// The color of all accents, like buttons and sizing.
 
@@ -80,7 +82,7 @@ Future<void> load() async {
         dynamicList = _settings['tags'];
         tagList = [];
         for (int i = 0; i < dynamicList.length; i++) {
-          tagList.add(dynamicList[i] as String);
+          tagList.add(Tag(name: dynamicList[i]['name'], color: dynamicList[i]['color']));
         }
       }
     }
@@ -102,16 +104,16 @@ void _assignDefaults() async {
     accentColorKey: Colors.deepPurpleAccent[100]!.value,
   };
   tagList = [
-    'Calm',
-    'Centered',
-    'Content',
-    'Fulfilled',
-    'Patient',
-    'Peaceful',
-    'Present',
-    'Relaxed',
-    'Serene',
-    'Trusting',
+    Tag(name: 'Calm'),
+    Tag(name: 'Centered'),
+    Tag(name: 'Content'),
+    Tag(name: 'Fulfilled'),
+    Tag(name: 'Patient'),
+    Tag(name: 'Peaceful'),
+    Tag(name: 'Present'),
+    Tag(name: 'Relaxed'),
+    Tag(name: 'Serene'),
+    Tag(name: 'Trusting'),
   ];
 }
 
@@ -133,7 +135,9 @@ Future<void> save() async {
   settings['enc'] = encrypted;
 
   //add lines to update tags
-  settings['tags'] = tagList;
+	for (final tag in tagList) {
+		settings['tags'] = {'name': tag.getName(), 'color': tag.getColor().hashCode};
+	}
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);

@@ -1,6 +1,16 @@
 import 'package:app/provider/settings.dart' as prov;
 import 'package:flutter/material.dart';
 
+class Tag {
+	final String name;
+	Color color;
+
+	Tag({required this.name, this.color = Colors.grey});
+
+	String getName() => name;
+	Color getColor() => color;
+	}
+
 class TagSettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => const TagSettingsPage());
@@ -13,28 +23,29 @@ class TagSettingsPage extends StatefulWidget {
 }
 
 class _TagSettingsState extends State<TagSettingsPage> {
-  List<String>? compatableTagList;
+  List<Tag>? compatableTagList;
   TextEditingController textController = TextEditingController();
   //delete tag function used to delete the tag from the complete list
   //and update the screen
-  void deleteTag(String name) {
-    prov.tagList.remove(name);
+  void deleteTag(Tag tag) {
+    prov.tagList.remove(tag);
     //call save
     prov.save();
-    compatableTagList?.remove(name);
+    compatableTagList?.remove(tag);
     setState(() {});
   }
 
   //function to add a tag to the complete list and update screen
-  void addTag(String name) {
+  void addTag({required String name, Color? color}) {
     //check for duplicates and add only unique names
-    if (!prov.tagList.contains(name)) {
-      prov.tagList.add(name);
+    if (!prov.tagList.any((tag) => tag.getName() == name)) {
+			final newTag = Tag(name: name, color: color ?? Colors.grey);
+      prov.tagList.add(newTag);
       //call save
       prov.save();
       //declare compatable list and add new name
       compatableTagList ??= [];
-      compatableTagList?.add(name);
+      compatableTagList?.add(newTag);
     }
     setState(() {});
   }
@@ -66,13 +77,13 @@ class _TagSettingsState extends State<TagSettingsPage> {
                     }
                     //input text has something so we move onto the search
                     compatableTagList ??= [];
-                    List<String> nullProofTagList = [];
+                    List<Tag> nullProofTagList = [];
                     //clear compatable list for each search to ensure consistency
                     nullProofTagList.clear();
                     compatableTagList?.clear();
                     //check the full tag list for comptable tags
                     for (int index = 0; index < prov.tagList.length; index++) {
-                      if (prov.tagList[index].contains(inputText)) {
+                      if (prov.tagList[index].getName().contains(inputText)) {
                         //add index to list of compatableTags
                         compatableTagList?.add(prov.tagList[index]);
                         nullProofTagList.add(prov.tagList[index]);
@@ -88,7 +99,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                     value = value.trim(),
                     if (value.isNotEmpty)
                       {
-                        addTag(value),
+                        addTag(name: value),
                         value = "",
                       }
                   },
@@ -105,7 +116,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                           ElevatedButton(
                               key: const Key('Create Tag'),
                               //on pressed adds the phrase in the text form field to the taglist
-                              onPressed: () => addTag(textController.text),
+                              onPressed: () => addTag(name: textController.text),
                               child: const Text('Create Tag'))
                         ],
                       );
@@ -115,17 +126,17 @@ class _TagSettingsState extends State<TagSettingsPage> {
                         const Text("List of compatable tags: ")
                       ];
                       //if comptable list is still null nothing has been searched
-                      List<String> compList = compatableTagList ?? prov.tagList;
+                      List<Tag> compList = compatableTagList ?? prov.tagList;
                       for (int index = 0; index < compList.length; index++) {
                         //generate 1 row for each name in list
                         childofColumn.add(Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             //first child is tag
-                            Text(compList[index]),
+                            Text(compList[index].name),
                             //second is delete button
                             TextButton(
-                                key: Key('Delete ${compList[index]} Button'),
+                                key: Key('Delete ${compList[index].name} Button'),
                                 onPressed: () => deleteTag(compList[index]),
                                 child: const Text('Delete')),
                           ],
@@ -148,9 +159,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
 
 //this function will return true if the compatable list has anything to display
 //onto the screen
-bool tagsExist(List<String>? compatableList, List<String> actualList) {
+bool tagsExist(List<Tag>? compatableList, List<Tag> actualList) {
   //first initialize the list if it has not yet been done
-  List<String> nullProofTagList = compatableList ?? [];
+  List<Tag> nullProofTagList = compatableList ?? [];
   //check if compatable list has been initialized and if not return the full tag list
   if (compatableList != null && nullProofTagList.isEmpty) {
     //if the list is empty then no tags are found and button will be displayed

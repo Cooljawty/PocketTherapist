@@ -6,7 +6,7 @@ void main() {
   String filter = 'test';
 
   //Initial test used to make sure that no create tag button is displayed
-  testWidgets("Test to ensure tag list is displayed andfunctions properly",
+  testWidgets("Test to ensure tag list is displayed and functions properly",
       (widgetTester) async {
     //traverse to tag settings -------------------------------------------------
     app.main();
