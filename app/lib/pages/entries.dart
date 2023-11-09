@@ -16,19 +16,19 @@ class EntriesPage extends StatefulWidget {
 }
 
 List<JournalEntry> entries = [
-  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
-  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
-  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
-  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
-  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
-  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 5, 5)),
-  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 12, 29)),
-  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
-  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
+  JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
+  JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
+  JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
+  JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
+  JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
+  JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 5, 5)),
+  JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 12, 29)),
+  JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
+  JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
 ];
 
 //Generated list of journal entries
-final items = entries;
+List<JournalEntry> items = entries;
 
 // Display options
 List<String> displayOptions = ['Week', 'Month', 'Year'];
@@ -43,7 +43,7 @@ class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    showAllItems = false;
+    showAllItems = true;
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
 
     return Scaffold(
@@ -51,25 +51,33 @@ class _EntriesPageState extends State<EntriesPage> {
         child: Column(
           children: [
             const Text('Entries'),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(250, 20, 20, 20),
-              // Dropdown for filter by date
-              child: DropdownButtonFormField<String>(
-                key: const Key("SortByDateDropDown"),
-                // Make the grey background
-                dropdownColor: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10.0),
 
-                // Set up the dropdown menu items
-                value: chosenDisplay,
-                items: displayOptions.map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item, style: const TextStyle(color: Colors.black),)
-                )).toList(),
-                // if changed set new display option
-                onChanged: (item) => setState(() {
-                  chosenDisplay = item;
-                }),
+            // Pad filter to the right
+            Padding(padding: const EdgeInsets.fromLTRB(250, 20, 20, 20),
+              child: Container(
+                // Push text to the right a little bit
+                padding: const EdgeInsets.only(left: 15),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+
+                // Dropdown for filter by date
+                child: DropdownButtonFormField<String>(
+                  key: const Key("SortByDateDropDown"),
+                  dropdownColor: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10.0),
+                  // Set up the dropdown menu items
+                  value: chosenDisplay,
+                  items: displayOptions.map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item, style: const TextStyle(color: Colors.black))
+                  )).toList(),
+                  // if changed set new display option
+                  onChanged: (item) => setState(() {
+                    chosenDisplay = item;
+                  }),
+                ),
               ),
             ),
 
