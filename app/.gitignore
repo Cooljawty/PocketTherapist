@@ -53,3 +53,5 @@ app.*.map.json
 /macos
 #ios
 
+# Dont need to commit this
+pubspec.lock
