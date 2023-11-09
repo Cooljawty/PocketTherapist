@@ -20,30 +20,30 @@ List<JournalEntry> entries = [
   // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
   // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
   // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
-  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
-  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 5, 5)),
-  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 12, 29)),
+  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 1, 27)),
+  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 1, 29)),
+  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 1, 5)),
   // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
   // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
 ];
 
 //Generated list of journal entries
-List<JournalEntry> items = entries;
+final items = entries;
 
 // Display options
-List<String> displayOptions = ['Week', 'Month', 'Year'];
+final List<String> displayOptions = ['Week', 'Month', 'Year'];
 String? chosenDisplay = 'Week';
 
 // Sort the Journal entries by most recent date
 late List<JournalEntry> sortedItems;
-late bool showAllItems;
+bool showAllItems = true;
 
 class _EntriesPageState extends State<EntriesPage> {
 
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    showAllItems = true;
+    //showAllItems = false;
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
 
     return Scaffold(
@@ -97,106 +97,73 @@ class _EntriesPageState extends State<EntriesPage> {
                     } else { // else check if same date by filters
                       isSameDate = time.isSameDate(sortedItems[index - 1].getDate(), chosenDisplay!);
                     }
-                    if (index == 0 || !(isSameDate)) { // if not same date or first in list make new list
-                      return Column(
-                        children: [
-                          Text((() {
-                            // If weekly view, then calculate weeks of the year and display range in header
-                            if (chosenDisplay == 'Week') {
-                              DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
-                              int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
-                              DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
-                              DateTime lower = upper.subtract(const Duration(days: 6));
+                    return Column(  // if not same date or first in list make new list
+                      children:[
+                        if (index == 0 || !(isSameDate))...[
+                          Text(() {
+                              // If weekly view, then calculate weeks of the year and display range in header
+                              if (chosenDisplay == 'Week') {
+                                DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+                                int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
+                                DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
+                                DateTime lower = upper.subtract(const Duration(days: 6));
 
-                              // Range for the week
-                              return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-                            } else if (chosenDisplay == 'Month') {
-                              // If monthly, only display month and year
-                              return '${time.formatDate()} ${time.year.toString()}';
-                            } else {
-                              // If yearly, only display year
-                              return time.year.toString();
-                            }
-                          })()),
-                          // Make Dismissible card per journal entry
-                          Dismissible(
-                            // Each Dismissible must contain a Key. Keys allow Flutter to
-                            // uniquely identify widgets.
-                            key: Key(item.getTitle()),
-                            // this has to change later
-                            //prevents right swipes
-                            direction: DismissDirection.endToStart,
-
-                            // Provide a function that tells the app
-                            // what to do after an item has been swiped away.
-                            onDismissed: (direction) {
-                              // Remove the item from the data source.
-                              setState(() {
-                                items.removeAt(index);
-                              });
-
-                              // Then show a snackBar w/ item name as dismissed message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('${item.getTitle()} deleted')));
-                            },
-                            confirmDismiss: (DismissDirection direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Delete Entry?"),
-                                    content: const Text("Are you sure you wish to delete this entry?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () => Navigator.of(context).pop(true),
-                                          child: const Text("DELETE")),
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(false),
-                                        child: const Text("CANCEL"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: item.asDisplayCard(),
-                          ),
+                                // Range for the week
+                                return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+                              } else if (chosenDisplay == 'Month') {
+                                // If monthly, only display month and year
+                                return '${time.formatDate()} ${time.year.toString()}';
+                              } else {
+                                // If yearly, only display year
+                                return time.year.toString();
+                              }
+                          }())
                         ],
-                      );
-                    } else { // if in the same filter header list, then just make a new entry
-                      return Dismissible(
-                        key: Key(item.getTitle()),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          setState(() {
-                            items.removeAt(index);
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('${item.getTitle()} deleted')));
-                        },
-                        confirmDismiss: (DismissDirection direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("Delete Entry?"),
-                                content: const Text("Are you sure you wish to delete this entry?"),
-                                actions: <Widget>[
-                                  TextButton(
-                                      onPressed: () => Navigator.of(context).pop(true),
-                                      child: const Text("DELETE")),
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(false),
-                                    child: const Text("CANCEL"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: item.asDisplayCard(),
-                      );
-                    }
+
+                        Dismissible(
+                          // Each Dismissible must contain a Key. Keys allow Flutter to
+                          // uniquely identify widgets.
+                          key: Key(item.getTitle()),
+                          // this has to change later
+                          //prevents right swipes
+                          direction: DismissDirection.endToStart,
+
+                          // Provide a function that tells the app
+                          // what to do after an item has been swiped away.
+                          onDismissed: (direction) {
+                            // Remove the item from the data source.
+                            setState(() {
+                              items.removeAt(index);
+                            });
+
+                            // Then show a snackBar w/ item name as dismissed message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('${item.getTitle()} deleted')));
+                          },
+                          confirmDismiss: (DismissDirection direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Delete Entry?"),
+                                  content: const Text("Are you sure you wish to delete this entry?"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: const Text("DELETE")),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text("CANCEL"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: item.asDisplayCard(),
+                        )
+                      ]
+                    );// if in the same filter header list, then just make a new entry
                   },
                 )),
             ElevatedButton(
@@ -228,8 +195,6 @@ class _EntriesPageState extends State<EntriesPage> {
     });
   }
 }
-
-
 
 // items = journal entry list;
 // chosenDisplay = 'Week', 'Month', 'Year';

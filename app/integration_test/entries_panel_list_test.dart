@@ -1,4 +1,4 @@
-import 'package:app/pages/entries.dart';
+import 'package:app/pages/entries.dart' as entry;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/entry.dart';
@@ -8,10 +8,10 @@ void main() {
   late Widget myApp;
   setUp(() => {
     myApp = const MaterialApp(
-        home: EntriesPage(),
+        home: entry.EntriesPage(),
     )});
 
-  entries.addAll([
+  entry.entries.addAll([
     JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime(2022, 2, 7)),
     JournalEntry(title: "This is another entry", entryText: 'The next one wont have a body', date: DateTime(2022, 2, 6)),
     JournalEntry(title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
@@ -24,7 +24,7 @@ void main() {
   @override
   Future<void> testForItems(WidgetTester tester, String filter, bool show) async {
     // Show all items in the entry database
-    showAllItems = show;
+    entry.showAllItems = show;
     await tester.pumpWidget(myApp);
     await tester.pumpAndSettle();
 
@@ -42,8 +42,8 @@ void main() {
     expect(find.text(filter), findsOneWidget);
 
     // Check to see if every entry is there
-    for (int i = 0; i < sortedItems.length; i++) {
-      final entryKey = find.byKey(ValueKey(sortedItems[i].getTitle()));
+    for (int i = 0; i < entry.sortedItems.length; i++) {
+      final entryKey = find.byKey(ValueKey(entry.sortedItems[i].getTitle()));
       await tester.pumpWidget(myApp);
       await tester.pumpAndSettle();
 
