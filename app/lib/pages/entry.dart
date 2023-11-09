@@ -25,9 +25,10 @@ class JournalEntry with DisplayOnCard {
 			title: _title,
 			body: getPreviewText(),
 		  date: _date,
-		);	
+		);
 
-		pageRoute = (() => EntryPage.route(entry: this));
+		pageRoute = EntryPage.route(entry: this);
+		//pageRoute = (() => EntryPage.route(entry: this)) as Route?;
 	}
 	String getPreviewText() => _previewText;
 	String getEntryText() => _entryText;

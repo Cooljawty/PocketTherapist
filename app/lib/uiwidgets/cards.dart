@@ -7,7 +7,7 @@ class DisplayCard extends StatefulWidget {
   final String body;
   final DateTime date;
 
-	final dynamic page;
+  final Route<dynamic>? page;
 
   const DisplayCard(
       {super.key,
@@ -92,7 +92,7 @@ class _DisplayCardState extends State<DisplayCard> {
 mixin DisplayOnCard {
   ({String title, String body, DateTime date}) card = (title: "", body: "", date: DateTime.now());
 
-	dynamic pageRoute;
+  Route<dynamic>? pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(
