@@ -118,7 +118,7 @@ void main() {
 		//Title, entry text, and applied tags should be displayed
 		final title = find.text(newTitle);
 		final text = find.text(newEntry);
-		final tag = find.text(newTag);
+		final tag = find.text("#$newTag");
 		expect(title, findsOneWidget);
 		expect(text, findsOneWidget);
 		expect(tag, findsOneWidget);
