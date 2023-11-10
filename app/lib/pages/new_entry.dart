@@ -20,12 +20,14 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
   double _progress = 0;
+
   final _items = prov.tagList.asMap().entries.map((tag) {
     int idx = tag.key;
     String val = tag.value;
 
     return MultiSelectItem<Tag>(Tag(id: idx, name: val), val);
   }).toList();
+  List<Tag> _selectedTags = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
@@ -74,38 +76,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     ),
                     maxLines: 8,
                     minLines: 1,
-                  ),
-                ),
-
-                // Temporary Tags
-                Padding(
-                  padding: EdgeInsets.all(20),
-                  child: MultiSelectDialogField(
-                    items: _items,
-                    title: const Text("Tags"),
-                    listType: MultiSelectListType.LIST,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(40)),
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: 2,
-                      ),
-                    ),
-                    buttonIcon: const Icon(
-                      Icons.tag,
-                      color: Colors.blue,
-                    ),
-                    buttonText: Text(
-                      "Tags",
-                      style: TextStyle(
-                        color: Colors.blue[800],
-                        fontSize: 16,
-                      ),
-                    ),
-                    onConfirm: (results) {
-                      //_selectedAnimals = results;
-                    },
                   ),
                 ),
 
@@ -182,6 +152,16 @@ class _NewEntryPageState extends State<NewEntryPage> {
           ),
         ),
 
+        MultiSelectChipDisplay(
+          items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
+          scroll: true,
+          onTap: (value) {
+            setState(() {
+              _selectedTags.remove(value);
+            });
+          },
+        ),
+
         //Row for overflow widget
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -201,7 +181,22 @@ class _NewEntryPageState extends State<NewEntryPage> {
                         TextButton(
                             key: const Key("tagButton"),
                             child: const Text('Tag'),
-                            onPressed: () {}),
+                            onPressed: () async {
+                              await showDialog(
+                                context: context,
+                                builder: (ctx) {
+                                  return MultiSelectDialog(
+                                    items: _items,
+                                    initialValue: _selectedTags,
+                                    onConfirm: (values) {
+                                      setState(() {
+                                        _selectedTags = values;
+                                      });
+                                    },
+                                  );
+                                },
+                              );
+                            }),
                         TextButton(
                             key: const Key("saveButton"),
                             child: const Text('Save'),
