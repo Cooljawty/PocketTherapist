@@ -44,7 +44,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
       body: SafeArea(
           child: Column(
               children: [
-                Expanded(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height - 347,
                     child: Column(
                       children: [
                         const Text('New Entry'),
