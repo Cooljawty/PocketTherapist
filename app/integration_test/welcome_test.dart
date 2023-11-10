@@ -172,7 +172,7 @@ void main() {
     Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
 
     await widgetTester.tap(enterPasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pumpAndSettle(const Duration(seconds: 19));
 
     Finder confirmIncorrectButton = find.byKey(const Key("Confirm_Incorrect_Password"));
     await widgetTester.tap(confirmIncorrectButton);

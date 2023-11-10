@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -77,6 +78,109 @@ class _QuoteState extends State<Quote> {
       );
   }
 }
+
+// class LoadingAnimation extends StatefulWidget {
+//   const LoadingAnimation({
+//     super.key
+//   });
+//
+//   @override
+//   State<LoadingAnimation> createState() => _LoadingAnimationState();
+// }
+//
+// class _LoadingAnimationState extends State<LoadingAnimation> with SingleTickerProviderStateMixin {
+//   late AnimationController _animationController;
+//
+//  final frames = [Image.asset('assets/frame1.png'),
+//    Image.asset('assets/frame2.png'),
+//    Image.asset('assets/frame3.png'),
+//    Image.asset('assets/frame4.png')];
+//  final words = ["Loading.", "Loading..", "Loading..." "Loading...."];
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    _animationController = AnimationController(
+//      vsync: this,
+//      duration: const Duration(milliseconds: 1000),
+//      lowerBound: 0,
+//      upperBound: 2.0
+//    )..repeat();
+//  }
+//
+//  @override
+//  void dispose() {
+//    _animationController.dispose();
+//    super.dispose();
+//  }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//           backgroundColor: const Color.fromRGBO(0, 0 , 0, 75),
+//           body: Center(
+//             child: SizedBox(
+//               width: 100,
+//               height: 100,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Padding(
+//                     padding: const EdgeInsets.all(8.0),
+//                     child: AnimatedBuilder(
+//                       animation: _animationController,
+//                       builder: (context, child) => Stack(
+//                         alignment: Alignment.center,
+//                         children: [
+//                           Visibility(
+//                             visible: _animationController.value <= 0.5,
+//                             child: LoadingIcon(img: frames[0], txt: words[0])
+//                           ),
+//                           Visibility(
+//                               visible: 0.5 < _animationController.value  && _animationController.value <= 1,
+//                               child: LoadingIcon(img: frames[1], txt: words[1])
+//                           ),
+//                           Visibility(
+//                               visible: 1 < _animationController.value && _animationController.value <= 1.5,
+//                               child: LoadingIcon(img: frames[2], txt: words[2])
+//                           ),
+//                           Visibility(
+//                               visible: 1.5 < _animationController.value && _animationController.value <= 2.0,
+//                               child: LoadingIcon(img: frames[3], txt: words[3])
+//                           )
+//                         ],
+//                       )
+//
+//                     )
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         );
+//   }
+// }
+//
+// class LoadingIcon extends StatelessWidget {
+//   final Image img;
+//   final String txt;
+//   const LoadingIcon({
+//     super.key,
+//     required this.img,
+//     required this.txt
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Padding(padding: const EdgeInsets.all(8), child: img),
+//          Text(txt)
+//       ],
+//     );
+//   }
+// }
+
 
 //class LoadingAnimation extends StatefulWidget {
 //  const LoadingAnimation({super.key});
