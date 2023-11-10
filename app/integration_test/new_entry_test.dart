@@ -30,6 +30,11 @@ void main() {
 		await tester.pumpAndSettle();
 
 		//You are now in the new entry page
+		//What data will be in the entry
+		final newTag = "Tag!";
+		final newTitle = "Title!";
+		final newEntry = "Journal!";
+
 		//Create values for key
 		final journalInput = find.byKey(const ValueKey("journalInput"));
 		final titleInput = find.byKey(const ValueKey("titleInput"));
@@ -49,17 +54,17 @@ void main() {
 
 		// Test adding text to the title
 		await tester.tap(titleInput);
-		await tester.enterText(titleInput, "Title!");
+		await tester.enterText(titleInput, newTitle);
 		await tester.pump();
 		var titleText = (titleInput.evaluate().single.widget as TextField).controller!.text;
-		expect(titleText, equals("Title!"));
+		expect(titleText, equals(newTitle));
 
 		// Test adding text to the journal entry
 		await tester.tap(journalInput);
-		await tester.enterText(journalInput, "Journal!");
+		await tester.enterText(journalInput, newEntry);
 		await tester.pump();
 		var journalText = (journalInput.evaluate().single.widget as TextField).controller!.text;
-		expect(journalText, equals("Journal!"));
+		expect(journalText, equals(newEntry));
 
 		//Focus on the simulating tapping of the three buttons
 		await tester.tap(planButton);
@@ -70,10 +75,9 @@ void main() {
 		await tester.pumpAndSettle();
 
 		//Enter a new tag name
-		final newTag = "testTag";
     final searchBar = find.byKey(const Key('Tag Search Bar'));
     expect(searchBar, findsOneWidget);
-    await tester.enterText(searchBar, "$newTag");
+    await tester.enterText(searchBar, newEntry);
     await tester.pumpAndSettle();
 
 		//Create tag with given name
@@ -94,11 +98,20 @@ void main() {
 		await tester.tap(applyTagButton);
 		await tester.pumpAndSettle();
 		
-		await tester.tap(applyTagButton);
-		await tester.pumpAndSettle();
-
-
 		await tester.tap(saveButton);
 		await tester.pump();
+
+		//View new entry
+		final card = find.byType(DisplayCard).first;
+		expect(cardFinder, findsNWidgets(2));
+		await tester.tap(card);
+		await tester.pumpAndSettle();
+
+		final title = find.text(newTitle);
+		final text = find.text(entry.getEntryText());
+		final tag = find.text(
+
+		expect(title, findsOneWidget);
+		expect(text, findsOneWidget);
 		});
 }
