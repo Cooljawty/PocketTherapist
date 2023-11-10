@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/provider/settings.dart';
 import 'entry.dart';
 
 class NewEntryPage extends StatefulWidget {
@@ -33,7 +34,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
           children: [
             const Text('New Entry'),
 
-            // Title input textfield
+            // Title input text field
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextField(
@@ -43,11 +44,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   border: UnderlineInputBorder(),
                   labelText: 'Title',
                 ),
-                style: const TextStyle(color: Colors.black),
               ),
             ),
 
-            // Journal input textfield
+            // Journal input text field
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextField(
@@ -57,12 +57,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   border: UnderlineInputBorder(),
                   labelText: 'Journal Entry',
                 ),
-                style: const TextStyle(color: Colors.black),
                 maxLines: 8,
                 minLines: 8,
               ),
             ),
-
 
             // Add emotion wheel
 
@@ -73,7 +71,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                    color: Theme.of(context).colorScheme.background,
+                    color: getCurrentTheme().colorScheme.background,
                     child: Row(
                       children: [
                         OverflowBar(
@@ -108,6 +106,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   getEntry() {
     return JournalEntry(
-        title: titleController.text, entryText: journalController.text);
+        title: titleController.text, entryText: journalController.text, date: DateTime.now());
   }
 }

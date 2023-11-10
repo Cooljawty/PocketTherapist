@@ -82,7 +82,7 @@ Future<void> load() async {
         dynamicList = _settings['tags'];
         tagList = [];
         for (int i = 0; i < dynamicList.length; i++) {
-          tagList.add(Tag(name: dynamicList[i]['name'], color: dynamicList[i]['color']));
+          tagList.add(Tag(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
         }
       }
     }
@@ -135,8 +135,9 @@ Future<void> save() async {
   settings['enc'] = encrypted;
 
   //Add each tag as a map with its name and color
+	settings['tags'] = <Map<String, dynamic>>[];
 	for (final tag in tagList) {
-		settings['tags'] = {'name': tag.getName(), 'color': tag.getColor().hashCode};
+		settings['tags'].add({'name': tag.getName(), 'color': tag.getColor().hashCode});
 	}
 
   // Save them to the file

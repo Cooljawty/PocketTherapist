@@ -51,20 +51,17 @@ void main() {
 		await tester.tap(titleInput);
 		await tester.enterText(titleInput, "Title!");
 		await tester.pump();
-		var titleText = (titleInput.evaluate().single.widget as TextField)
-			.controller!.text;
+		var titleText = (titleInput.evaluate().single.widget as TextField).controller!.text;
 		expect(titleText, equals("Title!"));
 
 		// Test adding text to the journal entry
 		await tester.tap(journalInput);
 		await tester.enterText(journalInput, "Journal!");
 		await tester.pump();
-		var journalText = (journalInput.evaluate().single.widget as TextField)
-			.controller!.text;
+		var journalText = (journalInput.evaluate().single.widget as TextField).controller!.text;
 		expect(journalText, equals("Journal!"));
 
 		//Focus on the simulating tapping of the three buttons
-
 		await tester.tap(planButton);
 		await tester.pump();
 
