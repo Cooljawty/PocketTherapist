@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/provider/settings.dart';
+import 'package:app/pages/settings_tag.dart';
 import 'entry.dart';
 
 class NewEntryPage extends StatefulWidget {
@@ -17,6 +18,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
+
+	//Save applied tags
+	List<Tag> _tagList = [];
 
   @override
   void dispose() {
@@ -85,7 +89,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             TextButton(
                                 key: const Key("tagButton"),
                                 child: const Text('Tag'),
-                                onPressed: () {}),
+																onPressed: () {
+																	_saveTagsToEntry(context);
+																},
+														),
                             TextButton(
                                 key: const Key("saveButton"),
                                 child: const Text('Save'),
@@ -108,4 +115,12 @@ class _NewEntryPageState extends State<NewEntryPage> {
     return JournalEntry(
         title: titleController.text, entryText: journalController.text, date: DateTime.now());
   }
+
+	_saveTagsToEntry(BuildContext context) async {
+		final newTags = await Navigator.push(
+			context, 
+			MaterialPageRoute(builder: (context) => const TagSettingsPage()),
+		);
+		_tagList = newTags;
+	}
 }
