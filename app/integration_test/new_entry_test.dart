@@ -69,16 +69,11 @@ void main() {
 		await tester.tap(tagButton);
 		await tester.pumpAndSettle();
 
-		//Select pre-existing tag
-    final tagSelector = find.byKey(Key('Select ${settings.tagList.first.getName()} Button'));
-    expect(tagSelector, findsOneWidget);
-		await tester.tap(tagSelector);
-		await tester.pump();
-
 		//Enter a new tag name
+		final newTag = "testTag";
     final searchBar = find.byKey(const Key('Tag Search Bar'));
     expect(searchBar, findsOneWidget);
-    await tester.enterText(searchBar, "testTag");
+    await tester.enterText(searchBar, "$newTag");
     await tester.pumpAndSettle();
 
 		//Create tag with given name
@@ -87,7 +82,13 @@ void main() {
     await tester.tap(createTagButton);
     await tester.pumpAndSettle();
 
-		//Apply tags to journal entry
+		//Select new tag
+    final tagSelector = find.byKey(Key('Select $newTag Button'));
+    expect(tagSelector, findsOneWidget);
+		await tester.tap(tagSelector);
+		await tester.pump();
+
+		//Apply tags and return to journal edit page
 		final applyTagButton = find.byType(BackButton);
     expect(applyTagButton, findsOneWidget);
 		await tester.tap(applyTagButton);
