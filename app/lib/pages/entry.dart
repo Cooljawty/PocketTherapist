@@ -17,6 +17,7 @@ class JournalEntry with DisplayOnCard {
 		_title = title;
 		_entryText = entryText;
 		_date = date;
+		// List<Tag> tags;
 		
 		final preview = _entryText.split("\n").first;
 		_previewText = preview.substring(0, min(previewLength, preview.length));
@@ -37,7 +38,6 @@ class JournalEntry with DisplayOnCard {
 	/* TODO
 	int _id;
 	int getId();
-	List<Tag> tags;
 	List<Emotions> emotions;
 	List<Image> pictures;
 

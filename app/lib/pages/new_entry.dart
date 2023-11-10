@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:app/provider/settings.dart';
 import 'entry.dart';
+import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as prov;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:circular_seek_bar/circular_seek_bar.dart';
 
 class NewEntryPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -15,18 +17,9 @@ class NewEntryPage extends StatefulWidget {
   State<NewEntryPage> createState() => _NewEntryPageState();
 }
 
-// Temporary tags - move to settings(?)
-class Tag {
-  final int id;
-  final String name;
-
-  Tag({
-    required this.id,
-    required this.name,
-  });
-}
-
 class _NewEntryPageState extends State<NewEntryPage> {
+  final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+  double _progress = 0;
   final _items = prov.tagList.asMap().entries.map((tag) {
     int idx = tag.key;
     String val = tag.value;
@@ -142,6 +135,38 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 onConfirm: (results) {
                   //_selectedAnimals = results;
                 },
+              ),
+            ),
+
+            CircularSeekBar(
+              width: double.infinity,
+              height: 250,
+              progress: _progress,
+              barWidth: 8,
+              startAngle: 45,
+              sweepAngle: 270,
+              strokeCap: StrokeCap.butt,
+              progressGradientColors: const [Colors.red, Colors.orange, Colors.yellow, Colors.green, Colors.blue, Colors.indigo, Colors.purple],
+              innerThumbRadius: 5,
+              innerThumbStrokeWidth: 3,
+              innerThumbColor: Colors.white,
+              outerThumbRadius: 5,
+              outerThumbStrokeWidth: 10,
+              outerThumbColor: Colors.blueAccent,
+              dashWidth: 1,
+              dashGap: 2,
+              animation: true,
+              valueNotifier: _valueNotifier,
+              child: Center(
+                child: ValueListenableBuilder(
+                    valueListenable: _valueNotifier,
+                    builder: (_, double value, __) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('${value.round()}'),
+                        Text('progress'),
+                      ],
+                    )),
               ),
             ),
 
