@@ -98,7 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             // Go to settings page
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TagSettingsPage()));
+                                builder: (context) => const TagSettingsPage()));
                       },
                       child: const Text('Edit Tag List'))),
 

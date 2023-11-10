@@ -17,10 +17,10 @@ class TagSettingsPage extends StatefulWidget {
 	final List<Tag>? selectedTags;
 
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => TagSettingsPage());
+    return MaterialPageRoute(builder: (context) => const TagSettingsPage());
   }
 
-  TagSettingsPage({super.key, this.selectedTags});
+  const TagSettingsPage({super.key, this.selectedTags});
 
   @override
   State<TagSettingsPage> createState() => _TagSettingsState();
