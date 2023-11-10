@@ -30,6 +30,7 @@ void main() {
 		await tester.tap(find.byKey(Key("New Entry")));
 		await tester.pumpAndSettle();
 
+
 		//You are now in the new entry page
 		//What data will be in the entry
 		final newTag = "Tag!";
@@ -44,6 +45,7 @@ void main() {
 		final planButton = find.byKey(const ValueKey("planButton"));
 		final tagButton = find.byKey(const ValueKey("tagButton"));
 
+
 		//Find the 3 inputs
 		expect(titleInput, findsOneWidget);
 		expect(journalInput, findsOneWidget);
@@ -53,7 +55,8 @@ void main() {
 		expect(find.text('Tag'), findsOneWidget);
 		expect(find.text('Plan'), findsOneWidget);
 
-		// Test adding text to the title
+
+		// Test adding title to the title
 		await tester.tap(titleInput);
 		await tester.enterText(titleInput, newTitle);
 		await tester.pump();
@@ -67,9 +70,11 @@ void main() {
 		var journalText = (journalInput.evaluate().single.widget as TextField).controller!.text;
 		expect(journalText, equals(newEntry));
 
-		//Focus on the simulating tapping of the three buttons
+
+		//TODO: Test plan
 		await tester.tap(planButton);
 		await tester.pump();
+
 
 		//Testing tag creation
 		await tester.tap(tagButton);
@@ -99,6 +104,8 @@ void main() {
 		await tester.tap(applyTagButton);
 		await tester.pumpAndSettle();
 		
+
+		//Save new entry
 		await tester.tap(saveButton);
 		await tester.pump();
 
