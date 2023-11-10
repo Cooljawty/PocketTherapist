@@ -1,15 +1,14 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
-import 'package:argon2/argon2.dart';
-import 'package:crypto/crypto.dart';
+import 'package:app/exceptions/exception.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:encrypt/encrypt.dart';
-import 'package:system_info2/system_info2.dart';
+import 'package:hashlib/hashlib.dart';
 
-Uint8List _passwordHash = Uint8List(512);
+String _passwordHash = "";
 String _keyCipher = "";
 
 // Held in memory
@@ -17,10 +16,12 @@ Encrypter? encrypter;
 // Password Salt
 List<int> nonce = [];
 
+// Argon2 parameters
 const int parallelPower = 4;
 const int consumeMemory = 500000;
 const int iterations = 8; // 2x recommended minimum
-const int hashLength = 512; // length of generated hash
+//------------------------------------------------------------------------------
+const int pwHashLength = 32;
 
 /// If this is the first time opening the app, or encrypting is now enabled.
 /// Gen key => Encrypt KEy w/ password using PBKDF2 => Hash using Argon => Save Hash, save encrypted key.
@@ -30,62 +31,49 @@ const int hashLength = 512; // length of generated hash
 ///   check hash, if correct, decrypt key, toss password, hold key mem.
 /// 
 /// This method should only be called if resetting a password.
-void setPassword(String password) async {
+Future<void> setPassword(String password) async {
   if (password.isEmpty) {
     return;
   }
- 
+
   // Encryption Setup
   Random rand = Random.secure();
-  nonce = List.generate(32, (index) => rand.nextInt(256));
-  
+  nonce = List<int>.generate(16, (index) => rand.nextInt(256));
+
   // This is the key gen function
   Argon2id keyGen = Argon2id(
     parallelism: parallelPower,
     memory: consumeMemory,
     iterations: iterations,
-    hashLength: hashLength,
+    hashLength: pwHashLength,
   );
- 
-  // This is the hasher
-  Argon2BytesGenerator hasher = Argon2BytesGenerator();
-  hasher.init(Argon2Parameters(2, nonce.toUint8List(), memory: consumeMemory, iterations: iterations, lanes: parallelPower));
-
 
   //Generate KEK for internal encryption of actual key
   SecretKey keyEncryptionKey = await keyGen.deriveKeyFromPassword(
     password: password,
-    nonce: nonce 
+    nonce: nonce
   );
-  // Get the raw butes from the kek
+  // hash the
   List<int>? kekBytes = await keyEncryptionKey.extractBytes(); // Get bytes from secret key
+  Argon2 argon = Argon2(salt: nonce, hashLength: pwHashLength, iterations: iterations, parallelism: parallelPower, memorySizeKB: consumeMemory);
+  _passwordHash = argon.encode(kekBytes);
 
-  // Hash them up
-  hasher.generateBytes(kekBytes.toUint8List(), _passwordHash); // Hash secret key
-  
   // Used for Encrypting the secret key, temporary.
-  Encrypter keyEncrypter = Encrypter(AES(Key(kekBytes.toUint8List()), mode: AESMode.gcm)); 
-  kekBytes.clear();// Clear the kek's bytes, no longer needed
-  
+  Encrypter keyEncrypter = Encrypter(AES( Key(Uint8List.fromList(kekBytes)), mode: AESMode.gcm));
+  kekBytes = null;// Clear the kek's bytes, no longer needed
 
   // Generate the actual signing key
-  Key signingKey = Key.fromSecureRandom(512);
-
+  Key signingKey = Key.fromSecureRandom(pwHashLength);
   // Used for file encryption
   encrypter = Encrypter(AES(signingKey, mode: AESMode.gcm));
 
   // Generate random IV for key signing
-  IV secretKeyIV = IV.fromSecureRandom(96);
+  // Need 96 bit IV for clear GCM mode
+  IV secretKeyIV = IV.fromSecureRandom(12); // 12 bytes = 8 * 12 = 96 bit
   // Encrypt the key with its IV
   Encrypted cryptoKey = keyEncrypter.encryptBytes(signingKey.bytes, iv: secretKeyIV);
-  signingKey.bytes.clear(); // Remove it from memory
-
   // Store the cipher
-  _keyCipher = secretKeyIV.base64 + "\$" + cryptoKey.base64;
-
-  // clear the reset
-  secretKeyIV.bytes.clear();
-  cryptoKey.bytes.clear();
+  _keyCipher = "${secretKeyIV.base64}:${cryptoKey.base64}";
 }
 
 
@@ -94,51 +82,50 @@ bool validatePasswordField(String password) => (password.length >= 10 &&    // l
       password.contains(RegExp(r'[!@#$%^&*()]+')) &&  // contains special char   AND
       password.contains(RegExp(r'\d+')));           // contains at least 1 num
 
+/// This is used within any field that needs to validate a password input.
 String? defaultValidator(String? value) =>
     (value == null || value.isEmpty || validatePasswordField(value)) ?
     null :
     "Passwords must have the following:\n1. 10 or more characters\n2. At least one special character\n3.at least one number (!@#\$%^&*())";
 
-bool _verifyPassword(String password){
-  Argon2BytesGenerator hasher = Argon2BytesGenerator();
-  hasher.init(Argon2Parameters(2, nonce.toUint8List(), memory: consumeMemory, iterations: iterations, lanes: parallelPower));
-  Uint8List maybe = Uint8List(512);
-  hasher.generateBytesFromString(password, maybe);
-  return _hexEncode(_passwordHash) == _hexEncode(maybe);
-}
 
+/// This function is responsible for unlocking and initializing the application after password has been set
+/// [setPassword] should not be used unless part of a reset.
 Future<bool> unlock(String password) async {
-  if (_verifyPassword(password)){
-   // This is the key gen function
-   // This is the key gen function
-    Argon2id keyGen = Argon2id(
-      parallelism: parallelPower,
-      memory: consumeMemory,
-      iterations: iterations,
-      hashLength: hashLength,
-    );
-    //Generate KEK for internal encryption of actual key
-    SecretKey keyEncryptionKey = await keyGen.deriveKeyFromPassword(
+  Argon2id keyGen = Argon2id(
+    parallelism: parallelPower,
+    memory: consumeMemory,
+    iterations: iterations,
+    hashLength: pwHashLength,
+  );
+  //Generate KEK for internal encryption of actual key
+  SecretKey keyEncryptionKey = await keyGen.deriveKeyFromPassword(
       password: password,
-      nonce: nonce 
-    );
-    // Get the raw butes from the kek
-    List<int>? bytes = await keyEncryptionKey.extractBytes(); // Get bytes from secret key
+      nonce: nonce
+  );
+
+  // Get the raw butes from the kek
+  List<int>? kekBytes = await keyEncryptionKey.extractBytes(); // Get bytes from secret key
+  Argon2 argon = Argon2(salt: nonce, hashLength: pwHashLength, iterations: iterations, parallelism: parallelPower, memorySizeKB: consumeMemory);
+  String maybe = argon.encode(kekBytes);
+  bool valid = maybe == _passwordHash;
+
+  if (valid){
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(bytes.toUint8List()), mode: AESMode.gcm)); 
-    bytes.clear(); // Clear the kek's bytes, no longer needed
-    
-    // Split the package between the IV and the cipherKey
-    List<String> package = _keyCipher.split('\$');
+    Encrypter keyEncrypter = Encrypter(AES(Key(Uint8List.fromList(kekBytes)), mode: AESMode.gcm));
+    kekBytes = null; // Clear the kek's bytes, no longer needed
+
+    // Split the package between the IV and the cipher Key
+    List<String> package = _keyCipher.split(':');
     IV secretIV = IV.fromBase64(package[0]);
     Encrypted eKey = Encrypted.fromBase64(package[1]);
     package.clear(); // Dont need package anymore
 
     // the encrypter internall decodes it into a string, so we just re-encode it to get the bytes
-    Uint8List key = utf8.encode(keyEncrypter.decrypt(eKey, iv: secretIV)).toUint8List();
+    Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
+
     // Then we form the key from this and make the encryptor
-    encrypter = Encrypter(AES(Key(key), mode: AESMode.gcm));
-    key.clear();
+    encrypter = Encrypter(AES(Key(keyBytes), mode: AESMode.gcm));
     
     return true;
   } else {
@@ -147,60 +134,53 @@ Future<bool> unlock(String password) async {
 
 }
 
-
 // Utilities --------------------------------------
-String _compress() {
-    final pass = _hexEncode(_passwordHash.toList());
-    final salt = _hexEncode(nonce);
-    return _hexEncode(utf8.encode("$salt:$pass:$_keyCipher"));
-}
+String compressContents() => hexEncode(utf8.encode("${String.fromCharCodes(nonce)}#$_passwordHash#$_keyCipher"));
 
-bool load(Map<String, dynamic> map) {
+UnmodifiableMapView<String, dynamic> save() =>
+    UnmodifiableMapView({
+      "data": compressContents(),
+      "sig": sha512sum(compressContents()),
+    });
+
+void load(Map<String, dynamic> map) {
   String data = map['data'];
-  Digest? receivedSig = Digest(_hexDecode(map['sig']));
-  Digest? dataSig = sha512.convert(utf8.encode(data));
-  bool verified = dataSig == receivedSig;
-  List<String> actualData = utf8.decode(_hexDecode(data)).split(':');
-  
-  //Get the salt
-  nonce = _hexDecode(actualData[0]);
-  // Get the hash
-  _passwordHash = _hexDecode(actualData[1]).toUint8List();
-  // Get the cipher
-  _keyCipher = actualData[2];
-  /// eventually do something with IV and key, then toss the hashes from memory.
+  List<String> actualData = utf8.decode(hexDecode(data)).split('#');
 
+  String dataSig = sha512sum(data);
+  String receivedSig = map['sig'];
   data = "";
   map = {};
-  receivedSig = null;
-  dataSig = null;
-  return verified;
+  if (dataSig != receivedSig) {
+     dataSig = "";
+     receivedSig = "";
+     actualData.clear();
+     throw SignatureMismatchException("Signatures did not match, data integrity has been compromised!");
+  }
+  //Get the salt
+  nonce = actualData[0].codeUnits;
+  // Get the hash
+  _passwordHash = actualData[1];
+  // Get the cipher
+  _keyCipher = actualData[2];
+  actualData.clear();
 }
 
 void reset(){
   encrypter = null;
-  _passwordHash.clear();
-  _passwordHash = Uint8List(512);
+  _passwordHash = "";
   _keyCipher = "";
 }
 
-UnmodifiableMapView<String, dynamic> save() =>
-  UnmodifiableMapView({
-    "data": _compress(),
-    "sig": sha512.convert(utf8.encode(_compress())).toString(),
-  });
-
 
 // Encryption -------------------------------------
-
 String encrypt(String plainText) {
-  IV secretIV = IV.fromSecureRandom(96);
+  IV secretIV = IV.fromSecureRandom(12);
   final encrypted = encrypter!.encrypt(plainText, iv: secretIV);
-  return secretIV.base64 + '\$' + encrypted.base64;
+  return '${secretIV.base64}:${encrypted.base64}';
 }
-
 String decrypt(String cipherTextb64) {
-  List<String> package = cipherTextb64.split("\$");
+  List<String> package = cipherTextb64.split(":");
   IV secretIV = IV.fromBase64(package[0]);
   Encrypted cipherText = Encrypted.fromBase64(package[1]);
   final decrypted = encrypter!.decrypt(cipherText, iv: secretIV);
@@ -209,7 +189,7 @@ String decrypt(String cipherTextb64) {
 
 
 // Encodings ---------------------------------------
-String _hexEncode(List<int> bytes) {
+String hexEncode(List<int> bytes) {
   const hexDigits = '0123456789abcdef';
   var charCodes = Uint8List(bytes.length * 2);
   for (var i = 0, j = 0; i < bytes.length; i++) {
@@ -219,7 +199,7 @@ String _hexEncode(List<int> bytes) {
   }
   return String.fromCharCodes(charCodes);
 }
-List<int> _hexDecode(String hexString) {
+List<int> hexDecode(String hexString) {
   var bytes = <int>[];
   for (var i = 0; i < hexString.length; i += 2) {
     var byte = int.parse(hexString.substring(i, i + 2), radix: 16);
