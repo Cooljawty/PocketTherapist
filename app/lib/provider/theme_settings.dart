@@ -18,7 +18,7 @@ class ThemeSettings with ChangeNotifier {
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
         .copyWith(
         brightness: Brightness.dark,
-        background: Colors.black,
+        background: Colors.deepPurple.shade700,
         primary: Colors.deepPurpleAccent
     ),
     // textTheme: TextTheme(
@@ -76,9 +76,8 @@ class ThemeSettings with ChangeNotifier {
     ),
   ];
 
-  String currentThemeName = settings.getCurrentTheme().brightness == Brightness.dark? 'Dark' : 'Light';
+  String currentThemeName = settings.getCurrentTheme() == ThemeSettings.lightTheme? 'Light' : 'Dark';
   ThemeData get theme => settings.getCurrentTheme();
-
 
   changeTheme(String theme) {
     ThemeOption selectedtheme = switch(theme){

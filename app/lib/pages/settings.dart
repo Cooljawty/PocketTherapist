@@ -19,14 +19,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   // Drop down menu items
-  List<String> themeStrings = ['Dark', 'Light'];
-  String? chosenTheme = 'Light';
-  String dir = 'Dir';
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
-    chosenTheme = provider.currentThemeName;
+    List<String> themeStrings = ['Dark', 'Light'];
+    String? chosenTheme = provider.theme == ThemeSettings.lightTheme? 'Light' : 'Dark';
+    String dir = 'Dir';
+
     return Scaffold(
       
         // Invisible app bar
