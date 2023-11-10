@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:app/provider/settings.dart';
 import 'entry.dart';
+import 'package:app/provider/settings.dart' as prov;
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class NewEntryPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -13,7 +15,24 @@ class NewEntryPage extends StatefulWidget {
   State<NewEntryPage> createState() => _NewEntryPageState();
 }
 
+// Temporary tags - move to settings(?)
+class Tag {
+  final int id;
+  final String name;
+
+  Tag({
+    required this.id,
+    required this.name,
+  });
+}
+
 class _NewEntryPageState extends State<NewEntryPage> {
+  final _items = prov.tagList.asMap().entries.map((tag) {
+    int idx = tag.key;
+    String val = tag.value;
+
+    return MultiSelectItem<Tag>(Tag(id: idx, name: val), val);
+  }).toList();
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
@@ -62,7 +81,69 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Add emotion wheel
+            // Temporary Tags
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: MultiSelectDialogField(
+                items: _items,
+                title: const Text("Tags"),
+                listType: MultiSelectListType.LIST,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(40)),
+                  border: Border.all(
+                    color: Colors.blue,
+                    width: 2,
+                  ),
+                ),
+                buttonIcon: const Icon(
+                  Icons.tag,
+                  color: Colors.blue,
+                ),
+                buttonText: Text(
+                  "Tags",
+                  style: TextStyle(
+                    color: Colors.blue[800],
+                    fontSize: 16,
+                  ),
+                ),
+                onConfirm: (results) {
+                  //_selectedAnimals = results;
+                },
+              ),
+            ),
+
+            // Temporary Tags
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: MultiSelectDialogField(
+                items: _items,
+                title: const Text("Emotions"),
+                listType: MultiSelectListType.LIST,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(40)),
+                  border: Border.all(
+                    color: Colors.blue,
+                    width: 2,
+                  ),
+                ),
+                buttonIcon: const Icon(
+                  Icons.tag,
+                  color: Colors.blue,
+                ),
+                buttonText: Text(
+                  "Emotions",
+                  style: TextStyle(
+                    color: Colors.blue[800],
+                    fontSize: 16,
+                  ),
+                ),
+                onConfirm: (results) {
+                  //_selectedAnimals = results;
+                },
+              ),
+            ),
 
             //box SizedBox keeps the plan, tag, and save buttons on the bottom.
             const Expanded(child: SizedBox(height: 1)),
