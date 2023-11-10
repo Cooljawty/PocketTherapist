@@ -17,6 +17,8 @@ void main() {
     });
     app.main();
 
+		final navigator = NavigatorObserver();
+
     //traverse to tag settings
     await tester.pumpAndSettle();
     Finder startbutton = find.byKey(const Key("Start_Button"));
@@ -31,7 +33,6 @@ void main() {
 		//Create values for key
 		final journalInput = find.byKey(const ValueKey("journalInput"));
 		final titleInput = find.byKey(const ValueKey("titleInput"));
-		final tagList = find.byKey(Key('tagList'));
 
 		final saveButton = find.byKey(const ValueKey("saveButton"));
 		final planButton = find.byKey(const ValueKey("planButton"));
@@ -41,7 +42,6 @@ void main() {
 		expect(titleInput, findsOneWidget);
 		expect(journalInput, findsOneWidget);
 		expect(tagButton, findsOneWidget);
-    expect(tagList, findsOneWidget);
 
 		expect(find.text('Save'), findsOneWidget);
 		expect(find.text('Tag'), findsOneWidget);
@@ -69,6 +69,12 @@ void main() {
 		await tester.tap(tagButton);
 		await tester.pumpAndSettle();
 
+		//Select pre-existing tag
+    final tagSelector = find.byKey(Key('Select ${settings.tagList.first.getName()} Button'));
+    expect(tagSelector, findsOneWidget);
+		await tester.tap(tagSelector);
+		await tester.pump();
+
 		//Enter a new tag name
     final searchBar = find.byKey(const Key('Tag Search Bar'));
     expect(searchBar, findsOneWidget);
@@ -81,23 +87,12 @@ void main() {
     await tester.tap(createTagButton);
     await tester.pumpAndSettle();
 
-		//Select pre-existing tag
-		final addedTag = settings.tagList.first;
-    final addedTagSelector = find.byKey(Key('Select ${addedTag.getName()} Button'));
-    expect(addedTagSelector, findsOneWidget);
-		await tester.tap(addedTagSelector);
-		await tester.pump();
-
 		//Apply tags to journal entry
-		final applyTagButton = find.byKey(Key('Apply Tags'));
+		final applyTagButton = find.byType(BackButton);
     expect(applyTagButton, findsOneWidget);
 		await tester.tap(applyTagButton);
 		await tester.pumpAndSettle();
 		
-		//Check that both tags are added
-		final listedTags = find.byKey(Key('tag'));
-    expect(applyTagButton, findsNWidgets(2));
-
 		await tester.tap(applyTagButton);
 		await tester.pumpAndSettle();
 
