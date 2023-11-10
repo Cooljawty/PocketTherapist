@@ -14,7 +14,7 @@ class Tag {
 	}
 
 class TagSettingsPage extends StatefulWidget {
-	List<Tag>? selectedTags;
+	final List<Tag>? selectedTags;
 
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => TagSettingsPage());
@@ -188,11 +188,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
 			));
 		}
 
-		return Container(
-			child: Row(
-				mainAxisAlignment: MainAxisAlignment.center,
-				children: tagRow,
-			)
+		return Row(
+			mainAxisAlignment: MainAxisAlignment.center,
+			children: tagRow,
 		);
 	}
 }

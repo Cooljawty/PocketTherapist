@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 
-import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/cards.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
@@ -18,24 +16,22 @@ void main() {
     });
     app.main();
 
-		final navigator = NavigatorObserver();
-
     //traverse to tag settings
     await tester.pumpAndSettle();
     Finder startbutton = find.byKey(const Key("Start_Button"));
     await tester.tap(startbutton);
     await tester.pumpAndSettle();
-		await tester.tap(find.byKey(Key("Navbar_Destination_Entries")));
+		await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));
 		await tester.pumpAndSettle();
-		await tester.tap(find.byKey(Key("New Entry")));
+		await tester.tap(find.byKey(const Key("New Entry")));
 		await tester.pumpAndSettle();
 
 
 		//You are now in the new entry page
 		//What data will be in the entry
-		final newTag = "Tag!";
-		final newTitle = "Title!";
-		final newEntry = "Journal!";
+		const newTag = "Tag!";
+		const newTitle = "Title!";
+		const newEntry = "Journal!";
 
 		//Create values for key
 		final journalInput = find.byKey(const ValueKey("journalInput"));
@@ -93,7 +89,7 @@ void main() {
     await tester.pumpAndSettle();
 
 		//Select new tag
-    final tagSelector = find.byKey(Key('Select $newTag Button'));
+    final tagSelector = find.byKey(const Key('Select $newTag Button'));
     expect(tagSelector, findsOneWidget);
 		await tester.tap(tagSelector);
 		await tester.pump();
