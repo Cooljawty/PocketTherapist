@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:app/pages/new_entry.dart';
+import 'package:app/uiwidgets/cards.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
 
@@ -77,7 +78,7 @@ void main() {
 		//Enter a new tag name
     final searchBar = find.byKey(const Key('Tag Search Bar'));
     expect(searchBar, findsOneWidget);
-    await tester.enterText(searchBar, newEntry);
+    await tester.enterText(searchBar, newTag);
     await tester.pumpAndSettle();
 
 		//Create tag with given name
@@ -103,15 +104,16 @@ void main() {
 
 		//View new entry
 		final card = find.byType(DisplayCard).first;
-		expect(cardFinder, findsNWidgets(2));
+		expect(card, findsOneWidget);
 		await tester.tap(card);
 		await tester.pumpAndSettle();
 
+		//Title, entry text, and applied tags should be displayed
 		final title = find.text(newTitle);
-		final text = find.text(entry.getEntryText());
-		final tag = find.text(
-
+		final text = find.text(newEntry);
+		final tag = find.text(newTag);
 		expect(title, findsOneWidget);
 		expect(text, findsOneWidget);
+		expect(tag, findsOneWidget);
 		});
 }
