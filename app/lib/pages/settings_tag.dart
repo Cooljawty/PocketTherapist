@@ -14,11 +14,13 @@ class Tag {
 	}
 
 class TagSettingsPage extends StatefulWidget {
+	List<Tag>? selectedTags;
+
   static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const TagSettingsPage());
+    return MaterialPageRoute(builder: (context) => TagSettingsPage());
   }
 
-  const TagSettingsPage({super.key});
+  TagSettingsPage({super.key, this.selectedTags});
 
   @override
   State<TagSettingsPage> createState() => _TagSettingsState();
@@ -27,6 +29,7 @@ class TagSettingsPage extends StatefulWidget {
 class _TagSettingsState extends State<TagSettingsPage> {
   List<Tag>? compatableTagList;
   TextEditingController textController = TextEditingController();
+
   //delete tag function used to delete the tag from the complete list
   //and update the screen
   void deleteTag(Tag tag) {
@@ -58,6 +61,13 @@ class _TagSettingsState extends State<TagSettingsPage> {
         //app bar for back button
         appBar: AppBar(),
         body: SafeArea(
+					//Ensure that selected tags are returned after quitting
+					child: WillPopScope(
+					onWillPop: () async {
+						Navigator.pop(context, widget.selectedTags);
+						return false;
+					},
+
           child: SingleChildScrollView(
             //create column that will go on to contain the tag list and the search bar
             child: Column(
@@ -131,18 +141,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                       List<Tag> compList = compatableTagList ?? prov.tagList;
                       for (int index = 0; index < compList.length; index++) {
                         //generate 1 row for each name in list
-                        childofColumn.add(Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            //first child is tag
-                            Text(compList[index].name),
-                            //second is delete button
-                            TextButton(
-                                key: Key('Delete ${compList[index].name} Button'),
-                                onPressed: () => deleteTag(compList[index]),
-                                child: const Text('Delete')),
-                          ],
-                        ));
+                        childofColumn.add( _displayTag(index, compList) );
                       }
                       //final column starts will text wigdet displayed
                       Column finalColumn = Column(
@@ -155,8 +154,47 @@ class _TagSettingsState extends State<TagSettingsPage> {
               ],
             ),
           ),
-        ));
+        ),
+				),
+			);
   }
+
+	//Display tags as a row of widgets
+	Widget _displayTag(int index, List<Tag> compList) {
+		List<Widget> tagRow = [
+			//first child is tag
+			Text(compList[index].name),
+			//second is delete button
+			TextButton(
+					key: Key('Delete ${compList[index].name} Button'),
+					onPressed: () => deleteTag(compList[index]),
+					child: const Text('Delete')),
+		];
+
+		//If opend from NewEntry page, add a selection button
+		if (widget.selectedTags != null) { 
+			tagRow.insert(0, Checkbox(
+				key: Key('Select ${compList[index].name} Button'),
+				value: widget.selectedTags!.any((tag) => tag == compList[index]),
+				onChanged: (bool? selected) {
+					setState(() {
+						if (selected!) {
+							widget.selectedTags!.add(compList[index]);
+						} else {
+							widget.selectedTags!.remove(compList[index]);
+						}
+					});
+				},
+			));
+		}
+
+		return Container(
+			child: Row(
+				mainAxisAlignment: MainAxisAlignment.center,
+				children: tagRow,
+			)
+		);
+	}
 }
 
 //this function will return true if the compatable list has anything to display

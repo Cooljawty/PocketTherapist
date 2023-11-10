@@ -113,13 +113,18 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   getEntry() {
     return JournalEntry(
-        title: titleController.text, entryText: journalController.text, date: DateTime.now());
+        title: titleController.text, 
+				entryText: journalController.text, 
+				date: DateTime.now(),
+				tags: _tagList,
+		);
   }
 
+	//Update applied tags with the TagSettings Page
 	_saveTagsToEntry(BuildContext context) async {
 		final newTags = await Navigator.push(
 			context, 
-			MaterialPageRoute(builder: (context) => const TagSettingsPage()),
+			MaterialPageRoute(builder: (context) => TagSettingsPage(selectedTags: _tagList)),
 		);
 		_tagList = newTags;
 	}
