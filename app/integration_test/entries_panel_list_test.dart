@@ -75,4 +75,40 @@ void main() {
   testWidgets('See if all entries are correct and present - Year filter w/o show all entries', (WidgetTester tester) async {
     await testForItems(tester, 'Year', false);
   });
+
+  //create new test for text field and filter type
+  testWidgets('Checks if all Search field filters by Title and Tag',
+      (WidgetTester tester) async {
+    String targetTitle = 'This is an Entry';
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle();
+    Finder searchBar = find.byKey(const Key('FilterByTextForm'));
+
+    //first we expect there to be all entries displayed
+    expect(entry.entries.length, entry.items.length);
+    await tester.enterText(searchBar, targetTitle);
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    Finder currentJournal = find.byKey(ValueKey(entry.items[0].getTitle()));
+
+    //now after searching for one title we only expect the one entry
+    expect(entry.items.length, 1);
+    expect(currentJournal, findsOneWidget);
+
+    //now test for tag search by switching the filter and checking
+    Finder filterDropDown = find.byKey(const Key('FilterByDropDown'));
+    await tester.tap(filterDropDown);
+    await tester.pumpAndSettle();
+    //Title is found twice due to it being the default set
+    expect(find.text(entry.filterOptions[0]), findsNWidgets(2));
+    expect(find.text(entry.filterOptions[1]), findsOneWidget);
+
+    //select tag filter option
+    await tester.tap(find.text(entry.filterOptions[1]));
+    await tester.pumpAndSettle();
+    //now we dont expect the list to hold any valid entries because no tags
+    //would match the title.
+    expect(entry.items.length, 0);
+    expect(currentJournal, findsNothing);
+  });
 }
