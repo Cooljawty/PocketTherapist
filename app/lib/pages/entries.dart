@@ -26,12 +26,17 @@ List<JournalEntry> entries = [
   // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
 ];
 
-//Generated list of journal entries
-final items = entries;
+//Generated list of journal entries, update final to var to use list in search
+var items = entries;
 
 // Display options
 final List<String> displayOptions = ['Week', 'Month', 'Year'];
 String? chosenDisplay = 'Week';
+
+// Filter options
+final List<String> filterOptions = ['Title', 'Tag'];
+String? chosenFilter = 'Title';
+TextEditingController filterInputController = TextEditingController(text: '');
 
 // Sort the Journal entries by most recent date
 late List<JournalEntry> sortedItems;
@@ -51,6 +56,44 @@ class _EntriesPageState extends State<EntriesPage> {
           children: [
             const Text('Entries'),
 
+            //add a row which will hold the search bar
+            Row(
+              children: [
+                Expanded(
+                    flex: 2,
+                    child: TextFormField(
+                      key: const Key('FilterByTextForm'),
+                      controller: filterInputController,
+                      textAlign: TextAlign.center,
+                      onChanged: (value) {
+                        setState(() {
+                          updateFilteredList(value);
+                        });
+                      },
+                    )),
+                // Dropdown for filter by title or tag
+                //mimics logic from filter by date
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    key: const Key('FilterByDropDown'),
+                    dropdownColor: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10.0),
+                    value: chosenFilter,
+                    items: filterOptions
+                        .map((item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item,
+                                style: const TextStyle(color: Colors.black))))
+                        .toList(),
+                    onChanged: (item) => setState(() {
+                      chosenFilter = item;
+                      //update filtered list to match new option
+                      updateFilteredList(filterInputController.text);
+                    }),
+                  ),
+                ),
+              ],
+            ),
             // Pad filter to the right
             Padding(padding: const EdgeInsets.fromLTRB(250, 20, 20, 20),
               child: Container(
@@ -301,4 +344,41 @@ extension Formatter on DateTime {
     // return the difference between the start and end date by week rounded up
     return (end.difference(start).inDays / 7).ceil();
   }
+}
+
+//create function to update the filtered list to only contain compatable entries
+
+void updateFilteredList(String input) {
+  //create 1 list for each type of sort
+  List<JournalEntry> filteredList = [];
+  //iterate through list to determine if an entry is compatable
+  //if it is then add it to the new list
+  for (int i = 0; i < entries.length; i++) {
+    //check is based off filter type
+    if (chosenFilter == 'Title') {
+      //to handle casing we will compare lower case version of the title
+      //and of the input
+      if (entries[i].getTitle().toLowerCase().contains(input.toLowerCase())) {
+        filteredList.add(entries[i]);
+      }
+    } else if (chosenFilter == 'Tags') {
+      /*
+      //currently there is no tag array apart of journal entries
+      //if we add one the implementation would be as follows
+      List<Tag> taglist = entries[i].getTags();
+      for(int j = 0; j < taglist.length; j++)
+      {
+        if (taglist[j].name.toLowerCase().contains(input.toLowerCase())) {
+          //because we only want to add the value one time we
+          //break the loop after one valid tag is found within
+          //the tag list
+          tagFilter.add(entries[i]);
+          j = taglist.length;
+        }
+      }
+      */
+    }
+  }
+  //update the list thats on the screen
+  items = filteredList;
 }
