@@ -18,8 +18,7 @@ class NewEntryPage extends StatefulWidget {
 }
 
 class _NewEntryPageState extends State<NewEntryPage> {
-  final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
-  double _progress = 0;
+  final ValueNotifier<double> _progress = ValueNotifier(0);
 
   final _items = prov.tagList.asMap().entries.map((tag) {
     int idx = tag.key;
@@ -79,6 +78,16 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   ),
                 ),
 
+                MultiSelectChipDisplay(
+                  items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
+                  scroll: true,
+                  onTap: (value) {
+                    setState(() {
+                      _selectedTags.remove(value);
+                    });
+                  },
+                ),
+
                 // Emotions
                 Padding(
                   padding: EdgeInsets.all(20),
@@ -115,7 +124,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
         CircularSeekBar(
           width: double.infinity,
           height: 175,
-          progress: _progress,
+          progress: 0,
           maxProgress: 60,
           barWidth: 8,
           startAngle: 5,
@@ -139,10 +148,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
           dashWidth: 20,
           dashGap: 10,
           animation: false,
-          valueNotifier: _valueNotifier,
+          valueNotifier: _progress,
           child: Center(
             child: ValueListenableBuilder(
-                valueListenable: _valueNotifier,
+                valueListenable: _progress,
                 builder: (_, double value, __) => Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -150,16 +159,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       ],
                     )),
           ),
-        ),
-
-        MultiSelectChipDisplay(
-          items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
-          scroll: true,
-          onTap: (value) {
-            setState(() {
-              _selectedTags.remove(value);
-            });
-          },
         ),
 
         //Row for overflow widget
