@@ -11,6 +11,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Prepare coverage data for merge
+        run: mv app/coverage/lcov.info app/coverage/lcov.base.info
+
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1
  
