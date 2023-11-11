@@ -28,5 +28,5 @@ class Emotion {
 
   int get getId{return id;}
   String get getName{return name;}
-  set setStrength(int val) {strength = val;}
+  void setStrength(int val) {strength = val;}
 }

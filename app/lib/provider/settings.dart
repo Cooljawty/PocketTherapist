@@ -35,6 +35,9 @@ const String accentColorKey = "accent";
 //add tag list
 List<String> tagList = [];
 
+//add emotion list
+List<String> emotionList = [];
+
 /// The color of all accents, like buttons and sizing.
 
 Map<String, dynamic> _settings = {
@@ -83,6 +86,15 @@ Future<void> load() async {
           tagList.add(dynamicList[i] as String);
         }
       }
+
+      //load emotions
+      if (_settings['emotions'] != null) {
+        dynamicList = _settings['emotions'];
+        emotionList = [];
+        for (int i = 0; i < dynamicList.length; i++) {
+          emotionList.add(dynamicList[i] as String);
+        }
+      }
     }
 
     /// settings are loaded
@@ -113,6 +125,16 @@ void _assignDefaults() async {
     'Serene',
     'Trusting',
   ];
+  emotionList = [
+    'Happy',
+    'Trust',
+    'Fear',
+    'Surprise',
+    'Sad',
+    'Disgust',
+    'Anger',
+    'Anticipation',
+  ];
 }
 
 /// The saving function [save], will save settings to [_settingsStorageDirectory]
@@ -134,6 +156,9 @@ Future<void> save() async {
 
   //add lines to update tags
   settings['tags'] = tagList;
+
+  //add lines to update emotions
+  settings['emotions'] = emotionList;
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);
