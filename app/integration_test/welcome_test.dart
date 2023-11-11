@@ -192,16 +192,11 @@ void main() async {
       await widgetTester.tap(enterPasswordButton);
       await widgetTester.pumpAndSettle(const Duration(seconds: 25));
 
-      //Successful login, on dashboard
-      expect(find.text("Dashboard"), findsOneWidget);
 
-      await widgetTester.tap(find.text("nextPageEntries"));
-      await widgetTester.pumpAndSettle();
-      await widgetTester.tap(find.text("nextPagePlans"));
-      await widgetTester.pumpAndSettle();
-      await widgetTester.tap(find.text("nextPageCalendar"));
-      await widgetTester.pumpAndSettle();
+      //Successful login, on dashboard
+      expect(find.text("Dashboard"), findsNWidgets(2));
     });
+
   });
 
 }

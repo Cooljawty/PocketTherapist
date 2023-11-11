@@ -1,8 +1,10 @@
 import 'package:app/helper/file_manager.dart';
 import 'package:app/provider/theme_settings.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
+import 'settings_tag.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() {
@@ -17,15 +19,16 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   // Drop down menu items
-  List<String> themeStrings = ['Dark', 'Light'];
-  String? chosenTheme = 'Light';
-  String dir = 'Dir';
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ThemeSettings>(context);
-    chosenTheme = provider.currentThemeName;
+    List<String> themeStrings = ['Dark', 'Light'];
+    String? chosenTheme = provider.theme == ThemeSettings.lightTheme? 'Light' : 'Dark';
+    String dir = 'Dir';
+
     return Scaffold(
+      
         // Invisible app bar
         appBar: AppBar(
           centerTitle: true,
@@ -88,7 +91,13 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                   width: 240,
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            // Go to settings page
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TagSettingsPage()));
+                      },
                       child: const Text('Edit Tag List'))),
 
               // Enable/Disable encryption Button
@@ -127,6 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
               // }, child: const Text('nextPageCalendar') )
             ],
           ),
-        ));
+        ),
+			);
   }
 }

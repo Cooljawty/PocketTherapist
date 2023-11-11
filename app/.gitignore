@@ -54,4 +54,4 @@ app.*.map.json
 #ios
 
 # Dont need to commit this
-pubspec.lock
+*.lock
