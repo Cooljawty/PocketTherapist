@@ -76,16 +76,31 @@ void main() {
 		await tester.tap(tagButton);
 		await tester.pumpAndSettle();
 
-		//Enter a new tag name
-    final searchBar = find.byKey(const Key('Tag Search Bar'));
-    expect(searchBar, findsOneWidget);
-    await tester.enterText(searchBar, newTag);
-    await tester.pumpAndSettle();
-
 		//Create tag with given name
     final createTagButton = find.byKey(const Key('Create Tag'));
     expect(createTagButton, findsOneWidget);
     await tester.tap(createTagButton);
+    await tester.pumpAndSettle();
+
+		//Enter a new tag name
+    final nameField = find.byKey(const Key('Tag Name Field'));
+    expect(nameField, findsOneWidget);
+    await tester.enterText(nameField, newTag);
+
+		//Change tag's color from grey to green
+    final colorSelector = find.byKey(Key('Tag Color ${Colors.grey.toString()}'));
+    expect(nameField, findsOneWidget);
+    await tester.tap(colorSelector);
+		await tester.pump();
+		await tester.pump(Duration(seconds: 1)); //Flutter tests Dropdowns with a second pump
+		await tester.tap(find.byKey(Key('Tag Color ${Colors.green.toString()}')));
+		await tester.pump();
+		await tester.pump(Duration(seconds: 1));
+
+		//Confirm new tag
+    final confirmTagButton = find.byKey(const Key('Confirm New Tag Button'));
+    expect(confirmTagButton, findsOneWidget);
+		await tester.tap(confirmTagButton);
     await tester.pumpAndSettle();
 
 		//Select new tag
