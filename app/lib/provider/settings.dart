@@ -122,7 +122,9 @@ void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
 void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
 void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
 void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
-void setPassword(String newPassword) => encryptor.setPassword(newPassword);
+void setPassword(String newPassword) async {
+  await encryptor.setPassword(newPassword);
+}
 void setMockValues(Map<String, dynamic> value) {
   reset();
   _settings.addAll(value);

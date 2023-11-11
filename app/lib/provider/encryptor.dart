@@ -88,7 +88,6 @@ String? defaultValidator(String? value) =>
     null :
     "Passwords must have the following:\n1. 10 or more characters\n2. At least one special character\n3.at least one number (!@#\$%^&*())";
 
-
 /// This function is responsible for unlocking and initializing the application after password has been set
 /// [setPassword] should not be used unless part of a reset.
 Future<bool> unlock(String password) async {

@@ -1,10 +1,12 @@
 import 'package:app/main.dart' as app;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:app/provider/settings.dart' as settings;
 
 
-void main() {
+void main() async {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   tearDown(() async {
     await settings.reset();
@@ -133,72 +135,73 @@ void main() {
   });
 
   testWidgets("Login to Account", (widgetTester) async {
-    const String password = "password123@";
-    const String badPassword = "password123";
+    await widgetTester.runAsync(() async {
+      const String password = "password123@";
+      const String badPassword = "password123";
 
-    await settings.load();
-    settings.setMockValues({
-      settings.configuredKey: true,
-      settings.encryptionToggleKey: true,
-    });
-    settings.setPassword(password);
-    await settings.save();
+      await settings.load();
+      settings.setMockValues({
+        settings.configuredKey: true,
+        settings.encryptionToggleKey: true,
+      });
+      settings.setPassword(password);
+      await settings.save();
 
-    app.main();
+      app.main();
 
+      await widgetTester.pumpAndSettle();
 
-    await widgetTester.pumpAndSettle();
-
-    Finder startbutton = find.byKey(const Key("Start_Button"));
-    expect(startbutton, findsOneWidget);
-    await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
+      Finder startbutton = find.byKey(const Key("Start_Button"));
+      expect(startbutton, findsOneWidget);
+      await widgetTester.tap(startbutton);
+      await widgetTester.pumpAndSettle();
 
 // First alert box - Enter password ---------------------------------------------[
-    Finder encryptionAlert = find.byType(AlertDialog);
-    expect(encryptionAlert, findsOneWidget);
+      Finder encryptionAlert = find.byType(AlertDialog);
+      expect(encryptionAlert, findsOneWidget);
 
-    Finder passwordField = find.descendant(
-        of: find.byKey(const Key("Login_Password_Field")),
-        matching: find.byType(TextFormField)
-    );
-    expect(passwordField, findsOneWidget);
+      Finder passwordField = find.descendant(
+          of: find.byKey(const Key("Login_Password_Field")),
+          matching: find.byType(TextFormField));
+      expect(passwordField, findsOneWidget);
 
 // Enter password ---------------------------------------------------------------
-    await widgetTester.enterText(passwordField, badPassword);
-    await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(passwordField, badPassword);
+      await widgetTester.pumpAndSettle();
 
-    /// Submit the first password ( stores it )
-    Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
+      /// Submit the first password ( stores it )
+      Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
 
-    await widgetTester.tap(enterPasswordButton);
-    await widgetTester.pumpAndSettle(const Duration(seconds: 19));
+      await widgetTester.tap(enterPasswordButton);
+      await widgetTester.pumpAndSettle(const Duration(seconds: 25));
 
-    Finder confirmIncorrectButton = find.byKey(const Key("Confirm_Incorrect_Password"));
-    await widgetTester.tap(confirmIncorrectButton);
-    await widgetTester.pumpAndSettle();
+      Finder confirmIncorrectButton =
+          find.byKey(const Key("Confirm_Incorrect_Password"));
+      await widgetTester.tap(confirmIncorrectButton);
+      await widgetTester.pumpAndSettle();
 
-    await widgetTester.enterText(passwordField, password);
-    await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(passwordField, password);
+      await widgetTester.pumpAndSettle();
 
-    Finder seePasswordButton = find.byType(IconButton);
-    await widgetTester.tap(seePasswordButton);
-    await  widgetTester.pumpAndSettle();
-    await widgetTester.tap(seePasswordButton);
-    await  widgetTester.pumpAndSettle();
+      Finder seePasswordButton = find.byType(IconButton);
+      await widgetTester.tap(seePasswordButton);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(seePasswordButton);
+      await widgetTester.pumpAndSettle();
 
-    await widgetTester.tap(enterPasswordButton);
-    await widgetTester.pumpAndSettle();
+      await widgetTester.tap(enterPasswordButton);
+      await widgetTester.pumpAndSettle(const Duration(seconds: 25));
 
-    //Successful login, on dashboard
-    expect(find.text("Dashboard"), findsOneWidget);
+      //Successful login, on dashboard
+      expect(find.text("Dashboard"), findsOneWidget);
 
-    await widgetTester.tap(find.text("nextPageEntries"));
-    await  widgetTester.pumpAndSettle();
-    await widgetTester.tap(find.text("nextPagePlans"));
-    await  widgetTester.pumpAndSettle();
-    await widgetTester.tap(find.text("nextPageCalendar"));
-    await  widgetTester.pumpAndSettle();
+      await widgetTester.tap(find.text("nextPageEntries"));
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(find.text("nextPagePlans"));
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(find.text("nextPageCalendar"));
+      await widgetTester.pumpAndSettle();
+    });
   });
 
 }

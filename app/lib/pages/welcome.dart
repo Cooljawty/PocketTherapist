@@ -400,7 +400,7 @@ class _WelcomePageState extends State<WelcomePage> {
               TextButton(
                 //add key for testing
                   key: const Key('Submit_Password'),
-                  onPressed: () => _verifyPassword(context, passwordFieldText),
+                  onPressed: () async { await _verifyPassword(context, passwordFieldText);},
                   child: const Text("Enter")
               ),
             ],
@@ -408,7 +408,8 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void _verifyPassword(BuildContext context, String password) async {
+
+  Future<void> _verifyPassword(BuildContext context, String password) async {
     bool match = await encryptor.unlock(password);
     if (match) {
       password = "";
@@ -440,8 +441,10 @@ class _WelcomePageState extends State<WelcomePage> {
                   ],
                 )
         );
+      } else {
+        throw StateError(
+            "Context was not mounted while trying to draw IncPassword Dialog");
       }
-      throw StateError("Context was not mounted while trying to draw IncPassword Dialog");
       // I should never get here
     }
   }
