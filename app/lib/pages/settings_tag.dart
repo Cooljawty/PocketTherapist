@@ -65,18 +65,25 @@ class _TagSettingsState extends State<TagSettingsPage> {
 					return AlertDialog(
 						title: const Text('Create a New Tag'),
 						content: Column(
+							mainAxisSize: MainAxisSize.min,
 							children: [
 								//Tag name
-								TextField(
-									decoration: InputDecoration(hintText: "Tag name"),
-									onChanged: (name) { newName = name; },
+								Container(
+									padding: const EdgeInsets.symmetric(vertical: 16),
+									child: TextField(
+										decoration: InputDecoration(hintText: "Tag name"),
+										onChanged: (name) { newName = name; },
+									),
 								),
 								//Tag Color
-								DropdownMenu<Color>(
-									initialSelection: Colors.grey,
-									label: const Text("Tag color"),
-									dropdownMenuEntries: colorEntries,
-									onSelected: (color) => setState(() => newColor = color!),
+								Container(
+									padding: const EdgeInsets.symmetric(vertical: 16),
+									child: DropdownMenu<Color>(
+										initialSelection: Colors.grey,
+										label: const Text("Tag color"),
+										dropdownMenuEntries: colorEntries,
+										onSelected: (color) => setState(() => newColor = color!),
+									),
 								),
 							],
 						),
