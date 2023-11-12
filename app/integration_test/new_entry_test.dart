@@ -87,18 +87,18 @@ void main() {
     expect(nameField, findsOneWidget);
     await tester.enterText(nameField, newTag);
 
-		//Change tag's color from grey to green
-    final colorSelector = find.byKey(Key('Tag Color ${Colors.grey.toString()}'));
+		//Change tag's color from default grey to cyan
+    final colorSelector = find.byKey(const Key('Tag Color Field'));
     expect(nameField, findsOneWidget);
     await tester.tap(colorSelector);
 		await tester.pump();
 		await tester.pump(Duration(seconds: 1)); //Flutter tests Dropdowns with a second pump
-		await tester.tap(find.byKey(Key('Tag Color ${Colors.green.toString()}')));
+		await tester.tap(find.text("Cyan").first);
 		await tester.pump();
 		await tester.pump(Duration(seconds: 1));
 
 		//Confirm new tag
-    final confirmTagButton = find.byKey(const Key('Confirm New Tag Button'));
+    final confirmTagButton = find.byKey(const Key('Save New Tag Button'));
     expect(confirmTagButton, findsOneWidget);
 		await tester.tap(confirmTagButton);
     await tester.pumpAndSettle();

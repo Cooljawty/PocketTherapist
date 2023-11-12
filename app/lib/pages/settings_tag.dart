@@ -71,6 +71,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								Container(
 									padding: const EdgeInsets.symmetric(vertical: 16),
 									child: TextFormField(
+										key: const Key('Tag Name Field'),
 										decoration: InputDecoration(hintText: "Tag name"),
 										initialValue: name,
 										onChanged: (name) { newName = name; },
@@ -80,6 +81,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								Container(
 									padding: const EdgeInsets.symmetric(vertical: 16),
 									child: DropdownMenu<Color>(
+										key: const Key('Tag Color Field'),
 										initialSelection: color ?? Colors.grey,
 										dropdownMenuEntries: colorEntries,
 										//Show 5 colors at a time
@@ -92,6 +94,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 						//Conformation buttons
 						actions: <Widget>[
 							TextButton(
+								key: const Key('Save New Tag Button'),
 								child: const Text('Save'),
 								onPressed: () {
 									final newTag = Tag(name: name, color: color ?? Colors.grey);
@@ -106,6 +109,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								},
 							),
 							TextButton(
+								key: const Key('Cancel New Tag Button'),
 								child: const Text('Cancel'),
 								onPressed: () => Navigator.of(context).pop(),
 							)
