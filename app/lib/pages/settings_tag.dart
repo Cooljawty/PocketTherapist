@@ -48,14 +48,11 @@ class _TagSettingsState extends State<TagSettingsPage> {
 		Color newColor = color ?? Colors.grey;
 
 		final List<DropdownMenuEntry<Color>> colorEntries = [];
-		final colorList = Colors.primaries.map((color) => color.shade500).toList() + [Colors.black, Colors.white, Colors.grey];
-		for (color in colorList) {
-			final name = color.toString();
-			name[0].toUpperCase();
+		for (var color in ColorList.values) {
 			colorEntries.add( DropdownMenuEntry<Color>(
-					value: color, 
-					label: name, 
-					leadingIcon: Icon(Icons.circle, color: color)
+					value: color.color, 
+					label: color.name, 
+					leadingIcon: Icon(Icons.circle, color: color.color)
 				)
 			);
 		}
@@ -67,7 +64,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 				builder: (context) {
 					return AlertDialog(
 						title: const Text('Create a New Tag'),
-						content: Row(
+						content: Column(
 							children: [
 								/*Tag name
 								TextField(
@@ -267,4 +264,29 @@ bool tagsExist(List<Tag>? compatableList, List<Tag> actualList) {
   }
   //either filter has results or nothing is searched yet
   return true;
+}
+
+enum ColorList {
+	red(name: "Red", color: Colors.red),
+	pink(name: "Pink", color: Colors.pink),
+	purple(name: "Purple", color: Colors.purple),
+	deepPurple(name: "Deep Purple", color: Colors.deepPurple),
+	indigo(name: "Indigo", color: Colors.indigo),
+	blue(name: "Blue", color: Colors.blue),
+	lightBlue(name: "Light Blue", color: Colors.lightBlue),
+	cyan(name: "Cyan", color: Colors.cyan),
+	teal(name: "Teal", color: Colors.teal),
+	green(name: "Green", color: Colors.green),
+	lightGreen(name: "Light Green", color: Colors.lightGreen),
+	lime(name: "Lime", color: Colors.lime),
+	yellow(name: "Yellow", color: Colors.yellow),
+	amber(name: "Amber", color: Colors.amber),
+	orange(name: "Orange", color: Colors.orange),
+	deepOrange(name: "Deep Orange", color: Colors.deepOrange),
+	brown(name: "Brown", color: Colors.brown),
+	grey(name: "Grey", color: Colors.grey);
+
+	const ColorList({required this.name, required this.color});
+	final String name;
+	final Color color;
 }
