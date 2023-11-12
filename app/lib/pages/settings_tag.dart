@@ -29,6 +29,8 @@ class TagSettingsPage extends StatefulWidget {
 class _TagSettingsState extends State<TagSettingsPage> {
   List<Tag>? compatableTagList;
   TextEditingController textController = TextEditingController();
+	final TextEditingController _tagNameTextController = TextEditingController();
+	final TextEditingController _tagColorTextController = TextEditingController();
 
   //delete tag function used to delete the tag from the complete list
   //and update the screen
@@ -41,19 +43,111 @@ class _TagSettingsState extends State<TagSettingsPage> {
   }
 
   //function to add a tag to the complete list and update screen
-  void addTag({required String name, Color? color}) {
+  void addTag(BuildContext context, {required String name, Color? color}) {
+		String newName = name;
+		Color newColor = color ?? Colors.grey;
+
+		final List<DropdownMenuEntry<Color>> colorEntries = [];
+		final colorList = Colors.primaries.map((color) => color.shade500).toList() + [Colors.black, Colors.white, Colors.grey];
+		for (color in colorList) {
+			final name = color.toString();
+			name[0].toUpperCase();
+			colorEntries.add( DropdownMenuEntry<Color>(
+					value: color, 
+					label: name, 
+					leadingIcon: Icon(Icons.circle, color: color)
+				)
+			);
+		}
+
     //check for duplicates and add only unique names
     if (!prov.tagList.any((tag) => tag.getName() == name)) {
-			final newTag = Tag(name: name, color: color ?? Colors.grey);
-      prov.tagList.add(newTag);
-      //call save
-      prov.save();
-      //declare compatible list and add new name
-      compatableTagList ??= [];
-      compatableTagList?.add(newTag);
+			showDialog(
+				context: context,
+				builder: (context) {
+					return AlertDialog(
+						title: const Text('Create a New Tag'),
+						content: Row(
+							children: [
+								/*Tag name
+								TextField(
+									contoller: _tagNameTextController,
+									decoration: InputDecoration(hintText: "Tag name"),
+								),
+								*/
+								//Tag Color
+								DropdownMenu<Color>(
+									initialSelection: Colors.grey,
+									controller: _tagColorTextController,
+									label: const Text("Tag color"),
+									dropdownMenuEntries: colorEntries,
+									onSelected: (color) => setState(() => newColor = color!),
+								),
+							],
+						),
+						//Conformation buttons
+						actions: <Widget>[
+							TextButton(
+								child: const Text('Save'),
+								onPressed: () {
+									final newTag = Tag(name: name, color: color ?? Colors.grey);
+									prov.tagList.add(newTag);
+									//call save
+									prov.save();
+									//declare compatible list and add new name
+									compatableTagList ??= [];
+									compatableTagList?.add(newTag);
+
+									Navigator.pop(context);
+								},
+							),
+							TextButton(
+								child: const Text('Cancel'),
+								onPressed: () => Navigator.of(context).pop(),
+							)
+						],
+					);
+				},
+			);
     }
-    setState(() {});
+
+    setState((){});
   }
+
+	//Display tags as a row of widgets
+	Widget _displayTag(int index, List<Tag> compList) {
+		List<Widget> tagRow = [
+			//first child is tag
+			Text(compList[index].name),
+			//second is delete button
+			TextButton(
+					key: Key('Delete ${compList[index].name} Button'),
+					onPressed: () => deleteTag(compList[index]),
+					child: const Text('Delete')),
+		];
+
+		//If opend from NewEntry page, add a selection button
+		if (widget.selectedTags != null) { 
+			tagRow.insert(0, Checkbox(
+				key: Key('Select ${compList[index].name} Button'),
+				value: widget.selectedTags!.any((tag) => tag == compList[index]),
+				onChanged: (bool? selected) {
+					setState(() {
+						if (selected!) {
+							widget.selectedTags!.add(compList[index]);
+						} else {
+							widget.selectedTags!.remove(compList[index]);
+						}
+					});
+				},
+			));
+		}
+
+		return Row(
+			mainAxisAlignment: MainAxisAlignment.center,
+			children: tagRow,
+		);
+	}
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +205,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                     value = value.trim(),
                     if (value.isNotEmpty)
                       {
-                        addTag(name: value),
+                        addTag(context, name: value),
                         value = "",
                       }
                   },
@@ -128,7 +222,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                           ElevatedButton(
                               key: const Key('Create Tag'),
                               //on pressed adds the phrase in the text form field to the taglist
-                              onPressed: () => addTag(name: textController.text),
+                              onPressed: () => addTag(context, name: textController.text),
                               child: const Text('Create Tag'))
                         ],
                       );
@@ -159,40 +253,6 @@ class _TagSettingsState extends State<TagSettingsPage> {
 			);
   }
 
-	//Display tags as a row of widgets
-	Widget _displayTag(int index, List<Tag> compList) {
-		List<Widget> tagRow = [
-			//first child is tag
-			Text(compList[index].name),
-			//second is delete button
-			TextButton(
-					key: Key('Delete ${compList[index].name} Button'),
-					onPressed: () => deleteTag(compList[index]),
-					child: const Text('Delete')),
-		];
-
-		//If opend from NewEntry page, add a selection button
-		if (widget.selectedTags != null) { 
-			tagRow.insert(0, Checkbox(
-				key: Key('Select ${compList[index].name} Button'),
-				value: widget.selectedTags!.any((tag) => tag == compList[index]),
-				onChanged: (bool? selected) {
-					setState(() {
-						if (selected!) {
-							widget.selectedTags!.add(compList[index]);
-						} else {
-							widget.selectedTags!.remove(compList[index]);
-						}
-					});
-				},
-			));
-		}
-
-		return Row(
-			mainAxisAlignment: MainAxisAlignment.center,
-			children: tagRow,
-		);
-	}
 }
 
 //this function will return true if the compatable list has anything to display
