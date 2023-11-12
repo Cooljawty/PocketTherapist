@@ -66,12 +66,11 @@ class _TagSettingsState extends State<TagSettingsPage> {
 						title: const Text('Create a New Tag'),
 						content: Column(
 							children: [
-								/*Tag name
+								//Tag name
 								TextField(
-									contoller: _tagNameTextController,
 									decoration: InputDecoration(hintText: "Tag name"),
+									onChanged: (name) { newName = name; },
 								),
-								*/
 								//Tag Color
 								DropdownMenu<Color>(
 									initialSelection: Colors.grey,
