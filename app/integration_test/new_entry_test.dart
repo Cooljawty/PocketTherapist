@@ -103,6 +103,12 @@ void main() {
 		await tester.tap(confirmTagButton);
     await tester.pumpAndSettle();
 
+		//Clear tag search bar
+    final searchBar = find.byKey(const Key('Tag Search Bar'));
+    expect(searchBar, findsOneWidget);
+    await tester.enterText(searchBar, "");
+    await tester.pumpAndSettle();
+
 		//Select new tag
     final tagSelector = find.byKey(const Key('Select $newTag Button'));
     expect(tagSelector, findsOneWidget);

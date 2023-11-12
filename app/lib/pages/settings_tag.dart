@@ -29,8 +29,6 @@ class TagSettingsPage extends StatefulWidget {
 class _TagSettingsState extends State<TagSettingsPage> {
   List<Tag>? compatableTagList;
   TextEditingController textController = TextEditingController();
-	final TextEditingController _tagNameTextController = TextEditingController();
-	final TextEditingController _tagColorTextController = TextEditingController();
 
   //delete tag function used to delete the tag from the complete list
   //and update the screen
@@ -85,7 +83,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 										initialSelection: color ?? Colors.grey,
 										dropdownMenuEntries: colorEntries,
 										//Show 5 colors at a time
-										menuHeight: 5 * 50.0,
+										menuHeight: 4 * 50.0,
 										onSelected: (color) => setState(() => newColor = color!),
 									),
 								),
@@ -97,16 +95,19 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								key: const Key('Save New Tag Button'),
 								child: const Text('Save'),
 								onPressed: () {
-									final newTag = Tag(name: name, color: color ?? Colors.grey);
+									final newTag = Tag(name: newName, color: newColor ?? Colors.grey);
 									prov.tagList.add(newTag);
 									//call save
 									prov.save();
 									//declare compatible list and add new name
 									compatableTagList ??= [];
 									compatableTagList?.add(newTag);
+									
+									//Update search bar with new name
+									textController.value = TextEditingValue(text: newName); 
 
 									Navigator.pop(context);
-								},
+								}
 							),
 							TextButton(
 								key: const Key('Cancel New Tag Button'),
@@ -208,14 +209,13 @@ class _TagSettingsState extends State<TagSettingsPage> {
                     return;
                   },
                   //ideally would prompt if they would like to create tag
-                  onFieldSubmitted: (value) => {
+                  onFieldSubmitted: (value) {
                     //trim off white space from both sides
-                    value = value.trim(),
-                    if (value.isNotEmpty)
-                      {
-                        addTag(context, name: value),
-                        value = "",
-                      }
+                    value = value.trim();
+                    if (value.isNotEmpty) {
+											addTag(context, name: value);
+											value = "";
+										}
                   },
                 ),
                 SingleChildScrollView(
