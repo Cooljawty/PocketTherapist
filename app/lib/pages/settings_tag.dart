@@ -74,7 +74,6 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								//Tag Color
 								DropdownMenu<Color>(
 									initialSelection: Colors.grey,
-									controller: _tagColorTextController,
 									label: const Text("Tag color"),
 									dropdownMenuEntries: colorEntries,
 									onSelected: (color) => setState(() => newColor = color!),
