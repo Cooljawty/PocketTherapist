@@ -1,6 +1,5 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
-import 'package:app/provider/encryptor.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/provider/theme_settings.dart';
@@ -401,7 +400,7 @@ class _WelcomePageState extends State<WelcomePage> {
               TextButton(
                 //add key for testing
                   key: const Key('Submit_Password'),
-                  onPressed: () => _verifyPassword(context, passwordFieldText),
+                  onPressed: () async { await _verifyPassword(context, passwordFieldText);},
                   child: const Text("Enter")
               ),
             ],
@@ -409,34 +408,44 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void _verifyPassword(BuildContext context, String password) async {
-    if (verifyPassword(password)) {
+
+  Future<void> _verifyPassword(BuildContext context, String password) async {
+    bool match = await encryptor.unlock(password);
+    if (match) {
       password = "";
-      Navigator.of(context).pop();
-      Navigator.pushReplacement(context, DashboardPage.route());
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        Navigator.pushReplacement(context, DashboardPage.route());
+      }
     }
     else {
-      await showDialog(
-          context: context,
-          builder: (context) =>
-              AlertDialog(
-                backgroundColor: Theme
-                    .of(context)
-                    .colorScheme
-                    .onBackground,
-                title: const Text("Incorrect Password"),
-                actions: [
-                  TextButton(
-                    key: const Key(
-                        'Confirm_Incorrect_Password'),
-                    onPressed: Navigator
-                        .of(context)
-                        .pop,
-                    child: const Text("Ok"),
-                  )
-                ],
-              )
-      );
+      if (context.mounted) {
+        await showDialog(
+            context: context,
+            builder: (context) =>
+                AlertDialog(
+                  backgroundColor: Theme
+                      .of(context)
+                      .colorScheme
+                      .onBackground,
+                  title: const Text("Incorrect Password"),
+                  actions: [
+                    TextButton(
+                      key: const Key(
+                          'Confirm_Incorrect_Password'),
+                      onPressed: Navigator
+                          .of(context)
+                          .pop,
+                      child: const Text("Ok"),
+                    )
+                  ],
+                )
+        );
+      } else {
+        throw StateError(
+            "Context was not mounted while trying to draw IncPassword Dialog");
+      }
+      // I should never get here
     }
   }
 }

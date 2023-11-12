@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   //Things that need to be done before the application is ran.
-
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const RootApp());
 }
