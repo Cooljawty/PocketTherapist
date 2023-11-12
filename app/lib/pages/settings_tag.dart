@@ -70,8 +70,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								//Tag name
 								Container(
 									padding: const EdgeInsets.symmetric(vertical: 16),
-									child: TextField(
+									child: TextFormField(
 										decoration: InputDecoration(hintText: "Tag name"),
+										initialValue: name,
 										onChanged: (name) { newName = name; },
 									),
 								),
@@ -240,6 +241,16 @@ class _TagSettingsState extends State<TagSettingsPage> {
                         //generate 1 row for each name in list
                         childofColumn.add( _displayTag(index, compList) );
                       }
+											//Always add the add tags button if comming from new entry page
+											if (widget.selectedTags != null) { 
+												childofColumn.add(ElevatedButton(
+														key: const Key('Create Tag'),
+														//on pressed adds the phrase in the text form field to the taglist
+														onPressed: () => addTag(context, name: textController.text),
+														child: const Text('Create Tag')
+													)
+												);
+											}
                       //final column starts will text wigdet displayed
                       Column finalColumn = Column(
                           mainAxisAlignment: MainAxisAlignment.center,
