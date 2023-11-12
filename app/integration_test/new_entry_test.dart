@@ -92,10 +92,10 @@ void main() {
     expect(nameField, findsOneWidget);
     await tester.tap(colorSelector);
 		await tester.pump();
-		await tester.pump(Duration(seconds: 1)); //Flutter tests Dropdowns with a second pump
+		await tester.pump(const Duration(seconds: 1)); //Flutter tests Dropdowns with a second pump
 		await tester.tap(find.text("Cyan").first);
 		await tester.pump();
-		await tester.pump(Duration(seconds: 1));
+		await tester.pump(const Duration(seconds: 1));
 
 		//Confirm new tag
     final confirmTagButton = find.byKey(const Key('Save New Tag Button'));

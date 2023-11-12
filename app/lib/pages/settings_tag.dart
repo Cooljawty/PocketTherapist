@@ -41,9 +41,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
   }
 
   //function to add a tag to the complete list and update screen
-  void addTag(BuildContext context, {required String name, Color? color}) {
+  void addTag(BuildContext context, {required String name, Color color = Colors.grey}) {
 		String newName = name;
-		Color newColor = color ?? Colors.grey;
+		Color newColor = color;
 
 		final List<DropdownMenuEntry<Color>> colorEntries = [];
 		for (var color in ColorList.values) {
@@ -70,7 +70,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 									padding: const EdgeInsets.symmetric(vertical: 16),
 									child: TextFormField(
 										key: const Key('Tag Name Field'),
-										decoration: InputDecoration(hintText: "Tag name"),
+										decoration: const InputDecoration(hintText: "Tag name"),
 										initialValue: name,
 										onChanged: (name) { newName = name; },
 									),
@@ -80,7 +80,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 									padding: const EdgeInsets.symmetric(vertical: 16),
 									child: DropdownMenu<Color>(
 										key: const Key('Tag Color Field'),
-										initialSelection: color ?? Colors.grey,
+										initialSelection: color,
 										dropdownMenuEntries: colorEntries,
 										//Show 5 colors at a time
 										menuHeight: 4 * 50.0,
@@ -95,7 +95,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								key: const Key('Save New Tag Button'),
 								child: const Text('Save'),
 								onPressed: () {
-									final newTag = Tag(name: newName, color: newColor ?? Colors.grey);
+									final newTag = Tag(name: newName, color: newColor);
 									prov.tagList.add(newTag);
 									//call save
 									prov.save();
