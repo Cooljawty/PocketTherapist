@@ -79,9 +79,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								Container(
 									padding: const EdgeInsets.symmetric(vertical: 16),
 									child: DropdownMenu<Color>(
-										initialSelection: Colors.grey,
+										initialSelection: color ?? Colors.grey,
 										dropdownMenuEntries: colorEntries,
-										//Show 8 colors at a time
+										//Show 5 colors at a time
 										menuHeight: 5 * 50.0,
 										onSelected: (color) => setState(() => newColor = color!),
 									),
