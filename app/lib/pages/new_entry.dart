@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/provider/theme_settings.dart';
 import 'entry.dart';
 import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as prov;
@@ -19,7 +20,7 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  final _items = prov.tagList.asMap().entries.map((tag) {
+  final _tagItems = prov.tagList.asMap().entries.map((tag) {
     int idx = tag.key;
     String val = tag.value;
 
@@ -33,7 +34,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
     return MultiSelectItem<Emotion>(Emotion(id: idx, name: val), val);
   }).toList();
   
-  List<Tag> _selectedTags = [];
+  // List<Tag> _selectedTags = [];
+  // List<Emotion> _selectedEmotions = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
@@ -53,6 +55,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(children: [
+            const Padding(padding: EdgeInsets.only(top: 70)),
             const Text('New Entry'),
             // Title input text field
             Padding(
@@ -82,39 +85,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Temporary Tags
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: MultiSelectDialogField(
-                items: _tagItems,
-                title: const Text("Tags"),
-                listType: MultiSelectListType.LIST,
-                chipDisplay: MultiSelectChipDisplay(scroll: true),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(
-                    color: Colors.blue,
-                    width: 2,
-                  ),
-                ),
-                buttonIcon: const Icon(
-                  Icons.tag,
-                  color: Colors.blue,
-                ),
-                buttonText: Text(
-                  "Tags",
-                  style: TextStyle(
-                    color: Colors.blue[800],
-                    fontSize: 16,
-                  ),
-                ),
-                onConfirm: (results) {
-                  //_selectedAnimals = results;
-                },
-              ),
-            ),
-
             // Emotions
             Padding(
               padding: const EdgeInsets.all(20),
@@ -122,26 +92,47 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 items: _emotionItems,
                 title: const Text("Emotions"),
                 listType: MultiSelectListType.LIST,
+
+                confirmText: Text(
+                  key: const Key("ConfirmTag"),
+                  "Confirm",
+                  style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                ),
+                cancelText: Text(
+                  key: const Key("CancelTag"),
+                  "Cancel",
+                  style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                ),
+                itemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
+                selectedItemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
+                selectedColor: prov.getCurrentTheme().colorScheme.primary,
+                unselectedColor: prov.getCurrentTheme().colorScheme.primary,
+
+                // Display chip
                 chipDisplay: MultiSelectChipDisplay(
+                  textStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? prov.getCurrentTheme().primaryColor : Colors.white),
+                  chipColor: prov.getCurrentTheme().colorScheme.primary,
                   scroll: true,
                   onTap: (value) => _emotionalDial(context, value as Emotion),
                 ),
+
+
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: prov.getCurrentTheme().colorScheme.primary.withOpacity(0.1),
                   borderRadius: const BorderRadius.all(Radius.circular(40)),
                   border: Border.all(
-                    color: Colors.blue,
+                    color: prov.getCurrentTheme().colorScheme.primary,
                     width: 2,
                   ),
                 ),
-                buttonIcon: const Icon(
+                buttonIcon: Icon(
                   Icons.tag,
-                  color: Colors.blue,
+                  color: prov.getCurrentTheme().colorScheme.primary,
                 ),
                 buttonText: Text(
                   "Emotions",
                   style: TextStyle(
-                    color: Colors.blue[800],
+                    color: prov.getCurrentTheme().colorScheme.primary,
                     fontSize: 16,
                   ),
                 ),
@@ -150,6 +141,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
             ),
           ])),
       bottomNavigationBar: Container(
+        height: 50,
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
             borderRadius: BorderRadius.circular(10.0),
@@ -166,10 +158,40 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       key: const Key("planButton"),
                       child: const Text('Plan'),
                       onPressed: () {}),
-                  TextButton(
+                  MultiSelectDialogField(
+                    items: _tagItems,
+                    title: const Text("Select Tags"),
+                    listType: MultiSelectListType.LIST,
+                    chipDisplay: MultiSelectChipDisplay.none(),
+                    buttonIcon: const Icon(null, size: 0),
+                    decoration: const BoxDecoration(),
+
+                    itemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
+                    selectedItemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
+                    buttonText: Text(
                       key: const Key("tagButton"),
-                      child: const Text('Tag'),
-                      onPressed: () {}),
+                      "Tag",
+                      style: TextStyle(
+                        color: prov.getCurrentTheme().colorScheme.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.8,
+                      ),
+                    ),
+                    confirmText: Text(
+                      key: const Key("ConfirmTag"),
+                      "Confirm",
+                      style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                    ),
+                    cancelText: Text(
+                      key: const Key("CancelTag"),
+                      "Cancel",
+                      style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                    ),
+                    selectedColor: prov.getCurrentTheme().colorScheme.primary,
+                    unselectedColor: prov.getCurrentTheme().colorScheme.primary,
+                    onConfirm: (results) {},
+                  ),
                   TextButton(
                       key: const Key("saveButton"),
                       child: const Text('Save'),

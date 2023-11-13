@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
+import 'package:app/helper/classes.dart';
 
 import 'dart:math';
 
@@ -10,6 +11,8 @@ class JournalEntry with DisplayOnCard {
 	// year, month, day
 	DateTime current = DateTime.now();
 	DateTime _date = DateTime(1970, 12, 31);
+	List<Tag> tags = [];
+	List<Emotion> emotions = [];
 
 	static const previewLength = 25;
 
@@ -17,7 +20,8 @@ class JournalEntry with DisplayOnCard {
 		_title = title;
 		_entryText = entryText;
 		_date = date;
-		// List<Tag> tags;
+		// _tags = tags;
+		// _emotions = emotions;
 		
 		final preview = _entryText.split("\n").first;
 		_previewText = preview.substring(0, min(previewLength, preview.length));
@@ -34,6 +38,8 @@ class JournalEntry with DisplayOnCard {
 	String getEntryText() => _entryText;
 	String getTitle() => _title;
 	DateTime getDate() => _date;
+	// List<Tag> getTags() => _tags;
+	// List<Emotion> getEmotions() => _emotions;
 
 	/* TODO
 	int _id;
