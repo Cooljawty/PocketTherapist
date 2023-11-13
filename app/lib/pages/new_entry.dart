@@ -50,15 +50,19 @@ class _NewEntryPageState extends State<NewEntryPage> {
             // Journal input text field
             Padding(
               padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: journalController,
-                key: const Key("journalInput"),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Journal Entry',
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: TextField(
+                  controller: journalController,
+                  key: const Key("journalInput"),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Journal Entry',
+                  ),
+                  minLines: 1,
+                  maxLines: 8,
+
                 ),
-                maxLines: 8,
-                minLines: 8,
               ),
             ),
 

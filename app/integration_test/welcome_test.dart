@@ -9,7 +9,7 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   tearDown(() async {
-    await settings.reset();
+    settings.reset();
   });
 
 
@@ -145,7 +145,7 @@ void main() async {
         settings.encryptionToggleKey: true,
       });
       settings.setPassword(password);
-      await settings.save();
+      settings.save();
 
       app.main();
 
