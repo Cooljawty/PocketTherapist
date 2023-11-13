@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app/provider/settings.dart';
 import 'package:app/pages/settings_tag.dart';
 import 'entry.dart';
+
 // import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as prov;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
@@ -22,16 +23,15 @@ class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
   final _items = prov.tagList.map((tag) {
-    return MultiSelectItem<Tag>(tag);
+    return MultiSelectItem<Tag>(tag, tag.getName());
   }).toList();
-  List<Tag> _selectedTags = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
 
-	//Save applied tags
-	List<Tag> _tagList = [];
+  //Save applied tags
+  List<Tag> _tagList = [];
 
   @override
   void dispose() {
@@ -80,11 +80,12 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 ),
 
                 MultiSelectChipDisplay(
-                  items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
+                  items:
+                      _tagList.map((e) => MultiSelectItem(e, e.name)).toList(),
                   scroll: true,
                   onTap: (value) {
                     setState(() {
-                      _selectedTags.remove(value);
+                      _tagList.remove(value);
                     });
                   },
                 ),
@@ -179,24 +180,12 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             child: const Text('Plan'),
                             onPressed: () {}),
                         TextButton(
-                            key: const Key("tagButton"),
-                            child: const Text('Tag'),
-                            onPressed: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (ctx) {
-                                  return MultiSelectDialog(
-                                    items: _items,
-                                    initialValue: _selectedTags,
-                                    onConfirm: (values) {
-                                      setState(() {
-                                        _selectedTags = values;
-                                      });
-                                    },
-                                  );
-                                },
-                              );
-                            }),
+                          key: const Key("tagButton"),
+                          child: const Text('Tag'),
+                          onPressed: () {
+                            _saveTagsToEntry(context);
+                          },
+                        ),
                         TextButton(
                             key: const Key("saveButton"),
                             child: const Text('Save'),
@@ -215,19 +204,22 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   getEntry() {
     return JournalEntry(
-        title: titleController.text,
-				entryText: journalController.text,
-				date: DateTime.now(),
-				tags: _tagList,
-		);
+      title: titleController.text,
+      entryText: journalController.text,
+      date: DateTime.now(),
+      tags: _tagList,
+    );
   }
 
-	//Update applied tags with the TagSettings Page
-	_saveTagsToEntry(BuildContext context) async {
-		final newTags = await Navigator.push(
-			context,
-			MaterialPageRoute(builder: (context) => TagSettingsPage(selectedTags: _tagList)),
-		);
-		_tagList = newTags;
-	}
+  //Update applied tags with the TagSettings Page
+  _saveTagsToEntry(BuildContext context) async {
+    final newTags = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => TagSettingsPage(selectedTags: _tagList)),
+    );
+    setState(() {
+      _tagList = newTags;
+    });
+  }
 }
