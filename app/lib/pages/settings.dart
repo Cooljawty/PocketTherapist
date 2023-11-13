@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import 'settings_tag.dart';
 
 class SettingsPage extends StatefulWidget {
+	final List<Tag>? existingTags;
+
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => const SettingsPage());
   }
 
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, this.existingTags});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();

@@ -6,6 +6,8 @@ import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:app/pages/settings_tag.dart';
+
 /// Used for error messages
 const String prefrencesPrefix = "pocket-therapist";
 
@@ -33,7 +35,7 @@ const String encryptionToggleKey = 'encryption';
 const String accentColorKey = "accent";
 
 //add tag list
-List<String> tagList = [];
+List<Tag> tagList = [];
 
 /// The color of all accents, like buttons and sizing.
 
@@ -74,13 +76,13 @@ Future<void> load() async {
       // Erase from our reference, not used.
       _settings['enc'] = null;
 
-      List<dynamic> dynamicList;
       //load tags
+      List<dynamic> dynamicList;
       if (_settings['tags'] != null) {
         dynamicList = _settings['tags'];
         tagList = [];
         for (int i = 0; i < dynamicList.length; i++) {
-          tagList.add(dynamicList[i] as String);
+          tagList.add(Tag(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
         }
       }
     }
@@ -102,16 +104,16 @@ void _assignDefaults() async {
     accentColorKey: Colors.deepPurpleAccent[100]!.value,
   };
   tagList = [
-    'Calm',
-    'Centered',
-    'Content',
-    'Fulfilled',
-    'Patient',
-    'Peaceful',
-    'Present',
-    'Relaxed',
-    'Serene',
-    'Trusting',
+    Tag(name: 'Calm'),
+    Tag(name: 'Centered'),
+    Tag(name: 'Content'),
+    Tag(name: 'Fulfilled'),
+    Tag(name: 'Patient'),
+    Tag(name: 'Peaceful'),
+    Tag(name: 'Present'),
+    Tag(name: 'Relaxed'),
+    Tag(name: 'Serene'),
+    Tag(name: 'Trusting'),
   ];
 }
 
@@ -132,8 +134,11 @@ Future<void> save() async {
   Map<String, dynamic> settings = Map.of(_settings);
   settings['enc'] = encrypted;
 
-  //add lines to update tags
-  settings['tags'] = tagList;
+  //Add each tag as a map with its name and color
+	settings['tags'] = <Map<String, dynamic>>[];
+	for (final tag in tagList) {
+		settings['tags'].add({'name': tag.getName(), 'color': tag.getColor().hashCode});
+	}
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);
@@ -156,13 +161,13 @@ Future<void> reset() async {
 /// Setters --------------------------
 void setConfigured(bool value) => _settings[configuredKey] = value;
 void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
-void setFontScale(double newFontScale) =>
-    _settings[fontScaleKey] = newFontScale;
-void setEncryptionStatus(bool newStatus) =>
-    _settings[encryptionToggleKey] = newStatus;
-void setAccentColor(Color newColor) =>
-    _settings[accentColorKey] = newColor.value;
-void setPassword(String newPassword) => encryptor.setPassword(newPassword);
+void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
+void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
+void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
+void setPassword(String newPassword) async {
+  await encryptor.setPassword(newPassword);
+}
+
 void setMockValues(Map<String, dynamic> value) {
   reset();
   _settings.addAll(value);

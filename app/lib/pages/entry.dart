@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:app/uiwidgets/cards.dart';
+import 'package:app/pages/settings_tag.dart';
 
 import 'dart:math';
 
 class JournalEntry with DisplayOnCard {
+	// Journal entry title and body
 	String _title = "";
-	String _previewText = "";
 	String _entryText = "";
+	String _previewText = "";
+
+	// Associated tags/emotinos
+	List<Tag> _tags = [];
+	//List<Emotions> emotions;
+
 	// year, month, day
 	DateTime current = DateTime.now();
 	DateTime _date = DateTime(1970, 12, 31);
 
 	static const previewLength = 25;
 
-	JournalEntry({required title, required entryText, required date}){
+	JournalEntry({required title, required entryText, required date, tags}){
 		_title = title;
 		_entryText = entryText;
 		_date = date;
-		// List<Tag> tags;
+		_tags = tags ?? [];
 		
 		final preview = _entryText.split("\n").first;
 		_previewText = preview.substring(0, min(previewLength, preview.length));
@@ -34,15 +41,14 @@ class JournalEntry with DisplayOnCard {
 	String getEntryText() => _entryText;
 	String getTitle() => _title;
 	DateTime getDate() => _date;
+	List<Tag> getTags() => _tags;
 
 	/* TODO
 	int _id;
 	int getId();
-	List<Emotions> emotions;
 	List<Image> pictures;
 
 	Tag getTagByTitle(String title);
-	List<Tags> getTags();
 	Emotion getStrongestEmotion();
 	List<Emotion> getEmotions();
 	List<Image> getPictures();
@@ -89,6 +95,18 @@ class _EntryPageState extends State<EntryPage> {
 									children: <Widget>[ 
 										Text( widget.entry.getEntryText()),
 									],
+								),
+							),
+							Container(
+								padding: const EdgeInsets.all(12),
+								child: Wrap( 
+									direction: Axis.horizontal,
+									children: widget.entry.getTags()
+										.map((tag) => Text(
+											"#${tag.name}", 
+											selectionColor: tag.color
+										))
+										.toList(),
 								),
 							),
 						],
