@@ -17,8 +17,9 @@ class NewEntryPage extends StatefulWidget {
 }
 
 class _NewEntryPageState extends State<NewEntryPage> {
-  final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
-  final _tagItems = prov.tagList.asMap().entries.map((tag) {
+  final ValueNotifier<double> _progress = ValueNotifier(0);
+
+  final _items = prov.tagList.asMap().entries.map((tag) {
     int idx = tag.key;
     String val = tag.value;
 
@@ -31,6 +32,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
     return MultiSelectItem<Emotion>(Emotion(id: idx, name: val), val);
   }).toList();
+  
+  List<Tag> _selectedTags = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
@@ -187,11 +190,11 @@ class _NewEntryPageState extends State<NewEntryPage> {
           return AlertDialog(
             content: CircularSeekBar(
               width: double.infinity,
-              height: 250,
+              height: 175,
               progress: emotion.strength.toDouble(),
               barWidth: 8,
-              startAngle: 45,
-              sweepAngle: 270,
+              startAngle: 5,
+              sweepAngle: 360,
               strokeCap: StrokeCap.butt,
               progressGradientColors: const [
                 Colors.red,
@@ -208,13 +211,13 @@ class _NewEntryPageState extends State<NewEntryPage> {
               outerThumbRadius: 5,
               outerThumbStrokeWidth: 10,
               outerThumbColor: Colors.blueAccent,
-              dashWidth: 1,
-              dashGap: 2,
+              dashWidth: 10,
+              dashGap: 20,
               animation: false,
-              valueNotifier: _valueNotifier,
+              valueNotifier: _progress,
               child: Center(
                 child: ValueListenableBuilder(
-                    valueListenable: _valueNotifier,
+                    valueListenable: _progress,
                     builder: (_, double value, __) => Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
