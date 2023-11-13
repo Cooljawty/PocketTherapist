@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:app/provider/theme_settings.dart';
+import 'package:app/pages/settings_tag.dart';
 import 'entry.dart';
-import 'package:app/helper/classes.dart';
+
+// import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as prov;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
@@ -20,18 +22,13 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  final _tagItems = prov.tagList.asMap().entries.map((tag) {
-    int idx = tag.key;
-    String val = tag.value;
 
-    return MultiSelectItem<Tag>(Tag(id: idx, name: val), val);
+  final _tagItems = prov.tagList.map((tag) {
+    return MultiSelectItem<Tag>(tag, tag.getName());
   }).toList();
 
-  final _emotionItems = prov.emotionList.asMap().entries.map((emotion) {
-    int idx = emotion.key;
-    String val = emotion.value;
-
-    return MultiSelectItem<Emotion>(Emotion(id: idx, name: val), val);
+  final _emotionItems = prov.emotionList.map((emotion) {
+    return MultiSelectItem<Emotion>(emotion, emotion.getName());
   }).toList();
   
   // List<Tag> _selectedTags = [];
@@ -40,6 +37,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
+
+  //Save applied tags
+  List<Tag> _tagList = [];
 
   @override
   void dispose() {
@@ -265,8 +265,22 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   getEntry() {
     return JournalEntry(
-        title: titleController.text,
-        entryText: journalController.text,
-        date: DateTime.now());
+      title: titleController.text,
+      entryText: journalController.text,
+      date: DateTime.now(),
+      tags: _tagList,
+    );
+  }
+
+  //Update applied tags with the TagSettings Page
+  _saveTagsToEntry(BuildContext context) async {
+    final newTags = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => TagSettingsPage(selectedTags: _tagList)),
+    );
+    setState(() {
+      _tagList = newTags;
+    });
   }
 }
