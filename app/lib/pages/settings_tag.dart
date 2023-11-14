@@ -1,17 +1,9 @@
-import 'package:app/provider/settings.dart' as prov;
+import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
+import 'package:app/helper/classes.dart';
 
 ///Each tag can be associated to diffrent journal entries and events.
 ///Tags can also have an optinal color, with grey as the default.
-class Tag {
-	final String name;
-	Color color;
-
-	Tag({required this.name, this.color = Colors.grey});
-
-	String getName() => name;
-	Color getColor() => color;
-	}
 
 class TagSettingsPage extends StatefulWidget {
 	final List<Tag>? selectedTags;
@@ -33,9 +25,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
   //delete tag function used to delete the tag from the complete list
   //and update the screen
   void deleteTag(Tag tag) {
-    prov.tagList.remove(tag);
+    settings.tagList.remove(tag);
     //call save
-    prov.save();
+    settings.save();
     compatableTagList?.remove(tag);
     setState(() {});
   }
@@ -56,7 +48,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 		}
 
     //check for duplicates and add only unique names
-    if (!prov.tagList.any((tag) => tag.getName() == name)) {
+    if (!settings.tagList.any((tag) => (tag as Tag).name == name)) {
 			showDialog(
 				context: context,
 				builder: (context) {
@@ -96,9 +88,9 @@ class _TagSettingsState extends State<TagSettingsPage> {
 								child: const Text('Save'),
 								onPressed: () {
 									final newTag = Tag(name: newName, color: newColor);
-									prov.tagList.add(newTag);
+									settings.tagList.add(newTag);
 									//call save
-									prov.save();
+									settings.save();
 									//declare compatible list and add new name
 									compatableTagList ??= [];
 									compatableTagList?.add(newTag);
@@ -197,11 +189,11 @@ class _TagSettingsState extends State<TagSettingsPage> {
                     nullProofTagList.clear();
                     compatableTagList?.clear();
                     //check the full tag list for comptable tags
-                    for (int index = 0; index < prov.tagList.length; index++) {
-                      if (prov.tagList[index].getName().contains(inputText)) {
+                    for (int index = 0; index < settings.tagList.length; index++) {
+                      if (settings.tagList[index].getName().contains(inputText)) {
                         //add index to list of compatableTags
-                        compatableTagList?.add(prov.tagList[index]);
-                        nullProofTagList.add(prov.tagList[index]);
+                        compatableTagList?.add(settings.tagList[index]);
+                        nullProofTagList.add(settings.tagList[index]);
                       }
                     }
                     //update screen before return
@@ -221,7 +213,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                 SingleChildScrollView(
                   child: ((() {
                     //if the function returns is false then we display button to create tag
-                    if (!tagsExist(compatableTagList, prov.tagList)) {
+                    if (!tagsExist(compatableTagList, settings.tagList)) {
                       //if null thats our sign to return a button
                       Column finalColumn = Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -240,7 +232,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                         const Text("List of compatable tags: ")
                       ];
                       //if comptable list is still null nothing has been searched
-                      List<Tag> compList = compatableTagList ?? prov.tagList;
+                      List<Tag> compList = compatableTagList ?? settings.tagList;
                       for (int index = 0; index < compList.length; index++) {
                         //generate 1 row for each name in list
                         childofColumn.add( _displayTag(index, compList) );

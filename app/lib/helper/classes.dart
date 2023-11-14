@@ -1,32 +1,27 @@
+import 'package:flutter/material.dart';
+
 /// Tags
 ///
 class Tag {
-  final int id;
   final String name;
+  Color color;
 
-  Tag({
-    required this.id,
-    required this.name,
-  });
+  Tag({required this.name, this.color = Colors.blue});
 
-  int get getId{return id;}
-  String get getName{return name;}
+  String getName() => name;
+  Color getColor() => color;
 }
 
 /// Emotions
 ///
-class Emotion {
-  final int id;
+class Emotion extends Tag {
   final String name;
   int strength = 0;
 
   Emotion({
-    required this.id,
     required this.name,
-  });
+  }) : super(name: name);
 
 
-  int get getId{return id;}
-  String get getName{return name;}
   void setStrength(int val) {strength = val;}
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:app/provider/theme_settings.dart';
-import 'package:app/pages/settings_tag.dart';
 import 'entry.dart';
 
-// import 'package:app/helper/classes.dart';
-import 'package:app/provider/settings.dart' as prov;
+import 'package:app/helper/classes.dart';
+import 'package:app/provider/settings.dart' as settings;
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
@@ -22,23 +21,24 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  final _tagitems = prov.tagList.map((tag) {
+  // current map of tags to set in multiSelectItem
+  final _tagItems = settings.tagList.map((tag) {
     return MultiSelectItem<Tag>(tag, tag.name);
   }).toList();
 
-  final _emotionItems = prov.emotionList.map((emotion) {
-    return MultiSelectItem<Emotion>(emotion, emotion.getName());
+  // current map of emotions to set in multiSelectItem
+  final _emotionItems = settings.emotionList.asMap().entries.map((emotion) {
+    String val = emotion.value;
+    return MultiSelectItem<Emotion>(Emotion(name: val), val);
   }).toList();
-  
-  // List<Tag> _selectedTags = [];
-  // List<Emotion> _selectedEmotions = [];
+
+  // List of selected tags to keep track of when making the chip list
+  List<Tag> _selectedTags = [];
+  List<Emotion> _selectedEmotions = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
   final journalController = TextEditingController();
-
-  //Save applied tags
-  List<Tag> _tagList = [];
 
   @override
   void dispose() {
@@ -55,8 +55,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
           height: MediaQuery.of(context).size.height,
           child: Column(children: [
             const Padding(padding: EdgeInsets.only(top: 70)),
+            // Title of the page
             const Text('New Entry'),
-            // Title input text field
+
+            // Text field for the Journal Entry Title
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextField(
@@ -69,7 +71,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Journal input text field
+            // Text input field for the Journal Entry Body
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextField(
@@ -84,7 +86,24 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Emotions
+            // Chip list of the currently selected tags
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: MultiSelectChipDisplay(
+                items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
+                textStyle: TextStyle(
+                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white
+                ),
+                chipColor: settings.getCurrentTheme().colorScheme.primary,
+                scroll: true,
+              ),
+            ),
+
+            /*
+            * Emotion multi select button
+            * Will create an Alert dialog field that will allow
+            * users to select the emotions for the Journal Entry
+            */
             Padding(
               padding: const EdgeInsets.all(20),
               child: MultiSelectDialogField(
@@ -92,60 +111,96 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 title: const Text("Emotions"),
                 listType: MultiSelectListType.LIST,
 
+                // Style changes for Alert Dialog Selector confirm button
                 confirmText: Text(
                   key: const Key("ConfirmTag"),
                   "Confirm",
-                  style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                  style: TextStyle(
+                    color: settings.getCurrentTheme().colorScheme.primary,
+                  ),
                 ),
+
+                // Style changes for Alert Dialog Selector cancel button
                 cancelText: Text(
                   key: const Key("CancelTag"),
                   "Cancel",
-                  style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
+                  style: TextStyle(
+                    color: settings.getCurrentTheme().colorScheme.primary,
+                  ),
                 ),
-                itemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
-                selectedItemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
-                selectedColor: prov.getCurrentTheme().colorScheme.primary,
-                unselectedColor: prov.getCurrentTheme().colorScheme.primary,
 
-                // Display chip
+                // Style changes for Alert Dialog Selector list items when built
+                itemsTextStyle: TextStyle(
+                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
+                ),
+
+                // Style changes for Alert Dialog Selector list items when selected
+                selectedItemsTextStyle: TextStyle(
+                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
+                ),
+
+                // Style changes for Alert Dialog Selector list items when selected/notSelected
+                selectedColor: settings.getCurrentTheme().colorScheme.primary,
+                unselectedColor: settings.getCurrentTheme().colorScheme.primary,
+
+                // Chip display of all the currently selected emotions
                 chipDisplay: MultiSelectChipDisplay(
-                  textStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? prov.getCurrentTheme().primaryColor : Colors.white),
-                  chipColor: prov.getCurrentTheme().colorScheme.primary,
+                  items: _selectedEmotions.map((e) => MultiSelectItem(e, e.name)).toList(),
+                  textStyle: TextStyle(
+                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white
+                  ),
+                  chipColor: settings.getCurrentTheme().colorScheme.primary,
+
+                  // Be able to scroll through all the selected emotions to avoid overflow
                   scroll: true,
-                  onTap: (value) => _emotionalDial(context, value as Emotion),
+
+                  // Make Alert Dialog pop-up when an emotion is selected to display emotional dial
+                  onTap: (value) => _emotionalDial(context, value),
                 ),
 
-
+                // Decoration theme of the multi selector drop down
                 decoration: BoxDecoration(
-                  color: prov.getCurrentTheme().colorScheme.primary.withOpacity(0.1),
+                  color: settings.getCurrentTheme().colorScheme.primary.withOpacity(0.1),
                   borderRadius: const BorderRadius.all(Radius.circular(40)),
                   border: Border.all(
-                    color: prov.getCurrentTheme().colorScheme.primary,
+                    color: settings.getCurrentTheme().colorScheme.primary,
                     width: 2,
                   ),
                 ),
+
+                // Display Icon on the right side of the multi selector drop down
                 buttonIcon: Icon(
                   Icons.tag,
-                  color: prov.getCurrentTheme().colorScheme.primary,
+                  color: settings.getCurrentTheme().colorScheme.primary,
                 ),
+
+                // Text displayed on the drop down
                 buttonText: Text(
                   "Emotions",
                   style: TextStyle(
-                    color: prov.getCurrentTheme().colorScheme.primary,
+                    color: settings.getCurrentTheme().colorScheme.primary,
                     fontSize: 16,
                   ),
                 ),
-                onConfirm: (results) {},
+                onConfirm: (values) {
+                  setState(() {
+                    _selectedEmotions = values;
+                  });
+                }
               ),
             ),
           ])),
+
+      // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
-        height: 50,
+          height: 50,
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
             borderRadius: BorderRadius.circular(10.0),
           ),
           margin: const EdgeInsets.only(left: 50.0, right: 50.0),
+
+          // Keep all the button spaced evenly and centered on the page
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -153,44 +208,71 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 spacing: 50,
                 overflowAlignment: OverflowBarAlignment.center,
                 children: <Widget>[
+
+                  // Plan button
                   TextButton(
                       key: const Key("planButton"),
                       child: const Text('Plan'),
                       onPressed: () {}),
-                  MultiSelectDialogField(
-                    items: _tagItems,
-                    title: const Text("Select Tags"),
-                    listType: MultiSelectListType.LIST,
-                    chipDisplay: MultiSelectChipDisplay.none(),
-                    buttonIcon: const Icon(null, size: 0),
-                    decoration: const BoxDecoration(),
-
-                    itemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
-                    selectedItemsTextStyle: TextStyle(color: (prov.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white),
-                    buttonText: Text(
+                  /*
+                  * Tag button
+                  * Will create a multi select dialog field that will allow
+                  * users to select the tags for the Journal Entry
+                  */
+                  TextButton(
                       key: const Key("tagButton"),
-                      "Tag",
-                      style: TextStyle(
-                        color: prov.getCurrentTheme().colorScheme.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        height: 1.8,
-                      ),
-                    ),
-                    confirmText: Text(
-                      key: const Key("ConfirmTag"),
-                      "Confirm",
-                      style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
-                    ),
-                    cancelText: Text(
-                      key: const Key("CancelTag"),
-                      "Cancel",
-                      style: TextStyle(color: prov.getCurrentTheme().colorScheme.primary,),
-                    ),
-                    selectedColor: prov.getCurrentTheme().colorScheme.primary,
-                    unselectedColor: prov.getCurrentTheme().colorScheme.primary,
-                    onConfirm: (results) {},
-                  ),
+                      child: const Text('Tag'),
+                      onPressed: () async {
+                        await showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return MultiSelectDialog(
+                              items: _tagItems,
+                              initialValue: _selectedTags,
+
+                              // Style changes for the Title
+                              title: const Text("Select Tags"),
+
+                              // Style changes for the selected/deselected items
+                              itemsTextStyle: TextStyle(
+                                  color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
+                              ),
+                              selectedItemsTextStyle: TextStyle(
+                                  color: (settings.getCurrentTheme() == ThemeSettings.lightTheme)? Colors.black : Colors.white
+                              ),
+                              selectedColor: settings.getCurrentTheme().colorScheme.primary,
+                              unselectedColor: settings.getCurrentTheme().colorScheme.primary,
+
+                              // Style changes for the confirm button in the multiSelect field
+                              confirmText: Text(
+                                key: const Key("ConfirmTag"),
+                                "Confirm",
+                                style: TextStyle(
+                                  color: settings.getCurrentTheme().colorScheme.primary,
+                                ),
+                              ),
+
+                              // Style changes for the cancel button in the multiSelect field
+                              cancelText: Text(
+                                key: const Key("CancelTag"),
+                                "Cancel",
+                                style: TextStyle(
+                                  color: settings.getCurrentTheme().colorScheme.primary,
+                                ),
+                              ),
+
+                              // when confirm is tapped, update selected tags so chips can be displayed properly
+                              onConfirm: (values) {
+                                setState(() {
+                                  _selectedTags = values;
+                                });
+                              },
+                            );
+                          },
+                        );
+                      }),
+
+                  // Save button
                   TextButton(
                       key: const Key("saveButton"),
                       child: const Text('Save'),
@@ -204,7 +286,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
     );
   }
 
+  // Make an Alert Dialog Box that will display the emotional dial and a save button
   dynamic _emotionalDial(BuildContext context, Emotion emotion) async {
+    int strength = 0;
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -243,7 +327,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(() {
-                              emotion.setStrength(value.round());
+                              // on changed, set the strength
+                              strength = value.round();
                               return '${value.round()}';
                             }()),
                             const Text('progress'),
@@ -252,8 +337,17 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
             actions: [
+              // pop the alert dialog off the screen and don't save the strength changes
               TextButton(
                   onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel")),
+
+              // Save the strength changes and pop the dialog off the screen
+              TextButton(
+                  onPressed: () {
+                    emotion.setStrength(strength);
                     Navigator.of(context).pop();
                   },
                   child: const Text("Save")),
@@ -262,24 +356,14 @@ class _NewEntryPageState extends State<NewEntryPage> {
         });
   }
 
+  // Make the journal entry and save it
   getEntry() {
     return JournalEntry(
       title: titleController.text,
       entryText: journalController.text,
       date: DateTime.now(),
-      tags: _tagList,
+      tags: _selectedTags,
+      emotions: _selectedEmotions,
     );
-  }
-
-  //Update applied tags with the TagSettings Page
-  _saveTagsToEntry(BuildContext context) async {
-    final newTags = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => TagSettingsPage(selectedTags: _tagList)),
-    );
-    setState(() {
-      _tagList = newTags;
-    });
   }
 }

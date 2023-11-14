@@ -5,8 +5,7 @@ import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:app/pages/settings_tag.dart';
+import 'package:app/helper/classes.dart';
 
 /// Used for error messages
 const String prefrencesPrefix = "pocket-therapist";
