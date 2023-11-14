@@ -22,9 +22,8 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-
-  final _tagItems = prov.tagList.map((tag) {
-    return MultiSelectItem<Tag>(tag, tag.getName());
+  final _tagitems = prov.tagList.map((tag) {
+    return MultiSelectItem<Tag>(tag, tag.name);
   }).toList();
 
   final _emotionItems = prov.emotionList.map((emotion) {
