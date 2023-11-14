@@ -22,7 +22,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
   final _items = prov.tagList.map((tag) {
-    return MultiSelectItem<Tag>(tag);
+    return MultiSelectItem<Tag>(tag, tag.name);
   }).toList();
   List<Tag> _selectedTags = [];
 
