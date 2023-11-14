@@ -86,16 +86,28 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            // Chip list of the currently selected tags
             Padding(
               padding: const EdgeInsets.all(20),
-              child: MultiSelectChipDisplay(
-                items: _selectedTags.map((e) => MultiSelectItem(e, e.name)).toList(),
-                textStyle: TextStyle(
-                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _selectedTags
+                        .map((tag) => Padding(
+                            padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+                            child: Chip(
+                              label: Text(tag.name),
+                              backgroundColor: tag.color,
+                              onDeleted: () {
+                                setState(() {
+                                  _selectedTags.removeWhere(
+                                      (element) => element.name == tag.name);
+                                });
+                              },
+                            )))
+                        .toList(),
+                  ),
                 ),
-                chipColor: settings.getCurrentTheme().colorScheme.primary,
-                scroll: true,
               ),
             ),
 
@@ -107,87 +119,99 @@ class _NewEntryPageState extends State<NewEntryPage> {
             Padding(
               padding: const EdgeInsets.all(20),
               child: MultiSelectDialogField(
-                items: _emotionItems,
-                title: const Text("Emotions"),
-                listType: MultiSelectListType.LIST,
+                  items: _emotionItems,
+                  title: const Text("Emotions"),
+                  listType: MultiSelectListType.LIST,
 
-                // Style changes for Alert Dialog Selector confirm button
-                confirmText: Text(
-                  key: const Key("ConfirmTag"),
-                  "Confirm",
-                  style: TextStyle(
+                  // Style changes for Alert Dialog Selector confirm button
+                  confirmText: Text(
+                    key: const Key("ConfirmTag"),
+                    "Confirm",
+                    style: TextStyle(
+                      color: settings.getCurrentTheme().colorScheme.primary,
+                    ),
+                  ),
+
+                  // Style changes for Alert Dialog Selector cancel button
+                  cancelText: Text(
+                    key: const Key("CancelTag"),
+                    "Cancel",
+                    style: TextStyle(
+                      color: settings.getCurrentTheme().colorScheme.primary,
+                    ),
+                  ),
+
+                  // Style changes for Alert Dialog Selector list items when built
+                  itemsTextStyle: TextStyle(
+                      color: (settings.getCurrentTheme() ==
+                              ThemeSettings.lightTheme)
+                          ? Colors.black
+                          : Colors.white),
+
+                  // Style changes for Alert Dialog Selector list items when selected
+                  selectedItemsTextStyle: TextStyle(
+                      color: (settings.getCurrentTheme() ==
+                              ThemeSettings.lightTheme)
+                          ? Colors.black
+                          : Colors.white),
+
+                  // Style changes for Alert Dialog Selector list items when selected/notSelected
+                  selectedColor: settings.getCurrentTheme().colorScheme.primary,
+                  unselectedColor:
+                      settings.getCurrentTheme().colorScheme.primary,
+
+                  // Chip display of all the currently selected emotions
+                  chipDisplay: MultiSelectChipDisplay(
+                    items: _selectedEmotions
+                        .map((e) => MultiSelectItem(e, e.name))
+                        .toList(),
+                    textStyle: TextStyle(
+                        color: (settings.getCurrentTheme() ==
+                                ThemeSettings.lightTheme)
+                            ? settings.getCurrentTheme().colorScheme.secondary
+                            : Colors.white),
+                    chipColor: settings.getCurrentTheme().colorScheme.primary,
+
+                    // Be able to scroll through all the selected emotions to avoid overflow
+                    scroll: true,
+
+                    // Make Alert Dialog pop-up when an emotion is selected to display emotional dial
+                    onTap: (value) => _emotionalDial(context, value),
+                  ),
+
+                  // Decoration theme of the multi selector drop down
+                  decoration: BoxDecoration(
+                    color: settings
+                        .getCurrentTheme()
+                        .colorScheme
+                        .primary
+                        .withOpacity(0.1),
+                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                    border: Border.all(
+                      color: settings.getCurrentTheme().colorScheme.primary,
+                      width: 2,
+                    ),
+                  ),
+
+                  // Display Icon on the right side of the multi selector drop down
+                  buttonIcon: Icon(
+                    Icons.tag,
                     color: settings.getCurrentTheme().colorScheme.primary,
                   ),
-                ),
 
-                // Style changes for Alert Dialog Selector cancel button
-                cancelText: Text(
-                  key: const Key("CancelTag"),
-                  "Cancel",
-                  style: TextStyle(
-                    color: settings.getCurrentTheme().colorScheme.primary,
+                  // Text displayed on the drop down
+                  buttonText: Text(
+                    "Emotions",
+                    style: TextStyle(
+                      color: settings.getCurrentTheme().colorScheme.primary,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-
-                // Style changes for Alert Dialog Selector list items when built
-                itemsTextStyle: TextStyle(
-                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
-                ),
-
-                // Style changes for Alert Dialog Selector list items when selected
-                selectedItemsTextStyle: TextStyle(
-                    color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
-                ),
-
-                // Style changes for Alert Dialog Selector list items when selected/notSelected
-                selectedColor: settings.getCurrentTheme().colorScheme.primary,
-                unselectedColor: settings.getCurrentTheme().colorScheme.primary,
-
-                // Chip display of all the currently selected emotions
-                chipDisplay: MultiSelectChipDisplay(
-                  items: _selectedEmotions.map((e) => MultiSelectItem(e, e.name)).toList(),
-                  textStyle: TextStyle(
-                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white
-                  ),
-                  chipColor: settings.getCurrentTheme().colorScheme.primary,
-
-                  // Be able to scroll through all the selected emotions to avoid overflow
-                  scroll: true,
-
-                  // Make Alert Dialog pop-up when an emotion is selected to display emotional dial
-                  onTap: (value) => _emotionalDial(context, value),
-                ),
-
-                // Decoration theme of the multi selector drop down
-                decoration: BoxDecoration(
-                  color: settings.getCurrentTheme().colorScheme.primary.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(
-                    color: settings.getCurrentTheme().colorScheme.primary,
-                    width: 2,
-                  ),
-                ),
-
-                // Display Icon on the right side of the multi selector drop down
-                buttonIcon: Icon(
-                  Icons.tag,
-                  color: settings.getCurrentTheme().colorScheme.primary,
-                ),
-
-                // Text displayed on the drop down
-                buttonText: Text(
-                  "Emotions",
-                  style: TextStyle(
-                    color: settings.getCurrentTheme().colorScheme.primary,
-                    fontSize: 16,
-                  ),
-                ),
-                onConfirm: (values) {
-                  setState(() {
-                    _selectedEmotions = values;
-                  });
-                }
-              ),
+                  onConfirm: (values) {
+                    setState(() {
+                      _selectedEmotions = values;
+                    });
+                  }),
             ),
           ])),
 
@@ -208,7 +232,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 spacing: 50,
                 overflowAlignment: OverflowBarAlignment.center,
                 children: <Widget>[
-
                   // Plan button
                   TextButton(
                       key: const Key("planButton"),
@@ -223,6 +246,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       key: const Key("tagButton"),
                       child: const Text('Tag'),
                       onPressed: () async {
+                        debugPrint(_tagItems.length.toString());
                         await showDialog(
                           context: context,
                           builder: (ctx) {
@@ -235,20 +259,33 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
                               // Style changes for the selected/deselected items
                               itemsTextStyle: TextStyle(
-                                  color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
-                              ),
+                                  color: (settings.getCurrentTheme() ==
+                                          ThemeSettings.lightTheme)
+                                      ? Colors.black
+                                      : Colors.white),
                               selectedItemsTextStyle: TextStyle(
-                                  color: (settings.getCurrentTheme() == ThemeSettings.lightTheme)? Colors.black : Colors.white
-                              ),
-                              selectedColor: settings.getCurrentTheme().colorScheme.primary,
-                              unselectedColor: settings.getCurrentTheme().colorScheme.primary,
+                                  color: (settings.getCurrentTheme() ==
+                                          ThemeSettings.lightTheme)
+                                      ? Colors.black
+                                      : Colors.white),
+                              selectedColor: settings
+                                  .getCurrentTheme()
+                                  .colorScheme
+                                  .primary,
+                              unselectedColor: settings
+                                  .getCurrentTheme()
+                                  .colorScheme
+                                  .primary,
 
                               // Style changes for the confirm button in the multiSelect field
                               confirmText: Text(
                                 key: const Key("ConfirmTag"),
                                 "Confirm",
                                 style: TextStyle(
-                                  color: settings.getCurrentTheme().colorScheme.primary,
+                                  color: settings
+                                      .getCurrentTheme()
+                                      .colorScheme
+                                      .primary,
                                 ),
                               ),
 
@@ -257,7 +294,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                 key: const Key("CancelTag"),
                                 "Cancel",
                                 style: TextStyle(
-                                  color: settings.getCurrentTheme().colorScheme.primary,
+                                  color: settings
+                                      .getCurrentTheme()
+                                      .colorScheme
+                                      .primary,
                                 ),
                               ),
 
@@ -265,6 +305,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                               onConfirm: (values) {
                                 setState(() {
                                   _selectedTags = values;
+                                  debugPrint(_selectedTags[0].color.toString());
                                 });
                               },
                             );
@@ -347,7 +388,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
               // Save the strength changes and pop the dialog off the screen
               TextButton(
                   onPressed: () {
-                    emotion.setStrength(strength);
+                    emotion.strength = strength;
                     Navigator.of(context).pop();
                   },
                   child: const Text("Save")),

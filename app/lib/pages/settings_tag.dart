@@ -2,8 +2,8 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:app/helper/classes.dart';
 
-///Each tag can be associated to diffrent journal entries and events.
-///Tags can also have an optinal color, with grey as the default.
+///Each tag can be associated to different journal entries and events.
+///Tags can also have an optional color, with grey as the default.
 
 class TagSettingsPage extends StatefulWidget {
 	final List<Tag>? selectedTags;
@@ -19,7 +19,7 @@ class TagSettingsPage extends StatefulWidget {
 }
 
 class _TagSettingsState extends State<TagSettingsPage> {
-  List<Tag>? compatableTagList;
+  List<Tag>? compatibleTagList;
   TextEditingController textController = TextEditingController();
 
   //delete tag function used to delete the tag from the complete list
@@ -28,7 +28,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
     settings.tagList.remove(tag);
     //call save
     settings.save();
-    compatableTagList?.remove(tag);
+    compatibleTagList?.remove(tag);
     setState(() {});
   }
 
@@ -92,8 +92,8 @@ class _TagSettingsState extends State<TagSettingsPage> {
 									//call save
 									settings.save();
 									//declare compatible list and add new name
-									compatableTagList ??= [];
-									compatableTagList?.add(newTag);
+									compatibleTagList ??= [];
+									compatibleTagList?.add(newTag);
 									
 									//Update search bar with new name
 									textController.value = TextEditingValue(text: newName); 
@@ -127,7 +127,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 					child: const Text('Delete')),
 		];
 
-		//If opend from NewEntry page, add a selection button
+		//If opened from NewEntry page, add a selection button
 		if (widget.selectedTags != null) { 
 			tagRow.insert(0, Checkbox(
 				key: Key('Select ${compList[index].name} Button'),
@@ -173,26 +173,26 @@ class _TagSettingsState extends State<TagSettingsPage> {
                   controller: textController,
                   key: const Key('Tag Search Bar'),
                   onChanged: (inputText) {
-                    //the validator will update the compatable tag list to a state
+                    //the validator will update the compatible tag list to a state
                     //that will be used in the tagsExist function to build the display
                     if (inputText.isEmpty) {
-                      //no input found yet so we update the compatable list to null and prompt user
-                      compatableTagList = null;
+                      //no input found yet so we update the compatible list to null and prompt user
+                      compatibleTagList = null;
                       //update list to screen
                       setState(() {});
                       return;
                     }
                     //input text has something so we move onto the search
-                    compatableTagList ??= [];
+                    compatibleTagList ??= [];
                     List<Tag> nullProofTagList = [];
-                    //clear compatable list for each search to ensure consistency
+                    //clear compatible list for each search to ensure consistency
                     nullProofTagList.clear();
-                    compatableTagList?.clear();
-                    //check the full tag list for comptable tags
+                    compatibleTagList?.clear();
+                    //check the full tag list for compatible tags
                     for (int index = 0; index < settings.tagList.length; index++) {
-                      if (settings.tagList[index].getName().contains(inputText)) {
-                        //add index to list of compatableTags
-                        compatableTagList?.add(settings.tagList[index]);
+                      if (settings.tagList[index].name.contains(inputText)) {
+                        //add index to list of compatibleTags
+                        compatibleTagList?.add(settings.tagList[index]);
                         nullProofTagList.add(settings.tagList[index]);
                       }
                     }
@@ -213,12 +213,12 @@ class _TagSettingsState extends State<TagSettingsPage> {
                 SingleChildScrollView(
                   child: ((() {
                     //if the function returns is false then we display button to create tag
-                    if (!tagsExist(compatableTagList, settings.tagList)) {
-                      //if null thats our sign to return a button
+                    if (!tagsExist(compatibleTagList, settings.tagList)) {
+                      //if null that's our sign to return a button
                       Column finalColumn = Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("No Compatable Tags found: "),
+                          const Text("No Compatible Tags found: "),
                           ElevatedButton(
                               key: const Key('Create Tag'),
                               //on pressed adds the phrase in the text form field to the taglist
@@ -229,15 +229,15 @@ class _TagSettingsState extends State<TagSettingsPage> {
                       return finalColumn;
                     } else {
                       List<Widget> childofColumn = [
-                        const Text("List of compatable tags: ")
+                        const Text("List of compatible tags: ")
                       ];
-                      //if comptable list is still null nothing has been searched
-                      List<Tag> compList = compatableTagList ?? settings.tagList;
+                      //if compatible list is still null nothing has been searched
+                      List<Tag> compList = compatibleTagList ?? settings.tagList;
                       for (int index = 0; index < compList.length; index++) {
                         //generate 1 row for each name in list
                         childofColumn.add( _displayTag(index, compList) );
                       }
-											//Always add the add tags button if comming from new entry page
+											//Always add the add tags button if coming from new entry page
 											if (widget.selectedTags != null) { 
 												childofColumn.add(ElevatedButton(
 														key: const Key('Create Tag'),
@@ -247,7 +247,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 													)
 												);
 											}
-                      //final column starts will text wigdet displayed
+                      //final column starts will text widget displayed
                       Column finalColumn = Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: childofColumn);
@@ -265,13 +265,13 @@ class _TagSettingsState extends State<TagSettingsPage> {
 
 }
 
-//this function will return true if the compatable list has anything to display
+//this function will return true if the compatible list has anything to display
 //onto the screen
-bool tagsExist(List<Tag>? compatableList, List<Tag> actualList) {
+bool tagsExist(List<Tag>? compatibleList, List<Tag> actualList) {
   //first initialize the list if it has not yet been done
-  List<Tag> nullProofTagList = compatableList ?? [];
-  //check if compatable list has been initialized and if not return the full tag list
-  if (compatableList != null && nullProofTagList.isEmpty) {
+  List<Tag> nullProofTagList = compatibleList ?? [];
+  //check if compatible list has been initialized and if not return the full tag list
+  if (compatibleList != null && nullProofTagList.isEmpty) {
     //if the list is empty then no tags are found and button will be displayed
     return false;
   }

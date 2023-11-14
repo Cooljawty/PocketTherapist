@@ -13,7 +13,7 @@ const String prefrencesPrefix = "pocket-therapist";
 /// True if loading has been completed, false otherwise.
 bool _init = false;
 
-/// These are the default settings and will be overwritten when laoded.
+/// These are the default settings and will be overwritten when loaded.
 
 const String configuredKey = "configured";
 
@@ -59,13 +59,14 @@ Future<void> load() async {
   // first time setup
   if (!await _settingsFile!.exists()) {
     // cannot create settings file
-    // attempt to create the whole directory path if it doesnt exist.
+    // attempt to create the whole directory path if it doesn't exist.
     await _settingsFile!.create();
     _assignDefaults();
   }
   // Else settings exists, load them.
   else {
     String fileContent = await _settingsFile!.readAsString();
+    debugPrint(fileContent);
     if (fileContent.isEmpty) {
       // Settings file exists but empty, save the defaults
       _assignDefaults();
@@ -87,6 +88,8 @@ Future<void> load() async {
           tagList.add(Tag(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
         }
       }
+
+      debugPrint(tagList.length.toString());
 
       //load emotions
       if (_settings['emotions'] != null) {
@@ -147,7 +150,7 @@ Future<void> save() async {
   // first time setup
   if (!await _settingsFile!.exists()) {
     // cannot create settings file
-    // attempt to create the whole directory path if it doesnt exist.
+    // attempt to create the whole directory path if it doesn't exist.
     await _settingsFile!.create();
   }
   // Collect all the settings
@@ -158,7 +161,7 @@ Future<void> save() async {
   //Add each tag as a map with its name and color
 	settings['tags'] = <Map<String, dynamic>>[];
 	for (final tag in tagList) {
-		settings['tags'].add({'name': tag.getName(), 'color': tag.getColor().hashCode});
+		settings['tags'].add({'name': tag.name, 'color': tag.color.value});
 	}
 
   //add lines to update emotions
