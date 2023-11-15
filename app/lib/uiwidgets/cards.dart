@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 
-/// A card that displays text with a title and main text bocy
+import '../helper/classes.dart';
+
+/// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
   final String title;
   final String body;
   final DateTime date;
+  final List<Tag> tagList;
 
   final dynamic page;
 
@@ -14,7 +19,8 @@ class DisplayCard extends StatefulWidget {
       required this.title,
       required this.body,
       required this.date,
-      this.page});
+      this.page,
+      required this.tagList});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -38,64 +44,85 @@ class _DisplayCardState extends State<DisplayCard> {
           }
         },
         child: Card(
-            color: getCurrentTheme().colorScheme.background,
-            shape: RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
               side: BorderSide(
                 color: getCurrentTheme().colorScheme.outline,
               ),
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: ((){
+                    List<Color> bgCardColors = [];
+                    if (widget.tagList.length > 1) {
+                      for (int i = 0; i < 3; i++) {
+                        bgCardColors.add(widget.tagList[i].color);
+                      }
+                    } else if(widget.tagList.isEmpty){
+                      bgCardColors.add(Colors.grey.shade800);
+                      bgCardColors.add(Colors.grey.shade400);
+                    }
+                    else{
+                      bgCardColors.add(widget.tagList[0].color);
+                      bgCardColors.add(widget.tagList[0].color);
+                    }
+                    return bgCardColors;
+                  }())
+              ),
+            ),
 
             child: Row( // row to hold all information
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
 
-              Column( // Column to hold title and preview text
-                crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    // Title
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(
-                        widget.title,
-                        style: DefaultTextStyle.of(context).style.apply(
-                              fontSizeFactor: 1.3,
-                              fontWeightDelta: 1,
-                            ),
+                Column( // Column to hold title and preview text
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Title
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(
+                          widget.title,
+                          style: DefaultTextStyle.of(context).style.apply(
+                            fontSizeFactor: 1.3,
+                            fontWeightDelta: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                    // preview text
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(
-                        widget.body,
-                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      // preview text
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(
+                          widget.body,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
-                    ),
-                  ]),
-              // spacer to push the date to the right and the text to the left
-              const Spacer(),
+                    ]),
+                // spacer to push the date to the right and the text to the left
+                const Spacer(),
 
-              // Date
-              Container(
-                padding: const EdgeInsets.all(7),
-                child: Text(
-                  '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
+                // Date
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  child: Text(
+                    '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
+                  ),
                 ),
-              ),
-            ])),
+              ]),
+          ),
+        ),
       ),
     );
   }
 }
 
 mixin DisplayOnCard {
-  ({String title, String body, DateTime date}) card = (title: "", body: "", date: DateTime.now());
-
+  ({String title, String body, DateTime date, List<Tag> tagList}) card = (title: "", body: "", date: DateTime.now(), tagList: []);
   dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(
-        title: card.title, body: card.body, date: card.date, page: pageRoute);
+        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList);
   }
 }

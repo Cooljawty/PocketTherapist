@@ -1,3 +1,4 @@
+import 'package:app/helper/classes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ void main() {
 		title: "Test Object Title",
 		body: "Body text of Test Object",
 		date: DateTime(2023, 11, 5),
+		tagList: [],
 	);
 
 	late Widget myApp;
@@ -28,7 +30,8 @@ void main() {
 								title: entry.getTitle(), 
 								body: entry.getPreviewText(),
 								date: entry.getDate(),
-								page: () => EntryPage.route(entry: entry)
+								page: () => EntryPage.route(entry: entry),
+								tagList: const [],
 							),
 							testObj.asDisplayCard(),
 						],
@@ -86,8 +89,9 @@ class TestObject with DisplayOnCard{
 	String title;
 	String body;
 	DateTime date;
+	List<Tag> tagList;
 
-	TestObject({this.title = "", required this.body, required this.date}){
-		card = (title: title, body: body, date: date);
+	TestObject({this.title = "", required this.body, required this.date, required this.tagList}){
+		card = (title: title, body: body, date: date, tagList: tagList);
 	}
 }

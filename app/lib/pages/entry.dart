@@ -6,6 +6,8 @@ import 'dart:math';
 
 class JournalEntry with DisplayOnCard {
 
+	// unique id for each entry
+	int _id = 0;
 
 	// Journal entry title and body
 	String _title = "";
@@ -24,7 +26,8 @@ class JournalEntry with DisplayOnCard {
 
 	static const previewLength = 25;
 
-	JournalEntry({required title, required entryText, required date, tags, emotions}){
+	JournalEntry({id, required title, required entryText, required date, tags, emotions}){
+		_id = id;
 		_title = title;
 		_entryText = entryText;
 		_date = date;
@@ -38,10 +41,12 @@ class JournalEntry with DisplayOnCard {
 			title: _title,
 			body: getPreviewText(),
 		  date: _date,
+			tagList: _tags,
 		);
 
 		pageRoute = (() => EntryPage.route(entry: this));
 	}
+	int getID() => _id;
 	String getPreviewText() => _previewText;
 	String getEntryText() => _entryText;
 	String getTitle() => _title;
@@ -49,11 +54,22 @@ class JournalEntry with DisplayOnCard {
 	List<Tag> getTags() => _tags;
 	List<Emotion> getEmotions() => _emotions;
 
+	// Get the strongest emotion in the entry
+	Emotion getStrongestEmotion(){
+		if(_emotions.isNotEmpty){
+			Emotion strongestEmotion = _emotions[0];
+			for(int i = 1; i < _emotions.length; i++) {
+				(strongestEmotion.strength < _emotions[i].strength) ? strongestEmotion = _emotions[i] : 0;
+			}
+			return strongestEmotion;
+		}
+		return Emotion(name: 'None', strength: 0, color: Colors.black); 	// This shouldnt happen
+	}
+
 	/* TODO
 	List<Image> pictures;
 
 	Tag getTagByTitle(String title);
-	Emotion getStrongestEmotion();
 	List<Image> getPictures();
 	*/
 }
@@ -75,6 +91,8 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
 			body: SafeArea(
 				child: Center(

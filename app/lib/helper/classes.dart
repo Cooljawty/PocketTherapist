@@ -8,7 +8,7 @@ class Tag {
 
   Tag({
     required this.name,
-    this.color = Colors.blue
+    required this.color,
   });
 }
 
@@ -20,5 +20,6 @@ class Emotion extends Tag {
   Emotion({
     required super.name,
     this.strength = 0,
+    required super.color,
   });
 }

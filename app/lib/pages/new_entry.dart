@@ -29,7 +29,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // current map of emotions to set in multiSelectItem
   final _emotionItems = settings.emotionList.asMap().entries.map((emotion) {
     String val = emotion.value;
-    return MultiSelectItem<Emotion>(Emotion(name: val), val);
+
+    return MultiSelectItem<Emotion>(Emotion(name: val, color: Colors.white), val);
   }).toList();
 
   // List of selected tags to keep track of when making the chip list
@@ -53,6 +54,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
     return Scaffold(
       body: SizedBox(
           height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           child: Column(children: [
             const Padding(padding: EdgeInsets.only(top: 70)),
             // Title of the page
@@ -86,26 +88,26 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
+            // Chip display for the tags
             Padding(
               padding: const EdgeInsets.all(20),
+              // Make the chips scrollable
               child: Scrollbar(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: _selectedTags
-                        .map((tag) => Padding(
+                    children: _selectedTags.map((tag) =>
+                        Padding(
                             padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
                             child: Chip(
                               label: Text(tag.name),
                               backgroundColor: tag.color,
                               onDeleted: () {
                                 setState(() {
-                                  _selectedTags.removeWhere(
-                                      (element) => element.name == tag.name);
+                                  _selectedTags.removeWhere((element) => element.name == tag.name);
                                 });
                               },
-                            )))
-                        .toList(),
+                            ))).toList(),
                   ),
                 ),
               ),
@@ -143,33 +145,23 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
                   // Style changes for Alert Dialog Selector list items when built
                   itemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() ==
-                              ThemeSettings.lightTheme)
-                          ? Colors.black
-                          : Colors.white),
+                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
+                  ),
 
                   // Style changes for Alert Dialog Selector list items when selected
                   selectedItemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() ==
-                              ThemeSettings.lightTheme)
-                          ? Colors.black
-                          : Colors.white),
+                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
+                  ),
 
                   // Style changes for Alert Dialog Selector list items when selected/notSelected
                   selectedColor: settings.getCurrentTheme().colorScheme.primary,
-                  unselectedColor:
-                      settings.getCurrentTheme().colorScheme.primary,
+                  unselectedColor: settings.getCurrentTheme().colorScheme.primary,
 
                   // Chip display of all the currently selected emotions
                   chipDisplay: MultiSelectChipDisplay(
-                    items: _selectedEmotions
-                        .map((e) => MultiSelectItem(e, e.name))
-                        .toList(),
+                    items: _selectedEmotions.map((e) => MultiSelectItem(e, e.name)).toList(),
                     textStyle: TextStyle(
-                        color: (settings.getCurrentTheme() ==
-                                ThemeSettings.lightTheme)
-                            ? settings.getCurrentTheme().colorScheme.secondary
-                            : Colors.white),
+                        color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white),
                     chipColor: settings.getCurrentTheme().colorScheme.primary,
 
                     // Be able to scroll through all the selected emotions to avoid overflow
@@ -217,7 +209,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
-          height: 50,
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
             borderRadius: BorderRadius.circular(10.0),
@@ -226,12 +217,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
           // Keep all the button spaced evenly and centered on the page
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //crossAxisAlignment: CrossAxisAlignment.baseline,
             children: [
-              OverflowBar(
-                spacing: 50,
-                overflowAlignment: OverflowBarAlignment.center,
-                children: <Widget>[
                   // Plan button
                   TextButton(
                       key: const Key("planButton"),
@@ -313,15 +301,13 @@ class _NewEntryPageState extends State<NewEntryPage> {
                         );
                       }),
 
-                  // Save button
-                  TextButton(
-                      key: const Key("saveButton"),
-                      child: const Text('Save'),
-                      onPressed: () {
-                        Navigator.pop(context, getEntry());
-                      }),
-                ],
-              )
+              // Save button
+              TextButton(
+                  key: const Key("saveButton"),
+                  child: const Text('Save'),
+                  onPressed: () {
+                    Navigator.pop(context, getEntry());
+                  }),
             ],
           )),
     );
@@ -400,6 +386,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // Make the journal entry and save it
   getEntry() {
     return JournalEntry(
+      id: UniqueKey().hashCode,
       title: titleController.text,
       entryText: journalController.text,
       date: DateTime.now(),

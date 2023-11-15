@@ -118,16 +118,16 @@ void _assignDefaults() async {
     accentColorKey: Colors.deepPurpleAccent[100]!.value,
   };
   tagList = [
-    Tag(name: 'Calm'),
-    Tag(name: 'Centered'),
-    Tag(name: 'Content'),
-    Tag(name: 'Fulfilled'),
-    Tag(name: 'Patient'),
-    Tag(name: 'Peaceful'),
-    Tag(name: 'Present'),
-    Tag(name: 'Relaxed'),
-    Tag(name: 'Serene'),
-    Tag(name: 'Trusting'),
+    Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+    Tag(name: 'Centered', color: const Color(0xff794e5e)),
+    Tag(name: 'Content', color: const Color(0xfff1903b)),
+    Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
+    Tag(name: 'Patient', color: const Color(0xff00c5cc)),
+    Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
+    Tag(name: 'Present', color: const Color(0xffff7070)),
+    Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
+    Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
+    Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
   ];
   emotionList = [
     'Happy',

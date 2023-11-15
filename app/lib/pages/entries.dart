@@ -126,7 +126,7 @@ class _EntriesPageState extends State<EntriesPage> {
                           // Issue with the key, needs to be specific id, not a
                           // name or will receive error that dismissible is still
                           // in the tree
-                          key: UniqueKey(),
+                          key: Key(item.getID().toString()),
 
                           //prevents right swipes
                           direction: DismissDirection.endToStart,
