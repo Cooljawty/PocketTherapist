@@ -21,16 +21,12 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  // current map of tags to set in multiSelectItem
-  final _tagItems = settings.tagList.map((tag) {
-    return MultiSelectItem<Tag>(tag, tag.name);
-  }).toList();
-
   // current map of emotions to set in multiSelectItem
   final _emotionItems = settings.emotionList.asMap().entries.map((emotion) {
     String val = emotion.value;
 
-    return MultiSelectItem<Emotion>(Emotion(name: val, color: Colors.white), val);
+    return MultiSelectItem<Emotion>(
+        Emotion(name: val, color: Colors.white), val);
   }).toList();
 
   // List of selected tags to keep track of when making the chip list
@@ -95,19 +91,20 @@ class _NewEntryPageState extends State<NewEntryPage> {
               child: Scrollbar(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _selectedTags.map((tag) =>
-                        Padding(
-                            padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
-                            child: Chip(
+                  child: Wrap(
+                    spacing: 5,
+                    children: _selectedTags
+                        .map((tag) => Chip(
                               label: Text(tag.name),
                               backgroundColor: tag.color,
                               onDeleted: () {
                                 setState(() {
-                                  _selectedTags.removeWhere((element) => element.name == tag.name);
+                                  _selectedTags.removeWhere(
+                                      (element) => element.name == tag.name);
                                 });
                               },
-                            ))).toList(),
+                            ))
+                        .toList(),
                   ),
                 ),
               ),
@@ -145,23 +142,33 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
                   // Style changes for Alert Dialog Selector list items when built
                   itemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
-                  ),
+                      color: (settings.getCurrentTheme() ==
+                              ThemeSettings.lightTheme)
+                          ? Colors.black
+                          : Colors.white),
 
                   // Style changes for Alert Dialog Selector list items when selected
                   selectedItemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? Colors.black : Colors.white
-                  ),
+                      color: (settings.getCurrentTheme() ==
+                              ThemeSettings.lightTheme)
+                          ? Colors.black
+                          : Colors.white),
 
                   // Style changes for Alert Dialog Selector list items when selected/notSelected
                   selectedColor: settings.getCurrentTheme().colorScheme.primary,
-                  unselectedColor: settings.getCurrentTheme().colorScheme.primary,
+                  unselectedColor:
+                      settings.getCurrentTheme().colorScheme.primary,
 
                   // Chip display of all the currently selected emotions
                   chipDisplay: MultiSelectChipDisplay(
-                    items: _selectedEmotions.map((e) => MultiSelectItem(e, e.name)).toList(),
+                    items: _selectedEmotions
+                        .map((e) => MultiSelectItem(e, e.name))
+                        .toList(),
                     textStyle: TextStyle(
-                        color: (settings.getCurrentTheme() == ThemeSettings.lightTheme) ? settings.getCurrentTheme().colorScheme.secondary : Colors.white),
+                        color: (settings.getCurrentTheme() ==
+                                ThemeSettings.lightTheme)
+                            ? settings.getCurrentTheme().colorScheme.secondary
+                            : Colors.white),
                     chipColor: settings.getCurrentTheme().colorScheme.primary,
 
                     // Be able to scroll through all the selected emotions to avoid overflow
@@ -220,86 +227,62 @@ class _NewEntryPageState extends State<NewEntryPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             //crossAxisAlignment: CrossAxisAlignment.baseline,
             children: [
-                  // Plan button
-                  TextButton(
-                      key: const Key("planButton"),
-                      child: const Text('Plan'),
-                      onPressed: () {}),
-                  /*
+              // Plan button
+              TextButton(
+                  key: const Key("planButton"),
+                  child: const Text('Plan'),
+                  onPressed: () {}),
+              /*
                   * Tag button
                   * Will create a multi select dialog field that will allow
                   * users to select the tags for the Journal Entry
                   */
-                  TextButton(
-                      key: const Key("tagButton"),
-                      child: const Text('Tag'),
-                      onPressed: () async {
-                        debugPrint(_tagItems.length.toString());
-                        await showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return MultiSelectDialog(
-                              items: _tagItems,
-                              initialValue: _selectedTags,
-
-                              // Style changes for the Title
-                              title: const Text("Select Tags"),
-
-                              // Style changes for the selected/deselected items
-                              itemsTextStyle: TextStyle(
-                                  color: (settings.getCurrentTheme() ==
-                                          ThemeSettings.lightTheme)
-                                      ? Colors.black
-                                      : Colors.white),
-                              selectedItemsTextStyle: TextStyle(
-                                  color: (settings.getCurrentTheme() ==
-                                          ThemeSettings.lightTheme)
-                                      ? Colors.black
-                                      : Colors.white),
-                              selectedColor: settings
-                                  .getCurrentTheme()
-                                  .colorScheme
-                                  .primary,
-                              unselectedColor: settings
-                                  .getCurrentTheme()
-                                  .colorScheme
-                                  .primary,
-
-                              // Style changes for the confirm button in the multiSelect field
-                              confirmText: Text(
-                                key: const Key("ConfirmTag"),
-                                "Confirm",
-                                style: TextStyle(
-                                  color: settings
-                                      .getCurrentTheme()
-                                      .colorScheme
-                                      .primary,
-                                ),
+              TextButton(
+                  key: const Key("tagButton"),
+                  child: const Text('Tag'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                          return AlertDialog(
+                            title: const Text("Select Tags"),
+                            content: Wrap(
+                              spacing: 5.0,
+                              children: settings.tagList.map((Tag tag) {
+                                return FilterChip(
+                                  label: Text(tag.name),
+                                  selected: _selectedTags.contains(tag),
+                                  showCheckmark: false,
+                                  selectedColor: tag.color,
+                                  onSelected: (bool selected) {
+                                    stfSetState(() {
+                                      setState(() {
+                                        if (selected) {
+                                          _selectedTags.add(tag);
+                                        } else {
+                                          _selectedTags.remove(tag);
+                                        }
+                                      });
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Approve'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-
-                              // Style changes for the cancel button in the multiSelect field
-                              cancelText: Text(
-                                key: const Key("CancelTag"),
-                                "Cancel",
-                                style: TextStyle(
-                                  color: settings
-                                      .getCurrentTheme()
-                                      .colorScheme
-                                      .primary,
-                                ),
-                              ),
-
-                              // when confirm is tapped, update selected tags so chips can be displayed properly
-                              onConfirm: (values) {
-                                setState(() {
-                                  _selectedTags = values;
-                                  debugPrint(_selectedTags[0].color.toString());
-                                });
-                              },
-                            );
-                          },
-                        );
-                      }),
+                            ],
+                          );
+                        });
+                      },
+                    );
+                  }),
 
               // Save button
               TextButton(

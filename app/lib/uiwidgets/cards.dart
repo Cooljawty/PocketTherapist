@@ -1,4 +1,5 @@
-import 'dart:developer';
+// import 'dart:developer';
+import 'dart:math';
 
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class _DisplayCardState extends State<DisplayCard> {
                   colors: ((){
                     List<Color> bgCardColors = [];
                     if (widget.tagList.length > 1) {
-                      for (int i = 0; i < 3; i++) {
+                      for (int i = 0; i < min(widget.tagList.length, 3); i++) {
                         bgCardColors.add(widget.tagList[i].color);
                       }
                     } else if(widget.tagList.isEmpty){
