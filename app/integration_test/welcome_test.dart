@@ -173,10 +173,75 @@ void main() async {
       Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
 
       await widgetTester.tap(enterPasswordButton);
-      await widgetTester.pumpAndSettle(const Duration(seconds: 25));
+      await widgetTester.pumpAndSettle();
 
       Finder confirmIncorrectButton =
           find.byKey(const Key("Confirm_Incorrect_Password"));
+      await widgetTester.tap(confirmIncorrectButton);
+      await widgetTester.pumpAndSettle();
+
+      await widgetTester.enterText(passwordField, password);
+      await widgetTester.pumpAndSettle();
+
+      Finder seePasswordButton = find.byType(IconButton);
+      await widgetTester.tap(seePasswordButton);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(seePasswordButton);
+      await widgetTester.pumpAndSettle();
+
+      await widgetTester.tap(enterPasswordButton);
+      await widgetTester.pumpAndSettle(const Duration(seconds: 25));
+
+
+      //Successful login, on dashboard
+      expect(find.text("Dashboard"), findsNWidgets(2));
+    });
+
+  });
+
+  testWidgets("Login to Account", (widgetTester) async {
+    await widgetTester.runAsync(() async {
+      const String password = "password123@";
+      const String badPassword = "password123";
+
+      await settings.load();
+      settings.setMockValues({
+        settings.configuredKey: true,
+        settings.encryptionToggleKey: true,
+      });
+      settings.setPassword(password);
+      settings.save();
+
+      app.main();
+
+      await widgetTester.pumpAndSettle();
+
+      Finder startbutton = find.byKey(const Key("Start_Button"));
+      expect(startbutton, findsOneWidget);
+      await widgetTester.tap(startbutton);
+      await widgetTester.pumpAndSettle();
+
+// First alert box - Enter password ---------------------------------------------[
+      Finder encryptionAlert = find.byType(AlertDialog);
+      expect(encryptionAlert, findsOneWidget);
+
+      Finder passwordField = find.descendant(
+          of: find.byKey(const Key("Login_Password_Field")),
+          matching: find.byType(TextFormField));
+      expect(passwordField, findsOneWidget);
+
+// Enter password ---------------------------------------------------------------
+      await widgetTester.enterText(passwordField, badPassword);
+      await widgetTester.pumpAndSettle();
+
+      /// Submit the first password ( stores it )
+      Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
+
+      await widgetTester.tap(enterPasswordButton);
+      await widgetTester.pumpAndSettle();
+
+      Finder confirmIncorrectButton =
+      find.byKey(const Key("Confirm_Incorrect_Password"));
       await widgetTester.tap(confirmIncorrectButton);
       await widgetTester.pumpAndSettle();
 
