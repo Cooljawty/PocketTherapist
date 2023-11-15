@@ -111,6 +111,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
               // Make the chips scrollable
               child: Scrollbar(
                 child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Wrap(
                     spacing: 5,
                     children: _selectedEmotions
