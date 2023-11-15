@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app/provider/theme_settings.dart';
 import 'entry.dart';
 
 import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as settings;
-import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
 class NewEntryPage extends StatefulWidget {
@@ -23,15 +21,12 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   // current map of emotions to set in multiSelectItem
   final _emotionItems = settings.emotionList.asMap().entries.map((emotion) {
-    String val = emotion.value;
-
-    return MultiSelectItem<Emotion>(
-        Emotion(name: val, color: Colors.white), val);
+    return Emotion(name: emotion.value, color: Colors.white);
   }).toList();
 
   // List of selected tags to keep track of when making the chip list
-  List<Tag> _selectedTags = [];
-  List<Emotion> _selectedEmotions = [];
+  final List<Tag> _selectedTags = [];
+  final List<Emotion> _selectedEmotions = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
@@ -110,107 +105,24 @@ class _NewEntryPageState extends State<NewEntryPage> {
               ),
             ),
 
-            /*
-            * Emotion multi select button
-            * Will create an Alert dialog field that will allow
-            * users to select the emotions for the Journal Entry
-            */
+            // Chip display for the emotions
             Padding(
               padding: const EdgeInsets.all(20),
-              child: MultiSelectDialogField(
-                  items: _emotionItems,
-                  title: const Text("Emotions"),
-                  listType: MultiSelectListType.LIST,
-
-                  // Style changes for Alert Dialog Selector confirm button
-                  confirmText: Text(
-                    key: const Key("ConfirmTag"),
-                    "Confirm",
-                    style: TextStyle(
-                      color: settings.getCurrentTheme().colorScheme.primary,
-                    ),
-                  ),
-
-                  // Style changes for Alert Dialog Selector cancel button
-                  cancelText: Text(
-                    key: const Key("CancelTag"),
-                    "Cancel",
-                    style: TextStyle(
-                      color: settings.getCurrentTheme().colorScheme.primary,
-                    ),
-                  ),
-
-                  // Style changes for Alert Dialog Selector list items when built
-                  itemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() ==
-                              ThemeSettings.lightTheme)
-                          ? Colors.black
-                          : Colors.white),
-
-                  // Style changes for Alert Dialog Selector list items when selected
-                  selectedItemsTextStyle: TextStyle(
-                      color: (settings.getCurrentTheme() ==
-                              ThemeSettings.lightTheme)
-                          ? Colors.black
-                          : Colors.white),
-
-                  // Style changes for Alert Dialog Selector list items when selected/notSelected
-                  selectedColor: settings.getCurrentTheme().colorScheme.primary,
-                  unselectedColor:
-                      settings.getCurrentTheme().colorScheme.primary,
-
-                  // Chip display of all the currently selected emotions
-                  chipDisplay: MultiSelectChipDisplay(
-                    items: _selectedEmotions
-                        .map((e) => MultiSelectItem(e, e.name))
-                        .toList(),
-                    textStyle: TextStyle(
-                        color: (settings.getCurrentTheme() ==
-                                ThemeSettings.lightTheme)
-                            ? settings.getCurrentTheme().colorScheme.secondary
-                            : Colors.white),
-                    chipColor: settings.getCurrentTheme().colorScheme.primary,
-
-                    // Be able to scroll through all the selected emotions to avoid overflow
-                    scroll: true,
-
-                    // Make Alert Dialog pop-up when an emotion is selected to display emotional dial
-                    onTap: (value) => _emotionalDial(context, value),
-                  ),
-
-                  // Decoration theme of the multi selector drop down
-                  decoration: BoxDecoration(
-                    color: settings
-                        .getCurrentTheme()
-                        .colorScheme
-                        .primary
-                        .withOpacity(0.1),
-                    borderRadius: const BorderRadius.all(Radius.circular(40)),
-                    border: Border.all(
-                      color: settings.getCurrentTheme().colorScheme.primary,
-                      width: 2,
-                    ),
-                  ),
-
-                  // Display Icon on the right side of the multi selector drop down
-                  buttonIcon: Icon(
-                    Icons.tag,
-                    color: settings.getCurrentTheme().colorScheme.primary,
-                  ),
-
-                  // Text displayed on the drop down
-                  buttonText: Text(
-                    "Emotions",
-                    style: TextStyle(
-                      color: settings.getCurrentTheme().colorScheme.primary,
-                      fontSize: 16,
-                    ),
-                  ),
-                  onConfirm: (values) {
-                    setState(() {
-                      _selectedEmotions = values;
-                    });
-                  }),
+              // Make the chips scrollable
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 5,
+                    children: _selectedEmotions
+                      .map((Emotion emotion) => ActionChip(
+                      label: Text(emotion.name),
+                      backgroundColor: Colors.grey,
+                      onPressed: () => _emotionalDial(context, emotion),
+                    ))
+                      .toList(),
+                  )
+                )
+              )
             ),
           ])),
 
@@ -272,7 +184,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             ),
                             actions: <Widget>[
                               TextButton(
-                                child: const Text('Approve'),
+                                child: const Text('Save'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -280,6 +192,53 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             ],
                           );
                         });
+                      },
+                    );
+                  }),
+
+              TextButton(
+                  key: const Key("emotionButton"),
+                  child: const Text('Emotion'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                              return AlertDialog(
+                                title: const Text("Select Emotions"),
+                                content: Wrap(
+                                  spacing: 5.0,
+                                  children: _emotionItems.map((Emotion emote) {
+                                    return FilterChip(
+                                      label: Text(emote.name),
+                                      selected: _selectedEmotions.contains(emote),
+                                      showCheckmark: false,
+                                      // selectedColor: emote.color,
+                                      onSelected: (bool selected) {
+                                        stfSetState(() {
+                                          setState(() {
+                                            if (selected) {
+                                              _selectedEmotions.add(emote);
+                                            } else {
+                                              _selectedEmotions.remove(emote);
+                                            }
+                                          });
+                                        });
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
                       },
                     );
                   }),
@@ -326,8 +285,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
               outerThumbRadius: 5,
               outerThumbStrokeWidth: 10,
               outerThumbColor: Colors.blueAccent,
-              dashWidth: 10,
-              dashGap: 20,
+              dashWidth: 26,
+              dashGap: 10,
               animation: false,
               valueNotifier: _progress,
               child: Center(
