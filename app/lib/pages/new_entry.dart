@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:vector_math/vector_math_64.dart';
 import 'entry.dart';
 
 import 'package:app/helper/classes.dart';
@@ -129,11 +130,17 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(10.0),
+        transform: Matrix4.translationValues(0, 3, 0),
+          decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder (
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                  side: BorderSide(
+                      width: 3,
+                      color: settings.getCurrentTheme().colorScheme.primary,
+                  )
+              )
           ),
-          margin: const EdgeInsets.only(left: 50.0, right: 50.0),
+          margin: EdgeInsets.only(left: (MediaQuery.of(context).size.width / 10), right: (MediaQuery.of(context).size.width / 10)),
 
           // Keep all the button spaced evenly and centered on the page
           child: Row(
