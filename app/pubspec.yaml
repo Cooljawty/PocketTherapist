@@ -90,6 +90,7 @@ flutter:
      - assets/GlassesFrame2.png
      - assets/GlassesFrame3.png
      - assets/GlassesFrame4.png
+     - assets/circleCutOut.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -43,13 +43,20 @@ class _NewEntryPageState extends State<NewEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-          height: MediaQuery.of(context).size.height,
+      appBar: AppBar(
+          title: const Text('New Entry'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+      child: SizedBox(
+          height: MediaQuery.of(context).size.height + kBottomNavigationBarHeight,
           width: MediaQuery.of(context).size.width,
           child: Column(children: [
-            const Padding(padding: EdgeInsets.only(top: 70)),
-            // Title of the page
-            const Text('New Entry'),
+            // const Padding(padding: EdgeInsets.only(top: 70)),
+            // // Title of the page
+            // const Text('New Entry'),
 
             // Text field for the Journal Entry Title
             Padding(
@@ -125,15 +132,15 @@ class _NewEntryPageState extends State<NewEntryPage> {
                 )
               )
             ),
-          ])),
+          ]))),
 
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            color: settings.getCurrentTheme().bottomNavigationBarTheme.backgroundColor,
             borderRadius: BorderRadius.circular(10.0),
           ),
-          margin: const EdgeInsets.only(left: 50.0, right: 50.0),
+          margin: EdgeInsets.only(left: (MediaQuery.of(context).size.width / 10), right: (MediaQuery.of(context).size.width / 10)),
 
           // Keep all the button spaced evenly and centered on the page
           child: Row(
