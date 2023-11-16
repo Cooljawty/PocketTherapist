@@ -90,3 +90,9 @@ class ThemeSettings with ChangeNotifier {
     notifyListeners();
   }
 }
+
+Color darkenColor(Color color, double amount) {
+  // Grab the hue, saturation, and lightness of the color
+  HSLColor hsl = HSLColor.fromColor(color);
+  return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
+}

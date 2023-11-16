@@ -32,7 +32,16 @@ class _QuoteState extends State<Quote> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+              side: BorderSide(
+                  width: 4,
+                  color: Theme.of(context).colorScheme.primary,
+              )
+          ),
+        ),
       //height: 210,
       width: MediaQuery.of(context).size.width,
       child: GestureDetector(
@@ -40,34 +49,35 @@ class _QuoteState extends State<Quote> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
                   Transform.flip(
-                      origin: const Offset(-30, 0),
+                      origin: const Offset(-40, 0),
                       flipX: true,
                       child: Icon(Icons.format_quote_rounded,
                           size: 50,
                           color: getCurrentTheme().colorScheme.primary)),
 
                   //now we only need a text widget for quote
-                  Text(
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(
                     // quote from app
                     currentQuote,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 5,
                     textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                  ),
 
                   Transform(
-                      transform: Matrix4.translationValues(30, 0, 0),
+                      transform: Matrix4.translationValues(80, 0, 0),
                       child: Icon(Icons.format_quote_rounded,
                           size: 50,
                           color: getCurrentTheme().colorScheme.primary)),
                 ]),
-          ],
-        ),
         onTap: () {
           setState(() => currentQuote = widget.newQuote());
         },

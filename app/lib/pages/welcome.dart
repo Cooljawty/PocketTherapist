@@ -3,6 +3,7 @@ import 'package:app/pages/settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/uiwidgets/buttons.dart';
+import 'package:app/provider/theme_settings.dart';
 //add line for field import
 import 'package:app/uiwidgets/fields.dart';
 import 'package:flutter/material.dart';
@@ -201,12 +202,6 @@ class _WelcomePageState extends State<WelcomePage> {
         child: const Icon(Icons.settings),
       ),
     );
-  }
-
-  Color darkenColor(Color color, double amount) {
-    // Grab the hue, saturation, and lightness of the color
-    HSLColor hsl = HSLColor.fromColor(color);
-    return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
   }
 
   /// [_handleStartPress] handles taps of the start button, it uses the next 5
