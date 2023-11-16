@@ -20,9 +20,9 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  // current map of emotions to set in multiSelectItem
-  final _emotionItems = settings.emotionList.asMap().entries.map((emotion) {
-    return Emotion(name: emotion.value, color: Colors.white);
+  final _emotionItems = settings.emotionList.entries.map((emotion) {
+
+    return Emotion(name: emotion.key, color: emotion.value);
   }).toList();
 
   // List of selected tags to keep track of when making the chip list
@@ -52,10 +52,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
       ),
       body: SingleChildScrollView(
           child: SizedBox(
-              height: MediaQuery.of(context).size.height +
-                  kBottomNavigationBarHeight,
               width: MediaQuery.of(context).size.width,
-              child: Column(children: [
+              child: Column(
+                  children: [
 
                 // Text field for the Journal Entry Title
                 Padding(
@@ -123,9 +122,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                               children: _selectedEmotions
                                   .map((Emotion emotion) => ActionChip(
                                         label: Text(emotion.name),
-                                        backgroundColor: Colors.grey,
+                                        backgroundColor: emotion.color,
                                         onPressed: () =>
                                             _emotionalDial(context, emotion),
+
                                       ))
                                   .toList(),
                             )))),
@@ -157,7 +157,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   key: const Key("planButton"),
                   child: const Text('Plan'),
                   onPressed: () {}),
-              /*
+                 /*
                   * Tag button
                   * Will create a multi select dialog field that will allow
                   * users to select the tags for the Journal Entry
@@ -227,7 +227,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   label: Text(emote.name),
                                   selected: _selectedEmotions.contains(emote),
                                   showCheckmark: false,
-                                  // selectedColor: emote.color,
+                                  selectedColor: emote.color,
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {

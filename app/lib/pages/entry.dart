@@ -38,10 +38,11 @@ class JournalEntry with DisplayOnCard {
 		_previewText = preview.substring(0, min(previewLength, preview.length));
 
 		card = (
-			title: _title,
-			body: getPreviewText(),
-		  date: _date,
+			body: getEntryText(),
+			date: _date,
+			emotionList: _emotions,
 			tagList: _tags,
+			title: _title,
 		);
 
 		pageRoute = (() => EntryPage.route(entry: this));

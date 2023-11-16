@@ -12,6 +12,7 @@ class DisplayCard extends StatefulWidget {
   final String body;
   final DateTime date;
   final List<Tag> tagList;
+  final List<Emotion> emotionList;
 
   final dynamic page;
 
@@ -21,7 +22,8 @@ class DisplayCard extends StatefulWidget {
       required this.body,
       required this.date,
       this.page,
-      required this.tagList});
+      required this.tagList,
+      required this.emotionList});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -56,17 +58,27 @@ class _DisplayCardState extends State<DisplayCard> {
               gradient: LinearGradient(
                   colors: ((){
                     List<Color> bgCardColors = [];
-                    if (widget.tagList.length > 1) {
-                      for (int i = 0; i < min(widget.tagList.length, 3); i++) {
-                        bgCardColors.add(widget.tagList[i].color);
+                    if(widget.emotionList.isNotEmpty){
+                      if(widget.emotionList.length > 1){
+                        for (int i = 0; i < min(widget.emotionList.length, 3); i++) {
+                          bgCardColors.add(widget.emotionList[i].color);
+                        }
+                      }else{
+                        bgCardColors.add(widget.emotionList[0].color);
+                        bgCardColors.add(widget.emotionList[0].color);
                       }
-                    } else if(widget.tagList.isEmpty){
+                    }else if(widget.tagList.isNotEmpty){
+                      if(widget.tagList.length > 1){
+                        for (int i = 0; i < min(widget.tagList.length, 3); i++) {
+                          bgCardColors.add(widget.tagList[i].color);
+                        }
+                      }else{
+                        bgCardColors.add(widget.tagList[0].color);
+                        bgCardColors.add(widget.tagList[0].color);
+                      }
+                    }else{
                       bgCardColors.add(Colors.grey.shade800);
                       bgCardColors.add(Colors.grey.shade400);
-                    }
-                    else{
-                      bgCardColors.add(widget.tagList[0].color);
-                      bgCardColors.add(widget.tagList[0].color);
                     }
                     return bgCardColors;
                   }())
@@ -119,11 +131,11 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 mixin DisplayOnCard {
-  ({String title, String body, DateTime date, List<Tag> tagList}) card = (title: "", body: "", date: DateTime.now(), tagList: []);
+  ({String title, String body, DateTime date, List<Tag> tagList, List<Emotion> emotionList,})card = (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
   dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(
-        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList);
+        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList, emotionList: card.emotionList,);
   }
 }
