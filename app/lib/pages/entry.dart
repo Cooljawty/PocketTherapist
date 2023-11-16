@@ -103,20 +103,9 @@ class _EntryPageState extends State<EntryPage> {
 							Container(
 								padding: const EdgeInsets.all(12),
 								child: Wrap( 
-									direction: Axis.vertical,
+									direction: Axis.horizontal,
 									children: <Widget>[
 										Text(widget.entry.getTitle()),
-									],
-								),
-							),
-
-							//Entry text
-							Container(
-								padding: const EdgeInsets.all(12),
-								child: Wrap( 
-									direction: Axis.vertical,
-									children: <Widget>[ 
-										Text( widget.entry.getEntryText()),
 									],
 								),
 							),
@@ -124,12 +113,13 @@ class _EntryPageState extends State<EntryPage> {
 							// Tags
 							Container(
 								padding: const EdgeInsets.all(12),
-								child: Wrap( 
+								child: Wrap(
 									direction: Axis.horizontal,
 									children: widget.entry.getTags().map((tag) => Text(
 											"#${tag.name} ",
+											style: TextStyle(inherit: true, color: tag.color, fontWeight: FontWeight.bold),
 											selectionColor: tag.color
-										)).toList(),
+									)).toList(),
 								),
 							),
 
@@ -140,8 +130,20 @@ class _EntryPageState extends State<EntryPage> {
 									direction: Axis.horizontal,
 									children: widget.entry.getEmotions().map((emotion) => Text(
 											"${emotion.name} : ${emotion.strength} \t",
+											style: TextStyle(inherit: true, color: emotion.color, fontWeight: FontWeight.bold),
 											selectionColor: emotion.color
 									)).toList(),
+								),
+							),
+
+							//Entry text
+							Container(
+								padding: const EdgeInsets.all(12),
+								child: Wrap( 
+									direction: Axis.horizontal,
+									children: <Widget>[
+											Text( widget.entry.getEntryText()),
+									],
 								),
 							),
 						],

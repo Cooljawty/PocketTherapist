@@ -1,4 +1,3 @@
-// import 'dart:developer';
 import 'dart:math';
 
 import 'package:app/provider/settings.dart';
@@ -54,6 +53,7 @@ class _DisplayCardState extends State<DisplayCard> {
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
           child: Container(
+            //width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: ((){
@@ -90,28 +90,43 @@ class _DisplayCardState extends State<DisplayCard> {
               children: <Widget>[
 
                 Column( // Column to hold title and preview text
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       // Title
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 5,),
+                          child: Text(
                           widget.title,
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
                           style: DefaultTextStyle.of(context).style.apply(
                             fontSizeFactor: 1.3,
                             fontWeightDelta: 1,
                           ),
                         ),
+                        )
                       ),
+
                       // preview text
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
-                          widget.body,
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 150,
+                        // height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20, bottom: 10, top: 5),
+                          child: Text(
+                            widget.body,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(fontStyle: FontStyle.italic),
+                          ),),
                       ),
-                    ]),
+                    ]
+                ),
                 // spacer to push the date to the right and the text to the left
                 const Spacer(),
 
@@ -122,7 +137,8 @@ class _DisplayCardState extends State<DisplayCard> {
                     '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
                   ),
                 ),
-              ]),
+              ]
+            ),
           ),
         ),
       ),
