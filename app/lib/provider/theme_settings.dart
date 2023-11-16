@@ -49,39 +49,51 @@ class ThemeSettings with ChangeNotifier {
   // )
 
   static ThemeData lightTheme = ThemeData(
-    //Theme used for customizing backbuttonicon but overide function to obtain
+    //can be used to customize back button icon, left default
     //actionIconTheme: ,
 
-    //light app bar theme, currently app Bar is not used by pages but option is there
-    //appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurple),
+    //light app bar theme
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
 
     //applies semi-transparent overlay color on materials to indicate elevation
     applyElevationOverlayColor: true,
 
-    //defines theme used for BottomNavigationBar, note our framework deploys a regular navBar but we could could adopt this change
-    //bottomNavigationBarTheme:BottomNavigationBarThemeData(backgroundColor: Colors.pink),
+    //defines theme used for BottomNavigationBar, note our app deploys a regular navBar but we could could adopt this change
+    //bottomNavigationBarTheme:BottomNavigationBarThemeData(backgroundColor: Colors.deepPurple),
 
     brightness: Brightness.light,
 
-    //Theme defines the default for button widgets like dropDownbutton and buttonBar, note we do not yet either of these
-    //buttonTheme: ButtonThemeData(buttonColor: Colors.pink),
+    //Theme defines the default for button widgets like dropDownbutton and buttonBar, note we do not yet use either of these
+    buttonTheme: const ButtonThemeData(buttonColor: Colors.deepPurple),
 
-    //updates default color of MaterialType.canvas Material, not seen used
-    //canvasColor: Colors.deepPurple,
+    //updates default color of MaterialType.canvas Material, used to control color of drop down menu items
+    canvasColor: Colors.grey.shade300,
 
     //Card color and theme is used to set the default of the Card widget class
-    //cardColor: Colors.pink,
+    //cardColor: Colors.deepPurple, //The color of Material when it is used as a card
     cardTheme: CardTheme(
-        color: Colors.deepPurple,
+        color: Colors.deepPurple.shade100,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: Colors.deepPurple.shade800,
+            width: 3.0,
+            strokeAlign: BorderSide.strokeAlignOutside,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
         )),
 
-    //TODO has not been tested but should be added since check box is used in tags
-    //checkboxTheme: ,
+    //Controls the appearence and layout of checkbox widgets
+    checkboxTheme: CheckboxThemeData(
+      fillColor: MaterialStateProperty.all<Color>(Colors.deepPurple.shade100),
+      checkColor: MaterialStateProperty.all<Color>(Colors.black),
+      //note: must be overwritten with MaterialStateBorderSide for affect to apply to box while box is true
+      side: const BorderSide(
+        color: Colors.black,
+        width: 2.0,
+        strokeAlign: BorderSide.strokeAlignOutside,
+      ),
+    ),
+
     //Set of 30 colors that can be used to customize widgets further if needed
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF)).copyWith(
         //these can be accessed by widgets to set their color to match the light theme
@@ -90,6 +102,7 @@ class ThemeSettings with ChangeNotifier {
         background: Colors.white,
         onBackground: Colors.deepPurple,
         primary: Colors.deepPurpleAccent[100],
+        primaryContainer: Colors.deepPurpleAccent,
         //color of hint validation text in text fields
         error: Colors.red),
 
@@ -101,7 +114,9 @@ class ThemeSettings with ChangeNotifier {
     dialogBackgroundColor: Colors.deepPurpleAccent,
     //DialogTheme will set the theme for all Dialog elements but also overwrites the background color above
     dialogTheme: const DialogTheme(
-      backgroundColor: Colors.deepPurpleAccent,
+      backgroundColor: Colors.deepPurple,
+      elevation: 20.0,
+      shadowColor: Colors.black,
       //covers the text style for the top part of the dialog box, textstyle is body medium by default
       titleTextStyle: TextStyle(
           color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600),
@@ -109,60 +124,72 @@ class ThemeSettings with ChangeNotifier {
 
     //dividerColor and divider theme might be useful if we opt to use dividers
 
-    //TODO theme for customizing dropdownmenu widgets, does not currently work but is needed
-    /*dropdownMenuTheme: DropdownMenuThemeData(
+    //theme for customizing dropdownmenu widgets, does not affect DropdownButtonFormField
+    dropdownMenuTheme: DropdownMenuThemeData(
         //textStyle: , by default textstyle is set to lightTheme.textTheme
         menuStyle: MenuStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.pink),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
         ),
-        inputDecorationTheme: InputDecorationTheme(fillColor: Colors.pink)),
-*/
+        inputDecorationTheme: const InputDecorationTheme(
+            fillColor: Colors.deepPurple, filled: true)),
+
     //light elevated button theme, controls the default look of all elevated buttons
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
       backgroundColor:
           MaterialStateProperty.all<Color>(Colors.deepPurpleAccent.shade100),
-      shadowColor: MaterialStateProperty.all<Color>(Colors.black),
+      elevation: MaterialStateProperty.all<double?>(10.0),
       //color of the text of elevated button
       foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      //fixed sized initially set to match standardElevatedButton size
+      fixedSize: MaterialStateProperty.all<Size>(const Size(350, 50)),
       //default will be used but can be overwritten to give text better sizing
-      textStyle: MaterialStateProperty.all<TextStyle>(defaultTextStyle()),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+          const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600)),
+      shadowColor: MaterialStateProperty.all<Color>(Colors.black),
     )),
 
     //light floating button theme
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: Colors.black,
-        foregroundColor: Colors.deepPurple.shade700,
+        foregroundColor: Colors.white,
         //shape will be circular by default
-        shape: const CircleBorder(eccentricity: 1.0)),
+        shape: CircleBorder(eccentricity: 1.0)),
 
     //used to set the default color of the hint text in Textfields
-    hintColor: Color.fromARGB(220, 0, 0, 0),
-    //used to set default hover color for a component, does not currently work as color
-    //is overwritten by other defaults
-    //hoverColor: Colors.pink,
+    hintColor: const Color.fromARGB(220, 0, 0, 0),
 
-    //IconButton is used in fields.dart so override to control its color scheme
-    //iconButtonTheme: IconButtonThemeData(),
-    //set the icon theme, I think the icon colors are being overwritten by parent widget
-    /*iconTheme: IconThemeData(
-      color: Colors.pink,
-    ),*/
-    //indicator color is the default color of the selected tab in the tab bar
-    //indicatorColor: Colors.pink,
+    //IconButton theme is used in fields.dart so override to control its color scheme
+    iconButtonTheme: const IconButtonThemeData(
+        style: ButtonStyle(
+      backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+      elevation: MaterialStatePropertyAll(10.0),
+      foregroundColor: MaterialStatePropertyAll(Colors.grey),
+    )),
+    //icon theme
+    iconTheme: const IconThemeData(
+      color: Colors.grey,
+    ),
 
-    //default input decoration for Textfield and TextformField, side note also effects dropdown menu
-    /*inputDecorationTheme:
-        InputDecorationTheme(fillColor: Colors.blue, filled: true),*/
+    //default input decoration for Textfield, TextformField, and DropdownButtonFormField
+    inputDecorationTheme: const InputDecorationTheme(
+      fillColor: Colors.grey,
+      filled: true,
+    ),
 
     //default light theme for the navigation bar
-    //navigationBarTheme: NavigationBarThemeData(backgroundColor: Colors.pink),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: Colors.deepPurple.shade300,
+      iconTheme:
+          const MaterialStatePropertyAll(IconThemeData(color: Colors.black)),
+      indicatorColor: Colors.white,
+    ),
     //navigationDrawerTheme
 
-    //will be used later to add in the page transitions
+    //will be used to add page transitions after front end is done
     //pageTransitionsTheme: ,
 
-    //The background color for major parts of the app (toolbars, tab bars), might not need
+    //The background color for major parts of the app (toolbars, tab bars)
     primaryColor: Colors.deepPurple,
     primaryColorDark: const Color.fromARGB(255, 65, 36, 116),
     primaryColorLight: Colors.deepPurpleAccent,
@@ -177,60 +204,55 @@ class ThemeSettings with ChangeNotifier {
     shadowColor: Colors.black,
 
     //Theme used for creating default appearance of all Textbuttons
-    //textButtonTheme
-    //Used to set the theme of textField widgets, may be used instead of input decoration Theme
-    //textSelectionTheme: ,
+    textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+      backgroundColor:
+          MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.5)),
+      foregroundColor: const MaterialStatePropertyAll(Colors.black),
+    )),
+
+    //Used to set the theme of content selected within a textField widgets
+    textSelectionTheme:
+        TextSelectionThemeData(selectionColor: Colors.deepPurple.shade100),
 
     //light text theme for all default widgets, should be used before declaring new text style
     textTheme: const TextTheme(
       //headline, title, body, and label are the default fonts so they are overwritten
       //the varients of each like headline# are not used by default
+      labelLarge: TextStyle(
+          color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.normal),
+      labelMedium: TextStyle(
+          color: Colors.black, fontSize: 10.0, fontWeight: FontWeight.normal),
+      labelSmall: TextStyle(
+          color: Colors.black, fontSize: 8.0, fontWeight: FontWeight.normal),
+      titleLarge: TextStyle(
+          color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(
+          color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w500),
       titleSmall: TextStyle(
-          color: Colors.green, fontSize: 25.0, fontWeight: FontWeight.bold),
-
+          color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w400),
       headlineLarge: TextStyle(
-          color: Colors.black, fontSize: 25.0, fontWeight: FontWeight.bold),
-      //headlineMedium: TextStyle(color: Colors.pink, fontSize: 25.0, fontWeight: FontWeight.bold),
-      //headlineSmall: TextStyle(color: Colors.pink, fontSize: 20.0, fontWeight: FontWeight.bold),
-
+          color: Colors.black, fontSize: 32.0, fontWeight: FontWeight.bold),
+      headlineMedium: TextStyle(
+          color: Colors.black, fontSize: 28.0, fontWeight: FontWeight.w600),
+      headlineSmall: TextStyle(
+          color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.w600),
       bodyLarge: TextStyle(
-          color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w600),
-      //bodyMedium: TextStyle(color: Colors.orange, fontSize: 12.0, fontWeight: FontWeight.w500),
+          color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w500),
+      bodyMedium: TextStyle(
+          color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.normal),
       bodySmall: TextStyle(
-          color: Colors.black, fontSize: 10.0, fontWeight: FontWeight.w400),
+          color: Colors.black, fontSize: 10.0, fontWeight: FontWeight.w500),
     ),
 
     useMaterial3: true,
   );
 
-  /*
-  static ThemeData lightTheme = ThemeData.light().copyWith(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF) ).copyWith(
-      brightness: Brightness.light,
-      background: Colors.white,
-      primary:  Colors.deepPurpleAccent[100]
-    ),
-    // textTheme: TextTheme(
-    //   displayLarge: defaultTextStyle(),
-    //   displayMedium: defaultTextStyle(),
-    //   displaySmall: defaultTextStyle(),
-    //   headlineMedium: defaultTextStyle(),
-    //   headlineSmall: defaultTextStyle(),
-    //   titleLarge: defaultTextStyle(),
-    //   titleMedium: defaultTextStyle(),
-    //   titleSmall: defaultTextStyle(),
-    //   bodyLarge: defaultTextStyle(),
-    //   bodyMedium: defaultTextStyle(),
-    //   bodySmall: defaultTextStyle(),
-    //   labelLarge: defaultTextStyle(),
-    //   labelSmall: defaultTextStyle(),
-    // )
-  );*/
-
   static TextStyle defaultTextStyle(
-          [double fontSize = 14.0, FontWeight fontWeight = FontWeight.bold]) =>
-      TextStyle(fontSize: fontSize, fontWeight: fontWeight);
+          [Color color = Colors.white,
+          double fontSize = 14.0,
+          FontWeight fontWeight = FontWeight.bold]) =>
+      TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight);
 
   static List<BoxShadow> defaultBoxShadow = [
     BoxShadow(
