@@ -44,103 +44,108 @@ class _NewEntryPageState extends State<NewEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(children: [
-            const Padding(padding: EdgeInsets.only(top: 70)),
-            // Title of the page
-            const Text('New Entry'),
+      appBar: AppBar(
+        title: const Text('New Entry'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+          child: SizedBox(
+              height: MediaQuery.of(context).size.height +
+                  kBottomNavigationBarHeight,
+              width: MediaQuery.of(context).size.width,
+              child: Column(children: [
 
-            // Text field for the Journal Entry Title
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: titleController,
-                key: const Key("titleInput"),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Title',
-                ),
-              ),
-            ),
-
-            // Text input field for the Journal Entry Body
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                controller: journalController,
-                key: const Key("journalInput"),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Journal Entry',
-                ),
-                maxLines: 8,
-                minLines: 1,
-              ),
-            ),
-
-            // Chip display for the tags
-            Padding(
-              padding: const EdgeInsets.all(20),
-              // Make the chips scrollable
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Wrap(
-                    spacing: 5,
-                    children: _selectedTags
-                        .map((tag) => Chip(
-                              label: Text(tag.name),
-                              backgroundColor: tag.color,
-                              onDeleted: () {
-                                setState(() {
-                                  _selectedTags.removeWhere(
-                                      (element) => element.name == tag.name);
-                                });
-                              },
-                            ))
-                        .toList(),
+                // Text field for the Journal Entry Title
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: titleController,
+                    key: const Key("titleInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Title',
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            // Chip display for the emotions
-            Padding(
-              padding: const EdgeInsets.all(20),
-              // Make the chips scrollable
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Wrap(
-                    spacing: 5,
-                    children: _selectedEmotions
-                      .map((Emotion emotion) => ActionChip(
-                      label: Text(emotion.name),
-                      backgroundColor: Colors.grey,
-                      onPressed: () => _emotionalDial(context, emotion),
-                    ))
-                      .toList(),
-                  )
-                )
-              )
-            ),
-          ])),
+                // Text input field for the Journal Entry Body
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: journalController,
+                    key: const Key("journalInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Journal Entry',
+                    ),
+                    maxLines: 8,
+                    minLines: 1,
+                  ),
+                ),
+
+                // Chip display for the tags
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  // Make the chips scrollable
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Wrap(
+                        spacing: 5,
+                        children: _selectedTags
+                            .map((tag) => Chip(
+                                  label: Text(tag.name),
+                                  backgroundColor: tag.color,
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedTags.removeWhere((element) =>
+                                          element.name == tag.name);
+                                    });
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Chip display for the emotions
+                Padding(
+                    padding: const EdgeInsets.all(20),
+                    // Make the chips scrollable
+                    child: Scrollbar(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 5,
+                              children: _selectedEmotions
+                                  .map((Emotion emotion) => ActionChip(
+                                        label: Text(emotion.name),
+                                        backgroundColor: Colors.grey,
+                                        onPressed: () =>
+                                            _emotionalDial(context, emotion),
+                                      ))
+                                  .toList(),
+                            )))),
+              ]))),
 
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
-        transform: Matrix4.translationValues(0, 3, 0),
+          transform: Matrix4.translationValues(0, 3, 0),
           decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder (
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
                   side: BorderSide(
-                      width: 3,
-                      color: settings.getCurrentTheme().colorScheme.primary,
-                  )
-              )
-          ),
-          margin: EdgeInsets.only(left: (MediaQuery.of(context).size.width / 10), right: (MediaQuery.of(context).size.width / 10)),
+                    width: 3,
+                    color: settings.getCurrentTheme().colorScheme.primary,
+                  ))),
+          margin: EdgeInsets.only(
+              left: (MediaQuery.of(context).size.width / 10),
+              right: (MediaQuery.of(context).size.width / 10)),
 
           // Keep all the button spaced evenly and centered on the page
           child: Row(
@@ -213,40 +218,40 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       builder: (dialogContext) {
                         return StatefulBuilder(
                             builder: (stfContext, stfSetState) {
-                              return AlertDialog(
-                                title: const Text("Select Emotions"),
-                                content: Wrap(
-                                  spacing: 5.0,
-                                  children: _emotionItems.map((Emotion emote) {
-                                    return FilterChip(
-                                      label: Text(emote.name),
-                                      selected: _selectedEmotions.contains(emote),
-                                      showCheckmark: false,
-                                      // selectedColor: emote.color,
-                                      onSelected: (bool selected) {
-                                        stfSetState(() {
-                                          setState(() {
-                                            if (selected) {
-                                              _selectedEmotions.add(emote);
-                                            } else {
-                                              _selectedEmotions.remove(emote);
-                                            }
-                                          });
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
+                          return AlertDialog(
+                            title: const Text("Select Emotions"),
+                            content: Wrap(
+                              spacing: 5.0,
+                              children: _emotionItems.map((Emotion emote) {
+                                return FilterChip(
+                                  label: Text(emote.name),
+                                  selected: _selectedEmotions.contains(emote),
+                                  showCheckmark: false,
+                                  // selectedColor: emote.color,
+                                  onSelected: (bool selected) {
+                                    stfSetState(() {
+                                      setState(() {
+                                        if (selected) {
+                                          _selectedEmotions.add(emote);
+                                        } else {
+                                          _selectedEmotions.remove(emote);
+                                        }
+                                      });
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Save'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                       },
                     );
                   }),
