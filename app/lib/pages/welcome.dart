@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import '../uiwidgets/decorations.dart';
 import 'package:flutter/services.dart';
 
+/// This boolean prevents the buttons from being spam clicked when encryption is running.
 bool _disabled = false;
 
 //create welcome page class like in app example starting with stateful widget
@@ -217,6 +218,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   .onBackground,
               title: const Text("Reset Password"),
               content: ControlledTextField(
+                key: const Key("Reset_Password_Field"),
                 hintText: "Enter your recovery phrase or password",
                 validator: (value) {
                   maybePasswordOrPhrase = value;
@@ -228,7 +230,7 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
               actions: [
                 TextButton(
-                    key: const Key('Reset_Password'),
+                    key: const Key('Reset_Password_Button'),
                     onPressed: () async {
                       bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
                       if(match) {
@@ -237,10 +239,16 @@ class _WelcomePageState extends State<WelcomePage> {
                                 .of(context)
                                 .colorScheme
                                 .onBackground,
-                            content: const Text("Password Reset Successful"),
+                            title: const Text("Password Reset Successful"),
                             actions: [ TextButton(
                                 key: const Key("Success_Pass_Reset"),
-                                onPressed: () => Navigator.pop(context), child: const Text("Ok"))]));
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  },
+                                child: const Text("Ok"))
+                            ]
+                        )).whenComplete(() async => _handleStartPress(context));
                       }
                       else {
                         await showDialog(context: context, builder: (context) => AlertDialog(
@@ -248,7 +256,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                 .of(context)
                                 .colorScheme
                                 .onBackground,
-                            content: const Text("Incorrect Password or Recovery Phrase"),
+                            title: const Text("Incorrect Password or Recovery Phrase"),
                             actions: [ TextButton(
                                 key: const Key("Fail_Pass_Reset"),
                                 onPressed: () => Navigator.pop(context), child: const Text("Ok"))]));
@@ -257,7 +265,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     child: const Text("Enter")),
               ],
             ),
-      ).whenComplete(() async => _handleStartPress(context));
+      );
     }
   }
 
@@ -328,7 +336,7 @@ class _WelcomePageState extends State<WelcomePage> {
     ).whenComplete(() async {
     if(settings.isEncryptionEnabled()){
       await showDialog(
-        barrierDismissible: false,
+  
           context: context,
       builder: (context) {
           String? recovery = encryptor.getRecoveryPhrase();
@@ -435,7 +443,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void _attemptLogin(BuildContext context) async {
     String passwordFieldText = "";
     await showDialog(
-      barrierDismissible: false,
+
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: Theme
@@ -481,7 +489,8 @@ class _WelcomePageState extends State<WelcomePage> {
     }
     else {
       if (context.mounted) {
-        await showDialog(barrierDismissible: false,
+        await showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (context) =>
                 AlertDialog(

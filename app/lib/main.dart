@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
-void main() async {
+void main()  {
   //Things that need to be done before the application is ran.
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const RootApp());
@@ -41,6 +41,7 @@ class _RootAppState extends State<RootApp>  {
     );
 
     settings.load().whenComplete(() => null);
+
   }
 
   @override

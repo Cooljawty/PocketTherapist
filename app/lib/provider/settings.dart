@@ -164,6 +164,9 @@ void setPassword(String newPassword) => encryptor.setPassword(newPassword);
 void setMockValues(Map<String, dynamic> value) {
   reset();
   _settings.addAll(value);
+  if (_settings.containsKey('enc')) {
+    encryptor.load(_settings['enc']);
+  }
 }
 
 /// Getters --------------------------

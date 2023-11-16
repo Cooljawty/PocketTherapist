@@ -65,7 +65,7 @@ bool resetCredentials(String phrase) {
     //Generate KEK for internal encryption of actual key
     Argon2HashDigest keyEncryptionKey = hasher.convert(phrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey!.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
     List<String> package = _keyCipher.split(':');
     IV secretIV = IV.fromBase64(package[0]);
@@ -76,7 +76,7 @@ bool resetCredentials(String phrase) {
     Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
     Key signingKey = Key(keyBytes);
     //Decrypt database
-
+    signingKey;
     // Wipe
     _passwordHash = "";
     _keyCipher = "";
@@ -84,9 +84,10 @@ bool resetCredentials(String phrase) {
     _recoveryHash = "";
     _recovery = "";
     _encrypter = null;
+    settings.setConfigured(false);
     settings.setEncryptionStatus(false); // Prevents a soft lock out of the app
     // Externally should call setPassword to complete the reset process.
-
+    settings.save().whenComplete(() => null);
     return true;
   }
   if (verifyRecoveryPhrase(phrase)){
@@ -94,7 +95,7 @@ bool resetCredentials(String phrase) {
     //Generate KEK for internal encryption of actual key
     Argon2HashDigest keyEncryptionKey = hasher.convert(phrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey!.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
     List<String> package = _recoveryKeyCipher.split(':');
     IV secretIV = IV.fromBase64(package[0]);
@@ -105,6 +106,7 @@ bool resetCredentials(String phrase) {
     Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
 
     Key signingKey = Key(keyBytes);
+    signingKey;
     //Decrypt database
 
     // Wipe
@@ -114,9 +116,10 @@ bool resetCredentials(String phrase) {
     _recoveryHash = "";
     _recovery = "";
     _encrypter = null;
-
+    settings.setConfigured(false);
     settings.setEncryptionStatus(false); // Prevents a soft lock out of the app
     // Externally should call setPassword to complete the reset process.
+    settings.save().whenComplete(() => null);
     return true;
   }
   return false; // Entered is neither password nor recovery phrase...
@@ -150,7 +153,7 @@ bool unlock(String passwordPhrase, [bool recovery = false]) {
     //Generate KEK for internal encryption of actual key
     Argon2HashDigest keyEncryptionKey = hasher.convert(passwordPhrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey!.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
     List<String> package = (recovery ? _recoveryKeyCipher.split(':') : _keyCipher.split(':'));
     IV secretIV = IV.fromBase64(package[0]);
