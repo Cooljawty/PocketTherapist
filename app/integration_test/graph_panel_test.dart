@@ -9,6 +9,7 @@ import 'package:app/uiwidgets/emotion_chart.dart';
 void main() {
   late Widget myApp;
 
+	/*
 	const testEntries = <JournalEntry>[
     JournalEntry(
 			title: "Day one entry 1", entryText: "", 
@@ -51,30 +52,31 @@ void main() {
 			tags: [],
 		),
 	];
+	*/
 
   setUp(() {
     myApp = MaterialApp(
       home: Scaffold(
 				body: SafeArea(
-					Column(
+					child: Column(
 						children: [
-							GraphPanel(
+							EmotionGraph(
 								key: const Key('Time graph'), 
-								startDate:,
-								endDate:,
+								startDate: DateTime(2023, 12, 1),
+								endDate:DateTime(2023, 12, 7),
 								type: GraphTypes.time
 							),
-							GraphPanel(
+							EmotionGraph(
 								key: const Key('Frequency graph'), 
-								startDate:,
-								endDate:,
+								startDate: DateTime(2023, 12, 1),
+								endDate:DateTime(2023, 12, 7),
 								type: GraphTypes.frequency
 							),
 						],
 					)
 				)
 			)
-		)
+		);
   });
 
   testWidgets('Displaying emotion time chart', (tester) async {
@@ -82,19 +84,19 @@ void main() {
     await tester.pumpAndSettle();
 
 		//Two graphs should exist
-		expect(find.byType(EmotionGraph). findsNWidgets(2));
+		expect(find.byType(EmotionGraph), findsNWidgets(2));
 
 		//Check time chart
-		final timeGraph = find.byType(LineChart)
+		final timeGraph = find.byType(LineChart);
 		expect(timeGraph, findsOneWidget);
 		//Check labels
 		//Check axies
 
 		//Check frequency chart
-		final frequencyGraph = find.byType(RadarChart)
+		final frequencyGraph = find.byType(RadarChart);
 		expect(frequencyGraph, findsOneWidget);
 		//Check labels
 		//Check axies
-	}
+	});
 
 }
