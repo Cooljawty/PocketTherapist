@@ -318,6 +318,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
             actions: [
               // pop the alert dialog off the screen and don't save the strength changes
               TextButton(
+                key: const Key('cancelDial'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -325,6 +326,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
               // Save the strength changes and pop the dialog off the screen
               TextButton(
+                key: const Key('saveDial'),
                   onPressed: () {
                     emotion.strength = strength;
                     Navigator.of(context).pop();

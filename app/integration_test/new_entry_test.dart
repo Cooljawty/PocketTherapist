@@ -7,25 +7,30 @@ import 'package:app/main.dart' as app;
 import 'package:integration_test/integration_test.dart';
 
 void main() {
+	IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   //tearDown(() async => await settings.reset());
 	// const newTag = "Tag!";
 	const newTitle = "Title!";
 	const newEntry = "Journal!";
 
-	// Create values for key
+	// Create values for journal input and title input
 	late final Finder journalInput;
 	late final Finder titleInput;
 
+	// Create values for buttons
 	late final Finder saveButton;
 	late final Finder planButton;
 	late final Finder tagButton;
 	late final Finder emotionButton;
 
+	// Set mock values in the settings
 	settings.setMockValues({
 		settings.configuredKey: true,
 		settings.encryptionToggleKey: false,
 	});
 
+	// Initialize the tag list
 	settings.tagList = [
 		Tag(name: 'Calm', color: const Color(0xff90c6d0)),
 		Tag(name: 'Centered', color: const Color(0xff794e5e)),
@@ -38,6 +43,8 @@ void main() {
 		Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
 		Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
 	];
+
+	// Initialize the emotion list
 	settings.emotionList = {
 		'Happy': const Color(0xfffddd68),
 		'Trust': const Color(0xff308c7e),
@@ -47,14 +54,10 @@ void main() {
 		'Anger': const Color(0xffb51c1c),
 		'Anticipation': const Color(0xffff8000),
 	};
-	List<int> emotionStrengths = [10, 20, 30, 40, 50, 60, 70];
 
-
-	// TODO: Test
-	// this should be separate tests, not one big test??
-
-  testWidgets('New Entry Page is Displayed', (WidgetTester tester) async {
-		IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+	// Navigate to the new entry page
+	@override
+	Future<void> setUp(WidgetTester tester) async {
 		app.main();
 		await tester.pumpAndSettle();
 		await settings.load();
@@ -67,9 +70,27 @@ void main() {
 		// Find the nav bar button for entries page
 		await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));
 		await tester.pumpAndSettle();
-
-		// Find the new entry button
 		await tester.tap(find.byKey(const Key("New Entry")));
+		await tester.pumpAndSettle();
+	}
+
+	// Save the entry and view it
+	Future<void> navigateToEntry(WidgetTester tester) async {
+		//Save new entry
+		await tester.tap(saveButton);
+		await tester.pump();
+
+		// View new entry
+		final card = find
+				.byType(DisplayCard)
+				.first;
+		expect(card, findsOneWidget);
+		await tester.tap(card);
+		await tester.pumpAndSettle();
+	}
+
+  testWidgets('New Entry Page is Displayed', (WidgetTester tester) async {
+		await setUp(tester);
 		await tester.pumpAndSettle();
 
 		// Find the title to the new entry page
@@ -93,9 +114,11 @@ void main() {
 		expect(planButton, findsOneWidget);
 		expect(tagButton, findsOneWidget);
 		expect(emotionButton, findsOneWidget);
-	// });
+	});
 
-	// testWidgets('The title and body field take in and display the correct input', (WidgetTester tester) async {
+	testWidgets('The title and body field take in and display the correct input in entry page', (WidgetTester tester) async {
+		await setUp(tester);
+
 		// Test adding title to the title field
 		await tester.tap(titleInput);
 		await tester.enterText(titleInput, newTitle);
@@ -119,15 +142,28 @@ void main() {
 
 		// check that the text in the body field is the same as the body text
 		expect(journalText, equals(newEntry));
-	// });
 
-	// testWidgets('Plan Button', (WidgetTester tester) async {
+		await navigateToEntry(tester);
+
+		// Find the title on the entry page
+		final title = find.text(newTitle);
+		expect(title, findsOneWidget);
+
+		// Find the body text on the entry page
+		final text = find.text(newEntry);
+		expect(text, findsOneWidget);
+	});
+
+	testWidgets('Plan Button', (WidgetTester tester) async {
+		await setUp(tester);
 		//TODO: Test plan
 		await tester.tap(planButton);
 		await tester.pump();
-	// });
+	});
 
-	// testWidgets('Tag button pulls up tag menu and correct tags are displayed', (WidgetTester tester) async {
+	testWidgets('Tag button pulls up tag menu and correct tags are displayed', (WidgetTester tester) async {
+		await setUp(tester);
+
 		// Tap the tag button to bring up the tag menu
 		await tester.tap(tagButton);
 		await tester.pumpAndSettle();
@@ -158,21 +194,26 @@ void main() {
 
 			// Manually scroll through the list if the tag wasn't seen
 			// Expect to find the tag after scroll
-			await tester.drag(tagChips, const Offset(-20, 0));
+			await tester.drag(tagChips, const Offset(-50, 0));
 			await tester.pump();
 		}
-	// });
 
-	// testWidgets('Plan Button', (WidgetTester tester) async {
-		//TODO: Test plan
-		await tester.tap(planButton);
-		await tester.pump();
-		expect(find.byKey(const Key("planButton")), findsOneWidget);
-	// });
+		await navigateToEntry(tester);
 
+		// Find the tags on the entry page
+		for (int i = 0; i < settings.tagList.length; i++) {
+			final tagName = find.text('#${settings.tagList[i].name} ');
+			await tester.pumpAndSettle();
 
-	// testWidgets('Emotion button pulls up emotion menu and correct emotions are displayed', (WidgetTester tester) async {
-		// Tap the tag button to bring up the emotion menu
+			// Confirm that the tag was seen
+			expect(tagName, findsOneWidget);
+		}
+	});
+
+	testWidgets('Emotion button pulls up emotion menu and correct emotions are displayed', (WidgetTester tester) async {
+		await setUp(tester);
+
+		// Tap the emotion button to bring up the emotion menu
 		await tester.tap(emotionButton);
 		await tester.pumpAndSettle();
 
@@ -191,7 +232,6 @@ void main() {
 
 		// Find the chip display
 		final emotionChips = find.byKey(const Key('EmotionChipsDisplay'));
-		late final emotionalDial;
 
 		for(int i = 0; i < settings.emotionList.length; i++){
 			final emotionName = find.text(settings.emotionList.entries.elementAt(i).key);
@@ -202,22 +242,52 @@ void main() {
 
 			// Manually scroll through the list if the tag wasn't seen
 			// Expect to find the tag after scroll
-			await tester.drag(emotionChips, const Offset(-20, 0));
+			await tester.drag(emotionChips, const Offset(-50, 0));
 			await tester.pump();
 
 			// Tap the emotion chip to pull up emotional dial
-			// await tester.tap(emotionName);
-			// await tester.pumpAndSettle();
-			//
-			// // find the emotionalDial
-			// emotionalDial = find.byKey(const Key('EmotionalDial'));
-			// expect(emotionalDial, findsOneWidget);
+			await tester.tap(emotionName);
+			await tester.pumpAndSettle();
 
-			// await tester.d
-			// emotionStrengths
+			// find the emotionalDial
+			final emotionalDial = find.byKey(const Key('EmotionalDial'));
+			expect(emotionalDial, findsOneWidget);
+
+			// Set a value on the emotional dial
+			await tester.drag(find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
+			await tester.pumpAndSettle();
+			expect(find.text('75'), findsOneWidget);
+			await tester.pumpAndSettle();
+
+			// test the cancel button
+			final cancelDial = find.byKey(const Key('cancelDial'));
+			expect(cancelDial, findsOneWidget);
+			await tester.tap(cancelDial);
+			await tester.pumpAndSettle();
+
+			// Tap on emotion and set value again
+			await tester.tap(emotionName);
+			await tester.pumpAndSettle();
+			await tester.drag(find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
+			await tester.pumpAndSettle();
+
+			// test the save button
+			final saveDial = find.byKey(const Key('saveDial'));
+			expect(saveDial, findsOneWidget);
+			await tester.tap(saveDial);
+			await tester.pumpAndSettle();
 		}
 
-	// });
+		await navigateToEntry(tester);
+
+		for(int i = 0; i < settings.emotionList.length; i++){
+			final emotionName = find.text('${settings.emotionList.entries.elementAt(i).key}: 75 ');
+			await tester.pumpAndSettle();
+
+			// Confirm that the tag was seen
+			expect(emotionName, findsOneWidget);
+		}
+	});
 
 
 		//Create tag with given name
@@ -265,44 +335,9 @@ void main() {
 		// await tester.tap(applyTagButton);
 		// await tester.pumpAndSettle();
 
-	// testWidgets('Save the entry and see if everything is there', (WidgetTester tester) async {
-		//Save new entry
-		await tester.tap(saveButton);
-		await tester.pump();
-
-		// View new entry
-		final card = find.byType(DisplayCard).first;
-		expect(card, findsOneWidget);
-		await tester.tap(card);
-		await tester.pumpAndSettle();
-
-		// Find the title on the entry page
-		final title = find.text(newTitle);
-		expect(title, findsOneWidget);
-
-		// Find the body text on the entry page
-		final text = find.text(newEntry);
-		expect(text, findsOneWidget);
-
-		// Find the tags on the entry page
-		for (int i = 0; i < settings.tagList.length; i++) {
-			final tagName = find.text('#${settings.tagList[i].name} ');
-			await tester.pumpAndSettle();
-
-			// Confirm that the tag was seen
-			expect(tagName, findsOneWidget);
-		}
-
-		for(int i = 0; i < settings.emotionList.length; i++){
-			final emotionName = find.text('${settings.emotionList.entries.elementAt(i).key}: 0 ');
-			await tester.pumpAndSettle();
-
-			// Confirm that the tag was seen
-			expect(emotionName, findsOneWidget);
-		}
 
 		// Find the tag on the entry page
 		// final tag = find.text("#$newTag");
 		//expect(tag, findsOneWidget);
-		});
+
 }
