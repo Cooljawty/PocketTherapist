@@ -89,6 +89,7 @@ void main() {
 		await tester.pumpAndSettle();
 	}
 
+	// Test if every widget is on new entry page
   testWidgets('New Entry Page is Displayed', (WidgetTester tester) async {
 		await setUp(tester);
 		await tester.pumpAndSettle();
@@ -96,10 +97,11 @@ void main() {
 		// Find the title to the new entry page
 		expect(find.text("New Entry"), findsOneWidget);
 
-		// Create values for key
+		// initialize journal body and title for the rest of the tests
 		journalInput = find.byKey(const ValueKey("journalInput"));
 		titleInput = find.byKey(const ValueKey("titleInput"));
 
+		// initialize save, plan, tag, and emotions buttons for the rest of the tests
 		saveButton = find.byKey(const Key("saveButton"));
 		planButton = find.byKey(const Key("planButton"));
 		tagButton = find.byKey(const Key("tagButton"));
@@ -143,6 +145,7 @@ void main() {
 		// check that the text in the body field is the same as the body text
 		expect(journalText, equals(newEntry));
 
+		// Navigate to the new entry
 		await navigateToEntry(tester);
 
 		// Find the title on the entry page
@@ -154,13 +157,14 @@ void main() {
 		expect(text, findsOneWidget);
 	});
 
+	// TODO: Test plan
 	testWidgets('Plan Button', (WidgetTester tester) async {
 		await setUp(tester);
-		//TODO: Test plan
 		await tester.tap(planButton);
 		await tester.pump();
 	});
 
+	// Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
 	testWidgets('Tag button pulls up tag menu and correct tags are displayed', (WidgetTester tester) async {
 		await setUp(tester);
 
@@ -198,6 +202,7 @@ void main() {
 			await tester.pump();
 		}
 
+		// Navigate to the new entry
 		await navigateToEntry(tester);
 
 		// Find the tags on the entry page
@@ -210,6 +215,7 @@ void main() {
 		}
 	});
 
+	// Test if the emotions interact properly with the alert dialog, chip display, and the created journal entry page
 	testWidgets('Emotion button pulls up emotion menu and correct emotions are displayed', (WidgetTester tester) async {
 		await setUp(tester);
 
@@ -233,6 +239,7 @@ void main() {
 		// Find the chip display
 		final emotionChips = find.byKey(const Key('EmotionChipsDisplay'));
 
+		// iterate through all of the emotions in the list and test them
 		for(int i = 0; i < settings.emotionList.length; i++){
 			final emotionName = find.text(settings.emotionList.entries.elementAt(i).key);
 			await tester.pumpAndSettle();
@@ -278,13 +285,15 @@ void main() {
 			await tester.pumpAndSettle();
 		}
 
+		// Navigate to the new entry
 		await navigateToEntry(tester);
 
+		// search for all clicked emotions
 		for(int i = 0; i < settings.emotionList.length; i++){
 			final emotionName = find.text('${settings.emotionList.entries.elementAt(i).key}: 75 ');
 			await tester.pumpAndSettle();
 
-			// Confirm that the tag was seen
+			// Confirm that the emotion was seen on the entry with the intensity correct value
 			expect(emotionName, findsOneWidget);
 		}
 	});
