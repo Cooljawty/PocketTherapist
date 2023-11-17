@@ -2,10 +2,14 @@ import 'dart:convert';
 
 import 'package:app/exceptions/exception.dart';
 import 'package:app/provider/encryptor.dart' as encrypter;
+import 'package:flutter/cupertino.dart';
 import 'package:test/test.dart';
 import 'dart:io';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+
   test("Testing hex encode and decode", () {
     String message = "No ill never tell ;)";
     stdout.writeln(message);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
@@ -183,7 +185,7 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                     credentials
   /// - [_verifyPassword] - Displays the errors or completes the transition to
   ///                       the DashboardPage
-  void _handleStartPress(BuildContext context) async {
+  void _handleStartPress(BuildContext context)  {
     if (settings.isConfigured()) {
       if (settings.isEncryptionEnabled()) {
         _attemptLogin(context);
@@ -205,10 +207,10 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                             with [encryptor] to perform verification and reset
   ///                             If successful will start the [_createPassword]
   ///                             Process.
-  void _handleResetPasswordPress(BuildContext context) async {
+  void _handleResetPasswordPress(BuildContext context) {
     String? maybePasswordOrPhrase = "";
     if (settings.isConfigured()) {
-      await showDialog(
+      showDialog(
         context: context,
         builder: (context) =>
             AlertDialog(
@@ -231,10 +233,10 @@ class _WelcomePageState extends State<WelcomePage> {
               actions: [
                 TextButton(
                     key: const Key('Reset_Password_Button'),
-                    onPressed: () async {
+                    onPressed: () {
                       bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
                       if(match) {
-                        await showDialog(context: context, builder: (context) => AlertDialog(
+                        showDialog(context: context, builder: (context) => AlertDialog(
                             backgroundColor: Theme
                                 .of(context)
                                 .colorScheme
@@ -248,10 +250,10 @@ class _WelcomePageState extends State<WelcomePage> {
                                   },
                                 child: const Text("Ok"))
                             ]
-                        )).whenComplete(() async => _handleStartPress(context));
+                        )).whenComplete(() => _handleStartPress(context));
                       }
                       else {
-                        await showDialog(context: context, builder: (context) => AlertDialog(
+                        showDialog(context: context, builder: (context) => AlertDialog(
                             backgroundColor: Theme
                                 .of(context)
                                 .colorScheme
@@ -271,9 +273,9 @@ class _WelcomePageState extends State<WelcomePage> {
 
   /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
   ///                                 all user data & passwords securely.
-  void _handleResetEverythingPress(BuildContext context) async {
+  void _handleResetEverythingPress(BuildContext context)  {
     // if (settings.isConfigured()) {
-    //   await showDialog(
+    //   showDialog(
     //     context: context,
     //     // Display prompt for password entry. it must be set.
     //     builder: (context) =>
@@ -286,13 +288,13 @@ class _WelcomePageState extends State<WelcomePage> {
     //           actions: [
     //             TextButton(
     //                 key: const Key('Reset_Everything'),
-    //                 onPressed: () async {
+    //                 onPressed: () {
     //                   //Reset the password
     //                 },
     //                 child: const Text("Yes")),
     //             TextButton(
     //                 key: const Key('Dont_Reset_Everything'),
-    //                 onPressed: () async {
+    //                 onPressed: () {
     //                   //Reset the password
     //                 },
     //                 child: const Text("No")),
@@ -302,10 +304,10 @@ class _WelcomePageState extends State<WelcomePage> {
     // }
   }
 
-  void _createPassword(BuildContext context) async {
+  void _createPassword(BuildContext context)  {
     String password = "";
     // Not initialized
-    await showDialog(
+    showDialog(
       context: context,
       // Start user creation process.
       builder: (context) =>
@@ -333,9 +335,9 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: const Text("Enter")),
             ],
           ),
-    ).whenComplete(() async {
+    ).whenComplete(() {
     if(settings.isEncryptionEnabled()){
-      await showDialog(
+      showDialog(
   
           context: context,
       builder: (context) {
@@ -362,12 +364,12 @@ class _WelcomePageState extends State<WelcomePage> {
     });
   }
 
-  void _confirmPassword(BuildContext context, String password) async {
+  void _confirmPassword(BuildContext context, String password) {
     bool match = false;
     // if password supplied and valid
     if (password.isNotEmpty) {
       // begin confirmation loop (verification)
-      await showDialog(barrierDismissible: false,
+      showDialog(barrierDismissible: false,
           context: context,
           builder: (context) =>
               AlertDialog(
@@ -397,7 +399,7 @@ class _WelcomePageState extends State<WelcomePage> {
     // No password supplied
     else {
       //Password is empty, prompt for confirmation (ensure no encryption)
-      await showDialog(barrierDismissible: false,
+      showDialog(barrierDismissible: false,
           context: context,
           builder: (context) =>
               AlertDialog(
@@ -429,7 +431,7 @@ class _WelcomePageState extends State<WelcomePage> {
     match = false;
   }
 
-  void _finishConfiguraton(BuildContext context, String password) async {
+  void _finishConfiguraton(BuildContext context, String password)  {
     _disabled = true;
     settings.setPassword(password); // empty password no encryption
     settings.setConfigured(true);
@@ -440,9 +442,9 @@ class _WelcomePageState extends State<WelcomePage> {
         context, DashboardPage.route()); // Move to dashboard w/o encryption
   }
 
-  void _attemptLogin(BuildContext context) async {
+  void _attemptLogin(BuildContext context)  {
     String passwordFieldText = "";
-    await showDialog(
+    showDialog(
 
       context: context,
       builder: (context) => AlertDialog(
@@ -478,18 +480,15 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void _verifyPassword(BuildContext context, String password) async {
+  void _verifyPassword(BuildContext context, String password)  {
     bool match = encryptor.unlock(password);
     if (match) {
       password = "";
-      if (context.mounted) {
         Navigator.of(context).pop();
         Navigator.pushReplacement(context, DashboardPage.route());
-      }
     }
     else {
-      if (context.mounted) {
-        await showDialog(
+        showDialog(
             barrierDismissible: false,
             context: context,
             builder: (context) =>
@@ -502,7 +501,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   actions: [
                     TextButton(
                       key: const Key(
-                          'Confirm_Incorrect_Password'),
+                          'Incorrect_Password'),
                       onPressed: () {
                         Navigator
                             .of(context)
@@ -514,10 +513,6 @@ class _WelcomePageState extends State<WelcomePage> {
                   ],
                 )
         );
-      } else {
-        throw StateError(
-            "Context was not mounted while trying to draw IncPassword Dialog");
-      }
       // I should never get here
     }
   }

@@ -1,6 +1,0 @@
-Revivew --
-entries.dart:125 - Using item.getTitle as a key 
-  # titles are not unique, and while we could guarantee this, its not nice. - Code Style
-
-entries.dart:262 - Convert switch statement to swtich expression - Code Style
-entry.dart: consrtuctor - the language does most of this for you
