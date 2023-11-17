@@ -131,15 +131,6 @@ void _assignDefaults() async {
     Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
     Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
   ];
-  // emotionList = [
-  //   Emotion(name: 'Happy', color: const Color(0xfffddd68)),
-  //   Emotion(name: 'Trust', color: const Color(0xff308c7e)),
-  //   Emotion(name: 'Fear', color: const Color(0xff4c4e52)),
-  //   Emotion(name: 'Sad', color: const Color(0xff1f3551)),
-  //   Emotion(name: 'Disgust', color: const Color(0xff384e36)),
-  //   Emotion(name: 'Anger', color: const Color(0xffb51c1c)),
-  //   Emotion(name: 'Anticipation', color: const Color(0xffff8000)),
-  // ];
   emotionList = {
     'Happy': const Color(0xfffddd68),
     'Trust': const Color(0xff308c7e),
@@ -173,17 +164,6 @@ Future<void> save() async {
 	for (final tag in tagList) {
 		settings['tags'].add({'name': tag.name, 'color': tag.color.value});
 	}
-
-  // //add lines to update emotions
-  // settings['emotions'] = <Map<String, dynamic>>[];
-  // for (final emotion in emotionList) {
-  //   settings['emotions'].add({'name': emotion.name, 'color': emotion.color.value});
-  // }
-  //add lines to update emotions
-  // settings['emotions'] = <Map<String, dynamic>>[];
-  // for (final emotion in emotionList) {
-  //   settings['emotion'].add({'name': emotion.name, 'color': emotion.color.value});
-  // }
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);

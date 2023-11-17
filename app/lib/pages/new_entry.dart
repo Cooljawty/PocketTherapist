@@ -90,6 +90,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   // Make the chips scrollable
                   child: Scrollbar(
                     child: SingleChildScrollView(
+                      key: const Key('TagChipsDisplay'),
                       scrollDirection: Axis.horizontal,
                       child: Wrap(
                         spacing: 5,
@@ -116,6 +117,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     // Make the chips scrollable
                     child: Scrollbar(
                         child: SingleChildScrollView(
+                            key: const Key('EmotionChipsDisplay'),
                             scrollDirection: Axis.horizontal,
                             child: Wrap(
                               spacing: 5,
@@ -184,11 +186,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
-                                        if (selected) {
-                                          _selectedTags.add(tag);
-                                        } else {
-                                          _selectedTags.remove(tag);
-                                        }
+                                        selected ? _selectedTags.add(tag) : _selectedTags.remove(tag);
                                       });
                                     });
                                   },
@@ -197,6 +195,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             ),
                             actions: <Widget>[
                               TextButton(
+                                key: const Key('saveTagsButton'),
                                 child: const Text('Save'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -231,11 +230,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
-                                        if (selected) {
-                                          _selectedEmotions.add(emote);
-                                        } else {
-                                          _selectedEmotions.remove(emote);
-                                        }
+                                        selected ? _selectedEmotions.add(emote) : _selectedEmotions.remove(emote);
                                       });
                                     });
                                   },
@@ -244,6 +239,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             ),
                             actions: <Widget>[
                               TextButton(
+                                key: const Key('saveEmotionsButton'),
                                 child: const Text('Save'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -276,6 +272,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             content: CircularSeekBar(
+              key: const Key('EmotionalDial'),
               width: double.infinity,
               height: 175,
               progress: emotion.strength.toDouble(),
@@ -341,7 +338,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // Make the journal entry and save it
   getEntry() {
     return JournalEntry(
-      id: UniqueKey().hashCode,
       title: titleController.text,
       entryText: journalController.text,
       date: DateTime.now(),
