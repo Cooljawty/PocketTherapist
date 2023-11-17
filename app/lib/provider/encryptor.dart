@@ -146,7 +146,7 @@ bool verifyRecoveryPhrase(String phrase) {
 /// [unlock] is responsible for unlocking and initializing the application after password has been set
 /// The recovery boolean indicates if we are unlocking with the recovery method, this should
 /// lead to a password reset, but it is not required.
-bool unlock(String passwordPhrase, [bool recovery = false]) {
+bool unlock(String passwordPhrase, [bool recovery = false])  {
   bool valid = !recovery ? verifyPassword(passwordPhrase) : verifyRecoveryPhrase(passwordPhrase);
   if (valid){
     Argon2 hasher = Argon2.fromEncoded(!recovery? _passwordHash : _recoveryHash);

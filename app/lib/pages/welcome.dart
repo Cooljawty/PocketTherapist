@@ -13,9 +13,6 @@ import 'package:flutter/material.dart';
 import '../uiwidgets/decorations.dart';
 import 'package:flutter/services.dart';
 
-/// This boolean prevents the buttons from being spam clicked when encryption is running.
-bool _disabled = false;
-
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -108,7 +105,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     children: [
                       StandardElevatedButton(
                         key: const Key("Start_Button"),
-                        onPressed: () => _handleStartPress(context),
+                        onPressed: () async => _handleStartPress(context),
                         child: const Text(
                           'Start',
                           style: TextStyle(color: Colors.amber),
@@ -185,7 +182,7 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                     credentials
   /// - [_verifyPassword] - Displays the errors or completes the transition to
   ///                       the DashboardPage
-  void _handleStartPress(BuildContext context)  {
+  void _handleStartPress(BuildContext context) async {
     if (settings.isConfigured()) {
       if (settings.isEncryptionEnabled()) {
         _attemptLogin(context);
@@ -198,19 +195,44 @@ class _WelcomePageState extends State<WelcomePage> {
       }
     }
     else {
-      _createPassword(context);
+      await _createPassword(context).whenComplete(() async {
+        if(settings.isEncryptionEnabled()) {
+          await showDialog(
+              context: context,
+              builder: (context) {
+                String? recovery = encryptor.getRecoveryPhrase();
+                return AlertDialog(
+                    title: const Text("Recovery Phrase"),
+                    backgroundColor: Theme
+                        .of(context)
+                        .colorScheme
+                        .onBackground,
+                    actions: [
+                      TextButton(
+                          key: const Key("Recovery_Phrase_Confirm"),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Ok")),
+                      TextButton(
+                          key: const Key("Recovery_Phrase_Copy"),
+                          onPressed: () =>
+                              Clipboard.setData(ClipboardData(text: recovery!)),
+                          child: const Text("Copy")),
+                    ],
+                    content: Text(recovery!));
+              });
+        }
+      });
     }
-
   }
 
   /// [_handleResetPasswordPress] - Requests the users 5 word phrase and interacts
   ///                             with [encryptor] to perform verification and reset
   ///                             If successful will start the [_createPassword]
   ///                             Process.
-  void _handleResetPasswordPress(BuildContext context) {
+  void _handleResetPasswordPress(BuildContext context) async {
     String? maybePasswordOrPhrase = "";
     if (settings.isConfigured()) {
-      showDialog(
+    await showDialog(
         context: context,
         builder: (context) =>
             AlertDialog(
@@ -233,10 +255,10 @@ class _WelcomePageState extends State<WelcomePage> {
               actions: [
                 TextButton(
                     key: const Key('Reset_Password_Button'),
-                    onPressed: () {
+                    onPressed: () async {
                       bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
                       if(match) {
-                        showDialog(context: context, builder: (context) => AlertDialog(
+                        await showDialog(context: context, builder: (context) => AlertDialog(
                             backgroundColor: Theme
                                 .of(context)
                                 .colorScheme
@@ -250,10 +272,10 @@ class _WelcomePageState extends State<WelcomePage> {
                                   },
                                 child: const Text("Ok"))
                             ]
-                        )).whenComplete(() => _handleStartPress(context));
+                        )).whenComplete(() async => _handleStartPress(context));
                       }
                       else {
-                        showDialog(context: context, builder: (context) => AlertDialog(
+                      await showDialog(context: context, builder: (context) => AlertDialog(
                             backgroundColor: Theme
                                 .of(context)
                                 .colorScheme
@@ -275,7 +297,7 @@ class _WelcomePageState extends State<WelcomePage> {
   ///                                 all user data & passwords securely.
   void _handleResetEverythingPress(BuildContext context)  {
     // if (settings.isConfigured()) {
-    //   showDialog(
+    // await showDialog(
     //     context: context,
     //     // Display prompt for password entry. it must be set.
     //     builder: (context) =>
@@ -304,10 +326,10 @@ class _WelcomePageState extends State<WelcomePage> {
     // }
   }
 
-  void _createPassword(BuildContext context)  {
+  Future<void> _createPassword(BuildContext context) async {
     String password = "";
     // Not initialized
-    showDialog(
+    await showDialog(
       context: context,
       // Start user creation process.
       builder: (context) =>
@@ -331,45 +353,20 @@ class _WelcomePageState extends State<WelcomePage> {
             actions: [
               TextButton(
                   key: const Key('Create_Password'),
-                  onPressed: () => _confirmPassword(context, password),
+                  onPressed: () async =>  _confirmPassword(context, password),
                   child: const Text("Enter")),
             ],
           ),
-    ).whenComplete(() {
-    if(settings.isEncryptionEnabled()){
-      showDialog(
-  
-          context: context,
-      builder: (context) {
-          String? recovery = encryptor.getRecoveryPhrase();
-        return AlertDialog(
-          title: const Text("Recovery Phrase"),
-          backgroundColor: Theme
-              .of(context)
-              .colorScheme
-              .onBackground,
-          actions: [
-            TextButton(
-                key: const Key("Recovery_Phrase_Confirm"),
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Ok")),
-            TextButton(
-                key: const Key("Recovery_Phrase_Copy"),
-                onPressed: () => Clipboard.setData(ClipboardData(text: recovery!)),
-                child: const Text("Copy")),
-          ],
-          content: Text(recovery!));
-      });
-    }
-    });
+    );
+
   }
 
-  void _confirmPassword(BuildContext context, String password) {
+  void _confirmPassword(BuildContext context, String password) async {
     bool match = false;
     // if password supplied and valid
     if (password.isNotEmpty) {
       // begin confirmation loop (verification)
-      showDialog(barrierDismissible: false,
+      await showDialog(
           context: context,
           builder: (context) =>
               AlertDialog(
@@ -389,17 +386,17 @@ class _WelcomePageState extends State<WelcomePage> {
                 actions: [
                   TextButton(
                     key: const Key('Verify_Password'),
-                    onPressed: () => (match && !_disabled) ? _finishConfiguraton(context, password): null,
+                    onPressed: () async => (match) ? _finishConfiguraton(context, password): null,
                     child: const Text("Enter"),
                   ),
                 ],
               )
-      ).whenComplete(() => _disabled = false);
+      );
     }
     // No password supplied
     else {
       //Password is empty, prompt for confirmation (ensure no encryption)
-      showDialog(barrierDismissible: false,
+      await showDialog(
           context: context,
           builder: (context) =>
               AlertDialog(
@@ -418,34 +415,33 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                   TextButton(
                       key: const Key('Cancel_No_Password'),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context)
                             .pop(); // remove confirmation window to entry password.
                       },
                       child: const Text("No")
                   ),
                 ],
-              ));
+              )
+      );
     }
     password = "";
     match = false;
   }
 
-  void _finishConfiguraton(BuildContext context, String password)  {
-    _disabled = true;
+  void _finishConfiguraton(BuildContext context, String password) async {
     settings.setPassword(password); // empty password no encryption
     settings.setConfigured(true);
-    settings.save();
+    settings.save().whenComplete(() => null);
     Navigator.of(context).pop(); // remove confirmation window
     Navigator.of(context).pop(); // remove inital entry window
     Navigator.pushReplacement(
         context, DashboardPage.route()); // Move to dashboard w/o encryption
   }
 
-  void _attemptLogin(BuildContext context)  {
+  void _attemptLogin(BuildContext context) async {
     String passwordFieldText = "";
-    showDialog(
-
+    await showDialog(
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: Theme
@@ -467,11 +463,8 @@ class _WelcomePageState extends State<WelcomePage> {
               TextButton(
                 //add key for testing
                   key: const Key('Submit_Password'),
-                  onPressed: () {
-                    if(!_disabled) {
-                      _disabled = true;
+                  onPressed: () async {
                       _verifyPassword(context, passwordFieldText);
-                    }
                   },
                   child: const Text("Enter")
               ),
@@ -480,7 +473,7 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void _verifyPassword(BuildContext context, String password)  {
+  void _verifyPassword(BuildContext context, String password) async  {
     bool match = encryptor.unlock(password);
     if (match) {
       password = "";
@@ -488,8 +481,7 @@ class _WelcomePageState extends State<WelcomePage> {
         Navigator.pushReplacement(context, DashboardPage.route());
     }
     else {
-        showDialog(
-            barrierDismissible: false,
+      await showDialog(
             context: context,
             builder: (context) =>
                 AlertDialog(
@@ -502,11 +494,10 @@ class _WelcomePageState extends State<WelcomePage> {
                     TextButton(
                       key: const Key(
                           'Incorrect_Password'),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator
                             .of(context)
                             .pop();
-                        _disabled = false;
                       },
                       child: const Text("Ok"),
                     )
