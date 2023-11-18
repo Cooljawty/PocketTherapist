@@ -1,4 +1,3 @@
-// import 'dart:developer';
 import 'dart:math';
 
 import 'package:app/provider/settings.dart';
@@ -12,6 +11,7 @@ class DisplayCard extends StatefulWidget {
   final String body;
   final DateTime date;
   final List<Tag> tagList;
+  final List<Emotion> emotionList;
 
   final dynamic page;
 
@@ -21,7 +21,8 @@ class DisplayCard extends StatefulWidget {
       required this.body,
       required this.date,
       this.page,
-      required this.tagList});
+      required this.tagList,
+      required this.emotionList});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -52,21 +53,32 @@ class _DisplayCardState extends State<DisplayCard> {
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
           child: Container(
+            //width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: ((){
                     List<Color> bgCardColors = [];
-                    if (widget.tagList.length > 1) {
-                      for (int i = 0; i < min(widget.tagList.length, 3); i++) {
-                        bgCardColors.add(widget.tagList[i].color);
+                    if(widget.emotionList.isNotEmpty){
+                      if(widget.emotionList.length > 1){
+                        for (int i = 0; i < min(widget.emotionList.length, 3); i++) {
+                          bgCardColors.add(widget.emotionList[i].color);
+                        }
+                      }else{
+                        bgCardColors.add(widget.emotionList[0].color);
+                        bgCardColors.add(widget.emotionList[0].color);
                       }
-                    } else if(widget.tagList.isEmpty){
+                    }else if(widget.tagList.isNotEmpty){
+                      if(widget.tagList.length > 1){
+                        for (int i = 0; i < min(widget.tagList.length, 3); i++) {
+                          bgCardColors.add(widget.tagList[i].color);
+                        }
+                      }else{
+                        bgCardColors.add(widget.tagList[0].color);
+                        bgCardColors.add(widget.tagList[0].color);
+                      }
+                    }else{
                       bgCardColors.add(Colors.grey.shade800);
                       bgCardColors.add(Colors.grey.shade400);
-                    }
-                    else{
-                      bgCardColors.add(widget.tagList[0].color);
-                      bgCardColors.add(widget.tagList[0].color);
                     }
                     return bgCardColors;
                   }())
@@ -78,28 +90,43 @@ class _DisplayCardState extends State<DisplayCard> {
               children: <Widget>[
 
                 Column( // Column to hold title and preview text
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       // Title
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 5,),
+                          child: Text(
                           widget.title,
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
                           style: DefaultTextStyle.of(context).style.apply(
                             fontSizeFactor: 1.3,
                             fontWeightDelta: 1,
                           ),
                         ),
+                        )
                       ),
+
                       // preview text
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
-                          widget.body,
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 150,
+                        // height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20, bottom: 10, top: 5),
+                          child: Text(
+                            widget.body,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(fontStyle: FontStyle.italic),
+                          ),),
                       ),
-                    ]),
+                    ]
+                ),
                 // spacer to push the date to the right and the text to the left
                 const Spacer(),
 
@@ -110,7 +137,8 @@ class _DisplayCardState extends State<DisplayCard> {
                     '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
                   ),
                 ),
-              ]),
+              ]
+            ),
           ),
         ),
       ),
@@ -119,11 +147,11 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 mixin DisplayOnCard {
-  ({String title, String body, DateTime date, List<Tag> tagList}) card = (title: "", body: "", date: DateTime.now(), tagList: []);
+  ({String title, String body, DateTime date, List<Tag> tagList, List<Emotion> emotionList,})card = (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
   dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(
-        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList);
+        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList, emotionList: card.emotionList,);
   }
 }

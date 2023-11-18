@@ -48,7 +48,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 		}
 
     //check for duplicates and add only unique names
-    if (!settings.tagList.any((tag) => (tag as Tag).name == name)) {
+    if (!settings.tagList.any((tag) => (tag).name == name)) {
 			showDialog(
 				context: context,
 				builder: (context) {
@@ -157,11 +157,15 @@ class _TagSettingsState extends State<TagSettingsPage> {
         appBar: AppBar(),
         body: SafeArea(
 					//Ensure that selected tags are returned after quitting
-					child: WillPopScope(
-					onWillPop: () async {
-						Navigator.pop(context, widget.selectedTags);
-						return false;
-					},
+					// WillPopScope is deprecated, use pops cope instead
+					child: PopScope(
+						canPop: false,
+						onPopInvoked: (bool didPop) {
+							if (didPop) {
+								return;
+							}
+							Navigator.pop(context, widget.selectedTags);
+						},
 
           child: SingleChildScrollView(
             //create column that will go on to contain the tag list and the search bar
@@ -221,27 +225,27 @@ class _TagSettingsState extends State<TagSettingsPage> {
                           const Text("No Compatible Tags found: "),
                           ElevatedButton(
                               key: const Key('Create Tag'),
-                              //on pressed adds the phrase in the text form field to the taglist
+                              //on pressed adds the phrase in the text form field to the tag list
                               onPressed: () => addTag(context, name: textController.text),
                               child: const Text('Create Tag'))
                         ],
                       );
                       return finalColumn;
                     } else {
-                      List<Widget> childofColumn = [
+                      List<Widget> childOfColumn = [
                         const Text("List of compatible tags: ")
                       ];
                       //if compatible list is still null nothing has been searched
                       List<Tag> compList = compatibleTagList ?? settings.tagList;
                       for (int index = 0; index < compList.length; index++) {
                         //generate 1 row for each name in list
-                        childofColumn.add( _displayTag(index, compList) );
+                        childOfColumn.add( _displayTag(index, compList) );
                       }
 											//Always add the add tags button if coming from new entry page
 											if (widget.selectedTags != null) { 
-												childofColumn.add(ElevatedButton(
+												childOfColumn.add(ElevatedButton(
 														key: const Key('Create Tag'),
-														//on pressed adds the phrase in the text form field to the taglist
+														//on pressed adds the phrase in the text form field to the tag list
 														onPressed: () => addTag(context, name: textController.text),
 														child: const Text('Create Tag')
 													)
@@ -250,7 +254,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                       //final column starts will text widget displayed
                       Column finalColumn = Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: childofColumn);
+                          children: childOfColumn);
                       return finalColumn;
                     }
                   })()),

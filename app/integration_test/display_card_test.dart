@@ -17,6 +17,7 @@ void main() {
 		body: "Body text of Test Object",
 		date: DateTime(2023, 11, 5),
 		tagList: [],
+		emotionList: [],
 	);
 
 	late Widget myApp;
@@ -31,7 +32,8 @@ void main() {
 								body: entry.getPreviewText(),
 								date: entry.getDate(),
 								page: () => EntryPage.route(entry: entry),
-								tagList: const [],
+								tagList: entry.getTags(),
+								emotionList: entry.getEmotions(),
 							),
 							testObj.asDisplayCard(),
 						],
@@ -90,8 +92,9 @@ class TestObject with DisplayOnCard{
 	String body;
 	DateTime date;
 	List<Tag> tagList;
+	List<Emotion> emotionList;
 
-	TestObject({this.title = "", required this.body, required this.date, required this.tagList}){
-		card = (title: title, body: body, date: date, tagList: tagList);
+	TestObject({this.title = "", required this.body, required this.date, required this.tagList, required this.emotionList}){
+		card = (title: title, body: body, date: date, tagList: tagList, emotionList: emotionList);
 	}
 }

@@ -208,7 +208,7 @@ class _WelcomePageState extends State<WelcomePage> {
   /// methods
   /// - [_createPassword] - Creates the password if we are in that state
   /// - [_confirmPassword] - Accepts a 2nd password to compare to the 1st
-  /// - [_finishConfiguraton] - Completes the configuraiton process for passwords
+  /// - [_finishConfiguration] - Completes the configuration process for passwords
   ///                           and recovery phrases
   /// - [_attemptLogin] - Attempts to the log the user in after receiving the
   ///                     credentials
@@ -283,7 +283,7 @@ class _WelcomePageState extends State<WelcomePage> {
     //                 },
     //                 child: const Text("Yes")),
     //             TextButton(
-    //                 key: const Key('Dont_Reset_Everything'),
+    //                 key: const Key('Don't_Reset_Everything'),
     //                 onPressed: () async {
     //                   //Reset the password
     //                 },
@@ -343,8 +343,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 actions: [
                   TextButton(
                     key: const Key('Verify_Password'),
-                    onPressed: () =>
-                        match ? _finishConfiguraton(context, password) : null,
+                    onPressed: () => match? _finishConfiguration(context, password): null,
                     child: const Text("Enter"),
                   ),
                 ],
@@ -363,8 +362,10 @@ class _WelcomePageState extends State<WelcomePage> {
                 actions: [
                   TextButton(
                       key: const Key('Confirm_No_Password'),
-                      onPressed: () => _finishConfiguraton(context, password),
-                      child: const Text("Yes")),
+                      onPressed: () => _finishConfiguration(context, password),
+                      child: const Text("Yes")
+                  ),
+                  
                   TextButton(
                       key: const Key('Cancel_No_Password'),
                       onPressed: () {
@@ -380,13 +381,13 @@ class _WelcomePageState extends State<WelcomePage> {
     match = false;
   }
 
-  void _finishConfiguraton(BuildContext context, String password) async {
+  void _finishConfiguration(BuildContext context, String password) async {
     settings.setPassword(password); // empty password no encryption
     settings.setEncryptionStatus(password.isNotEmpty);
     settings.setConfigured(true);
     settings.save();
     Navigator.of(context).pop(); // remove confirmation window
-    Navigator.of(context).pop(); // remove inital entry window
+    Navigator.of(context).pop(); // remove initial entry window
     Navigator.pushReplacement(
         context, DashboardPage.route()); // Move to dashboard w/o encryption
   }
