@@ -26,6 +26,8 @@ class _WelcomePageState extends State<WelcomePage> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
+
+            // Gradient
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -42,6 +44,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
             ),
+
+            // Stripe
             Transform(
               transform: Matrix4.skewY(-0.45),
               origin: const Offset(60, 0),
@@ -55,18 +59,21 @@ class _WelcomePageState extends State<WelcomePage> {
                 height: MediaQuery.of(context).size.height / 2,
               ),
             ),
+
+            // Top primary color
             Transform(
               transform: Matrix4.skewY(-0.45),
               alignment: Alignment.bottomLeft, //changing the origin
               child: Container(
                 decoration: BoxDecoration(
-                  color: settings.getCurrentTheme().colorScheme.primary,
-                  //borderRadius: BorderRadius.circular(10.0),
+                  color: settings.getCurrentTheme().colorScheme.onBackground,
                 ),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 2,
               ),
             ),
+
+            // Wavy circle behind logo
             Container(
               alignment: Alignment.center,
               child: Padding(
@@ -74,10 +81,12 @@ class _WelcomePageState extends State<WelcomePage> {
                 child: Image.asset(
                   'assets/circleCutOut.png',
                   scale: .85,
-                  color: darkenColor(settings.getCurrentTheme().colorScheme.primary, .1),
+                  color: darkenColor(settings.getCurrentTheme().colorScheme.onBackground, .1),
                 ),
               ),
             ),
+
+            // The top of the stack
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -88,6 +97,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 children: <Widget>[
                   const Padding(padding: EdgeInsets.only(top: 50)),
 
+                  // Logo with catch phrase
                   SizedBox(
                       height: 250,
                       width: 250,
@@ -100,10 +110,10 @@ class _WelcomePageState extends State<WelcomePage> {
                             transform: Matrix4.translationValues(0, -37, 0),
                             child: Container(
                               alignment: Alignment.center,
-                              width: 183,
+                              width: 190,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: darkenColor(Theme.of(context).colorScheme.primary, 0.1),
+                                color: darkenColor(Theme.of(context).colorScheme.onBackground, 0.1),
                                 borderRadius: const BorderRadius.all(
                                     Radius.circular(15.0)),
                               ),
@@ -113,12 +123,12 @@ class _WelcomePageState extends State<WelcomePage> {
                                 children: [
                                   Text(
                                     'How are you ',
-                                    style: Theme.of(context).textTheme.labelLarge,
+                                    style: Theme.of(context).textTheme.bodyLarge,
                                     textAlign: TextAlign.center,
                                   ),
                                   Text(
                                     ' really ',
-                                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                       color: Colors.amber,
                                         fontStyle: FontStyle.italic,
                                     ),
@@ -126,7 +136,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                   ),
                                   Text(
                                     ' feeling?',
-                                    style: Theme.of(context).textTheme.labelLarge,
+                                    style: Theme.of(context).textTheme.bodyLarge,
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -136,10 +146,13 @@ class _WelcomePageState extends State<WelcomePage> {
                         ],
                       )),
                   // ),
-                  // Start Button
+
+                  // Buttons
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+
+                      // Start button
                       Padding(
                         padding: const EdgeInsets.only(bottom: 7),
                         child: StandardElevatedButton(
@@ -151,6 +164,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
+
                       // Reset Password Button
                       Padding(
                         padding: const EdgeInsets.only(bottom: 7),
@@ -163,6 +177,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
+
                       // Erase everything
                       StandardElevatedButton(
                         key: const Key("Erase_Button"),
@@ -174,8 +189,9 @@ class _WelcomePageState extends State<WelcomePage> {
                       ),
                     ],
                   ),
-                  //use a container for the quote of the day
-                  Container(
+
+                  //use a size box for the quote of the day
+                  SizedBox(
                     height: 180,
                     child: Padding(padding: const EdgeInsets.only(left: 20, right: 20), child: Quote()),
                   ),

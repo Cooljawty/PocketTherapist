@@ -32,56 +32,55 @@ class _QuoteState extends State<Quote> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      child: Container(
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(32),
               side: BorderSide(
-                  width: 4,
-                  color: Theme.of(context).colorScheme.primary,
-              )
-          ),
+                width: 4,
+                color: Theme.of(context).colorScheme.primary,
+              )),
         ),
-      //height: 210,
-      width: MediaQuery.of(context).size.width,
-      child: GestureDetector(
+        //height: 210,
+        width: MediaQuery.of(context).size.width,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-                  Transform.flip(
-                      origin: const Offset(-40, 0),
-                      flipX: true,
-                      child: Icon(Icons.format_quote_rounded,
-                          size: 50,
-                          color: getCurrentTheme().colorScheme.primary)),
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              // Top Quote
+              Transform.flip(
+                  origin: const Offset(-40, 0),
+                  flipX: true,
+                  child: Icon(Icons.format_quote_rounded,
+                      size: 50, color: getCurrentTheme().colorScheme.primary)),
 
-                  //now we only need a text widget for quote
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Text(
-                    // quote from app
-                    currentQuote,
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5,
-                    textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              // Quote
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  // quote from app
+                  currentQuote,
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 5,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
+                ),
+              ),
 
-                  Transform(
-                      transform: Matrix4.translationValues(80, 0, 0),
-                      child: Icon(Icons.format_quote_rounded,
-                          size: 50,
-                          color: getCurrentTheme().colorScheme.primary)),
-                ]),
-        onTap: () {
-          setState(() => currentQuote = widget.newQuote());
-        },
+              // Bottom Quote
+              Transform(
+                  transform: Matrix4.translationValues(80, 0, 0),
+                  child: Icon(Icons.format_quote_rounded,
+                      size: 50, color: getCurrentTheme().colorScheme.primary)),
+            ]),
       ),
+      onTap: () {
+        setState(() => currentQuote = widget.newQuote());
+      },
     );
   }
 }
