@@ -94,13 +94,16 @@ void main() {
     await widgetTester.tap(find.text('Enable/Disable Encryption'));
     await widgetTester.pumpAndSettle();
 
-    await widgetTester.tap(find.text('Open Vault File'));
-    await widgetTester.pumpAndSettle();
-
     await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
     await widgetTester.pumpAndSettle();
 
     await widgetTester.tap(find.text('Edit Tag List'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.pageBack();
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Open Vault File'));
     await widgetTester.pumpAndSettle();
   });
 }
