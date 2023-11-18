@@ -69,6 +69,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   ),
                 ),
 
+
                 // Text input field for the Journal Entry Body
                 Padding(
                   padding: const EdgeInsets.all(20),
