@@ -6,7 +6,7 @@ void main() {
   String filter = 'test';
 
   //Initial test used to make sure that no create tag button is displayed
-  testWidgets("Test to ensure tag list is displayed andfunctions properly",
+  testWidgets("Test to ensure tag list is displayed and functions properly",
       (widgetTester) async {
     //traverse to tag settings -------------------------------------------------
     app.main();
@@ -32,26 +32,58 @@ void main() {
     //check tag creation and deletion ------------------------------------------
     target = find.byKey(Key('Delete $filter Button'));
     expect(target, findsNothing);
+
     target = find.byKey(const Key('Create Tag'));
     await widgetTester.tap(target);
     await widgetTester.pumpAndSettle();
-    target = find.text(filter);
-    //one in search bar and one in new tag created
-    expect(target, findsNWidgets(2));
-    target = find.byKey(const Key('Create Tag'));
-    expect(target, findsNothing);
+
+		//Enter a new tag name
+    target = find.byKey(const Key('Tag Name Field'));
+    expect(target, findsOneWidget);
+    await widgetTester.enterText(target, filter);
+
+		//Confirm new tag
+    target = find.byKey(const Key('Save New Tag Button'));
+    expect(target, findsOneWidget);
+		await widgetTester.tap(target);
+    await widgetTester.pumpAndSettle();
+
+		//Empty tag search bar
+    target = find.byKey(const Key('Tag Search Bar'));
+    await widgetTester.enterText(target, "");
+    await widgetTester.pumpAndSettle();
+
+    //try to delete tag
+    await widgetTester.enterText(target, filter);
+    await widgetTester.pumpAndSettle();
     target = find.byKey(Key('Delete $filter Button'));
     expect(target, findsOneWidget);
-    //try to delete tag
     await widgetTester.tap(target);
     await widgetTester.pumpAndSettle();
+
     //expect no delete button and create tag button again
+    target = find.byKey(const Key('Tag Search Bar'));
+    await widgetTester.enterText(target, filter);
+    await widgetTester.pumpAndSettle();
+    target = find.byKey(Key('Delete $filter Button'));
     expect(target, findsNothing);
+
+		//Recreate tag
     target = find.byKey(const Key('Create Tag'));
-    expect(target, findsOneWidget);
-    //hit button to create tag
     await widgetTester.tap(target);
     await widgetTester.pumpAndSettle();
+
+		//Enter a new tag name
+    target = find.byKey(const Key('Tag Name Field'));
+    expect(target, findsOneWidget);
+    await widgetTester.enterText(target, filter);
+
+		//Confirm new tag
+    target = find.byKey(const Key('Save New Tag Button'));
+    expect(target, findsOneWidget);
+		await widgetTester.tap(target);
+    await widgetTester.pumpAndSettle();
+
 
     //check field submission with text and without -----------------------------
     target = find.byKey(const Key('Tag Search Bar'));

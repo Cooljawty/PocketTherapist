@@ -1,5 +1,6 @@
 import 'package:app/helper/file_manager.dart';
 import 'package:app/provider/theme_settings.dart';
+import 'package:app/helper/classes.dart';
 
 import 'package:flutter/material.dart';
 
@@ -7,11 +8,13 @@ import 'package:provider/provider.dart';
 import 'settings_tag.dart';
 
 class SettingsPage extends StatefulWidget {
+	final List<Tag>? existingTags;
+
   static Route<dynamic> route() {
     return MaterialPageRoute(builder: (context) => const SettingsPage());
   }
 
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, this.existingTags});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
