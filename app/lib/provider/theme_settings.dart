@@ -13,7 +13,6 @@ class ThemeSettings with ChangeNotifier {
 
   // To change the theme
   static ThemeData darkTheme = ThemeData.dark().copyWith(
-    useMaterial3: true,
     primaryColor: Colors.deepPurpleAccent,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
         .copyWith(
@@ -39,7 +38,6 @@ class ThemeSettings with ChangeNotifier {
   );
 
   static ThemeData lightTheme = ThemeData.light().copyWith(
-    useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF) ).copyWith(
       brightness: Brightness.light,
       background: Colors.white,
@@ -80,12 +78,12 @@ class ThemeSettings with ChangeNotifier {
   ThemeData get theme => settings.getCurrentTheme();
 
   changeTheme(String theme) {
-    ThemeOption selectedtheme = switch(theme){
+    ThemeOption selectedTheme = switch(theme){
       "Light" => ThemeOption.light,
       "Dark" => ThemeOption.dark,
         _ => ThemeOption.dark,
     };
-    settings.setTheme(selectedtheme);
+    settings.setTheme(selectedTheme);
 
     notifyListeners();
   }

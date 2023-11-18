@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:app/helper/classes.dart';
 
 /// Used for error messages
-const String prefrencesPrefix = "pocket-therapist";
+const String preferencesPrefix = "pocket-therapist";
 
 /// True if loading has been completed, false otherwise.
 bool _init = false;

@@ -26,7 +26,7 @@ class _ControlledTextFieldState extends State<ControlledTextField> {
   final _formKey = GlobalKey<FormState>();
   // this is used to control and track the text that is in the field
   final textController = TextEditingController();
-  // This is used to requrest focus on the field
+  // This is used to request focus on the field
   final textFocusNode = FocusNode();
   // We obscure text by default
   bool _isObscured = true;
@@ -48,7 +48,7 @@ class _ControlledTextFieldState extends State<ControlledTextField> {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: _isObscured,
           focusNode: textFocusNode,
-          // changes the keybaord that the system displays to one that supports
+          // changes the keyboard that the system displays to one that supports
           // email addressing with the @.
           keyboardType: TextInputType.emailAddress,
           controller: textController,

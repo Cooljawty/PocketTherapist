@@ -33,7 +33,7 @@ void main() {
     expect(settings.isConfigured(), true);
     expect(settings.isEncryptionEnabled(), true);
 
-    expect(settings.getOtherSetting(settings.prefrencesPrefix), null);
+    expect(settings.getOtherSetting(settings.preferencesPrefix), null);
     expect(settings.getOtherSetting(settings.fontScaleKey), 1.5);
   });
 
