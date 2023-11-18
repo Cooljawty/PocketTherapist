@@ -13,10 +13,6 @@ class JournalEntry with DisplayOnCard {
   String _entryText = "";
   String _previewText = "";
 
-  // Associated tags/emotions
-  //List<Tag> _tags = [];
-  //List<Emotions> _emotions = [];
-
   // year, month, day
   DateTime current = DateTime.now();
   DateTime _date = DateTime(1970, 12, 31);
@@ -66,7 +62,7 @@ class JournalEntry with DisplayOnCard {
       return strongestEmotion;
     }
     return Emotion(
-        name: 'None', strength: 0, color: Colors.black); // This shouldnt happen
+        name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
   }
 
   /* TODO

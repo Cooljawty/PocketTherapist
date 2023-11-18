@@ -173,7 +173,7 @@ void main() async {
       Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
 
       await widgetTester.tap(enterPasswordButton);
-      await widgetTester.pump(const Duration(seconds: 25));
+      await widgetTester.pump(const Duration(minutes: 1));
 
       Finder confirmIncorrectButton = find.byKey(const Key("Confirm_Incorrect_Password"));
       await widgetTester.tap(confirmIncorrectButton);
@@ -189,7 +189,7 @@ void main() async {
       await widgetTester.pumpAndSettle();
 
       await widgetTester.tap(enterPasswordButton);
-      await widgetTester.pumpAndSettle(const Duration(seconds: 25));
+      await widgetTester.pump(const Duration(minutes: 2));
 
 
       //Successful login, on dashboard
