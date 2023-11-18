@@ -78,7 +78,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 		return AspectRatio( 
 			aspectRatio: 2,
 			child: Padding(
-				padding: const EdgeInsets.all(6.0),
+				padding: const EdgeInsets.all(12.0),
 				child: switch(widget.type) {
 					//Time graph
 					GraphTypes.time => LineChart(
@@ -86,6 +86,17 @@ class _EmotionGraphState extends State<EmotionGraph> {
 							titlesData: FlTitlesData(show: false),
 							minX: 0.0, maxX: getXFromDay(widget.endDate),
 							minY: 0.0, maxY: MAX_STRENGTH,
+							gridData: FlGridData(
+								show: true,
+								drawHorizontalLine: false,
+								drawVerticalLine: true,
+								verticalInterval: 1,
+								getDrawingVerticalLine: (_) => FlLine(
+									dashArray: [1, 0],
+									strokeWidth: 0.8,
+									color: Colors.grey, 
+								),
+							),
 							//Create a line for each emotion 
 							lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 									spots: entry.value,
