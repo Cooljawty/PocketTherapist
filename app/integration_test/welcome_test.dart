@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:app/provider/settings.dart' as settings;
 
-
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -113,7 +112,7 @@ void main() async {
     );
     await expectLater(passwordField, findsOneWidget);
 
-// Enter passwrodr ---------------------------------------------------------------
+// Enter password ---------------------------------------------------------------
     await widgetTester.enterText(passwordField, password);
     await widgetTester.pumpAndSettle();
 
@@ -136,7 +135,6 @@ void main() async {
     await expectLater(find.text("Dashboard"), findsNWidgets(2));
   });
 
-
   testWidgets(
       "No Password But Then Password Account creation", (widgetTester) async {
     app.main();
@@ -151,7 +149,7 @@ void main() async {
     Finder encryptionAlert = find.byType(AlertDialog);
     await expectLater(encryptionAlert, findsOneWidget);
 
-// Enter passwrodr ---------------------------------------------------------------
+// Enter password ---------------------------------------------------------------
     /// Submit the first password ( stores it )
     Finder enterPasswordButton = find.byKey(const Key('Create_Password'));
 
@@ -282,8 +280,5 @@ void main() async {
       await widgetTester.pumpAndSettle();
       await expectLater(find.text("Encryption?"), findsOneWidget);
   });
-
-
-
 
 }

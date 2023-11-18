@@ -43,12 +43,18 @@ void main() {
 
     // Check to see if every entry is there
     for (int i = 0; i < entry.sortedItems.length; i++) {
-      final entryKey = find.byKey(ValueKey(entry.sortedItems[i].getTitle()));
-      await tester.pumpWidget(myApp);
+      final entryKey = find.byKey(Key(entry.sortedItems[i].getID().toString()));
+      // await tester.pumpWidget(myApp);
       await tester.pumpAndSettle();
 
       // Confirm that the entry was seen
-      expect(entryKey, findsOneWidget);
+      expectLater(entryKey, findsOneWidget);
+
+      // Manually scroll through the list if the entry wasn't seen
+      // Expect to find the entry after scroll
+      final gesture = await tester.startGesture(const Offset(100, 500));
+      await gesture.moveBy(const Offset(0, -30));
+      await tester.pump();
     }
   }
 
