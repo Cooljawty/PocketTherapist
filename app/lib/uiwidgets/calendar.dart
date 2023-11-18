@@ -61,6 +61,7 @@ class _CalendarState extends State<Calendar> {
 						key: const Key("Calendar_Panel"),
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
+						childAspectRatio: 0.8,
 						shrinkWrap: true,
 						//Calculating each day
 						children: _getCalendarDays(),
