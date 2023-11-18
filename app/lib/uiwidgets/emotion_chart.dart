@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/pages/entry.dart';
@@ -64,19 +65,16 @@ class _EmotionGraphState extends State<EmotionGraph> {
 			for (var emotion in entry.getEmotions()){
 				final dayIndex = getX(entry).floor();
 				//Set the y position has the highest intensity of the day
-				/*
-				if (dayIndex < _emotionData[emotion]!.length) {
-					_emotionData[emotion]![dayIndex] = FlSpot(getX(entry), math.max(_emotionData[emotion]![dayIndex].y, emotion.strength));
+				if (dayIndex < _emotionData[emotion.name]!.length) {
+					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), math.max(_emotionData[emotion.name]![dayIndex].y, emotion.strength));
 				} else {
-					_emotionData[emotion]!.insert(dayIndex, FlSpot(getX(entry), emotion.strength));
+					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), emotion.strength);
 				}
-				*/
-				_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), emotion.strength);
 			}
 		} 	
 
 		return AspectRatio( 
-			aspectRatio: 2,
+			aspectRatio: 1.75,
 			child: Padding(
 				padding: const EdgeInsets.all(12.0),
 				child: switch(widget.type) {
@@ -101,9 +99,12 @@ class _EmotionGraphState extends State<EmotionGraph> {
 							lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 									spots: entry.value,
 									color: emotionlist[entry.key]!.color,
+									dotData: const FlDotData( show: false, ),
 									isCurved: true,
 									curveSmoothness: 0.5,
+									barWidth: 4.5,
 									preventCurveOverShooting: true,
+									preventCurveOvershootingThreshold: 2,
 								),
 							).toList(),
 						),
@@ -121,6 +122,7 @@ final emotionlist = {
 	"Happy": Emotion(name: "Happy", color: Colors.green, strength: 0), 
 	"Sad": Emotion(name: "Sad", color: Colors.blue, strength: 0), 
 	"Angry": Emotion(name: "Angry", color: Colors.red, strength: 0),
+	"Sonder": Emotion(name: "Sonder", color: Colors.orange, strength: 0),
 };
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
@@ -131,20 +133,8 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 					Emotion(
 						name: "Sad",
 						color: Colors.blue,
-						strength: 30,
+						strength: 60,
 					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 30,
-					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -154,20 +144,8 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 					Emotion(
 						name: "Sad",
 						color: Colors.blue,
-						strength: 60,
-					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
 						strength: 30,
 					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 30,
-					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -179,18 +157,11 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 						color: Colors.blue,
 						strength: 30,
 					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
 					Emotion(
 						name: "Angry",
 						color: Colors.red,
-						strength: 30,
+						strength: 8,
 					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -200,20 +171,13 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 					Emotion(
 						name: "Sad",
 						color: Colors.blue,
-						strength: 30,
+						strength: 15,
 					),
-					/*
 					Emotion(
 						name: "Happy",
 						color: Colors.green,
 						strength: 30,
 					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 30,
-					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -221,22 +185,10 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				date: DateTime(2023, 1, 3), 
 				emotions: [
 					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-					Emotion(
 						name: "Angry",
 						color: Colors.red,
-						strength: 30,
+						strength: 60,
 					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -244,22 +196,10 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				date: DateTime(2023, 1, 4), 
 				emotions: [
 					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-					Emotion(
 						name: "Angry",
 						color: Colors.red,
 						strength: 30,
 					),
-					*/
 				]
 			),
 			JournalEntry(
@@ -269,20 +209,13 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 					Emotion(
 						name: "Sad",
 						color: Colors.blue,
-						strength: 30,
-					),
-					/*
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
+						strength: 5,
 					),
 					Emotion(
 						name: "Angry",
 						color: Colors.red,
-						strength: 30,
+						strength: 18,
 					),
-					*/
 				]
 			),
 			/*
