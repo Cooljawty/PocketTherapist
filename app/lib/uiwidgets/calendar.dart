@@ -24,7 +24,7 @@ class _CalendarState extends State<Calendar> {
 
 	List<Widget> _getCalendarDays() {
 		final datesInRange = <Card>[];
-		for (var day = 0; day < _daysFromDate(widget.endDate); day += 1) {
+		for (var day = 0; day <= _daysFromDate(widget.endDate); day += 1) {
 			datesInRange.add( Card(
 				color: _emotionData[day].color, 
 				child: Text("${day+1}", style: Theme.of(context).textTheme.labelLarge),
@@ -154,6 +154,17 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 						name: "Angry",
 						color: Colors.red,
 						strength: 18,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Happy day", entryText: "", 
+				date: DateTime(2023, 1, 31), 
+				emotions: [
+					Emotion(
+						name: "Sonder",
+						color: Colors.orange,
+						strength: 30,
 					),
 				]
 			),
