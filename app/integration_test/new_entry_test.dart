@@ -78,7 +78,7 @@ void main() {
 	Future<void> navigateToEntry(WidgetTester tester) async {
 		//Save new entry
 		await tester.tap(saveButton);
-		await tester.pump();
+		await tester.pumpAndSettle();
 
 		// View new entry
 		final card = find
@@ -196,23 +196,38 @@ void main() {
 			// Confirm that the tag was seen
 			expectLater(tagName, findsOneWidget);
 
+			// Delete the first tag
+			if(i == 0) {
+				await tester.tap(tagName);
+				await tester.pumpAndSettle();
+
+				expect(tagName, findsNothing);
+			}
+
 			// Manually scroll through the list if the tag wasn't seen
 			// Expect to find the tag after scroll
 			await tester.drag(tagChips, const Offset(-50, 0));
-			await tester.pump();
+			await tester.pumpAndSettle();
 		}
 
 		// Navigate to the new entry
 		await navigateToEntry(tester);
 
 		// Find the tags on the entry page
-		for (int i = 0; i < settings.tagList.length; i++) {
+		for (int i = 1; i < settings.tagList.length; i++) {		// i = 1 because we deleted the first tag
 			final tagName = find.text('#${settings.tagList[i].name} ');
 			await tester.pumpAndSettle();
 
 			// Confirm that the tag was seen
 			expect(tagName, findsOneWidget);
 		}
+
+		// get the first tag that should have been deleted
+		final deletedTag = find.text('#${settings.tagList[0].name} ');
+		await tester.pumpAndSettle();
+
+		// Should not find that tag
+		expect(deletedTag, findsNothing);
 	});
 
 	// Test if the emotions interact properly with the alert dialog, chip display, and the created journal entry page
@@ -250,7 +265,7 @@ void main() {
 			// Manually scroll through the list if the tag wasn't seen
 			// Expect to find the tag after scroll
 			await tester.drag(emotionChips, const Offset(-50, 0));
-			await tester.pump();
+			await tester.pumpAndSettle();
 
 			// Tap the emotion chip to pull up emotional dial
 			await tester.tap(emotionName);
@@ -264,25 +279,45 @@ void main() {
 			await tester.drag(find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
 			await tester.pumpAndSettle();
 			expect(find.text('75'), findsOneWidget);
-			await tester.pumpAndSettle();
 
-			// test the cancel button
-			final cancelDial = find.byKey(const Key('cancelDial'));
-			expect(cancelDial, findsOneWidget);
-			await tester.tap(cancelDial);
-			await tester.pumpAndSettle();
+			// Only test the cancel button once to save time on testing
+			if (i == 0) {
+				// test the cancel button
+				final cancelDial = find.byKey(const Key('cancelDial'));
+				expect(cancelDial, findsOneWidget);
+				await tester.tap(cancelDial);
+				await tester.pumpAndSettle();
 
-			// Tap on emotion and set value again
-			await tester.tap(emotionName);
-			await tester.pumpAndSettle();
-			await tester.drag(find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
-			await tester.pumpAndSettle();
+				// Tap on emotion and set value again
+				await tester.tap(emotionName);
+				await tester.pumpAndSettle();
+
+				// check that the value wasn't saved, because cancel was selected
+				expect(find.text('75'), findsNothing);
+
+				// Set the value again
+				await tester.drag(find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
+				await tester.pumpAndSettle();
+			}
 
 			// test the save button
 			final saveDial = find.byKey(const Key('saveDial'));
 			expect(saveDial, findsOneWidget);
 			await tester.tap(saveDial);
 			await tester.pumpAndSettle();
+
+			if(i == 0) {
+				// Tap on emotion and see if the value is saved
+				await tester.tap(emotionName);
+				await tester.pumpAndSettle();
+
+				// check that the value wasn't saved, because cancel was selected
+				expect(find.text('75'), findsOneWidget);
+
+				// save the intensity
+				await tester.tap(saveDial);
+				await tester.pumpAndSettle();
+			}
 		}
 
 		// Navigate to the new entry

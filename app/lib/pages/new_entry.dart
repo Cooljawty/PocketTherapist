@@ -95,10 +95,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       child: Wrap(
                         spacing: 5,
                         children: _selectedTags
-                            .map((tag) => Chip(
+                            .map((tag) => ActionChip(
                                   label: Text(tag.name),
                                   backgroundColor: tag.color,
-                                  onDeleted: () {
+                                  onPressed: () {
                                     setState(() {
                                       _selectedTags.removeWhere((element) =>
                                           element.name == tag.name);
