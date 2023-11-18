@@ -114,6 +114,13 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					//Frequency graph
 					GraphTypes.frequency => RadarChart(
 						RadarChartData(
+							borderData: FlBorderData(show: false),
+							getTitle: (index, angel) => RadarChartTitle(text: _emotionData.keys.elementAt(index)),
+							//Hide value ticker
+							ticksTextStyle: const TextStyle(color: Colors.transparent, fontSize: 10),
+							tickBorderData: const BorderSide(color: Colors.transparent),
+							radarBorderData: const BorderSide(color: Colors.transparent),
+							gridBorderData: BorderSide(color: Theme.of(context).canvasColor, width: 2),
 							dataSets: [
 								RadarDataSet(
 									//Summ up the strength of all entreis
@@ -139,6 +146,7 @@ final emotionlist = {
 	"Sad": Emotion(name: "Sad", color: Colors.blue, strength: 0), 
 	"Angry": Emotion(name: "Angry", color: Colors.red, strength: 0),
 	"Sonder": Emotion(name: "Sonder", color: Colors.orange, strength: 0),
+	"Calm": Emotion(name: "Calm", color: Colors.deepPurple, strength: 0),
 };
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
