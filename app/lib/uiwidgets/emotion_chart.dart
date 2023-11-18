@@ -112,7 +112,21 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						),
 					),
 					//Frequency graph
-					GraphTypes.frequency => null, //TODO
+					GraphTypes.frequency => RadarChart(
+						RadarChartData(
+							dataSets: [
+								RadarDataSet(
+									//Summ up the strength of all entreis
+									dataEntries: _emotionData.entries.map((entry) {
+										//Radial equation
+										// sum (emotion.strength) / (max intensity * date_range)
+										final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
+										return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
+									}).toList(),
+								),
+							],
+						),
+					),
 				}
 			),
 		);
