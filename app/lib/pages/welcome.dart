@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
@@ -275,7 +274,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         )).whenComplete(() async => _handleStartPress(context));
                       }
                       else {
-                      await showDialog(context: context, builder: (context) => AlertDialog(
+                        await showDialog(context: context, builder: (context) => AlertDialog(
                             backgroundColor: Theme
                                 .of(context)
                                 .colorScheme
@@ -432,11 +431,11 @@ class _WelcomePageState extends State<WelcomePage> {
   void _finishConfiguraton(BuildContext context, String password) async {
     settings.setPassword(password); // empty password no encryption
     settings.setConfigured(true);
-    settings.save().whenComplete(() => null);
     Navigator.of(context).pop(); // remove confirmation window
     Navigator.of(context).pop(); // remove inital entry window
     Navigator.pushReplacement(
         context, DashboardPage.route()); // Move to dashboard w/o encryption
+    await settings.save();
   }
 
   void _attemptLogin(BuildContext context) async {
