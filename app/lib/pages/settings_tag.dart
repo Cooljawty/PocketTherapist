@@ -48,7 +48,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
 		}
 
     //check for duplicates and add only unique names
-    if (!settings.tagList.any((tag) => (tag as Tag).name == name)) {
+    if (!settings.tagList.any((tag) => (tag).name == name)) {
 			showDialog(
 				context: context,
 				builder: (context) {
