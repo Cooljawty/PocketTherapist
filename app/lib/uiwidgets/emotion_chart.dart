@@ -97,6 +97,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 							),
 							//Create a line for each emotion 
 							lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
+									show: entry.value.any((value) => value.y != 0),
 									spots: entry.value,
 									color: emotionlist[entry.key]!.color,
 									dotData: const FlDotData( show: false, ),
