@@ -8,25 +8,26 @@ void main() {
 
   testWidgets('Remove an entry from the list.', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: EntriesPage()));
-    final entry = entries[0].getTitle();
-    final entryKey = find.byKey(ValueKey(entry));
+    final entry = entries[0].getID().toString();
+    final entryKey = Key(entry);
+    Finder entryFinder = find.byKey(ValueKey(entry));
     await tester.pump();
 
     //confirm that entry exist
-    expect(find.text(entry), findsOneWidget);
+    expect(find.byKey(entryKey), findsOneWidget);
 
     //Drag the entry, then tap cancel button
-    await tester.drag(entryKey, const Offset(-500, 0));
+    await tester.drag(entryFinder, const Offset(-500, 0));
     await tester.pumpAndSettle();
     await tester.tap(find.text("CANCEL"));
     await tester.pumpAndSettle();
-    expect(find.text(entry), findsOneWidget);
+    expect(find.byKey(entryKey), findsOneWidget);
 
     //Drag the entry, then tap delete button
-    await tester.drag(entryKey, const Offset(-500, 0));
+    await tester.drag(entryFinder, const Offset(-500, 0));
     await tester.pumpAndSettle();
     await tester.tap(find.text("DELETE"));
     await tester.pumpAndSettle();
-    expect(find.text(entry), findsNothing);
+    expect(find.byKey(entryKey), findsNothing);
   });
 }

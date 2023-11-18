@@ -122,8 +122,12 @@ class _EntriesPageState extends State<EntriesPage> {
                         Dismissible(
                           // Each Dismissible must contain a Key. Keys allow Flutter to
                           // uniquely identify widgets.
-                          key: Key(item.getTitle()),
-                          // this has to change later
+
+                          // Issue with the key, needs to be specific id, not a
+                          // name or will receive error that dismissible is still
+                          // in the tree
+                          key: Key(item.getID().toString()),
+
                           //prevents right swipes
                           direction: DismissDirection.endToStart,
 
@@ -165,12 +169,21 @@ class _EntriesPageState extends State<EntriesPage> {
                     );// if in the same filter header list, then just make a new entry
                   },
                 )),
-            ElevatedButton(
-                onPressed: () {
-                  makeNewEntry();
-                },
-                key: const Key("New Entry"),
-                child: const Text('New Entry')
+            Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          makeNewEntry();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                        ),
+                        key: const Key("New Entry"),
+                        child: const Icon(Icons.add)
+                    )
+                )
             ),
           ],
         ),
@@ -221,41 +234,6 @@ List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDispl
   }
   return filteredList;
 }
-// Are we not using this anymore?
-// Shouldn't this be in new_entry.dart?
-//
-// class Bar extends StatelessWidget {
-//   const Bar({super.key});
-//
-//   @override
-//   //Creates the OverflowBar for the plan, tag, and save buttons
-//   Widget build(BuildContext context) {
-//     return Container(
-//         color: getCurrentTheme().colorScheme.onBackground,
-//         child: Row(
-//           children: [
-//             OverflowBar(
-//               spacing: 50,
-//               overflowAlignment: OverflowBarAlignment.center,
-//               children: <Widget>[
-//                 TextButton(
-//                     key: const Key("planButton"),
-//                     child: const Text('Plan'),
-//                     onPressed: () {}),
-//                 TextButton(
-//                     key: const Key("tagButton"),
-//                     child: const Text('Tag'),
-//                     onPressed: () {}),
-//                 TextButton(
-//                     key: const Key("saveButton"),
-//                     child: const Text('Save'),
-//                     onPressed: () {}),
-//               ],
-//             )
-//           ],
-//         ));
-//   }
-// }
 
 extension Formatter on DateTime {
   // Get the month string

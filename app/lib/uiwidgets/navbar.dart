@@ -6,8 +6,8 @@ import 'package:app/pages/settings.dart';
 
 import 'package:flutter/material.dart';
 
-/// NavBar provieds a navigation bar at the bottom of the screen that contains links to diffrent pages.
-/// Each link, or Destination, is defiend by the page that includes the NavBar.
+/// NavBar provides a navigation bar at the bottom of the screen that contains links to different pages.
+/// Each link, or Destination, is defined by the page that includes the NavBar.
 class NavBar extends StatelessWidget{
 	final List<Destination> destinations;
 
@@ -36,7 +36,7 @@ class NavBar extends StatelessWidget{
 
 }
 
-///Defines a destinaton on the NavBar. Comes with an icon and a route to the page, and a label.
+///Defines a destination on the NavBar. Comes with an icon and a route to the page, and a label.
 ///The label also works as a key to the widget.
 class Destination {
 	final String label;

@@ -62,8 +62,8 @@ class ThemeSettings with ChangeNotifier {
 
     //Set of 30 colors that can be used to customize widgets further if needed
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent).copyWith(
-        //these can be accessed by widgets to set their color to match the dark theme
-        //used with standardButton
+      //these can be accessed by widgets to set their color to match the dark theme
+      //used with standardButton
         brightness: Brightness.dark,
         background: Colors.deepPurple.shade300,
         onBackground: Colors.deepPurpleAccent,
@@ -92,7 +92,7 @@ class ThemeSettings with ChangeNotifier {
 
     //theme for customizing dropdownmenu widgets, does not affect DropdownButtonFormField
     dropdownMenuTheme: DropdownMenuThemeData(
-        //textStyle: , by default textstyle is set to darkTheme.textTheme
+      //textStyle: , by default textstyle is set to darkTheme.textTheme
         menuStyle: MenuStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
         ),
@@ -102,18 +102,18 @@ class ThemeSettings with ChangeNotifier {
     //dark elevated button theme, controls the default look of all elevated buttons
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-      backgroundColor:
+          backgroundColor:
           MaterialStateProperty.all<Color>(Colors.deepPurpleAccent.shade200),
-      elevation: MaterialStateProperty.all<double?>(10.0),
-      //color of the text of elevated button
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-      //fixed sized initially set to match standardElevatedButton size
-      fixedSize: MaterialStateProperty.all<Size>(const Size(350, 50)),
-      //default will be used but can be overwritten to give text better sizing
-      textStyle: MaterialStateProperty.all<TextStyle>(
-          const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600)),
-      shadowColor: MaterialStateProperty.all<Color>(Colors.black),
-    )),
+          elevation: MaterialStateProperty.all<double?>(10.0),
+          //color of the text of elevated button
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+          //fixed sized initially set to match standardElevatedButton size
+          fixedSize: MaterialStateProperty.all<Size>(const Size(350, 50)),
+          //default will be used but can be overwritten to give text better sizing
+          textStyle: MaterialStateProperty.all<TextStyle>(
+              const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600)),
+          shadowColor: MaterialStateProperty.all<Color>(Colors.black),
+        )),
 
     //dark floating button theme
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -128,10 +128,10 @@ class ThemeSettings with ChangeNotifier {
     //IconButton theme is used in fields.dart so override to control its color scheme
     iconButtonTheme: const IconButtonThemeData(
         style: ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(Colors.transparent),
-      elevation: MaterialStatePropertyAll(10.0),
-      foregroundColor: MaterialStatePropertyAll(Colors.white),
-    )),
+          backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+          elevation: MaterialStatePropertyAll(10.0),
+          foregroundColor: MaterialStatePropertyAll(Colors.white),
+        )),
     //icon theme
     iconTheme: const IconThemeData(
       color: Colors.white,
@@ -147,7 +147,7 @@ class ThemeSettings with ChangeNotifier {
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.deepPurple.shade900,
       iconTheme:
-          const MaterialStatePropertyAll(IconThemeData(color: Colors.white)),
+      const MaterialStatePropertyAll(IconThemeData(color: Colors.white)),
       indicatorColor: Colors.grey,
     ),
     //navigationDrawerTheme
@@ -172,14 +172,14 @@ class ThemeSettings with ChangeNotifier {
     //Theme used for creating default appearance of all Textbuttons
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-      backgroundColor:
+          backgroundColor:
           MaterialStatePropertyAll(Colors.deepPurple.withOpacity(0.5)),
-      foregroundColor: const MaterialStatePropertyAll(Colors.black),
-    )),
+          foregroundColor: const MaterialStatePropertyAll(Colors.black),
+        )),
 
     //Used to set the theme of content selected within a textField widgets
     textSelectionTheme:
-        TextSelectionThemeData(selectionColor: Colors.deepPurple.shade300),
+    TextSelectionThemeData(selectionColor: Colors.deepPurple.shade300),
 
     //dark text theme for all default widgets, should be used before declaring new text style
     textTheme: const TextTheme(
@@ -266,8 +266,8 @@ class ThemeSettings with ChangeNotifier {
 
     //Set of 30 colors that can be used to customize widgets further if needed
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF)).copyWith(
-        //these can be accessed by widgets to set their color to match the light theme
-        //used with standardButton
+      //these can be accessed by widgets to set their color to match the light theme
+      //used with standardButton
         brightness: Brightness.light,
         background: Colors.white,
         onBackground: Colors.deepPurple,
@@ -296,7 +296,7 @@ class ThemeSettings with ChangeNotifier {
 
     //theme for customizing dropdownmenu widgets, does not affect DropdownButtonFormField
     dropdownMenuTheme: DropdownMenuThemeData(
-        //textStyle: , by default textstyle is set to lightTheme.textTheme
+      //textStyle: , by default textstyle is set to lightTheme.textTheme
         menuStyle: MenuStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
         ),
@@ -306,18 +306,18 @@ class ThemeSettings with ChangeNotifier {
     //light elevated button theme, controls the default look of all elevated buttons
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-      backgroundColor:
+          backgroundColor:
           MaterialStateProperty.all<Color>(Colors.deepPurpleAccent.shade100),
-      elevation: MaterialStateProperty.all<double?>(10.0),
-      //color of the text of elevated button
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-      //fixed sized initially set to match standardElevatedButton size
-      fixedSize: MaterialStateProperty.all<Size>(const Size(350, 50)),
-      //default will be used but can be overwritten to give text better sizing
-      textStyle: MaterialStateProperty.all<TextStyle>(
-          const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600)),
-      shadowColor: MaterialStateProperty.all<Color>(Colors.black),
-    )),
+          elevation: MaterialStateProperty.all<double?>(10.0),
+          //color of the text of elevated button
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+          //fixed sized initially set to match standardElevatedButton size
+          fixedSize: MaterialStateProperty.all<Size>(const Size(350, 50)),
+          //default will be used but can be overwritten to give text better sizing
+          textStyle: MaterialStateProperty.all<TextStyle>(
+              const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600)),
+          shadowColor: MaterialStateProperty.all<Color>(Colors.black),
+        )),
 
     //light floating button theme
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -332,10 +332,10 @@ class ThemeSettings with ChangeNotifier {
     //IconButton theme is used in fields.dart so override to control its color scheme
     iconButtonTheme: const IconButtonThemeData(
         style: ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(Colors.transparent),
-      elevation: MaterialStatePropertyAll(10.0),
-      foregroundColor: MaterialStatePropertyAll(Colors.grey),
-    )),
+          backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+          elevation: MaterialStatePropertyAll(10.0),
+          foregroundColor: MaterialStatePropertyAll(Colors.grey),
+        )),
     //icon theme
     iconTheme: const IconThemeData(
       color: Colors.grey,
@@ -351,7 +351,7 @@ class ThemeSettings with ChangeNotifier {
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.deepPurple.shade300,
       iconTheme:
-          const MaterialStatePropertyAll(IconThemeData(color: Colors.black)),
+      const MaterialStatePropertyAll(IconThemeData(color: Colors.black)),
       indicatorColor: Colors.white,
     ),
     //navigationDrawerTheme
@@ -376,14 +376,14 @@ class ThemeSettings with ChangeNotifier {
     //Theme used for creating default appearance of all Textbuttons
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-      backgroundColor:
+          backgroundColor:
           MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.5)),
-      foregroundColor: const MaterialStatePropertyAll(Colors.black),
-    )),
+          foregroundColor: const MaterialStatePropertyAll(Colors.black),
+        )),
 
     //Used to set the theme of content selected within a textField widgets
     textSelectionTheme:
-        TextSelectionThemeData(selectionColor: Colors.deepPurple.shade100),
+    TextSelectionThemeData(selectionColor: Colors.deepPurple.shade100),
 
     //light text theme for all default widgets, should be used before declaring new text style
     textTheme: const TextTheme(
@@ -427,7 +427,7 @@ class ThemeSettings with ChangeNotifier {
   ];
 
   String currentThemeName =
-      settings.getCurrentTheme() == ThemeSettings.lightTheme ? 'Light' : 'Dark';
+  settings.getCurrentTheme() == ThemeSettings.lightTheme ? 'Light' : 'Dark';
   ThemeData get theme => settings.getCurrentTheme();
 
   changeTheme(String theme) {

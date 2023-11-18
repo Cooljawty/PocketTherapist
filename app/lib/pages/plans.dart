@@ -23,7 +23,7 @@ class _PlansPageState extends State<PlansPage> {
 				),
 			),
 			bottomNavigationBar: NavBar(
-				selectedIndex: 1,
+				selectedIndex: 3,
 				destinations: [
 					destinations['dashboard']!,
 					destinations['entries']!,
