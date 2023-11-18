@@ -52,13 +52,21 @@ class _CalendarState extends State<Calendar> {
 			}
 		}
 
-		return GridView.count(
-			key: const Key("Calendar_Panel"),
-			crossAxisCount: 7,
-			padding: const EdgeInsets.all(4.0),
-			shrinkWrap: true,
-			//Calculating each day
-			children: _getCalendarDays(),
+		return Card(
+			child: Column(
+				children: [
+					Text("Month", style: Theme.of(context).textTheme.titleLarge),
+					Divider(),
+					GridView.count(
+						key: const Key("Calendar_Panel"),
+						crossAxisCount: 7,
+						padding: const EdgeInsets.all(4.0),
+						shrinkWrap: true,
+						//Calculating each day
+						children: _getCalendarDays(),
+					),
+				]
+			),
 		);
 	}
 }
