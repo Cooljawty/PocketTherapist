@@ -4,11 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app/uiwidgets/cards.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
-import 'package:integration_test/integration_test.dart';
 
 void main() {
-	IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
 
 	// Initialize Values--------------------------------------------------
   //tearDown(() async => await settings.reset());
