@@ -263,8 +263,8 @@ class _TagSettingsState extends State<TagSettingsPage> {
             ),
           ),
         ),
-				),
-			);
+			),
+		);
   }
 
 }

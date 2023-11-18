@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
 
+import 'package:app/helper/classes.dart';
 import 'package:app/pages/entry.dart';
 
 import 'package:app/provider/settings.dart';
@@ -66,9 +67,9 @@ class _EmotionGraphState extends State<EmotionGraph> {
 				final dayIndex = getX(entry).floor();
 				//Set the y position has the highest intensity of the day
 				if (dayIndex < _emotionData[emotion.name]!.length) {
-					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), math.max(_emotionData[emotion.name]![dayIndex].y, emotion.strength));
+					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), math.max(_emotionData[emotion.name]![dayIndex].y, emotion.strength.toDouble()));
 				} else {
-					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), emotion.strength);
+					_emotionData[emotion.name]![dayIndex] = FlSpot(getX(entry), emotion.strength.toDouble());
 				}
 			}
 		} 	
