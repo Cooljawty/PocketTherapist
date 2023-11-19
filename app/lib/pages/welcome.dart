@@ -29,6 +29,14 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage>
     with SingleTickerProviderStateMixin {
+
+  //
+  @override
+  dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 1),

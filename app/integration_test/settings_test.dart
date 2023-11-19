@@ -43,13 +43,15 @@ void main() {
       settings.encryptionToggleKey: false,
     });
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     await widgetTester.tap(find.byKey(const Key("Settings_Button")));
-    await widgetTester.pumpAndSettle();
+
+    do{
+      await widgetTester.pump();
+    }while(widgetTester.widgetList(find.byKey(const ValueKey('StyleDropDown'))).isEmpty);
 
     // Find the drop down
-    
     final dropdown = find.byKey(const ValueKey('StyleDropDown'));
 
     // Tap the drop down
