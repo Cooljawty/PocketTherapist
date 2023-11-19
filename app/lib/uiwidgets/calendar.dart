@@ -27,6 +27,7 @@ class _CalendarState extends State<Calendar> {
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
 	Widget _displayDay(day, {outOfRange = false}) => Container(
+		key: const Key("Calendar_Day"),
 		alignment: Alignment.center,
 		margin: const EdgeInsets.all(4.0),
 		decoration: ShapeDecoration(
@@ -96,6 +97,7 @@ class _CalendarState extends State<Calendar> {
 						}).toList(),
 					),
 					GridView.count(
+						key: const Key("Calendar_Grid"),
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
 						shrinkWrap: true,
