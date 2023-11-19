@@ -10,6 +10,7 @@ enum ThemeOption {
 
 class ThemeSettings with ChangeNotifier {
   // To change the theme
+
   static ThemeData darkTheme = ThemeData(
     //can be used to customize back button icon, left default
     //actionIconTheme: ,
@@ -212,7 +213,8 @@ class ThemeSettings with ChangeNotifier {
           color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.w500),
     ),
 
-    useMaterial3: true,
+
+
   );
 
   static ThemeData lightTheme = ThemeData(

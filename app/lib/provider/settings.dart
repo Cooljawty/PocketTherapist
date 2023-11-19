@@ -67,7 +67,6 @@ Future<void> load() async {
   // Else settings exists, load them.
   else {
     String fileContent = await _settingsFile!.readAsString();
-    debugPrint(fileContent);
     if (fileContent.isEmpty) {
       // Settings file exists but empty, save the defaults
       _assignDefaults();
@@ -90,7 +89,6 @@ Future<void> load() async {
         }
       }
 
-      debugPrint(tagList.length.toString());
 
       //load emotions
       if (_settings['emotions'] != null) {
@@ -189,13 +187,14 @@ void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
 void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
 void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
 void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
-void setPassword(String newPassword) async {
-  await encryptor.setPassword(newPassword);
-}
+Future<void> setPassword(String newPassword) async => encryptor.setPassword(newPassword);
 
 void setMockValues(Map<String, dynamic> value) {
   reset();
   _settings.addAll(value);
+  if (_settings.containsKey('enc')) {
+    encryptor.load(_settings['enc']);
+  }
 }
 
 /// Getters --------------------------
