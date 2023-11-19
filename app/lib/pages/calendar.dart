@@ -17,12 +17,14 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
+		final firstOfTheMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
+		final lastOfTheMonth = DateTime(DateTime.now().year, DateTime.now().month + 1, 1).subtract(Duration(days: 1));
     return Scaffold(
 			body: SafeArea(
 				child: Column(
 					children: [
 						Text('Calendar'),
-						Calendar(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 31)),
+						Calendar(startDate: firstOfTheMonth, endDate: lastOfTheMonth),
 					],
 				),
 			),
