@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:app/helper/classes.dart';
+import 'package:app/pages/entry.dart';
+
 import 'package:app/helper/dates_and_times.dart' as date;
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/pages/entry.dart';
+
+import 'package:app/pages/entries.dart';
 
 class Calendar extends StatefulWidget {
 	final DateTime startDate; 
@@ -26,21 +29,24 @@ class _CalendarState extends State<Calendar> {
 
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
-	Widget _displayDay(day, {outOfRange = false}) => Container(
-		key: const Key("Calendar_Day"),
-		alignment: Alignment.center,
-		margin: const EdgeInsets.all(4.0),
-		decoration: ShapeDecoration(
-			color: outOfRange ? Colors.transparent : _emotionData[day].color, 
-			shape: CircleBorder(),
-		),
-		child: Text(
-			"${day+1}", 
-			//Have days outside of the current month be greyed out
-			style: outOfRange ? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(
-				color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5)
-			)
-			: settings.getCurrentTheme().textTheme.labelLarge,
+	Widget _displayDay(day, {outOfRange = false}) => GestureDetector(
+		onTap: () => Navigator.of(context).push(EntriesPage.route()),
+		child: Container(
+			key: const Key("Calendar_Day"),
+			alignment: Alignment.center,
+			margin: const EdgeInsets.all(4.0),
+			decoration: ShapeDecoration(
+				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
+				shape: CircleBorder(),
+			),
+			child: Text(
+				"${day+1}", 
+				//Have days outside of the current month be greyed out
+				style: outOfRange ? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(
+					color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5)
+				)
+				: settings.getCurrentTheme().textTheme.labelLarge,
+			),
 		),
 	);
 
@@ -244,6 +250,17 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			JournalEntry(
 				title: "", entryText: "", 
 				date: DateTime(2023, 11, 11), 
+			),
+			JournalEntry(
+				title: "Happy day", entryText: "", 
+				date: DateTime.now(), 
+				emotions: [
+					Emotion(
+						name: "Happy",
+						color: Color(0xfffddd68),
+						strength: 30,
+					),
+				]
 			),
 			JournalEntry(
 				title: "Happy day", entryText: "", 
