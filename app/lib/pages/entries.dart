@@ -9,7 +9,7 @@ class EntriesPage extends StatefulWidget {
 	final DateTime? startDate; 
 
   static Route<dynamic> route({startDate}) {
-    return MaterialPageRoute(builder: (context) => EntriesPage());
+    return MaterialPageRoute(builder: (context) => EntriesPage(startDate: startDate));
   }
 
   EntriesPage({super.key, this.startDate});

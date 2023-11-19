@@ -30,7 +30,7 @@ class _CalendarState extends State<Calendar> {
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
 	Widget _displayDay(day, {outOfRange = false}) => GestureDetector(
-		onTap: () => Navigator.of(context).push(EntriesPage.route()),
+		onTap: () => Navigator.of(context).push(EntriesPage.route(startDate: widget.startDate.add(Duration(days: day)))),
 		child: Container(
 			key: const Key("Calendar_Day"),
 			alignment: Alignment.center,
