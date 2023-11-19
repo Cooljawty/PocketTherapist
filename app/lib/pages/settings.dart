@@ -1,4 +1,5 @@
 import 'package:app/helper/file_manager.dart';
+import 'package:app/provider/settings.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/helper/classes.dart';
 
@@ -48,7 +49,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Container(
                       // Make the grey background
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: Color.fromRGBO(getCurrentTheme().colorScheme.primary.red,
+                            getCurrentTheme().colorScheme.primary.green,
+                            getCurrentTheme().colorScheme.primary.blue,
+                            getCurrentTheme().colorScheme.primary.alpha - 80),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
 
