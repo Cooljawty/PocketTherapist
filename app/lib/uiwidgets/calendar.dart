@@ -30,23 +30,35 @@ class _CalendarState extends State<Calendar> {
 		"December"
 	];
 
-	final _weekdays = ["Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur", "Sun"].map((day) {
+	final _weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) {
 		return Expanded( child: Text(day, textAlign: TextAlign.center) );
 	}).toList();
 
 
+	Widget _displayDay(day, {outOfRange = false}) => Container(
+		alignment: Alignment.center,
+		margin: const EdgeInsets.all(4.0),
+		decoration: ShapeDecoration(
+			color: outOfRange ? Colors.transparent : _emotionData[day].color, 
+			shape: CircleBorder(),
+		),
+		child: Text(
+			"${day+1}", 
+			style: outOfRange 
+			? Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).textTheme.labelLarge!.color!.withOpacity(0.5))
+			: Theme.of(context).textTheme.labelLarge,
+		),
+	);
+
 	List<Widget> _getCalendarDays() {
-		final datesInRange = <Card>[];
+		final datesInRange = <Widget>[];
 		for (var day = 0; day <= _daysFromDate(widget.endDate); day += 1) {
-			datesInRange.add( Card(
-				color: _emotionData[day].color, 
-				child: Text("${day+1}", style: Theme.of(context).textTheme.labelLarge),
-			));
+			datesInRange.add(_displayDay(day));
 		}
 
 		//Fill the start and end to line up weekdays
-		final prefix = List<Card>.filled(widget.startDate.weekday - 1, Card());
-		final suffix = List<Card>.filled(7 - widget.endDate.weekday, Card());
+		final prefix = List<Widget>.generate(widget.startDate.weekday - 1, (day) => _displayDay(widget.startDate!.subtract(Duration(days: 1)).day - day, outOfRange: true));
+		final suffix = List<Widget>.generate(7 - widget.endDate.weekday, (day) => _displayDay(day, outOfRange: true));
 
 		return prefix + datesInRange + suffix;
 	}
@@ -68,14 +80,17 @@ class _CalendarState extends State<Calendar> {
 		return Card(
 			child: Column(
 				children: [
-					Text(_months[widget.startDate.month]!, style: Theme.of(context).textTheme.titleLarge),
+					Container(
+						margin: const EdgeInsets.only(top: 13),
+						child: Text(_months[widget.startDate.month]!, style: Theme.of(context).textTheme.titleLarge)
+					),
 					Divider(),
-					Row( children: _weekdays,),
+					Row( children: _weekdays ),
 					GridView.count(
 						key: const Key("Calendar_Panel"),
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
-						childAspectRatio: 0.8,
+						//childAspectRatio: 0.8,
 						shrinkWrap: true,
 						//Calculating each day
 						children: _getCalendarDays(),
@@ -85,6 +100,7 @@ class _CalendarState extends State<Calendar> {
 		);
 	}
 }
+
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
 			JournalEntry(
@@ -153,35 +169,73 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				]
 			),
 			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 1, 4), 
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 1, 5), 
+				title: "Day one entry 1", entryText: "", 
+				date: DateTime(2023, 1, 17), 
 				emotions: [
 					Emotion(
 						name: "Sad",
 						color: Colors.blue,
-						strength: 5,
-					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 18,
+						strength: 60,
 					),
 				]
 			),
 			JournalEntry(
-				title: "Happy day", entryText: "", 
-				date: DateTime(2023, 1, 31), 
+				title: "Day one entry 2", entryText: "", 
+				date: DateTime(2023, 1, 25), 
 				emotions: [
 					Emotion(
-						name: "Sonder",
-						color: Colors.orange,
+						name: "Sad",
+						color: Colors.blue,
 						strength: 30,
 					),
 				]
+			),
+			JournalEntry(
+				title: "", entryText: "", 
+				date: DateTime(2023, 1, 30), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 30,
+					),
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 8,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 1", entryText: "", 
+				date: DateTime(2023, 1, 26), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 15,
+					),
+					Emotion(
+						name: "Happy",
+						color: Colors.green,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 2", entryText: "", 
+				date: DateTime(2023, 1, 12), 
+				emotions: [
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "", entryText: "", 
+				date: DateTime(2023, 1, 11), 
 			),
 			JournalEntry(
 				title: "Happy day", entryText: "", 
