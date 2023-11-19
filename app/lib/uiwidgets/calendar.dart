@@ -77,6 +77,7 @@ class _CalendarState extends State<Calendar> {
 		}
 
 		return Card(
+			key: const Key("Calendar_Panel"),
 			child: Column(
 				children: [
 					Container(
@@ -95,7 +96,6 @@ class _CalendarState extends State<Calendar> {
 						}).toList(),
 					),
 					GridView.count(
-						key: const Key("Calendar_Panel"),
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
 						shrinkWrap: true,
