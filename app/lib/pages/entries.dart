@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 
-class EntriesPage extends StatefulWidget {
-	final List<JournalEntry> entries;
+import 'package:app/helper/classes.dart'; //TODO implement database search
 
-  static Route<dynamic> route({entries}) {
-    return MaterialPageRoute(builder: (context) => EntriesPage(entries: entries ?? []));
+class EntriesPage extends StatefulWidget {
+	final DateTime? startDate; 
+
+  static Route<dynamic> route({startDate}) {
+    return MaterialPageRoute(builder: (context) => EntriesPage());
   }
 
-  EntriesPage({super.key, this.entries = const <JournalEntry>[]});
+  EntriesPage({super.key, this.startDate});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -30,7 +32,29 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
     //showAllItems = false;
-    sortedItems = getFilteredList(widget.entries, chosenDisplay, showAllItems);
+
+		//Show entreis in range of given date or from today
+		final today = widget.startDate ?? DateTime.now();
+		var entries = <JournalEntry>[];
+		switch(chosenDisplay) {
+			case "Week":
+				entries = entriesBetween(
+					today.subtract(Duration(days: today.weekday - 1)), 
+					today.add(Duration(days: 7 - today.weekday))
+				);
+			case "Month":
+				entries = entriesBetween(
+					DateTime(today.year, today.month, 1), 
+					DateTime(today.year, today.month+1, 1).subtract(Duration(days:1))
+				);
+			case "Year":
+				entries = entriesBetween(
+					DateTime(today.year, 1, 1), 
+					DateTime(today.year+1, 1, 1).subtract(Duration(days:1))
+				);
+		}
+
+    sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
     return Scaffold(
       body: SafeArea(
@@ -124,7 +148,6 @@ class _EntriesPageState extends State<EntriesPage> {
                             // Remove the item from the data source.
                             setState(() {
 															//TODO Delete from database
-                              widget.entries.removeAt(index);
                             });
 
                             // Then show a snackBar w/ item name as dismissed message
@@ -192,7 +215,6 @@ class _EntriesPageState extends State<EntriesPage> {
     final result = await Navigator.push(context, NewEntryPage.route());
     setState(() {
 			//TODO Add new entry to database
-      widget.entries.add(result);
     });
   }
 }
@@ -268,4 +290,191 @@ extension Formatter on DateTime {
     // return the difference between the start and end date by week rounded up
     return (end.difference(start).inDays / 7).ceil();
   }
+}
+
+//TODO replace with database
+List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
+	final testEntries = <JournalEntry>[
+			JournalEntry(
+				title: "Day one entry 1", entryText: "", 
+				date: DateTime(2023, 11, 1), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day one entry 2", entryText: "", 
+				date: DateTime(2023, 11, 1), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "", entryText: "", 
+				date: DateTime(2023, 11, 2), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 30,
+					),
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 8,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 1", entryText: "", 
+				date: DateTime(2023, 11, 3), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 15,
+					),
+					Emotion(
+						name: "Happy",
+						color: Colors.green,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 2", entryText: "", 
+				date: DateTime(2023, 11, 3), 
+				emotions: [
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day one entry 1", entryText: "", 
+				date: DateTime(2023, 11, 17), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day one entry 2", entryText: "", 
+				date: DateTime(2023, 11, 25), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "", entryText: "", 
+				date: DateTime(2023, 11, 30), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 30,
+					),
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 8,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 1", entryText: "", 
+				date: DateTime(2023, 11, 26), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 15,
+					),
+					Emotion(
+						name: "Happy",
+						color: Colors.green,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Day thrree entry 2", entryText: "", 
+				date: DateTime(2023, 11, 12), 
+				emotions: [
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "", entryText: "", 
+				date: DateTime(2023, 11, 11), 
+			),
+			JournalEntry(
+				title: "Happy day", entryText: "", 
+				date: DateTime.now(), 
+				emotions: [
+					Emotion(
+						name: "Happy",
+						color: Color(0xfffddd68),
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Happy day", entryText: "", 
+				date: DateTime(2023, 11, 24), 
+				emotions: [
+					Emotion(
+						name: "Happy",
+						color: Colors.green,
+						strength: 30,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Out of range entry", entryText: "", 
+				date: DateTime(2023, 11, 14), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 60,
+					),
+					Emotion(
+						name: "Happy",
+						color: Colors.green,
+						strength: 30,
+					),
+					Emotion(
+						name: "Angry",
+						color: Colors.red,
+						strength: 30,
+					),
+				]
+			),
+		];
+
+	testEntries.retainWhere((e) => ( !e.getDate().isBefore(start) && !e.getDate().isAfter(end)));
+	testEntries.sort((a, b) => a.getDate().compareTo(b.getDate()));
+	return testEntries;
 }
