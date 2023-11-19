@@ -1,17 +1,22 @@
-
+// Page imports
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/settings.dart';
+
+// Provider imports
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/uiwidgets/buttons.dart';
 import 'package:app/provider/theme_settings.dart';
-//add line for field import
+
+// Widget imports
+import 'package:app/uiwidgets/buttons.dart';
+import '../uiwidgets/decorations.dart';
 import 'package:app/uiwidgets/fields.dart';
+
+// Dependency imports
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:wave/config.dart';
-import '../uiwidgets/decorations.dart';
 import 'package:wave/wave.dart';
-import 'dart:math' as math;
 import 'package:flutter/services.dart';
 
 //create welcome page class like in app example starting with stateful widget
@@ -101,27 +106,6 @@ class _WelcomePageState extends State<WelcomePage>
               ),
             ),
 
-            // Wavy circle behind logo
-            Container(
-              padding: const EdgeInsets.only(top: 50),
-              alignment: Alignment.topCenter,
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (_, child) {
-                  return Transform.rotate(
-                    angle: _controller.value * .12 * math.pi,
-                    child: child,
-                  );
-                },
-                child: Image.asset(
-                  'assets/circleCutOut.png',
-                  scale: .85,
-                  color: darkenColor(
-                      settings.getCurrentTheme().colorScheme.primary, .1),
-                ),
-              ),
-            ),
-
             // Intractable widgets and the logo
             SingleChildScrollView(
               child: SizedBox(
@@ -134,63 +118,89 @@ class _WelcomePageState extends State<WelcomePage>
                   children: <Widget>[
                     const Padding(padding: EdgeInsets.only(top: 50)),
 
-                    // Logo with catch phrase
+                    // Contains the logo, spinning circle, and catch phrase
                     SizedBox(
-                        height: 250,
-                        width: 250,
-                        child: Column(
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
                           children: [
-                            const Image(
-                              image: AssetImage('assets/logoSmall.png'),
-                            ),
-                            Transform(
-                              transform: Matrix4.translationValues(0, -37, 0),
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 190,
-                                height: 30,
-                                decoration: BoxDecoration(
+                            // Wavy circle behind logo
+                            Container(
+                              alignment: Alignment.topCenter,
+                              child: AnimatedBuilder(
+                                animation: _controller,
+                                builder: (_, child) {
+                                  return Transform.rotate(
+                                    angle: _controller.value * .12 * math.pi,
+                                    child: child,
+                                  );
+                                },
+                                child: Image.asset(
+                                  'assets/circleCutOut.png',
+                                  scale: .8,
                                   color: darkenColor(
-                                      settings.getCurrentTheme()
-                                          .colorScheme
-                                          .primary,
-                                      0.1),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15.0)),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'How are you ',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      ' really ',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
-                                            color: Colors.amber,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      ' feeling?',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                      settings.getCurrentTheme().colorScheme.primary, .1),
                                 ),
                               ),
                             ),
+
+                            // Logo
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Image(
+                                  image: AssetImage('assets/logoSmall.png'),
+                                ),
+                                Transform(
+                                  transform: Matrix4.translationValues(0, -37, 0),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: 190,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: darkenColor(
+                                          settings.getCurrentTheme()
+                                              .colorScheme
+                                              .primary,
+                                          0.1),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15.0)),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'How are you ',
+                                          style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          ' really ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                            color: Colors.amber,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          ' feeling?',
+                                          style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
-                        )),
+                        )
+                    ),
                     // ),
 
                     // Buttons
