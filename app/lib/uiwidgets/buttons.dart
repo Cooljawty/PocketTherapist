@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/provider/theme_settings.dart';
 
 
 /// Button that can do something with an elevation component
@@ -25,6 +26,10 @@ class StandardElevatedButton extends StatelessWidget {
           elevation: elevation,
           shadowColor: shadowColor,
           backgroundColor: backgroundColor,
+            side: BorderSide(
+                color: darkenColor(Theme.of(context).colorScheme.primary, .1),
+                width: 3
+            ),
         ),
         child:  child,
       )

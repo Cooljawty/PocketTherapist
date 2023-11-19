@@ -10,13 +10,13 @@ void main() {
     IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
     app.main();
-    await tester.pumpAndSettle();
+    await tester.pump();
 
 		//Press start
     Finder startbutton = find.byKey(const Key("Start_Button"));
     expect(startbutton, findsOneWidget);
     await tester.tap(startbutton);
-    await tester.pumpAndSettle();
+    await tester.pump();
 
 		//Skip password creation
     Finder encryptionAlert = find.byType(AlertDialog);
@@ -25,15 +25,17 @@ void main() {
     Finder enterPasswordButton = find.byKey(const Key('Create_Password'));
 
     await tester.tap(enterPasswordButton);
-    await tester.pumpAndSettle();
+    await tester.pump();
     encryptionAlert = find.byType(AlertDialog);
     expect(encryptionAlert, findsNWidgets(2)); 
 
     Finder confirmPasswordButton = find.text("Yes");
     expect(confirmPasswordButton, findsOneWidget);
     await tester.tap(confirmPasswordButton);
-    await tester.pumpAndSettle();
-		
+
+    do{
+      await tester.pump();
+    }while(tester.widgetList(find.text("Dashboard")).isEmpty);
 
 		//Should be on the dashboard
 		expect(find.text("Dashboard"), findsWidgets);

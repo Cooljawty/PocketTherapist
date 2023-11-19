@@ -50,6 +50,7 @@ dependencies:
   multi_select_flutter: ^4.1.3
   system_info2: ^4.0.0
   hashlib: ^1.12.0
+  wave: ^0.2.2
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +91,7 @@ flutter:
      - assets/GlassesFrame2.png
      - assets/GlassesFrame3.png
      - assets/GlassesFrame4.png
+     - assets/circleCutOut.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

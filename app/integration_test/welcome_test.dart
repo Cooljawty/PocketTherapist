@@ -5,7 +5,9 @@ import 'package:integration_test/integration_test.dart';
 import 'package:app/provider/settings.dart' as settings;
 
 void main() async {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() {
+    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  });
 
   tearDown(() async {
     await settings.reset();
@@ -16,7 +18,7 @@ void main() async {
     const String badPassword = "password123";
 
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
     // This is a ripped hash from  an actual install so it should function the same everytime.
     Map<String, Object> settingsMap = {
       "configured": true,
@@ -42,12 +44,12 @@ void main() async {
       ]
     };
     settings.setMockValues(settingsMap);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     Finder startbutton = find.byKey(const Key("Start_Button"));
     await expectLater(startbutton, findsOneWidget);
     await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
 // First alert box - Enter password ---------------------------------------------[
     Finder encryptionAlert = find.byType(AlertDialog);
@@ -62,33 +64,33 @@ void main() async {
     await widgetTester.runAsync(() async {
 
       await widgetTester.enterText(passwordField, badPassword);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
 
       /// Submit the first password ( stores it )
       Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
       await widgetTester.tap(enterPasswordButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
 
       Finder confirmIncorrectButton = find.byKey(const Key("Incorrect_Password"));
       await widgetTester.tap(confirmIncorrectButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
 
     });
     await widgetTester.enterText(passwordField, password);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     Finder seePasswordButton = find.byType(IconButton);
     await widgetTester.tap(seePasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
     await widgetTester.tap(seePasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     await widgetTester.runAsync(() async {
       Finder enterPasswordButton = find.byKey(const Key('Submit_Password'));
       await widgetTester.tap(enterPasswordButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
     });
-
+    await widgetTester.pumpAndSettle();
     //Successful login, on dashboard
     await expectLater(find.text("Dashboard"), findsNWidgets(2));
   });
@@ -96,12 +98,12 @@ void main() async {
   testWidgets("No Password Account creation", (widgetTester) async {
     String password = "";
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     Finder startbutton = find.byKey(const Key("Start_Button"));
     await expectLater(startbutton, findsOneWidget);
     await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
 // First alert box - Enter password ---------------------------------------------[
     Finder encryptionAlert = find.byType(AlertDialog);
@@ -114,14 +116,14 @@ void main() async {
 
 // Enter password ---------------------------------------------------------------
     await widgetTester.enterText(passwordField, password);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     /// Submit the first password ( stores it )
     Finder enterPasswordButton = find.byKey(const Key('Create_Password'));
 
 // Tap enter button to create password ----------------------------------------------
     await widgetTester.tap(enterPasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
     encryptionAlert = find.byType(AlertDialog);
     await expectLater(encryptionAlert,
         findsNWidgets(2)); // should be two alerts now, one on the other
@@ -138,12 +140,12 @@ void main() async {
   testWidgets(
       "No Password But Then Password Account creation", (widgetTester) async {
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     Finder startbutton = find.byKey(const Key("Start_Button"));
     await expectLater(startbutton, findsOneWidget);
     await widgetTester.tap(startbutton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
 // First alert box - Enter password ---------------------------------------------[
     Finder encryptionAlert = find.byType(AlertDialog);
@@ -155,7 +157,7 @@ void main() async {
 
 // Tap enter button to create password ----------------------------------------------
     await widgetTester.tap(enterPasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
     encryptionAlert = find.byType(AlertDialog);
     await expectLater(encryptionAlert,
         findsNWidgets(2)); // should be two alerts now, one on the other
@@ -164,12 +166,12 @@ void main() async {
     Finder confirmNoPasswordButton = find.text("No");
     await expectLater(confirmNoPasswordButton, findsOneWidget);
     await widgetTester.tap(confirmNoPasswordButton);
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
   });
 
   testWidgets("Reset Password w/ recovery code", (widgetTester) async {
       app.main();
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       // the recovery phrase
       String recovery = "46jDQvvpxNNsX7yb4mrg6F+e2lg=";
       // This is a ripped hash from  an actual install so it should function the same everytime.
@@ -198,36 +200,42 @@ void main() async {
       };
       settings.setMockValues(settingsMap);
 
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder resetButton = find.byKey(const Key("Reset_Button"));
       await widgetTester.tap(resetButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder passwordResetField = find.byKey(const Key("Reset_Password_Field"));
       Finder resetPasswordbutton = find.byKey(
           const Key("Reset_Password_Button"));
       await expectLater(passwordResetField, findsOneWidget);
       await widgetTester.enterText(passwordResetField, "PotatoChips");
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.enterText(passwordResetField, recovery);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
+
       okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
+
+      do{
+        await widgetTester.pump();
+      }while(widgetTester.widgetList(find.byKey(const Key("Success_Pass_Reset"))).isEmpty);
+
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await expectLater(find.text("Encryption?"), findsOneWidget);
   });
 
   testWidgets("Reset Password w/ password", (widgetTester) async {
       app.main();
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       String password = "password123@";
       // This is a ripped hash from  an actual install so it should function the same everytime.
       Map<String, Object> settingsMap = {
@@ -254,30 +262,34 @@ void main() async {
         ]
       };
       settings.setMockValues(settingsMap);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder resetButton = find.byKey(const Key("Reset_Button"));
       await widgetTester.tap(resetButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder passwordResetField = find.byKey(const Key("Reset_Password_Field"));
       Finder resetPasswordbutton = find.byKey(
           const Key("Reset_Password_Button"));
       await expectLater(passwordResetField, findsOneWidget);
       await widgetTester.enterText(passwordResetField, "PotatoChips");
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.enterText(passwordResetField, password);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pumpAndSettle();
+
+      do{
+        await widgetTester.pump();
+      }while(widgetTester.widgetList(find.byKey(const Key("Success_Pass_Reset"))).isEmpty);
+
       okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pumpAndSettle();
+      await widgetTester.pump();
       await expectLater(find.text("Encryption?"), findsOneWidget);
   });
 

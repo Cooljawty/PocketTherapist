@@ -27,7 +27,7 @@ void main() {
 	@override
 	Future<void> setUp(WidgetTester tester) async {
 		app.main();
-		await tester.pumpAndSettle();
+		await tester.pump();
 
 		// Set mock values in the settings
 		settings.setMockValues({
@@ -35,12 +35,13 @@ void main() {
 			settings.encryptionToggleKey: false,
 		});
 
-		await settings.load();
-
 		// Enter the app
 		Finder startButton = find.byKey(const Key("Start_Button"));
 		await tester.tap(startButton);
-		await tester.pumpAndSettle();
+
+		do{
+			await tester.pump();
+		}while(tester.widgetList(find.byKey(const Key("Navbar_Destination_Entries"))).isEmpty);
 
 		// Find the nav bar button for entries page
 		await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));

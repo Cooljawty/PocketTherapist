@@ -10,10 +10,14 @@ void main() {
       (widgetTester) async {
     //traverse to tag settings -------------------------------------------------
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
     expect(find.byKey(const Key("Settings_Button")), findsOneWidget);
     await widgetTester.tap(find.byKey(const Key("Settings_Button")));
-    await widgetTester.pumpAndSettle();
+
+    do{
+      await widgetTester.pump();
+    }while(widgetTester.widgetList(find.text("Edit Tag List")).isEmpty);
+
     expect(find.text('Edit Tag List'), findsOneWidget);
     await widgetTester.tap(find.text('Edit Tag List'));
     await widgetTester.pumpAndSettle();
