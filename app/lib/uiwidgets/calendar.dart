@@ -113,7 +113,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
 			JournalEntry(
 				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 1), 
+				date: DateTime(2023, 11, 1), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -124,7 +124,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 1), 
+				date: DateTime(2023, 11, 1), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -135,7 +135,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 2), 
+				date: DateTime(2023, 11, 2), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -151,7 +151,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 3), 
+				date: DateTime(2023, 11, 3), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -167,7 +167,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 3), 
+				date: DateTime(2023, 11, 3), 
 				emotions: [
 					Emotion(
 						name: "Angry",
@@ -178,7 +178,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 17), 
+				date: DateTime(2023, 11, 17), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -189,7 +189,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 25), 
+				date: DateTime(2023, 11, 25), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -200,7 +200,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 30), 
+				date: DateTime(2023, 11, 30), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -216,7 +216,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 26), 
+				date: DateTime(2023, 11, 26), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -232,7 +232,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 12), 
+				date: DateTime(2023, 11, 12), 
 				emotions: [
 					Emotion(
 						name: "Angry",
@@ -243,11 +243,11 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 11), 
+				date: DateTime(2023, 11, 11), 
 			),
 			JournalEntry(
 				title: "Happy day", entryText: "", 
-				date: DateTime(2023, 1, 24), 
+				date: DateTime(2023, 11, 24), 
 				emotions: [
 					Emotion(
 						name: "Happy",
@@ -258,7 +258,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Out of range entry", entryText: "", 
-				date: DateTime(2023, 1, 14), 
+				date: DateTime(2023, 11, 14), 
 				emotions: [
 					Emotion(
 						name: "Sad",

@@ -21,11 +21,15 @@ class _CalendarPageState extends State<CalendarPage> {
 		final lastOfTheMonth = DateTime(DateTime.now().year, DateTime.now().month + 1, 1).subtract(Duration(days: 1));
     return Scaffold(
 			body: SafeArea(
-				child: Column(
-					children: [
-						Text('Calendar'),
-						Calendar(startDate: firstOfTheMonth, endDate: lastOfTheMonth),
-					],
+				child: Padding(
+					padding: const EdgeInsets.fromLTRB(12, 12, 12, 18),
+					child: Align(
+						child: Column(
+							children: [
+								Calendar(startDate: firstOfTheMonth, endDate: lastOfTheMonth),
+							],
+						),
+					),
 				),
 			),
 			bottomNavigationBar: NavBar(
