@@ -1,6 +1,5 @@
 //Months
 const month = {
-	0: null, 
 	DateTime.january: "January",
 	DateTime.february: "February",
 	DateTime.march: "March",
@@ -14,3 +13,13 @@ const month = {
 	DateTime.december: "December",
 };
 
+//Weekdays
+const weekday = {
+	DateTime.monday: "Monday",
+	DateTime.tuesday: "Tuesday",
+	DateTime.wednesday: "Wednesday",
+	DateTime.thursday: "Thursday",
+	DateTime.friday: "Friday",
+	DateTime.saturday: "Saturday",
+	DateTime.sunday: "Sunday",
+};

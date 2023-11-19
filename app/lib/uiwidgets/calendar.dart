@@ -24,11 +24,6 @@ class _CalendarState extends State<Calendar> {
 
 	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
 
-	//Weekdays
-	final _weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) {
-		return Expanded( child: Text(day, textAlign: TextAlign.center) );
-	}).toList();
-
 	Widget _displayDay(day, {outOfRange = false}) => Container(
 		alignment: Alignment.center,
 		margin: const EdgeInsets.all(4.0),
@@ -79,12 +74,20 @@ class _CalendarState extends State<Calendar> {
 						child: Text(date.month[widget.startDate.month]!, style: settings.getCurrentTheme().textTheme.titleLarge)
 					),
 					Divider(),
-					Row( children: _weekdays ),
+					Row( 
+						children: date.weekday.values.map((weekday) {
+							return Expanded( 
+								child: Text(
+									weekday.substring(0,3),
+									textAlign: TextAlign.center
+								)
+							);
+						}).toList(),
+					),
 					GridView.count(
 						key: const Key("Calendar_Panel"),
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
-						//childAspectRatio: 0.8,
 						shrinkWrap: true,
 						//Calculating each day
 						children: _getCalendarDays(),
