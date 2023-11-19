@@ -24,6 +24,8 @@ class _CalendarState extends State<Calendar> {
 
 	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
 
+	///Displays a given day of the month in a container with the color set 
+	///according to the strongest emotion of that day (if any)
 	Widget _displayDay(day, {outOfRange = false}) => Container(
 		alignment: Alignment.center,
 		margin: const EdgeInsets.all(4.0),
@@ -33,12 +35,16 @@ class _CalendarState extends State<Calendar> {
 		),
 		child: Text(
 			"${day+1}", 
-			style: outOfRange 
-			? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5))
+			//Have days outside of the current month be greyed out
+			style: outOfRange ? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(
+				color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5)
+			)
 			: settings.getCurrentTheme().textTheme.labelLarge,
 		),
 	);
 
+	///Returns the full grid of dates including the days of the last and 
+	///next month that would be part of the week
 	List<Widget> _getCalendarDays() {
 		final datesInRange = <Widget>[];
 		for (var day = 0; day <= _daysFromDate(widget.endDate); day += 1) {
@@ -46,17 +52,21 @@ class _CalendarState extends State<Calendar> {
 		}
 
 		//Fill the start and end to line up weekdays
-		final prefix = List<Widget>.generate(widget.startDate.weekday - 1, (day) => _displayDay(widget.startDate!.subtract(Duration(days: 1)).day - day, outOfRange: true));
-		final suffix = List<Widget>.generate(7 - widget.endDate.weekday, (day) => _displayDay(day, outOfRange: true));
+		final prePaddedDays = List<Widget>.generate(widget.startDate.weekday - 1, (day) {
+			return _displayDay( widget.startDate!.subtract(Duration(days: 1)).day - day, outOfRange: true);
+		});
+		final postPaddedDays = List<Widget>.generate(7 - widget.endDate.weekday, (day) {
+			return _displayDay(day, outOfRange: true);
+		});
 
-		return prefix + datesInRange + suffix;
+		return prePaddedDays + datesInRange + postPaddedDays;
 	}
 	
 	@override
 	Widget build(BuildContext context) {
-		final entries = entriesBetween(widget.startDate, widget.endDate); 
+		//Calculate the emotion data for each day
 		_emotionData = List.filled(_daysFromDate(widget.endDate) +1, (strength: 0, color: Colors.transparent));
-		for (var entry in entries) {
+		for (var entry in entriesBetween(widget.startDate, widget.endDate)) {
 			final strongestEmotion = entry.getStrongestEmotion();
 			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.getDate())].strength) {
 				_emotionData[_daysFromDate(entry.getDate())] = (
@@ -89,7 +99,6 @@ class _CalendarState extends State<Calendar> {
 						crossAxisCount: 7,
 						padding: const EdgeInsets.all(4.0),
 						shrinkWrap: true,
-						//Calculating each day
 						children: _getCalendarDays(),
 					),
 				]
