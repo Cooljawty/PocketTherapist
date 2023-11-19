@@ -26,7 +26,7 @@ void main() {
 
 		final firstWeekPadding = firstOfTheMonth.weekday - 1;
 		final lastWeekPadding = 7 - lastOfTheMonth.weekday;
-		final totalDays = firstWeekPadding + lastOfTheMonth.difference(firstOfTheMonth).inDays + lastWeekPadding;
+		final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
 
 		final calendarDays = find.byKey(const Key("Calendar_Day"));
 		expect(calendarDays, findsNWidgets(totalDays));
