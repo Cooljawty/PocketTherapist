@@ -39,7 +39,7 @@ class _QuoteState extends State<Quote> {
               borderRadius: BorderRadius.circular(32),
               side: BorderSide(
                 width: 4,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primaryContainer,
               )),
         ),
         //height: 210,
@@ -53,7 +53,7 @@ class _QuoteState extends State<Quote> {
                   origin: const Offset(-40, 0),
                   flipX: true,
                   child: Icon(Icons.format_quote_rounded,
-                      size: 50, color: getCurrentTheme().colorScheme.primary)),
+                      size: 40, color: getCurrentTheme().colorScheme.primaryContainer)),
 
               // Quote
               Padding(
@@ -75,7 +75,7 @@ class _QuoteState extends State<Quote> {
               Transform(
                   transform: Matrix4.translationValues(80, 0, 0),
                   child: Icon(Icons.format_quote_rounded,
-                      size: 50, color: getCurrentTheme().colorScheme.primary)),
+                      size: 40, color: getCurrentTheme().colorScheme.primaryContainer)),
             ]),
       ),
       onTap: () {

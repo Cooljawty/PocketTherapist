@@ -32,7 +32,7 @@ class ThemeSettings with ChangeNotifier {
     buttonTheme: const ButtonThemeData(buttonColor: Colors.deepPurple),
 
     //updates default color of MaterialType.canvas Material, used to control color of drop down menu items
-    canvasColor: Colors.grey.shade400,
+    canvasColor: const Color(0xffc9a5cf),
 
     //Card color and theme is used to set the default of the Card widget class
     //cardColor: Colors.deepPurple, //The color of Material when it is used as a card
@@ -65,9 +65,10 @@ class ThemeSettings with ChangeNotifier {
       //these can be accessed by widgets to set their color to match the dark theme
       //used with standardButton
         brightness: Brightness.dark,
-        background: Colors.deepPurple.shade300,
-        onBackground: Colors.deepPurpleAccent,
-        primary: Colors.deepPurpleAccent,
+        background: const Color(0xff1B1734),
+        onBackground: darkenColor(const Color(0xff1B1734), .2),
+        secondary: const Color(0xff420264),
+        primary: const Color(0xff5C038C),
         primaryContainer: Colors.deepPurple,
         //color of hint validation text in text fields
         error: Colors.red),
@@ -268,6 +269,7 @@ class ThemeSettings with ChangeNotifier {
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF)).copyWith(
       //these can be accessed by widgets to set their color to match the light theme
       //used with standardButton
+
         brightness: Brightness.light,
         background: Colors.white,
         onBackground: Colors.deepPurple,
