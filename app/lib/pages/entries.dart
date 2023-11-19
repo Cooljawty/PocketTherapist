@@ -4,30 +4,17 @@ import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 
 class EntriesPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
+	final List<JournalEntry> entries;
+
+  static Route<dynamic> route({entries}) {
+    return MaterialPageRoute(builder: (context) => EntriesPage(entries: entries ?? []));
   }
 
-  const EntriesPage({super.key});
+  EntriesPage({super.key, this.entries = const <JournalEntry>[]});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
 }
-
-List<JournalEntry> entries = [
-  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
-  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
-  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
-  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
-  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 1, 27)),
-  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 1, 29)),
-  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 1, 5)),
-  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
-  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
-];
-
-//Generated list of journal entries
-final items = entries;
 
 // Display options
 final List<String> displayOptions = ['Week', 'Month', 'Year'];
@@ -43,7 +30,7 @@ class _EntriesPageState extends State<EntriesPage> {
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
     //showAllItems = false;
-    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
+    sortedItems = getFilteredList(widget.entries, chosenDisplay, showAllItems);
 
     return Scaffold(
       body: SafeArea(
@@ -136,7 +123,8 @@ class _EntriesPageState extends State<EntriesPage> {
                           onDismissed: (direction) {
                             // Remove the item from the data source.
                             setState(() {
-                              items.removeAt(index);
+															//TODO Delete from database
+                              widget.entries.removeAt(index);
                             });
 
                             // Then show a snackBar w/ item name as dismissed message
@@ -203,7 +191,8 @@ class _EntriesPageState extends State<EntriesPage> {
   makeNewEntry() async {
     final result = await Navigator.push(context, NewEntryPage.route());
     setState(() {
-      items.add(result);
+			//TODO Add new entry to database
+      widget.entries.add(result);
     });
   }
 }
