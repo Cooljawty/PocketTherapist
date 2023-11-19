@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:app/helper/classes.dart';
+import 'package:app/helper/dates_and_times.dart' as date;
+import 'package:app/provider/settings.dart' as settings;
 import 'package:app/pages/entry.dart';
 
 class Calendar extends StatefulWidget {
@@ -22,18 +24,10 @@ class _CalendarState extends State<Calendar> {
 
 	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
 
-	static const _months = [ null, 
-		"January", "February", 
-		"March", "April", "May", 
-		"June", "July", "August", 
-		"November", "October", "November", 
-		"December"
-	];
-
+	//Weekdays
 	final _weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) {
 		return Expanded( child: Text(day, textAlign: TextAlign.center) );
 	}).toList();
-
 
 	Widget _displayDay(day, {outOfRange = false}) => Container(
 		alignment: Alignment.center,
@@ -45,8 +39,8 @@ class _CalendarState extends State<Calendar> {
 		child: Text(
 			"${day+1}", 
 			style: outOfRange 
-			? Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).textTheme.labelLarge!.color!.withOpacity(0.5))
-			: Theme.of(context).textTheme.labelLarge,
+			? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5))
+			: settings.getCurrentTheme().textTheme.labelLarge,
 		),
 	);
 
@@ -82,7 +76,7 @@ class _CalendarState extends State<Calendar> {
 				children: [
 					Container(
 						margin: const EdgeInsets.only(top: 13),
-						child: Text(_months[widget.startDate.month]!, style: Theme.of(context).textTheme.titleLarge)
+						child: Text(date.month[widget.startDate.month]!, style: settings.getCurrentTheme().textTheme.titleLarge)
 					),
 					Divider(),
 					Row( children: _weekdays ),
