@@ -22,6 +22,19 @@ class _CalendarState extends State<Calendar> {
 
 	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
 
+	static const _months = [ null, 
+		"January", "February", 
+		"March", "April", "May", 
+		"June", "July", "August", 
+		"November", "October", "November", 
+		"December"
+	];
+
+	final _weekdays = ["Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur", "Sun"].map((day) {
+		return Expanded( child: Text(day, textAlign: TextAlign.center) );
+	}).toList();
+
+
 	List<Widget> _getCalendarDays() {
 		final datesInRange = <Card>[];
 		for (var day = 0; day <= _daysFromDate(widget.endDate); day += 1) {
@@ -37,7 +50,7 @@ class _CalendarState extends State<Calendar> {
 
 		return prefix + datesInRange + suffix;
 	}
-
+	
 	@override
 	Widget build(BuildContext context) {
 		final entries = entriesBetween(widget.startDate, widget.endDate); 
@@ -55,8 +68,9 @@ class _CalendarState extends State<Calendar> {
 		return Card(
 			child: Column(
 				children: [
-					Text("Month", style: Theme.of(context).textTheme.titleLarge),
+					Text(_months[widget.startDate.month]!, style: Theme.of(context).textTheme.titleLarge),
 					Divider(),
+					Row( children: _weekdays,),
 					GridView.count(
 						key: const Key("Calendar_Panel"),
 						crossAxisCount: 7,
