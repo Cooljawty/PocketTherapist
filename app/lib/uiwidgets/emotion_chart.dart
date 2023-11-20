@@ -50,12 +50,6 @@ class _EmotionGraphState extends State<EmotionGraph> {
 		_ => "${day}th"
 	};
 
-	/*
-	final _weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) {
-		return Expanded( child: Text(day, textAlign: TextAlign.center) );
-	}).toList();
-	*/
-
 	Map<String, List<FlSpot>> _emotionData = {};
 	/* 
 		"Emotion 1": [
@@ -81,11 +75,14 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	Widget _getTimeTitles(double value, TitleMeta meta) {
 		final day = widget.startDate.add(Duration(days: value.toInt())).day;	
 
+		final startOfWeek = widget.startDate.add(Duration(days: value.floor())).weekday != widget.startDate.weekday;
 		return SideTitleWidget(
 			axisSide: meta.axisSide,
 			//Dont label last line if it's not the end of the week
-			child: (widget.startDate.add(Duration(days: value.floor())).weekday != widget.startDate.weekday) ? Text("") 
-				: Text("${widget.startDate.month}/${day}", style: Theme.of(context).textTheme.labelMedium),
+			child: Text(
+				(startOfWeek || getXFromDay(widget.endDate) <= 7.0) ? "${widget.startDate.month}/${day}" : "",
+				style: Theme.of(context).textTheme.labelMedium
+			),
 		);
 	}
 	
