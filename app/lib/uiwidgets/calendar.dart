@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app/helper/classes.dart';
 import 'package:app/pages/entry.dart';
 
-import 'package:app/helper/dates_and_times.dart' as date;
+import 'package:app/helper/dates_and_times.dart';
 import 'package:app/provider/settings.dart' as settings;
 
 import 'package:app/pages/entries.dart';
@@ -89,11 +89,11 @@ class _CalendarState extends State<Calendar> {
 				children: [
 					Container(
 						margin: const EdgeInsets.only(top: 13),
-						child: Text(date.month[widget.startDate.month]!, style: settings.getCurrentTheme().textTheme.titleLarge)
+						child: Text(widget.startDate.formatDate(), style: settings.getCurrentTheme().textTheme.titleLarge)
 					),
 					Divider(),
 					Row( 
-						children: date.weekday.values.map((weekday) {
+						children: weekday.values.map((weekday) {
 							return Expanded( 
 								child: Text(
 									weekday.substring(0,3),

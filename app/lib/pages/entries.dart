@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 
+import 'package:app/helper/dates_and_times.dart';
 import 'package:app/helper/classes.dart'; //TODO implement database search
 
 class EntriesPage extends StatefulWidget {
@@ -113,7 +114,7 @@ class _EntriesPageState extends State<EntriesPage> {
                           Text(() {
                               // If weekly view, then calculate weeks of the year and display range in header
                               if (chosenDisplay == 'Week') {
-                                DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+                                DateTime firstOfYear = DateTime(today.year, 1, 1);
                                 int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
                                 DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
                                 DateTime lower = upper.subtract(const Duration(days: 6));
@@ -246,55 +247,20 @@ List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDispl
   return filteredList;
 }
 
-extension Formatter on DateTime {
-  // Get the month string
-  String formatDate() {
-    switch (month) {
-      case 1: return 'January';
-      case 2: return 'February';
-      case 3: return 'March';
-      case 4: return 'April';
-      case 5: return 'May';
-      case 6: return 'June';
-      case 7: return 'July';
-      case 8: return 'August';
-      case 9: return 'September';
-      case 10: return 'October';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return 'Date is Wrong'; // This should never happen
-    }
-  }
-
-  // Check if entries are in the same filter date
-  bool isSameDate(DateTime other, String display) {
-    switch (display) {
-      // If week filter, then check if in the same year, month, and week
-      case 'Week':
-        final firstWeek = DateTime(DateTime.now().year, 1, 1);
-        return (year == other.year && month == other.month && (getWeekNumber(firstWeek, this) == getWeekNumber(firstWeek, other)));
-      // if month filter, then check for same year and month
-      case 'Month': return (year == other.year && month == other.month);
-      // if year filter, then check for same year
-      case 'Year': return (year == other.year);
-      // This should never happen
-      default: return false;
-    }
-  }
-
-  // get the week number for DateTime math in headers and filters
-  int getWeekNumber(DateTime start, DateTime end) {
-    start = DateTime(start.year, start.month, start.day);
-    end = DateTime(end.year, end.month, end.day);
-
-    // return the difference between the start and end date by week rounded up
-    return (end.difference(start).inDays / 7).ceil();
-  }
-}
-
 //TODO replace with database
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
+			JournalEntry(
+				title: "Day one entry 1", entryText: "", 
+				date: DateTime(2023, 10, 31), 
+				emotions: [
+					Emotion(
+						name: "Sad",
+						color: Colors.blue,
+						strength: 60,
+					),
+				]
+			),
 			JournalEntry(
 				title: "Day one entry 1", entryText: "", 
 				date: DateTime(2023, 11, 1), 
