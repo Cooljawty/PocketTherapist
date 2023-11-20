@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-//import 'package:fl_chart_app/presentation/resources/app_resources.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/helper/classes.dart';
@@ -51,26 +50,91 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	};
 
 	Map<String, List<FlSpot>> _emotionData = {};
-	/* 
-		"Emotion 1": [
-			day 1: (day 1, max strength),
-			..
-			day n: (day n, max strength)
-		],
-		..
-		"Emotion n": [
-			day 1: (day 1, max strength),
-			..
-			day n: (day n, max strength)
-		]
-	*/
 	
-	//Radial equation
-	// sum (emotion.strength) / (max intensity * date_range)
-
 	//X is the number of days from the start entry
 	double getX(JournalEntry entry) => entry.getDate().difference(widget.startDate).inDays.floorToDouble();
 	double getXFromDay(DateTime day) => day.difference(widget.startDate).inDays.toDouble().floorToDouble();
+	
+	Widget _getTimeChart(){
+		return LineChart(
+			LineChartData(
+				titlesData: FlTitlesData(
+					//Only show time at bottom
+					topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+					leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+					rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+					bottomTitles: AxisTitles(
+						sideTitles: SideTitles(
+							showTitles: true,
+							interval: 1,
+							getTitlesWidget: _getTimeTitles,
+						),
+					),
+				),
+				minX: 0.0, maxX: getXFromDay(widget.endDate),
+				minY: 0.0, maxY: MAX_STRENGTH,
+				gridData: FlGridData(
+					show: true,
+					drawHorizontalLine: false,
+					drawVerticalLine: true,
+					verticalInterval: 1,
+					getDrawingVerticalLine: (_) => FlLine(
+						dashArray: [1, 0],
+						strokeWidth: 0.8,
+						color: Colors.grey, 
+					),
+				),
+				//Create a line for each emotion 
+				lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
+						show: entry.value.any((value) => value.y != 0),
+						spots: entry.value,
+						color: emotionlist[entry.key]!.color,
+						dotData: const FlDotData( show: false, ),
+						isCurved: true,
+						curveSmoothness: 0.5,
+						barWidth: 4.5,
+						preventCurveOverShooting: true,
+						preventCurveOvershootingThreshold: 2,
+				)).toList(),
+			),
+		);
+	}
+	
+	Widget _getFrequencyChart(){
+		return Container(
+			padding: const EdgeInsets.only(top: 14,),
+			margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 24,),
+			decoration: ShapeDecoration(
+				color: Theme.of(context).colorScheme.background, 
+				shape: Theme.of(context).cardTheme.shape!,
+			),
+			child: RadarChart(
+				RadarChartData(
+					radarShape: RadarShape.polygon,
+					borderData: FlBorderData(show: true),
+					//titlePositionPercentageOffset: 0.068,
+					getTitle: (index, angel) => RadarChartTitle(text: _emotionData.keys.elementAt(index)),
+					//Hide value ticker
+					ticksTextStyle: const TextStyle(color: Colors.transparent, fontSize: 10),
+					tickBorderData: const BorderSide(color: Colors.transparent),
+					radarBorderData: BorderSide(color: Theme.of(context).canvasColor),
+					gridBorderData: BorderSide(color: Theme.of(context).canvasColor, width: 2),
+					dataSets: [
+						RadarDataSet(
+							entryRadius: 0.0,
+							//Summ up the strength of all entreis
+							dataEntries: _emotionData.entries.map((entry) {
+								//Radial equation
+								// sum (emotion.strength) / (max intensity * date_range)
+								final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
+								return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
+							}).toList(),
+						),
+					],
+				),
+			),
+		);
+	}
 
 	Widget _getTimeTitles(double value, TitleMeta meta) {
 		final day = widget.startDate.add(Duration(days: value.toInt())).day;	
@@ -121,83 +185,8 @@ class _EmotionGraphState extends State<EmotionGraph> {
 							),
 							Expanded(
 								child: switch(widget.type) {
-									//Time graph
-									GraphTypes.time => LineChart(
-										LineChartData(
-											titlesData: FlTitlesData(
-												//Only show time at bottom
-												topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-												leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-												rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-												bottomTitles: AxisTitles(
-													sideTitles: SideTitles(
-														showTitles: true,
-														interval: 1,
-														getTitlesWidget: _getTimeTitles,
-													),
-												),
-											),
-											minX: 0.0, maxX: getXFromDay(widget.endDate),
-											minY: 0.0, maxY: MAX_STRENGTH,
-											gridData: FlGridData(
-												show: true,
-												drawHorizontalLine: false,
-												drawVerticalLine: true,
-												verticalInterval: 1,
-												getDrawingVerticalLine: (_) => FlLine(
-													dashArray: [1, 0],
-													strokeWidth: 0.8,
-													color: Colors.grey, 
-												),
-											),
-											//Create a line for each emotion 
-											lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
-													show: entry.value.any((value) => value.y != 0),
-													spots: entry.value,
-													color: emotionlist[entry.key]!.color,
-													dotData: const FlDotData( show: false, ),
-													isCurved: true,
-													curveSmoothness: 0.5,
-													barWidth: 4.5,
-													preventCurveOverShooting: true,
-													preventCurveOvershootingThreshold: 2,
-											)).toList(),
-										),
-									),
-									//Frequency graph
-									GraphTypes.frequency => Container(
-										padding: const EdgeInsets.only(top: 14,),
-										margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 24,),
-										decoration: ShapeDecoration(
-											color: Theme.of(context).colorScheme.background, 
-											shape: Theme.of(context).cardTheme.shape!,
-										),
-										child: RadarChart(
-											RadarChartData(
-												radarShape: RadarShape.polygon,
-												borderData: FlBorderData(show: true),
-												//titlePositionPercentageOffset: 0.068,
-												getTitle: (index, angel) => RadarChartTitle(text: _emotionData.keys.elementAt(index)),
-												//Hide value ticker
-												ticksTextStyle: const TextStyle(color: Colors.transparent, fontSize: 10),
-												tickBorderData: const BorderSide(color: Colors.transparent),
-												radarBorderData: BorderSide(color: Theme.of(context).canvasColor),
-												gridBorderData: BorderSide(color: Theme.of(context).canvasColor, width: 2),
-												dataSets: [
-													RadarDataSet(
-														entryRadius: 0.0,
-														//Summ up the strength of all entreis
-														dataEntries: _emotionData.entries.map((entry) {
-															//Radial equation
-															// sum (emotion.strength) / (max intensity * date_range)
-															final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
-															return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
-														}).toList(),
-													),
-												],
-											),
-										),
-									),
+									GraphTypes.time => _getTimeChart(),
+									GraphTypes.frequency => _getFrequencyChart()
 								}
 							),
 						],
