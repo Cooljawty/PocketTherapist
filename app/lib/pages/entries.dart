@@ -65,7 +65,7 @@ class _EntriesPageState extends State<EntriesPage> {
                 child: DropdownButtonFormField<String>(
                   key: const Key("SortByDateDropDown"),
                   dropdownColor: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10.0),
+                  // borderRadius: BorderRadius.circular(10.0),
                   // Set up the dropdown menu items
                   value: chosenDisplay,
                   items: displayOptions.map((item) => DropdownMenuItem<String>(
@@ -169,6 +169,8 @@ class _EntriesPageState extends State<EntriesPage> {
                     );// if in the same filter header list, then just make a new entry
                   },
                 )),
+
+            // Add new Entry button
             Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: Align(

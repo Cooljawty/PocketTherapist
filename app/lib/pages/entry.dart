@@ -19,15 +19,26 @@ class JournalEntry with DisplayOnCard {
   List<Tag> _tags = [];
   List<Emotion> _emotions = [];
 
+  // Plan
+  bool? completed;
+
   static const previewLength = 25;
 
-  JournalEntry(
-      {required title, required entryText, required date, tags, emotions}) {
+  JournalEntry({
+    required title,
+    required entryText,
+    required date,
+    tags,
+    emotions,
+    bool? plan,
+  }) {
     _title = title;
     _entryText = entryText;
     _date = date;
     _tags = tags ?? [];
     _emotions = emotions ?? [];
+    completed = plan == false ? null : false;
+
 
     final preview = _entryText.split("\n").first;
     _previewText = preview.substring(0, min(previewLength, preview.length));
@@ -42,12 +53,19 @@ class JournalEntry with DisplayOnCard {
 
     pageRoute = (() => EntryPage.route(entry: this));
   }
+
   int getID() => _id;
+
   String getPreviewText() => _previewText;
+
   String getEntryText() => _entryText;
+
   String getTitle() => _title;
+
   DateTime getDate() => _date;
+
   List<Tag> getTags() => _tags;
+
   List<Emotion> getEmotions() => _emotions;
 
   // Get the strongest emotion in the entry
@@ -62,10 +80,12 @@ class JournalEntry with DisplayOnCard {
       return strongestEmotion;
     }
     return Emotion(
-        name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+        name: 'None',
+        strength: 0,
+        color: Colors.black); // This shouldn't happen
   }
 
-  /* TODO
+/* TODO
 	List<Image> pictures;
 
 	Tag getTagByTitle(String title);

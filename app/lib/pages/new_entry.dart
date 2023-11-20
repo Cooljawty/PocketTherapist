@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 //import 'package:vector_math/vector_math_64.dart';
 import 'entry.dart';
 
@@ -18,10 +19,12 @@ class NewEntryPage extends StatefulWidget {
 }
 
 class _NewEntryPageState extends State<NewEntryPage> {
+  DateTime? datePicked = DateTime.now();
+  bool isPlan = false;
+
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
   final _emotionItems = settings.emotionList.entries.map((emotion) {
-
     return Emotion(name: emotion.key, color: emotion.value);
   }).toList();
 
@@ -53,8 +56,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       body: SingleChildScrollView(
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Column(
-                  children: [
+              child: Column(children: [
                 // Text field for the Journal Entry Title
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -67,7 +69,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     ),
                   ),
                 ),
-
 
                 // Text input field for the Journal Entry Body
                 Padding(
@@ -126,7 +127,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                         backgroundColor: emotion.color,
                                         onPressed: () =>
                                             _emotionalDial(context, emotion),
-
                                       ))
                                   .toList(),
                             )))),
@@ -157,8 +157,27 @@ class _NewEntryPageState extends State<NewEntryPage> {
               TextButton(
                   key: const Key("planButton"),
                   child: const Text('Plan'),
-                  onPressed: () {}),
-                 /*
+                  onPressed: () async {
+                    isPlan = false;
+
+                    var selectedDate = await pickDate();
+                    if (selectedDate == null) return;
+
+                    var selectedTime = await pickTime();
+                    if (selectedTime == null) return;
+
+                    datePicked = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                    );
+
+                    isPlan = true;
+
+                  }),
+              /*
                   * Tag button
                   * Will create a multi select dialog field that will allow
                   * users to select the tags for the Journal Entry
@@ -185,7 +204,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
-                                        selected ? _selectedTags.add(tag) : _selectedTags.remove(tag);
+                                        selected
+                                            ? _selectedTags.add(tag)
+                                            : _selectedTags.remove(tag);
                                       });
                                     });
                                   },
@@ -229,7 +250,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
-                                        selected ? _selectedEmotions.add(emote) : _selectedEmotions.remove(emote);
+                                        selected
+                                            ? _selectedEmotions.add(emote)
+                                            : _selectedEmotions.remove(emote);
                                       });
                                     });
                                   },
@@ -317,7 +340,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
             actions: [
               // pop the alert dialog off the screen and don't save the strength changes
               TextButton(
-                key: const Key('cancelDial'),
+                  key: const Key('cancelDial'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -325,7 +348,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
               // Save the strength changes and pop the dialog off the screen
               TextButton(
-                key: const Key('saveDial'),
+                  key: const Key('saveDial'),
                   onPressed: () {
                     emotion.strength = strength;
                     Navigator.of(context).pop();
@@ -338,12 +361,25 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   // Make the journal entry and save it
   getEntry() {
+    debugPrint(isPlan.toString());
     return JournalEntry(
       title: titleController.text,
       entryText: journalController.text,
-      date: DateTime.now(),
+      date: isPlan ? datePicked : DateTime.now(),
       tags: _selectedTags,
       emotions: _selectedEmotions,
+      plan: isPlan,
     );
   }
+
+  // Date picker
+  Future<DateTime?> pickDate() => showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: datePicked);
+
+  // Time picker
+  Future<TimeOfDay?> pickTime() =>
+      showTimePicker(context: context, initialTime: TimeOfDay.now());
 }
