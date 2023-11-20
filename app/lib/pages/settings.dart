@@ -226,6 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               )),
                           Switch(
+                            key: const Key('Enable/Disable Encryption'),
                             splashRadius: 50.0,
                             value: encryption,
                             onChanged: (value) =>

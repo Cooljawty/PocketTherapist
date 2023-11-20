@@ -2,14 +2,37 @@ import 'package:app/pages/entries.dart' as entry;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/entry.dart';
+import 'package:app/provider/settings.dart' as settings;
+import 'package:app/main.dart' as app;
 
 void main() {
 
-  late Widget myApp;
-  setUp(() => {
-    myApp = const MaterialApp(
-        home: entry.EntriesPage(),
-    )});
+// Navigate to the entries panel
+  @override
+  Future<void> setUp(WidgetTester tester) async {
+    app.main();
+    await tester.pump();
+
+    // Set mock values in the settings
+    settings.setMockValues({
+      settings.configuredKey: true,
+      settings.encryptionToggleKey: false,
+    });
+
+    // Enter the app
+    Finder startButton = find.byKey(const Key("Start_Button"));
+    await tester.tap(startButton);
+
+    do {
+      await tester.pump();
+    } while (tester
+        .widgetList(find.byKey(const Key("Navbar_Destination_Entries")))
+        .isEmpty);
+
+    // Find the nav bar button for entries page
+    await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));
+    await tester.pumpAndSettle();
+  }
 
   entry.entries.addAll([
     JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime(2022, 2, 7)),
@@ -25,8 +48,7 @@ void main() {
   Future<void> testForItems(WidgetTester tester, String filter, bool show) async {
     // Show all items in the entry database
     entry.showAllItems = show;
-    await tester.pumpWidget(myApp);
-    await tester.pumpAndSettle();
+    await setUp(tester);
 
     final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
     // find the drop down and tap it

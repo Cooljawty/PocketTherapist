@@ -33,7 +33,7 @@ class JournalEntry with DisplayOnCard {
     _previewText = preview.substring(0, min(previewLength, preview.length));
 
     card = (
-      body: getEntryText(),
+      body: _previewText,
       date: _date,
       emotionList: _emotions,
       tagList: _tags,

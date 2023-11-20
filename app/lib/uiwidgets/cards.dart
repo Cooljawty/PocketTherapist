@@ -110,7 +110,9 @@ class _DisplayCardState extends State<DisplayCard> {
                   Column(children: <Widget>[
                     // Title
                     Text(
-                      '${widget.body.substring(0, 35)}...',
+                      (widget.title.length > 35)
+                          ? widget.title.substring(0, 35)
+                          : widget.title,
                       style: DefaultTextStyle.of(context).style.apply(
                             fontSizeFactor: 1.3,
                             fontWeightDelta: 1,
@@ -119,7 +121,7 @@ class _DisplayCardState extends State<DisplayCard> {
 
                     // preview text
                     Text(
-                      '${widget.body.substring(0, 44)}...',
+                      widget.body,
                       style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ]),

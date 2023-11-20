@@ -1,13 +1,9 @@
 import 'package:app/pages/entry.dart';
-import 'package:app/provider/settings.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:provider/provider.dart';
-import 'package:starsview/config/MeteoriteConfig.dart';
-import 'package:starsview/config/StarsConfig.dart';
-import 'package:starsview/starsview.dart';
 
 import '../helper/classes.dart';
 import '../uiwidgets/decorations.dart';
@@ -24,154 +20,154 @@ class EntriesPage extends StatefulWidget {
 }
 
 List<JournalEntry> entries = [
-  JournalEntry(
-      title: "Location: Paris, France",
-      entryText:
-          'Today was my first day in Paris and it was absolutely magical. I woke up early and headed straight to the '
-          'Eiffel Tower to catch the sunrise. The view from the top was breathtaking, with the sun just peeking over the horizon '
-          'and casting a warm glow over the city.',
-      date: DateTime(2022, 7, 12),
-      tags: [
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-        Tag(name: 'Present', color: const Color(0xffff7070)),
-        Tag(name: 'Content', color: const Color(0xfff1903b)),
-        Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-      ],
-      emotions: [
-        Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 90),
-        Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 70),
-      ]),
-
-  JournalEntry(
-      title: "What are my core values and how do they impact my decisions?",
-      entryText:
-          'Today I’ve been considering my core values and how they impact the decisions I make in my life. I realize '
-          'that my values are an essential part of who I am, and they play a significant role in shaping my thoughts, actions, '
-          'and choices.',
-      date: DateTime(2023, 1, 15),
-      tags: [
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-        Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-      ],
-      emotions: [
-        Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 40),
-        Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 70),
-      ]),
-
-  JournalEntry(
-      title: "Today was a good day",
-      entryText:
-          'Today was a busy day at work. I had a lot of meetings and deadlines to meet, which kept me on my toes all day. '
-          'I felt a little bit stressed at times, but overall, I was able to stay focused and get everything done that needed to '
-          'be done.',
-      date: DateTime(2023, 4, 27),
-      tags: [
-        Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-        Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-      ],
-      emotions: [
-        Emotion(name: 'Happy', color: const Color(0xfffddd68), strength: 80),
-        Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
-        Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 10),
-      ]),
-
-  JournalEntry(
-      title: '“If not now, when?”',
-      entryText:
-          'Today, I decided to experiment with some mixed media art in my art journal. I started'
-          ' by collaging some old book pages onto the page, creating a textured background. Then, I used watercolors to paint over the top,'
-          ' blending different colors and creating a dreamy, abstract effect.',
-      date: DateTime(2022, 5, 12),
-      tags: [
-        Tag(name: 'Present', color: const Color(0xffff7070)),
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-      ]),
-
-  JournalEntry(
-      title: "Mood",
-      entryText:
-          'I was late for work because of heavy traffic, and as soon as I walked into the office, my manager confronted me about '
-          'being late',
-      date: DateTime(2022, 8, 18),
-      emotions: [
-        //Emotion(name: 'Anticipation', color: const Color(0xffff8000), strength: 60),
-        Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
-        Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 60),
-      ]),
-
   // JournalEntry(
-  //     title: "Complete a 10k race in under an hour by the end of the year.",
-  //     entryText: 'I want to complete a 10k race in under an hour by the end of the year because I want to challenge myself, push my limits,'
-  //         ' and achieve something I’ve never done before.',
-  //     date: DateTime(2022, 9, 14),
+  //     title: "Location: Paris, France",
+  //     entryText:
+  //         'Today was my first day in Paris and it was absolutely magical. I woke up early and headed straight to the '
+  //         'Eiffel Tower to catch the sunrise. The view from the top was breathtaking, with the sun just peeking over the horizon '
+  //         'and casting a warm glow over the city.',
+  //     date: DateTime(2022, 7, 12),
+  //     tags: [
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //       Tag(name: 'Present', color: const Color(0xffff7070)),
+  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
+  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
+  //     ],
   //     emotions: [
-  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 100),
-  //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 100),
-  //     ]
-  // ),
-
-  JournalEntry(
-      title: "I am grateful for this moment of mindfulness",
-      entryText:
-          'Today, I took a few minutes to practice mindfulness during my lunch break. I closed my eyes and took a few deep breaths, '
-          'feeling the air fill my lungs and then releasing it slowly.',
-      date: DateTime(2022, 10, 21),
-      tags: [
-        Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-        Tag(name: 'Present', color: const Color(0xffff7070)),
-        Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-        Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-        Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-        Tag(name: 'Centered', color: const Color(0xff794e5e)),
-        Tag(name: 'Content', color: const Color(0xfff1903b)),
-        Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-        Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-      ],
-      emotions: [
-        Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
-      ]),
-
-  JournalEntry(
-      title: "Extraordinary beauty of nature",
-      entryText:
-          'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
-          'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-      date: DateTime(2023, 5, 17),
-      tags: [
-        Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-        Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-        Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-        Tag(name: 'Centered', color: const Color(0xff794e5e)),
-        Tag(name: 'Content', color: const Color(0xfff1903b)),
-        Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-      ],
-      emotions: [
-        Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
-        Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
-      ]),
-
-  JournalEntry(
-      title: "Flying Over the Ocean",
-      entryText:
-          'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
-          'bright and the sky was a brilliant shade of blue. ',
-      date: DateTime(2022, 9, 12),
-      tags: [
-        Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-        Tag(name: 'Centered', color: const Color(0xff794e5e)),
-        Tag(name: 'Content', color: const Color(0xfff1903b)),
-        Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-        Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-        Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-        Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-      ],
-      emotions: [
-        Emotion(
-            name: 'Anticipation', color: const Color(0xffff8000), strength: 50),
-        Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
-      ]),
+  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 90),
+  //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 70),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: "What are my core values and how do they impact my decisions?",
+  //     entryText:
+  //         'Today I’ve been considering my core values and how they impact the decisions I make in my life. I realize '
+  //         'that my values are an essential part of who I am, and they play a significant role in shaping my thoughts, actions, '
+  //         'and choices.',
+  //     date: DateTime(2023, 1, 15),
+  //     tags: [
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
+  //     ],
+  //     emotions: [
+  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 40),
+  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 70),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: "Today was a good day",
+  //     entryText:
+  //         'Today was a busy day at work. I had a lot of meetings and deadlines to meet, which kept me on my toes all day. '
+  //         'I felt a little bit stressed at times, but overall, I was able to stay focused and get everything done that needed to '
+  //         'be done.',
+  //     date: DateTime(2023, 4, 27),
+  //     tags: [
+  //       Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
+  //       Tag(name: 'Patient', color: const Color(0xff00c5cc)),
+  //     ],
+  //     emotions: [
+  //       Emotion(name: 'Happy', color: const Color(0xfffddd68), strength: 80),
+  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
+  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 10),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: '“If not now, when?”',
+  //     entryText:
+  //         'Today, I decided to experiment with some mixed media art in my art journal. I started'
+  //         ' by collaging some old book pages onto the page, creating a textured background. Then, I used watercolors to paint over the top,'
+  //         ' blending different colors and creating a dreamy, abstract effect.',
+  //     date: DateTime(2022, 5, 12),
+  //     tags: [
+  //       Tag(name: 'Present', color: const Color(0xffff7070)),
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: "Mood",
+  //     entryText:
+  //         'I was late for work because of heavy traffic, and as soon as I walked into the office, my manager confronted me about '
+  //         'being late',
+  //     date: DateTime(2022, 8, 18),
+  //     emotions: [
+  //       //Emotion(name: 'Anticipation', color: const Color(0xffff8000), strength: 60),
+  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
+  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 60),
+  //     ]),
+  //
+  // // JournalEntry(
+  // //     title: "Complete a 10k race in under an hour by the end of the year.",
+  // //     entryText: 'I want to complete a 10k race in under an hour by the end of the year because I want to challenge myself, push my limits,'
+  // //         ' and achieve something I’ve never done before.',
+  // //     date: DateTime(2022, 9, 14),
+  // //     emotions: [
+  // //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 100),
+  // //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 100),
+  // //     ]
+  // // ),
+  //
+  // JournalEntry(
+  //     title: "I am grateful for this moment of mindfulness",
+  //     entryText:
+  //         'Today, I took a few minutes to practice mindfulness during my lunch break. I closed my eyes and took a few deep breaths, '
+  //         'feeling the air fill my lungs and then releasing it slowly.',
+  //     date: DateTime(2022, 10, 21),
+  //     tags: [
+  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
+  //       Tag(name: 'Present', color: const Color(0xffff7070)),
+  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
+  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
+  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
+  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
+  //       Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
+  //       Tag(name: 'Patient', color: const Color(0xff00c5cc)),
+  //     ],
+  //     emotions: [
+  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: "Extraordinary beauty of nature",
+  //     entryText:
+  //         'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+  //         'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+  //     date: DateTime(2023, 5, 17),
+  //     tags: [
+  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
+  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
+  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
+  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
+  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
+  //     ],
+  //     emotions: [
+  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
+  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+  //     ]),
+  //
+  // JournalEntry(
+  //     title: "Flying Over the Ocean",
+  //     entryText:
+  //         'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+  //         'bright and the sky was a brilliant shade of blue. ',
+  //     date: DateTime(2022, 9, 12),
+  //     tags: [
+  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
+  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
+  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
+  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
+  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
+  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
+  //     ],
+  //     emotions: [
+  //       Emotion(
+  //           name: 'Anticipation', color: const Color(0xffff8000), strength: 50),
+  //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
+  //     ]),
 ];
 
 //Generated list of journal entries
