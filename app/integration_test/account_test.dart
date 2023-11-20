@@ -20,7 +20,7 @@ void main() async {
         of: find.byKey(const Key('Enter_Password_Field')),
         matching: find.byType(TextFormField)
     );
-    await expectLater(passwordField, findsOneWidget); // Enter passwrodr ---------------------------------------------------------------
+    await expectLater(passwordField, findsOneWidget); // Enter password ---------------------------------------------------------------
     await widgetTester.enterText(passwordField, password);
     await widgetTester.pump();
 

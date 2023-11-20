@@ -1,6 +1,10 @@
 import 'dart:math';
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:starsview/starsview.dart';
+import 'package:app/provider/theme_settings.dart';
+
+import '../provider/theme_settings.dart';
 
 List<String> quotes = [
   "Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?",
@@ -65,60 +69,61 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
         //height: 210,
         width: MediaQuery.of(context).size.width,
 
-          // animate the quote fade in and out
-          child: AnimatedOpacity(
-            onEnd: (() {
-              setState(() {
-                // To play the animation twice
-                visible = true;
-                clicked = false;
+        // animate the quote fade in and out
+        child: AnimatedOpacity(
+          onEnd: (() {
+            setState(() {
+              // To play the animation twice
+              visible = true;
+              clicked = false;
 
-                // Update quote here so it doesn't change before fade out and after fade in
-                currentQuote = nextQuote;
-              });
-            }),
+              // Update quote here so it doesn't change before fade out and after fade in
+              currentQuote = nextQuote;
+            });
+          }),
 
-            // If not clicked and is visible, then play fading in animation
-            // Otherwise fade out
-            opacity: (clicked == false && visible == true) ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 800),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  // Top Quotation
-                  Transform.flip(
-                      origin: const Offset(-40, 0),
-                      flipX: true,
-                      child: Icon(Icons.format_quote_rounded,
-                          size: 50, color: getCurrentTheme().colorScheme.primaryContainer)),
+          // If not clicked and is visible, then play fading in animation
+          // Otherwise fade out
+          opacity: (clicked == false && visible == true) ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 800),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                // Top Quotation
+                Transform.flip(
+                    origin: const Offset(-40, 0),
+                    flipX: true,
+                    child: Icon(Icons.format_quote_rounded,
+                        size: 50,
+                        color: getCurrentTheme().colorScheme.primaryContainer)),
 
-                  // Quote
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Text(
-                      // quote from app
-                      currentQuote,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 5,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                // Quote
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    // quote from app
+                    currentQuote,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 5,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
+                ),
 
-                  // Bottom Quotation
-                  Transform(
-                      transform: Matrix4.translationValues(80, 0, 0),
-                      child: Icon(Icons.format_quote_rounded,
-                          size: 50, color: getCurrentTheme().colorScheme.primaryContainer)),
-                ]),
-          ),
-        // ),
-
+                // Bottom Quotation
+                Transform(
+                    transform: Matrix4.translationValues(80, 0, 0),
+                    child: Icon(Icons.format_quote_rounded,
+                        size: 50,
+                        color: getCurrentTheme().colorScheme.primaryContainer)),
+              ]),
         ),
+        // ),
+      ),
       onTap: () {
         // When tapping on the quote container, make the quote fade out and prepare the next quote
         setState(() {
@@ -127,6 +132,69 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
           nextQuote = widget.newQuote();
         });
       },
+    );
+  }
+}
+
+/// Stripe background for reuse
+class StripeBackground extends StatelessWidget {
+  const StripeBackground({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      // Stripe
+      Transform(
+        transform: Matrix4.skewY(-0.45),
+        origin: const Offset(60, 0),
+        alignment: Alignment.bottomLeft, //changing the origin
+        child: Container(
+          decoration: BoxDecoration(
+            color: darkenColor(getCurrentTheme().colorScheme.secondary, .05),
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 2,
+        ),
+      ),
+
+      // Top primary color
+      Transform(
+        transform: Matrix4.skewY(-0.45),
+        alignment: Alignment.bottomLeft, //changing the origin
+        child: Container(
+          decoration: BoxDecoration(
+            color: getCurrentTheme().colorScheme.primary,
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 2,
+        ),
+      ),
+    ]);
+  }
+}
+
+///
+class StarBackground extends StatelessWidget {
+  const StarBackground({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: <Color>[
+            getCurrentTheme().colorScheme.primary,
+            getCurrentTheme().colorScheme.background,
+          ],
+        ))),
+        StarsView(
+          fps: 60,
+        )
+      ],
     );
   }
 }

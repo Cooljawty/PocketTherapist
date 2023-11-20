@@ -141,7 +141,8 @@ class ThemeSettings with ChangeNotifier {
 
     //default input decoration for Textfield, TextformField, and DropdownButtonFormField
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Colors.grey.shade400,
+      //fillColor: settings.getCurrentTheme().colorScheme.background,
+      fillColor: Colors.purple.shade800,
       filled: true,
     ),
 
@@ -175,7 +176,7 @@ class ThemeSettings with ChangeNotifier {
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-          MaterialStatePropertyAll(Colors.deepPurple.withOpacity(0.5)),
+          MaterialStatePropertyAll(Colors.deepPurple.withOpacity(0.8)),
           foregroundColor: const MaterialStatePropertyAll(Colors.black),
         )),
 
@@ -216,6 +217,18 @@ class ThemeSettings with ChangeNotifier {
 
 
   );
+
+
+
+
+
+
+
+
+
+
+
+
 
   static ThemeData lightTheme = ThemeData(
     //can be used to customize back button icon, left default
@@ -302,7 +315,7 @@ class ThemeSettings with ChangeNotifier {
     dropdownMenuTheme: DropdownMenuThemeData(
       //textStyle: , by default textstyle is set to lightTheme.textTheme
         menuStyle: MenuStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         ),
         inputDecorationTheme: const InputDecorationTheme(
             fillColor: Colors.deepPurple, filled: true)),
@@ -347,7 +360,7 @@ class ThemeSettings with ChangeNotifier {
 
     //default input decoration for Textfield, TextformField, and DropdownButtonFormField
     inputDecorationTheme: const InputDecorationTheme(
-      fillColor: Colors.grey,
+      fillColor: Colors.white,
       filled: true,
     ),
 
@@ -381,7 +394,7 @@ class ThemeSettings with ChangeNotifier {
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-          MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.5)),
+          MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.8)),
           foregroundColor: const MaterialStatePropertyAll(Colors.black),
         )),
 

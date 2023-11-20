@@ -92,7 +92,7 @@ class _EntryPageState extends State<EntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: Container(
           child: Column(
             children: <Widget>[
               //Title
