@@ -74,7 +74,6 @@ class _EmotionGraphState extends State<EmotionGraph> {
 				minX: 0.0, maxX: getXFromDay(widget.endDate),
 				minY: 0.0, maxY: MAX_STRENGTH,
 				gridData: FlGridData(
-					show: true,
 					drawHorizontalLine: false,
 					drawVerticalLine: true,
 					verticalInterval: 1,
@@ -84,6 +83,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						color: Colors.grey, 
 					),
 				),
+
 				//Create a line for each emotion 
 				lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 						show: entry.value.any((value) => value.y != 0),
@@ -139,7 +139,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	Widget _getTimeTitles(double value, TitleMeta meta) {
 		final day = widget.startDate.add(Duration(days: value.toInt())).day;	
 
-		final startOfWeek = widget.startDate.add(Duration(days: value.floor())).weekday != widget.startDate.weekday;
+		final startOfWeek = widget.startDate.add(Duration(days: value.floor())).weekday == widget.startDate.weekday;
 		return SideTitleWidget(
 			axisSide: meta.axisSide,
 			//Dont label last line if it's not the end of the week
