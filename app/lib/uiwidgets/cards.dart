@@ -105,13 +105,15 @@ class _DisplayCardState extends State<DisplayCard> {
             // All information in the card held here
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Column(children: <Widget>[
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
                     // Title
                     Text(
-                      (widget.title.length > 35)
-                          ? widget.title.substring(0, 35)
+                      (widget.title.length > 30)
+                          ? '${widget.title.substring(0, 30)}...'
                           : widget.title,
                       style: DefaultTextStyle.of(context).style.apply(
                             fontSizeFactor: 1.3,
@@ -121,7 +123,8 @@ class _DisplayCardState extends State<DisplayCard> {
 
                     // preview text
                     Text(
-                      widget.body,
+                      (widget.body.length >= 40) ?
+                      '${widget.body}...' : widget.body,
                       style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ]),

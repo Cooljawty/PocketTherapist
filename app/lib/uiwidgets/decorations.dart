@@ -93,7 +93,7 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
                     origin: const Offset(-40, 0),
                     flipX: true,
                     child: Icon(Icons.format_quote_rounded,
-                        size: 50,
+                        size: 40,
                         color: getCurrentTheme().colorScheme.primaryContainer)),
 
                 // Quote
@@ -116,7 +116,7 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
                 Transform(
                     transform: Matrix4.translationValues(80, 0, 0),
                     child: Icon(Icons.format_quote_rounded,
-                        size: 50,
+                        size: 40,
                         color: getCurrentTheme().colorScheme.primaryContainer)),
               ]),
         ),

@@ -19,7 +19,7 @@ class JournalEntry with DisplayOnCard {
   List<Tag> _tags = [];
   List<Emotion> _emotions = [];
 
-  static const previewLength = 25;
+  static const previewLength = 40;
 
   JournalEntry(
       {required title, required entryText, required date, tags, emotions}) {
