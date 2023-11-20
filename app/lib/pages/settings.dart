@@ -50,6 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
               offset: Offset(0, -(MediaQuery.of(context).padding.top + kToolbarHeight)),
               // This is not const, it changes with theme, don't set it to be const
               // no matter how much the flutter gods beg
+              // ignore: prefer_const_constructors
               child: StripeBackground()),
 
           BackdropFilter(

@@ -190,6 +190,7 @@ class _EntriesPageState extends State<EntriesPage> {
           body: Stack(children: [
             // This is not const, it changes with theme, don't set it to be const
             // no matter how much the flutter gods beg
+            // ignore: prefer_const_constructors
             StarBackground(),
 
             SafeArea(

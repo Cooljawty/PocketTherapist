@@ -145,7 +145,7 @@ class StripeBackground extends StatelessWidget {
       Transform(
         transform: Matrix4.skewY(-0.45),
         origin: const Offset(60, 0),
-        alignment: Alignment.bottomLeft, //changing the origin
+        alignment: Alignment.bottomLeft,
         child: Container(
           decoration: BoxDecoration(
             color: darkenColor(getCurrentTheme().colorScheme.secondary, .05),
@@ -158,7 +158,7 @@ class StripeBackground extends StatelessWidget {
       // Top primary color
       Transform(
         transform: Matrix4.skewY(-0.45),
-        alignment: Alignment.bottomLeft, //changing the origin
+        alignment: Alignment.bottomLeft,
         child: Container(
           decoration: BoxDecoration(
             color: getCurrentTheme().colorScheme.primary,
@@ -171,7 +171,7 @@ class StripeBackground extends StatelessWidget {
   }
 }
 
-///
+/// Background for Entries and Plans Currently
 class StarBackground extends StatelessWidget {
   const StarBackground({super.key});
 
@@ -189,7 +189,7 @@ class StarBackground extends StatelessWidget {
             getCurrentTheme().colorScheme.background,
           ],
         ))),
-        StarsView(
+        const StarsView(
           fps: 60,
         )
       ],

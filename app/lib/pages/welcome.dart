@@ -83,6 +83,7 @@ class _WelcomePageState extends State<WelcomePage>
 
             // This is not const, it changes with theme, don't set it to be const
             // no matter how much the flutter gods beg
+            // ignore: prefer_const_constructors
             StripeBackground(),
 
             // Intractable widgets and the logo
