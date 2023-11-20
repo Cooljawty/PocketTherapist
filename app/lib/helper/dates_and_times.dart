@@ -1,16 +1,5 @@
 //Months
 
-//Weekdays
-const weekday = {
-	DateTime.monday: "Monday",
-	DateTime.tuesday: "Tuesday",
-	DateTime.wednesday: "Wednesday",
-	DateTime.thursday: "Thursday",
-	DateTime.friday: "Friday",
-	DateTime.saturday: "Saturday",
-	DateTime.sunday: "Sunday",
-};
-
 extension Formatter on DateTime {
   // Get the month string
   ({String day, String month, String weekday}) formatDate() {
