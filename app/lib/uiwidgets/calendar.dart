@@ -59,8 +59,9 @@ class _CalendarState extends State<Calendar> {
 		}
 
 		//Fill the start and end to line up weekdays
+		final startFirstWeek = widget.startDate!.subtract(Duration(days: widget.startDate.weekday));
 		final prePaddedDays = List<Widget>.generate(widget.startDate.weekday - 1, (day) {
-			return _displayDay( widget.startDate!.subtract(Duration(days: 1)).day - day, outOfRange: true);
+			return _displayDay( startFirstWeek.day + day, outOfRange: true);
 		});
 		final postPaddedDays = List<Widget>.generate(7 - widget.endDate.weekday, (day) {
 			return _displayDay(day, outOfRange: true);
