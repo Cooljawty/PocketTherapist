@@ -13,8 +13,9 @@ const weekday = {
 
 extension Formatter on DateTime {
   // Get the month string
-  String formatDate() {
-    return switch (month) {
+  ({String day, String month, String weekday}) formatDate() {
+    return (
+			month: switch (month) {
 				DateTime.january => 'January',
 				DateTime.february => 'February',
 				DateTime.march => 'March',
@@ -28,7 +29,25 @@ extension Formatter on DateTime {
 				DateTime.november =>'November',
 				DateTime.december =>'December',
 				_ => 'Date is Wrong', // This should never happen
-		};
+			},
+			weekday: switch (weekday) {
+				DateTime.monday => "Monday",
+				DateTime.tuesday => "Tuesday",
+				DateTime.wednesday => "Wednesday",
+				DateTime.thursday => "Thursday",
+				DateTime.friday => "Friday",
+				DateTime.saturday => "Saturday",
+				DateTime.sunday => "Sunday",
+				_ => 'Date is Wrong', // This should never happen
+			},
+			day: switch (day) {
+				1 => "1st",
+				2 => "2nd",
+				3 => "3rd",
+				_ when day < 31 => "${day}th",
+				_ => 'Date is Wrong', // This should never happen
+			},
+		);
   }
 
   // Check if entries are in the same filter date

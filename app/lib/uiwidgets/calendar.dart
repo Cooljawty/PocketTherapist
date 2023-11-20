@@ -90,16 +90,13 @@ class _CalendarState extends State<Calendar> {
 				children: [
 					Container(
 						margin: const EdgeInsets.only(top: 13),
-						child: Text(widget.startDate.formatDate(), style: settings.getCurrentTheme().textTheme.titleLarge)
+						child: Text(widget.startDate.formatDate().month, style: settings.getCurrentTheme().textTheme.titleLarge)
 					),
 					Divider(),
 					Row( 
-						children: weekday.values.map((weekday) {
+						children: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((weekday) {
 							return Expanded( 
-								child: Text(
-									weekday.substring(0,3),
-									textAlign: TextAlign.center
-								)
+								child: Text( weekday, textAlign: TextAlign.center)
 							);
 						}).toList(),
 					),
