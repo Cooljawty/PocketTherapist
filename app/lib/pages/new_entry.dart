@@ -361,7 +361,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   // Make the journal entry and save it
   getEntry() {
-    debugPrint(isPlan.toString());
     return JournalEntry(
       title: titleController.text,
       entryText: journalController.text,
