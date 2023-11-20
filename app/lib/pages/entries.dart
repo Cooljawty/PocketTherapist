@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:provider/provider.dart';
-
-import '../helper/classes.dart';
 import '../uiwidgets/decorations.dart';
 
 class EntriesPage extends StatefulWidget {

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:starsview/starsview.dart';
 import 'package:app/provider/theme_settings.dart';
 
-import '../provider/theme_settings.dart';
-
 List<String> quotes = [
   "Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?",
   "I have love in me the likes of which you can scarcely imagine and rage the likes of which you would not believe. If I cannot satisfy the one, I will indulge the other.",

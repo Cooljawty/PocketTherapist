@@ -92,63 +92,61 @@ class _EntryPageState extends State<EntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              //Title
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Text(widget.entry.getTitle()),
-                  ],
-                ),
+        child: Column(
+          children: <Widget>[
+            //Title
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  Text(widget.entry.getTitle()),
+                ],
               ),
+            ),
 
-              // Tags
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(direction: Axis.horizontal, children: [
-                  for (var i in widget.entry.getTags())
-                    Text("#${i.name} ",
+            // Tags
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(direction: Axis.horizontal, children: [
+                for (var i in widget.entry.getTags())
+                  Text("#${i.name} ",
+                      style: TextStyle(
+                          inherit: true,
+                          color: i.color,
+                          fontWeight: FontWeight.bold),
+                      selectionColor: i.color)
+              ]),
+            ),
+
+            // Emotions
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  for (var i in widget.entry.getEmotions())
+                    Text("${i.name}: ${i.strength} ",
                         style: TextStyle(
                             inherit: true,
                             color: i.color,
                             fontWeight: FontWeight.bold),
                         selectionColor: i.color)
-                ]),
+                ],
               ),
+            ),
 
-              // Emotions
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    for (var i in widget.entry.getEmotions())
-                      Text("${i.name}: ${i.strength} ",
-                          style: TextStyle(
-                              inherit: true,
-                              color: i.color,
-                              fontWeight: FontWeight.bold),
-                          selectionColor: i.color)
-                  ],
-                ),
+            //Entry text
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  Text(widget.entry.getEntryText()),
+                ],
               ),
-
-              //Entry text
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Text(widget.entry.getEntryText()),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

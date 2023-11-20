@@ -14,7 +14,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
-import 'package:flutter/services.dart';
 
 //create welcome page class like in app example starting with stateful widget
 class WelcomePage extends StatefulWidget {
