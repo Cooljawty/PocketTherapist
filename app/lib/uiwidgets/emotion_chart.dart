@@ -7,7 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:app/helper/classes.dart';
 import 'package:app/pages/entry.dart';
 
-import 'package:app/provider/settings.dart';
+import 'package:app/provider/settings.dart' as settings;
 
 
 enum GraphTypes{ time, frequency }
@@ -56,6 +56,8 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	double getXFromDay(DateTime day) => day.difference(widget.startDate).inDays.toDouble().floorToDouble();
 	
 	Widget _getTimeChart(){
+		final gridColor = settings.getCurrentTheme().colorScheme.onBackground;
+
 		return LineChart(
 			LineChartData(
 				titlesData: FlTitlesData(
@@ -80,8 +82,14 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					getDrawingVerticalLine: (_) => FlLine(
 						dashArray: [1, 0],
 						strokeWidth: 0.8,
-						color: Colors.grey, 
+						color: gridColor, 
 					),
+				),
+
+				borderData: FlBorderData(
+					border: Border.all(
+						color: gridColor
+					)
 				),
 
 				//Create a line for each emotion 
@@ -101,12 +109,31 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	}
 	
 	Widget _getFrequencyChart(){
+		final gridColor = settings.getCurrentTheme().colorScheme.onBackground;
+
+		//Summ up the strength of all entreis
+		final emotionValues = _emotionData.entries.map((entry) {
+			final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
+			return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
+		}).toList();
+
+		//Find the strongest emotion based on calculated radial values
+		var max = 0.0;
+		final strongestEmotion = emotionlist[_emotionData.keys.elementAt(emotionValues.lastIndexWhere((emotion) { 
+			if (emotion.value > max) {
+				max = emotion.value;
+				return true;
+			} else {
+				return false;
+			}
+		}))];
+
 		return Container(
 			padding: const EdgeInsets.only(top: 14,),
 			margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 24,),
 			decoration: ShapeDecoration(
-				color: Theme.of(context).colorScheme.background, 
-				shape: Theme.of(context).cardTheme.shape!,
+				color: settings.getCurrentTheme().colorScheme.background, 
+				shape: settings.getCurrentTheme().cardTheme.shape!,
 			),
 			child: RadarChart(
 				RadarChartData(
@@ -117,18 +144,14 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					//Hide value ticker
 					ticksTextStyle: const TextStyle(color: Colors.transparent, fontSize: 10),
 					tickBorderData: const BorderSide(color: Colors.transparent),
-					radarBorderData: BorderSide(color: Theme.of(context).canvasColor),
-					gridBorderData: BorderSide(color: Theme.of(context).canvasColor, width: 2),
+					radarBorderData: BorderSide(color: gridColor),
+					gridBorderData: BorderSide(color: gridColor, width: 2),
 					dataSets: [
 						RadarDataSet(
 							entryRadius: 0.0,
-							//Summ up the strength of all entreis
-							dataEntries: _emotionData.entries.map((entry) {
-								//Radial equation
-								// sum (emotion.strength) / (max intensity * date_range)
-								final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
-								return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
-							}).toList(),
+							borderColor: strongestEmotion?.color,
+							fillColor: strongestEmotion?.color.withOpacity(0.5),
+							dataEntries: emotionValues,
 						),
 					],
 				),
@@ -145,7 +168,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 			//Dont label last line if it's not the end of the week
 			child: Text(
 				(startOfWeek || getXFromDay(widget.endDate) <= 7.0) ? "${widget.startDate.month}/${day}" : "",
-				style: Theme.of(context).textTheme.labelMedium
+				style: settings.getCurrentTheme().textTheme.labelMedium
 			),
 		);
 	}
@@ -179,7 +202,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 								margin: const EdgeInsets.only(bottom: 10),
 								child: Text( 
 									"${_months[widget.startDate.month]} ${_daySuffix(widget.startDate.day)} - ${_daySuffix(widget.endDate.day)}", 
-									style: Theme.of(context).textTheme.titleLarge,
+									style: settings.getCurrentTheme().textTheme.titleLarge,
 									textAlign: TextAlign.center,
 								),
 							),
