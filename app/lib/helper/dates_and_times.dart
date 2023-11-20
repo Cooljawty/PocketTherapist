@@ -14,21 +14,21 @@ const weekday = {
 extension Formatter on DateTime {
   // Get the month string
   String formatDate() {
-    switch (month) {
-      case 1: return 'January';
-      case 2: return 'February';
-      case 3: return 'March';
-      case 4: return 'April';
-      case 5: return 'May';
-      case 6: return 'June';
-      case 7: return 'July';
-      case 8: return 'August';
-      case 9: return 'September';
-      case 10: return 'October';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return 'Date is Wrong'; // This should never happen
-    }
+    return switch (month) {
+				DateTime.january => 'January',
+				DateTime.february => 'February',
+				DateTime.march => 'March',
+				DateTime.april => 'April',
+				DateTime.may => 'May',
+				DateTime.june => 'June',
+				DateTime.july => 'July',
+				DateTime.august  => 'August',
+				DateTime.september => 'September',
+				DateTime.october =>'October',
+				DateTime.november =>'November',
+				DateTime.december =>'December',
+				_ => 'Date is Wrong', // This should never happen
+		};
   }
 
   // Check if entries are in the same filter date
