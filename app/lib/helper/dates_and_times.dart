@@ -33,7 +33,8 @@ extension Formatter on DateTime {
 				1 => "1st",
 				2 => "2nd",
 				3 => "3rd",
-				_ when day <= 31 => "${day}th",
+				_ when day < 31 => "${day}th",
+				31 => "31st",
 				_ => 'Date is Wrong', // This should never happen
 			},
 		);
