@@ -7,11 +7,12 @@ import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
 
 class EntriesPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
-  }
+  final bool showPlans;
 
-  const EntriesPage({super.key});
+  static Route<dynamic> route({required bool showPlans}) {
+    return MaterialPageRoute(builder: (context) => EntriesPage(showPlans: showPlans));
+  }
+  const EntriesPage({super.key, this.showPlans = false});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -169,7 +170,9 @@ List<JournalEntry> entries = [
 ];
 
 //Generated list of journal entries
-final items = entries;
+
+final entry = entries.where((entry) => entry.status == PlanStatus.noPlan).toList();
+final plans = entries.where((entry) => entry.status == PlanStatus.unfinished).toList();
 
 // Display options
 final List<String> displayOptions = ['Week', 'Month', 'Year'];
@@ -182,6 +185,7 @@ bool showAllItems = true;
 class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
+    final items = widget.showPlans ? plans : entry;
     // Sort the Journal entries by most recent date
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
     return Consumer<ThemeSettings>(
@@ -197,7 +201,7 @@ class _EntriesPageState extends State<EntriesPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Entries'),
+                  !widget.showPlans ? const Text('Entries') : const Text("Plans"),
 
                   // Pad filter to the right
 
@@ -344,7 +348,7 @@ class _EntriesPageState extends State<EntriesPage> {
             ),
           ]),
           bottomNavigationBar: NavBar(
-            selectedIndex: 1,
+            selectedIndex: !widget.showPlans ? 1 : 3,
             destinations: [
               destinations['dashboard']!,
               destinations['entries']!,
@@ -359,9 +363,10 @@ class _EntriesPageState extends State<EntriesPage> {
   }
 
   makeNewEntry() async {
-    final result = await Navigator.push(context, NewEntryPage.route());
+    final JournalEntry result = await Navigator.push(context, NewEntryPage.route());
     setState(() {
-      items.add(result);
+      entries.add(result);
+      result.status == PlanStatus.noPlan ? entry.add(result) : plans.add(result);
     });
   }
 }

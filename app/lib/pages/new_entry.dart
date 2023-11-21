@@ -367,7 +367,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       date: isPlan ? datePicked : DateTime.now(),
       tags: _selectedTags,
       emotions: _selectedEmotions,
-      plan: isPlan,
+      planStatus: isPlan ? PlanStatus.unfinished : PlanStatus.noPlan,
     );
   }
 

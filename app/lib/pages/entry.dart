@@ -4,7 +4,14 @@ import 'package:app/helper/classes.dart';
 
 import 'dart:math';
 
+enum PlanStatus {
+  noPlan,
+  unfinished,
+  finished,
+}
+
 class JournalEntry with DisplayOnCard {
+
   // unique id for each entry
   final int _id = UniqueKey().hashCode;
 
@@ -21,13 +28,23 @@ class JournalEntry with DisplayOnCard {
 
   static const previewLength = 40;
 
-  JournalEntry(
-      {required title, required entryText, required date, tags, emotions}) {
+  // Plan
+  late PlanStatus status;
+
+  JournalEntry({
+    required title,
+    required entryText,
+    required date,
+    tags,
+    emotions,
+    PlanStatus planStatus = PlanStatus.noPlan,
+  }) {
     _title = title;
     _entryText = entryText;
     _date = date;
     _tags = tags ?? [];
     _emotions = emotions ?? [];
+    status = planStatus;
 
     final preview = _entryText.split("\n").first;
     _previewText = preview.substring(0, min(previewLength, preview.length));
