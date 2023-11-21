@@ -159,6 +159,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                   child: const Text('Plan'),
                   onPressed: () async {
                     isPlan = false;
+                    datePicked = null;
 
                     var selectedDate = await pickDate();
                     if (selectedDate == null) return;
@@ -173,7 +174,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       selectedTime.hour,
                       selectedTime.minute,
                     );
-
                     isPlan = true;
 
                   }),
@@ -202,6 +202,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   showCheckmark: false,
                                   selectedColor: tag.color,
                                   onSelected: (bool selected) {
+                                    // Double enclosed setstate, because one
+                                    // doesn't update both alertdialog,
+                                    // and the main app
                                     stfSetState(() {
                                       setState(() {
                                         selected
@@ -228,6 +231,11 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     );
                   }),
 
+              /*
+                  * Emotion button
+                  * Will create a multi select dialog field that will allow
+                  * users to select the tags for the Journal Entry
+                  */
               TextButton(
                   key: const Key("emotionButton"),
                   child: const Text('Emotion'),
@@ -247,6 +255,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   selected: _selectedEmotions.contains(emote),
                                   showCheckmark: false,
                                   selectedColor: emote.color,
+                                  // Double enclosed setstate, because one
+                                  // doesn't update both alertdialog,
+                                  // and the main app
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
@@ -362,11 +373,19 @@ class _NewEntryPageState extends State<NewEntryPage> {
   // Make the journal entry and save it
   getEntry() {
     return JournalEntry(
+      // User entered text
       title: titleController.text,
       entryText: journalController.text,
-      date: isPlan ? datePicked : DateTime.now(),
+
+      // Date to show when displaying an entry
+      date: DateTime.now(),
+      displayDate: datePicked,
+
+      // Tags and emotions selected
       tags: _selectedTags,
       emotions: _selectedEmotions,
+
+      // Is the entry a plan? If so, it is unfinished
       planStatus: isPlan ? PlanStatus.unfinished : PlanStatus.noPlan,
     );
   }
@@ -376,7 +395,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      initialDate: datePicked);
+      initialDate: datePicked ?? DateTime.now());
 
   // Time picker
   Future<TimeOfDay?> pickTime() =>

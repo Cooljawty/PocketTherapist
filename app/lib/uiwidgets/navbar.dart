@@ -1,7 +1,6 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
 import 'package:app/pages/calendar.dart';
-import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 
 import 'package:flutter/material.dart';

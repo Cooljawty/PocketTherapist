@@ -140,8 +140,10 @@ void main() {
 
 	testWidgets('Test plan button', (WidgetTester tester) async {
 		await setUp(tester);
-		// saveButton = find.byKey(const Key("saveButton"));
-		// planButton = find.byKey(const Key("planButton"));
+
+		await tester.tap(titleInput);
+		await tester.enterText(titleInput, "Planned");
+		await tester.pump();
 
 		// Test cancelling date picker
 		await tester.tap(planButton);
@@ -165,8 +167,16 @@ void main() {
 		await tester.tap(find.text("OK"));
 		await tester.pumpAndSettle();
 
+		// Save plan
 		await tester.tap(saveButton);
 		await tester.pumpAndSettle();
+
+		// Should not be on Entries page
+		expect(find.text("Planned"), findsNothing);
+		await tester.tap(find.byKey(const Key("Navbar_Destination_Plans")));
+		await tester.pumpAndSettle();
+		// Should be on Plans page
+		expect(find.text("Planned"), findsOneWidget);
 	});
 
 	// Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page

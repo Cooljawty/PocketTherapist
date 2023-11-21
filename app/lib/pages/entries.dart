@@ -10,8 +10,10 @@ class EntriesPage extends StatefulWidget {
   final bool showPlans;
 
   static Route<dynamic> route({required bool showPlans}) {
-    return MaterialPageRoute(builder: (context) => EntriesPage(showPlans: showPlans));
+    return MaterialPageRoute(
+        builder: (context) => EntriesPage(showPlans: showPlans));
   }
+
   const EntriesPage({super.key, this.showPlans = false});
 
   @override
@@ -170,9 +172,11 @@ List<JournalEntry> entries = [
 ];
 
 //Generated list of journal entries
-
-final entry = entries.where((entry) => entry.status == PlanStatus.noPlan).toList();
-final plans = entries.where((entry) => entry.status == PlanStatus.unfinished).toList();
+final entry =
+    entries.where((entry) => entry.status == PlanStatus.noPlan).toList();
+final plans =
+    entries.where((entry) => entry.status == PlanStatus.unfinished).toList();
+List<JournalEntry> items = [];
 
 // Display options
 final List<String> displayOptions = ['Week', 'Month', 'Year'];
@@ -185,7 +189,9 @@ bool showAllItems = true;
 class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
-    final items = widget.showPlans ? plans : entry;
+    setState(() {
+      items = widget.showPlans ? plans : entry;
+    });
     // Sort the Journal entries by most recent date
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
     return Consumer<ThemeSettings>(
@@ -201,7 +207,7 @@ class _EntriesPageState extends State<EntriesPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  !widget.showPlans ? const Text('Entries') : const Text("Plans"),
+                  const Text('Entries'),
 
                   // Pad filter to the right
 
@@ -250,8 +256,8 @@ class _EntriesPageState extends State<EntriesPage> {
                             sortedItems[index - 1].getDate(), chosenDisplay!);
                       }
                       return Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // if not same date or first in list make new list
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          // if not same date or first in list make new list
                           children: [
                             if (index == 0 || !(isSameDate)) ...[
                               Text(() {
@@ -363,10 +369,11 @@ class _EntriesPageState extends State<EntriesPage> {
   }
 
   makeNewEntry() async {
-    final JournalEntry result = await Navigator.push(context, NewEntryPage.route());
+    final JournalEntry result =
+        await Navigator.push(context, NewEntryPage.route());
     setState(() {
       entries.add(result);
-      result.status == PlanStatus.noPlan ? entry.add(result) : plans.add(result);
+      // result.status == PlanStatus.noPlan ? entry.add(result) : plans.add(result);
     });
   }
 }

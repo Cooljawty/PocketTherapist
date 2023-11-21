@@ -21,8 +21,8 @@ class JournalEntry with DisplayOnCard {
   String _previewText = "";
 
   // year, month, day
-  DateTime current = DateTime.now();
-  DateTime _date = DateTime(1970, 12, 31);
+  DateTime _creationDate = DateTime.now();
+  DateTime _displayDate = DateTime(1970, 12, 31);
   List<Tag> _tags = [];
   List<Emotion> _emotions = [];
 
@@ -35,13 +35,15 @@ class JournalEntry with DisplayOnCard {
     required title,
     required entryText,
     required date,
+    displayDate,
     tags,
     emotions,
     PlanStatus planStatus = PlanStatus.noPlan,
   }) {
+    _creationDate = date;
+    _displayDate = displayDate ?? date;
     _title = title;
     _entryText = entryText;
-    _date = date;
     _tags = tags ?? [];
     _emotions = emotions ?? [];
     status = planStatus;
@@ -51,7 +53,7 @@ class JournalEntry with DisplayOnCard {
 
     card = (
       body: _previewText,
-      date: _date,
+      date: _displayDate,
       emotionList: _emotions,
       tagList: _tags,
       title: _title,
@@ -63,7 +65,8 @@ class JournalEntry with DisplayOnCard {
   String getPreviewText() => _previewText;
   String getEntryText() => _entryText;
   String getTitle() => _title;
-  DateTime getDate() => _date;
+  DateTime getCreationDate() => _creationDate;
+  DateTime getDate() => _displayDate;
   List<Tag> getTags() => _tags;
   List<Emotion> getEmotions() => _emotions;
 
