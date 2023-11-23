@@ -9,36 +9,23 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:app/pages/entries.dart';
 
 class Calendar extends StatefulWidget {
-	final DateTime startDate; 
-	final DateTime endDate;
-
-	const Calendar({
-		super.key, 
-		required this.startDate, 
-		required this.endDate, 
-	});
 
 	@override
-	State<Calendar> createState() => _CalendarState(startDate: this.startDate, endDate: this.endDate);
+	State<Calendar> createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
-	final DateTime startDate; 
-	final DateTime endDate;
-
-	_CalendarState({
-		required this.startDate, 
-		required this.endDate, 
-	});
+	DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1); 
+	DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
 	List<({int strength, Color color})> _emotionData = [];
 
-	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
+	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
 
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
 	Widget _displayDay(day, {outOfRange = false}) => GestureDetector(
-		onTap: () => Navigator.of(context).push(EntriesPage.route(startDate: widget.startDate.add(Duration(days: day)))),
+		onTap: () => Navigator.of(context).push(EntriesPage.route(startDate: startDate.add(Duration(days: day)))),
 		child: Container(
 			key: const Key("Calendar_Day"),
 			alignment: Alignment.center,
@@ -62,16 +49,16 @@ class _CalendarState extends State<Calendar> {
 	///next month that would be part of the week
 	List<Widget> _getCalendarDays() {
 		final datesInRange = <Widget>[];
-		for (var day = 0; day <= _daysFromDate(widget.endDate); day += 1) {
+		for (var day = 0; day <= _daysFromDate(endDate); day += 1) {
 			datesInRange.add(_displayDay(day));
 		}
 
 		//Fill the start and end to line up weekdays
-		final startFirstWeek = widget.startDate!.subtract(Duration(days: widget.startDate.weekday));
-		final prePaddedDays = List<Widget>.generate(widget.startDate.weekday - 1, (day) {
+		final startFirstWeek = startDate!.subtract(Duration(days: startDate.weekday));
+		final prePaddedDays = List<Widget>.generate(startDate.weekday - 1, (day) {
 			return _displayDay( startFirstWeek.day + day, outOfRange: true);
 		});
-		final postPaddedDays = List<Widget>.generate(7 - widget.endDate.weekday, (day) {
+		final postPaddedDays = List<Widget>.generate(7 - endDate.weekday, (day) {
 			return _displayDay(day, outOfRange: true);
 		});
 
@@ -81,8 +68,8 @@ class _CalendarState extends State<Calendar> {
 	@override
 	Widget build(BuildContext context) {
 		//Calculate the emotion data for each day
-		_emotionData = List.filled(_daysFromDate(widget.endDate) +1, (strength: 0, color: Colors.transparent));
-		for (var entry in entriesBetween(widget.startDate, widget.endDate)) {
+		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent));
+		for (var entry in entriesBetween(startDate, endDate)) {
 			final strongestEmotion = entry.getStrongestEmotion();
 			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.getDate())].strength) {
 				_emotionData[_daysFromDate(entry.getDate())] = (
@@ -105,20 +92,23 @@ class _CalendarState extends State<Calendar> {
 										Icons.navigate_before, 
 									),
 									onPressed: ()=> setState(() {
-										final range = endDate.difference(widget.startDate);
-										startDate.subtract(range);
-										endDate.subtract(range);
+										final range = endDate.difference(startDate);
+										startDate = DateTime(startDate.year, startDate.month - 1, 1);
+										endDate = DateTime(startDate.year, startDate.month + 1, 0);
 									}),
 								),
-								Text(widget.startDate.formatDate().month, style: settings.getCurrentTheme().textTheme.titleLarge), 
+								Text(
+									"${startDate.formatDate().month}" 
+									+ ((startDate.year != DateTime.now().year) ? " ${startDate.year}" : ""), 
+									style: settings.getCurrentTheme().textTheme.titleLarge
+								), 
 								IconButton(
 									icon: const Icon(
 										Icons.navigate_next, 
 									),
 									onPressed: ()=> setState(() {
-										final range = endDate.difference(widget.startDate);
-										startDate.add(range);
-										endDate.add(range);
+										startDate = DateTime(startDate.year, startDate.month + 1, 1);
+										endDate = DateTime(startDate.year, startDate.month + 1, 0);
 									}),
 								),
 							]
