@@ -170,8 +170,6 @@ void main() async {
   });
 
   testWidgets("Reset Password w/ recovery code", (widgetTester) async {
-      app.main();
-      await widgetTester.pump();
       // the recovery phrase
       String recovery = "46jDQvvpxNNsX7yb4mrg6F+e2lg=";
       // This is a ripped hash from  an actual install so it should function the same everytime.
@@ -200,8 +198,14 @@ void main() async {
       };
       settings.setMockValues(settingsMap);
 
+      app.main();
       await widgetTester.pump();
-      Finder resetButton = find.byKey(const Key("Reset_Button"));
+
+      do {
+        await widgetTester.pump();
+      }while(widgetTester.widgetList(find.byKey(const Key("Reset_Button"))).isEmpty);
+
+            Finder resetButton = find.byKey(const Key("Reset_Button"));
       await widgetTester.tap(resetButton);
       await widgetTester.pump();
       Finder passwordResetField = find.byKey(const Key("Reset_Password_Field"));
@@ -234,8 +238,6 @@ void main() async {
   });
 
   testWidgets("Reset Password w/ password", (widgetTester) async {
-      app.main();
-      await widgetTester.pump();
       String password = "password123@";
       // This is a ripped hash from  an actual install so it should function the same everytime.
       Map<String, Object> settingsMap = {
@@ -262,7 +264,14 @@ void main() async {
         ]
       };
       settings.setMockValues(settingsMap);
+
+      app.main();
       await widgetTester.pump();
+
+      do {
+        await widgetTester.pump();
+      }while(widgetTester.widgetList(find.byKey(const Key("Reset_Button"))).isEmpty);
+
       Finder resetButton = find.byKey(const Key("Reset_Button"));
       await widgetTester.tap(resetButton);
       await widgetTester.pump();

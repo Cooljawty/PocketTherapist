@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:app/pages/entries.dart';
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/classes.dart';
+import '../helper/dates_and_times.dart';
 
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
@@ -45,100 +47,120 @@ class _DisplayCardState extends State<DisplayCard> {
             Navigator.of(context).push(route());
           }
         },
+
+        // Actual display card
         child: Card(
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: getCurrentTheme().colorScheme.outline,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(4)),
-            ),
+          // Rounded darker border
+          shape: const RoundedRectangleBorder(
+            side: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+
+          // Rounded background
           child: Container(
-            //width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
+              color: getCurrentTheme().colorScheme.background.withAlpha(200),
+              borderRadius: BorderRadius.circular(15),
               gradient: LinearGradient(
-                  colors: ((){
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: (() {
                     List<Color> bgCardColors = [];
-                    if(widget.emotionList.isNotEmpty){
-                      if(widget.emotionList.length > 1){
-                        for (int i = 0; i < min(widget.emotionList.length, 3); i++) {
-                          bgCardColors.add(widget.emotionList[i].color);
+                    if (widget.emotionList.isNotEmpty) {
+                      if (widget.emotionList.length > 1) {
+                        for (int i = 0;
+                            i < min(widget.emotionList.length, 2);
+                            i++) {
+                          bgCardColors
+                              .add(widget.emotionList[i].color.withAlpha(150));
                         }
-                      }else{
-                        bgCardColors.add(widget.emotionList[0].color);
-                        bgCardColors.add(widget.emotionList[0].color);
+                      } else {
+                        bgCardColors
+                            .add(widget.emotionList[0].color.withAlpha(150));
+                        bgCardColors
+                            .add(widget.emotionList[0].color.withAlpha(150));
                       }
-                    }else if(widget.tagList.isNotEmpty){
-                      if(widget.tagList.length > 1){
-                        for (int i = 0; i < min(widget.tagList.length, 3); i++) {
-                          bgCardColors.add(widget.tagList[i].color);
+                    } else if (widget.tagList.isNotEmpty) {
+                      if (widget.tagList.length > 1) {
+                        for (int i = 0;
+                            i < min(widget.tagList.length, 2);
+                            i++) {
+                          bgCardColors
+                              .add(widget.tagList[i].color.withAlpha(150));
                         }
-                      }else{
-                        bgCardColors.add(widget.tagList[0].color);
-                        bgCardColors.add(widget.tagList[0].color);
+                      } else {
+                        bgCardColors
+                            .add(widget.tagList[0].color.withAlpha(150));
+                        bgCardColors
+                            .add(widget.tagList[0].color.withAlpha(150));
                       }
-                    }else{
-                      bgCardColors.add(Colors.grey.shade800);
-                      bgCardColors.add(Colors.grey.shade400);
+                    } else {
+                      bgCardColors.add(Colors.grey.shade800.withAlpha(150));
+                      bgCardColors.add(Colors.grey.shade400.withAlpha(150));
                     }
                     return bgCardColors;
-                  }())
-              ),
+                  }())),
             ),
 
-            child: Row( // row to hold all information
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-
-                Column( // Column to hold title and preview text
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      // Title
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width - 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 5,),
-                          child: Text(
-                          widget.title,
-                          overflow: TextOverflow.fade,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: DefaultTextStyle.of(context).style.apply(
+            // All information in the card held here
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                    // Title
+                    Text(
+                      (widget.title.length > 30)
+                          ? '${widget.title.substring(0, 30)}...'
+                          : widget.title,
+                      style: DefaultTextStyle.of(context).style.apply(
                             fontSizeFactor: 1.3,
                             fontWeightDelta: 1,
                           ),
-                        ),
-                        )
+                    ),
+
+                    // preview text
+                    Text(
+                      (widget.body.length >= 40) ?
+                      '${widget.body}...' : widget.body,
+                      style: const TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ]),
+
+                  // Date
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Day
+                      Text(
+                        widget.date.day.toString(),
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
 
-                      // preview text
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width - 150,
-                        // height: 40,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20, bottom: 10, top: 5),
-                          child: Text(
-                            widget.body,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            softWrap: false,
-                            style: const TextStyle(fontStyle: FontStyle.italic),
-                          ),),
-                      ),
-                    ]
-                ),
-                // spacer to push the date to the right and the text to the left
-                const Spacer(),
+                      const Padding(padding: EdgeInsets.only(left: 5)),
 
-                // Date
-                Container(
-                  padding: const EdgeInsets.all(7),
-                  child: Text(
-                    '${widget.date.month.toString()}/${widget.date.day.toString()}/${widget.date.year.toString()}',
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // First 3 letters of the month
+                            Text(
+                              widget.date.formatDate().month.substring(0, 3),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+
+                            // Year
+                            Text(
+                              widget.date.year.toString(),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ])
+                    ],
                   ),
-                ),
-              ]
-            ),
+                ]),
           ),
         ),
       ),
@@ -147,11 +169,24 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 mixin DisplayOnCard {
-  ({String title, String body, DateTime date, List<Tag> tagList, List<Emotion> emotionList,})card = (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
+  ({
+    String title,
+    String body,
+    DateTime date,
+    List<Tag> tagList,
+    List<Emotion> emotionList,
+  }) card =
+      (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
   dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
     return DisplayCard(
-        title: card.title, body: card.body, date: card.date, page: pageRoute, tagList: card.tagList, emotionList: card.emotionList,);
+      title: card.title,
+      body: card.body,
+      date: card.date,
+      page: pageRoute,
+      tagList: card.tagList,
+      emotionList: card.emotionList,
+    );
   }
 }

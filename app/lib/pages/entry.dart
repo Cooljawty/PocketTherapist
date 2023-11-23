@@ -19,7 +19,7 @@ class JournalEntry with DisplayOnCard {
   List<Tag> _tags = [];
   List<Emotion> _emotions = [];
 
-  static const previewLength = 25;
+  static const previewLength = 40;
 
   JournalEntry(
       {required title, required entryText, required date, tags, emotions}) {
@@ -33,7 +33,7 @@ class JournalEntry with DisplayOnCard {
     _previewText = preview.substring(0, min(previewLength, preview.length));
 
     card = (
-      body: getEntryText(),
+      body: _previewText,
       date: _date,
       emotionList: _emotions,
       tagList: _tags,
@@ -92,63 +92,61 @@ class _EntryPageState extends State<EntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              //Title
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Text(widget.entry.getTitle()),
-                  ],
-                ),
+        child: Column(
+          children: <Widget>[
+            //Title
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  Text(widget.entry.getTitle()),
+                ],
               ),
+            ),
 
-              // Tags
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(direction: Axis.horizontal, children: [
-                  for (var i in widget.entry.getTags())
-                    Text("#${i.name} ",
+            // Tags
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(direction: Axis.horizontal, children: [
+                for (var i in widget.entry.getTags())
+                  Text("#${i.name} ",
+                      style: TextStyle(
+                          inherit: true,
+                          color: i.color,
+                          fontWeight: FontWeight.bold),
+                      selectionColor: i.color)
+              ]),
+            ),
+
+            // Emotions
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  for (var i in widget.entry.getEmotions())
+                    Text("${i.name}: ${i.strength} ",
                         style: TextStyle(
                             inherit: true,
                             color: i.color,
                             fontWeight: FontWeight.bold),
                         selectionColor: i.color)
-                ]),
+                ],
               ),
+            ),
 
-              // Emotions
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    for (var i in widget.entry.getEmotions())
-                      Text("${i.name}: ${i.strength} ",
-                          style: TextStyle(
-                              inherit: true,
-                              color: i.color,
-                              fontWeight: FontWeight.bold),
-                          selectionColor: i.color)
-                  ],
-                ),
+            //Entry text
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  Text(widget.entry.getEntryText()),
+                ],
               ),
-
-              //Entry text
-              Container(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Text(widget.entry.getEntryText()),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
