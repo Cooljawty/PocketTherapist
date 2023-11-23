@@ -38,6 +38,57 @@ void main() {
 		expect(calendarDays, findsNWidgets(totalDays));
   });
 
+	testWidgets('Switching between time ranges', (WidgetTester tester) async {
+		await tester.pumpWidget(myApp);
+		
+    final nextButton = find.byKey(const Key("Date_Next"));
+		expect(nextButton, findsOneWidget);
+
+    final previousButton = find.byKey(const Key("Date_Previous"));
+		expect(previousButton, findsOneWidget);
+
+		//Test forward
+		var today = DateTime.now();
+		while( today.isBefore(DateTime.now().add(Duration(days: 365)))){
+			final firstOfTheMonth = DateTime(today.year, today.month, 1);
+			final lastOfTheMonth = DateTime(today.year, today.month + 1, 1).subtract(Duration(days: 1));
+
+			final range = lastOfTheMonth.difference(DateTime(today.year, today.month, 1));
+			today = today.add(range);
+
+			//Ensuere the right number of days are on grid
+			final firstWeekPadding = firstOfTheMonth.weekday - 1;
+			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
+			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
+
+			await tester.tap(nextButton);
+			await tester.pump();
+
+			final calendarDays = find.byKey(const Key("Calendar_Day"));
+			expect(calendarDays, findsNWidgets(totalDays));
+		}
+
+		//Test backward
+		while( today.isAfter(DateTime.now().subtract(Duration(days: 2 * 365)))){
+			final firstOfTheMonth = DateTime(today.year, today.month, 1);
+			final lastOfTheMonth = DateTime(today.year, today.month + 1, 1).subtract(Duration(days: 1));
+
+			final range = lastOfTheMonth.difference(DateTime(today.year, today.month, 1));
+			today = today.add(range);
+
+			//Ensuere the right number of days are on grid
+			final firstWeekPadding = firstOfTheMonth.weekday - 1;
+			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
+			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
+
+			await tester.tap(previousButton);
+			await tester.pump();
+
+			final calendarDays = find.byKey(const Key("Calendar_Day"));
+			expect(calendarDays, findsNWidgets(totalDays));
+		}
+	});
+
 	Future<void> createNewEntry(WidgetTester tester) async {
 		// Find the nav bar button for entries page
 		await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));
