@@ -19,10 +19,18 @@ class Calendar extends StatefulWidget {
 	});
 
 	@override
-	State<Calendar> createState() => _CalendarState();
+	State<Calendar> createState() => _CalendarState(startDate: this.startDate, endDate: this.endDate);
 }
 
 class _CalendarState extends State<Calendar> {
+	final DateTime startDate; 
+	final DateTime endDate;
+
+	_CalendarState({
+		required this.startDate, 
+		required this.endDate, 
+	});
+
 	List<({int strength, Color color})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(widget.startDate).inDays;
@@ -90,7 +98,31 @@ class _CalendarState extends State<Calendar> {
 				children: [
 					Container(
 						margin: const EdgeInsets.only(top: 13),
-						child: Text(widget.startDate.formatDate().month, style: settings.getCurrentTheme().textTheme.titleLarge)
+						child: Row( 
+							children: [
+								IconButton(
+									icon: const Icon(
+										Icons.navigate_before, 
+									),
+									onPressed: ()=> setState(() {
+										final range = endDate.difference(widget.startDate);
+										startDate.subtract(range);
+										endDate.subtract(range);
+									}),
+								),
+								Text(widget.startDate.formatDate().month, style: settings.getCurrentTheme().textTheme.titleLarge), 
+								IconButton(
+									icon: const Icon(
+										Icons.navigate_next, 
+									),
+									onPressed: ()=> setState(() {
+										final range = endDate.difference(widget.startDate);
+										startDate.add(range);
+										endDate.add(range);
+									}),
+								),
+							]
+						),
 					),
 					Divider(),
 					Row( 
