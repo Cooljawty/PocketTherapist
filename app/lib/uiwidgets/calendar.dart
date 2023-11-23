@@ -83,14 +83,13 @@ class _CalendarState extends State<Calendar> {
 			key: const Key("Calendar_Panel"),
 			child: Column(
 				children: [
+					//Calendar title and time range changerj
 					Container(
 						margin: const EdgeInsets.only(top: 13) + EdgeInsets.symmetric(horizontal: 14),
 						child: Row( 
 							children: [
 								IconButton(
-									icon: const Icon(
-										Icons.navigate_before, 
-									),
+									icon: const Icon( Icons.navigate_before, ),
 									onPressed: ()=> setState(() {
 										final range = endDate.difference(startDate);
 										startDate = DateTime(startDate.year, startDate.month - 1, 1);
@@ -100,15 +99,14 @@ class _CalendarState extends State<Calendar> {
 								Expanded( 
 									child: Text(
 										"${startDate.formatDate().month}" 
+										//Add year if nessicary
 										+ ((startDate.year != DateTime.now().year) ? " ${startDate.year}" : ""), 
 										style: settings.getCurrentTheme().textTheme.titleLarge,
 										textAlign: TextAlign.center,
 									), 
 								),
 								IconButton(
-									icon: const Icon(
-										Icons.navigate_next, 
-									),
+									icon: const Icon( Icons.navigate_next, ),
 									onPressed: ()=> setState(() {
 										startDate = DateTime(startDate.year, startDate.month + 1, 1);
 										endDate = DateTime(startDate.year, startDate.month + 1, 0);
@@ -118,6 +116,7 @@ class _CalendarState extends State<Calendar> {
 						),
 					),
 					Divider(),
+					//Weekday header
 					Row( 
 						children: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((weekday) {
 							return Expanded( 
@@ -125,6 +124,7 @@ class _CalendarState extends State<Calendar> {
 							);
 						}).toList(),
 					),
+					//Calendar grid
 					GridView.count(
 						key: const Key("Calendar_Grid"),
 						crossAxisCount: 7,

@@ -16,7 +16,7 @@ class EntriesPage extends StatefulWidget {
     return MaterialPageRoute(builder: (context) => EntriesPage(startDate: startDate));
   }
 
-  EntriesPage({super.key, this.startDate});
+  const EntriesPage({super.key, this.startDate});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -199,12 +199,12 @@ class _EntriesPageState extends State<EntriesPage> {
 			case "Month":
 				entries = entriesBetween(
 					DateTime(today.year, today.month, 1), 
-					DateTime(today.year, today.month+1, 1).subtract(Duration(days:1))
+					DateTime(today.year, today.month, 0))
 				);
 			case "Year":
 				entries = entriesBetween(
 					DateTime(today.year, 1, 1), 
-					DateTime(today.year+1, 1, 1).subtract(Duration(days:1))
+					DateTime(today.year, 12, 0))
 				);
 		}
 
