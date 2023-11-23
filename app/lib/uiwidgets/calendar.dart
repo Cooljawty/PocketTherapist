@@ -84,7 +84,7 @@ class _CalendarState extends State<Calendar> {
 			child: Column(
 				children: [
 					Container(
-						margin: const EdgeInsets.only(top: 13),
+						margin: const EdgeInsets.only(top: 13) + EdgeInsets.symmetric(horizontal: 14),
 						child: Row( 
 							children: [
 								IconButton(
@@ -97,11 +97,14 @@ class _CalendarState extends State<Calendar> {
 										endDate = DateTime(startDate.year, startDate.month + 1, 0);
 									}),
 								),
-								Text(
-									"${startDate.formatDate().month}" 
-									+ ((startDate.year != DateTime.now().year) ? " ${startDate.year}" : ""), 
-									style: settings.getCurrentTheme().textTheme.titleLarge
-								), 
+								Expanded( 
+									child: Text(
+										"${startDate.formatDate().month}" 
+										+ ((startDate.year != DateTime.now().year) ? " ${startDate.year}" : ""), 
+										style: settings.getCurrentTheme().textTheme.titleLarge,
+										textAlign: TextAlign.center,
+									), 
+								),
 								IconButton(
 									icon: const Icon(
 										Icons.navigate_next, 
