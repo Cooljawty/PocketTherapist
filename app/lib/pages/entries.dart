@@ -199,12 +199,12 @@ class _EntriesPageState extends State<EntriesPage> {
 			case "Month":
 				entries = entriesBetween(
 					DateTime(today.year, today.month, 1), 
-					DateTime(today.year, today.month, 0))
+					DateTime(today.year, today.month, 0)
 				);
 			case "Year":
 				entries = entriesBetween(
 					DateTime(today.year, 1, 1), 
-					DateTime(today.year, 12, 0))
+					DateTime(today.year, 12, 0)
 				);
 		}
 

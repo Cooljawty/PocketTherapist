@@ -21,6 +21,8 @@ class _CalendarState extends State<Calendar> {
 	List<({int strength, Color color})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
+	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(Duration(days: 1));
+
 
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
@@ -89,11 +91,11 @@ class _CalendarState extends State<Calendar> {
 						child: Row( 
 							children: [
 								IconButton(
+									key: const Key("Date_Previous"),
 									icon: const Icon( Icons.navigate_before, ),
 									onPressed: ()=> setState(() {
-										final range = endDate.difference(startDate);
-										startDate = DateTime(startDate.year, startDate.month - 1, 1);
-										endDate = DateTime(startDate.year, startDate.month + 1, 0);
+										endDate = startDate.subtract(Duration(days: 1));
+										startDate = DateTime(endDate.year, endDate.month, 1);
 									}),
 								),
 								Expanded( 
@@ -106,10 +108,11 @@ class _CalendarState extends State<Calendar> {
 									), 
 								),
 								IconButton(
+									key: const Key("Date_Next"),
 									icon: const Icon( Icons.navigate_next, ),
 									onPressed: ()=> setState(() {
-										startDate = DateTime(startDate.year, startDate.month + 1, 1);
-										endDate = DateTime(startDate.year, startDate.month + 1, 0);
+										startDate = endDate.add(Duration(days: 1));
+										endDate = _getLastOfTheMonth(startDate);
 									}),
 								),
 							]
