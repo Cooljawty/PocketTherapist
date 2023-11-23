@@ -28,7 +28,7 @@ void main() {
 		//Ensuere the right number of days are on grid
 		final today = DateTime.now();
 		final firstOfTheMonth = DateTime(today.year, today.month, 1);
-		final lastOfTheMonth = DateTime(today.year, today.month + 1, 1).subtract(Duration(days: 1));
+		final lastOfTheMonth = DateTime(today.month < DateTime.december ? today.year : today.year+1, today.month < DateTime.december ? today.month + 1 : 1, 1).subtract(Duration(days: 1));
 
 		final firstWeekPadding = firstOfTheMonth.weekday - 1;
 		final lastWeekPadding = 7 - lastOfTheMonth.weekday;
@@ -38,52 +38,60 @@ void main() {
 		expect(calendarDays, findsNWidgets(totalDays));
   });
 
-	testWidgets('Switching between time ranges', (WidgetTester tester) async {
+	testWidgets('Test forward date switching', (WidgetTester tester) async {
 		await tester.pumpWidget(myApp);
 		
     final nextButton = find.byKey(const Key("Date_Next"));
 		expect(nextButton, findsOneWidget);
 
-    final previousButton = find.byKey(const Key("Date_Previous"));
-		expect(previousButton, findsOneWidget);
+    //Test forward
+		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isBefore(DateTime(DateTime.now().year + 1, DateTime.now().month, 1)) ){
+			//Calculate date of next month
+			if ( date.month < 12 ){
+				date = DateTime( date.year, date.month + 1, 1);
+			} else {
+				date = DateTime( date.year + 1, 1, 1);
+			}
 
-		//Test forward
-		var today = DateTime.now();
-		while( today.isBefore(DateTime.now().add(Duration(days: 365)))){
-			final firstOfTheMonth = DateTime(today.year, today.month, 1);
-			final lastOfTheMonth = DateTime(today.year, today.month + 1, 1).subtract(Duration(days: 1));
+			final firstOfTheMonth = DateTime(date.year, date.month, 1);
+			final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(Duration(days: 1));
 
-			final range = lastOfTheMonth.difference(DateTime(today.year, today.month, 1));
-			today = today.add(range);
-
-			//Ensuere the right number of days are on grid
 			final firstWeekPadding = firstOfTheMonth.weekday - 1;
 			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
 			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
 
+			//Go to next month and test amount of days are correct
 			await tester.tap(nextButton);
 			await tester.pump();
-
 			final calendarDays = find.byKey(const Key("Calendar_Day"));
 			expect(calendarDays, findsNWidgets(totalDays));
 		}
+	});
 
-		//Test backward
-		while( today.isAfter(DateTime.now().subtract(Duration(days: 2 * 365)))){
-			final firstOfTheMonth = DateTime(today.year, today.month, 1);
-			final lastOfTheMonth = DateTime(today.year, today.month + 1, 1).subtract(Duration(days: 1));
+	testWidgets('Test backwards date switching', (WidgetTester tester) async {
+		await tester.pumpWidget(myApp);
+		
+    final previousButton = find.byKey(const Key("Date_Previous"));
+		expect(previousButton, findsOneWidget);
 
-			final range = lastOfTheMonth.difference(DateTime(today.year, today.month, 1));
-			today = today.add(range);
+    //Test backward
+		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isAfter(DateTime(DateTime.now().year - 1, DateTime.now().month, 1)) ){
+			//Calculate date of previous month
+			final lastOfPreviousMonth = date.subtract(Duration(days: 1));
+			date = DateTime(lastOfPreviousMonth.year, lastOfPreviousMonth.month, 1);
 
-			//Ensuere the right number of days are on grid
+		final firstOfTheMonth = DateTime(date.year, date.month, 1);
+		final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(Duration(days: 1));
+
 			final firstWeekPadding = firstOfTheMonth.weekday - 1;
 			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
 			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
 
+			//Go to previous month and test amount of days are correct
 			await tester.tap(previousButton);
 			await tester.pump();
-
 			final calendarDays = find.byKey(const Key("Calendar_Day"));
 			expect(calendarDays, findsNWidgets(totalDays));
 		}
