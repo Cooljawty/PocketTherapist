@@ -73,6 +73,34 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						),
 					),
 				),
+
+				lineTouchData: LineTouchData(
+					touchTooltipData: LineTouchTooltipData(
+						fitInsideHorizontally: true,
+						fitInsideVertically: true,
+						tooltipBgColor: settings.getCurrentTheme().colorScheme.background,
+						tooltipBorder: BorderSide(color: gridColor),
+						getTooltipItems: (spots) => spots.map( (spot) {
+							final emotion = _emotionData.keys.elementAt(spot.barIndex);
+							final value = ((spot.bar.spots[spot.spotIndex].y / MAX_STRENGTH) * 100).round();
+
+							return LineTooltipItem(
+								"${emotion}: ",
+								settings.getCurrentTheme().textTheme.displayMedium!,
+								//Print value in emotion's color
+								children: [ 
+									TextSpan( 
+										text: "${value}%",
+										style: settings.getCurrentTheme().textTheme.displayMedium!.copyWith(
+											color: emotionlist[emotion]!.color
+										),
+									)
+								]
+							);
+						}).toList(),
+					),
+				),
+
 				minX: 0.0, maxX: getXFromDay(widget.endDate),
 				minY: 0.0, maxY: MAX_STRENGTH,
 				gridData: FlGridData(
