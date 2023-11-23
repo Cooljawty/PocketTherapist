@@ -46,7 +46,7 @@ void main() {
 
     //Test forward
 		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
-		while( date.isBefore(DateTime(DateTime.now().year + 1, DateTime.now().month, 1)) ){
+		while( date.isBefore(DateTime(DateTime.now().year + 4, DateTime.now().month, 1)) ){
 			//Calculate date of next month
 			if ( date.month < 12 ){
 				date = DateTime( date.year, date.month + 1, 1);
@@ -77,7 +77,7 @@ void main() {
 
     //Test backward
 		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
-		while( date.isAfter(DateTime(DateTime.now().year - 1, DateTime.now().month, 1)) ){
+		while( date.isAfter(DateTime(DateTime.now().year - 4, DateTime.now().month, 1)) ){
 			//Calculate date of previous month
 			final lastOfPreviousMonth = date.subtract(Duration(days: 1));
 			date = DateTime(lastOfPreviousMonth.year, lastOfPreviousMonth.month, 1);
