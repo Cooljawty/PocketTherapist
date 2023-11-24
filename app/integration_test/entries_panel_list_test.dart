@@ -12,10 +12,27 @@ void main() {
 // Navigate to the entries panel
   @override
   Future<void> setUp(WidgetTester tester) async {
-    await startSkipFrontScreen(tester);
-    Finder finder = find.text('Entries');
-    await pumpUntilFound(tester, finder);
-    await tap(tester, finder);
+    await startApp(tester);
+
+    // Set mock values in the settings
+    settings.setMockValues({
+      settings.configuredKey: true,
+      settings.encryptionToggleKey: false,
+    });
+
+    // Enter the app
+    Finder startButton = find.byKey(const Key("Start_Button"));
+    await tester.tap(startButton);
+
+    do {
+      await tester.pump();
+    } while (tester
+        .widgetList(find.text("Entries"))
+        .isEmpty);
+
+    // Find the nav bar button for entries page
+    await tester.tap(find.text("Entries"));
+    await tester.pumpAndSettle();
   }
 
   entries.addAll([
@@ -36,13 +53,11 @@ void main() {
 
     final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
     // find the drop down and tap it
-    await tester.tap(dropdownKey);
-    await tester.pumpAndSettle();
+    await tap(tester, dropdownKey, true);
 
     // find the Year option and tap it
     final weekDropDown = find.text(filter).last;
-    await tester.tap(weekDropDown);
-    await tester.pumpAndSettle();
+    await tap(tester, weekDropDown, true);
 
     // see if the dropdown is proper
     expect(find.text(filter), findsOneWidget);

@@ -35,10 +35,14 @@ void defaultSettings() {
 /// [pumpUntilFound] repeatedly calls [WidgetTester.pump()] until
 /// the [found] parameter is found or it times out. (5 min)
 /// use [settle] = true, to make it pumpAndSettle
-Future<void> pumpUntilFound(WidgetTester tester, Finder found, [bool settle = false, Duration duration = Duration.zero]) async {
+Future<void> pumpUntilFound(WidgetTester tester, Finder found, [bool settle = false, Duration? duration]) async {
   if(settle){
     while(!found.hasFound){
-      await tester.pumpAndSettle(duration);
+      if (duration != null) {
+        await tester.pumpAndSettle(duration);
+      } else {
+        await tester.pumpAndSettle();
+      }
     }
   } else {
     while(!found.hasFound){
@@ -50,10 +54,14 @@ Future<void> pumpUntilFound(WidgetTester tester, Finder found, [bool settle = fa
 /// [tap] can be used to tap on a widget with the Finder [found]
 /// This automatically pumps the widget tree after tapping.
 /// use [settle] = true, to make it pumpAndSettle
-Future<void> tap(WidgetTester tester, Finder found, [bool settle = false, Duration duration = Duration.zero]) async {
+Future<void> tap(WidgetTester tester, Finder found, [bool settle = false, Duration? duration]) async {
   await tester.tap(found);
   if(settle) {
-    await tester.pumpAndSettle(duration);
+    if (duration != null) {
+      await tester.pumpAndSettle(duration);
+    } else {
+      await tester.pumpAndSettle();
+    }
   } else {
     await tester.pump(duration);
   }

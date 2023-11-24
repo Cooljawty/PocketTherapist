@@ -1,4 +1,4 @@
-import 'package:app/pages/new_entry.dart';
+import 'package:app/pages/entries.dart';
 import 'package:flutter/material.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'dart:math';
@@ -361,7 +361,7 @@ class JournalEntry implements Comparable<JournalEntry>{
   }
 }
 
-void makeNewEntry(BuildContext context) async {
+Future<void> makeNewEntry(BuildContext context) async {
   final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewEntryPage()));
   if (result is JournalEntry) {
     items.add(result);

@@ -232,18 +232,23 @@ class CustomNavigationBar extends StatelessWidget{
       destinations: destinations,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
-      onDestinationSelected: onDestinationSelected ?? (index) {
+      onDestinationSelected: (index) {
         if(index == selectedIndex) return;
         if(index >= destinations.length) return;
-        switch(index) {
-          case 2: makeNewEntry(context); return;
-          case 5: Navigator.of(context).pushNamed(destinations[index].label); return;
-          case _: Navigator.of(context).pushReplacementNamed(destinations[index].label); break;
-        }
+        onDestinationSelected == null ? defaultOnDestinationSelected(index, context) : onDestinationSelected!(index);
         selectedIndex = index;
       },
     );
   }
+
+  void defaultOnDestinationSelected(int index, BuildContext context) async {
+    switch(index) {
+      case 2: makeNewEntry(context); return;
+      case 5: Navigator.of(context).pushNamed(destinations[index].label); return;
+      case _: Navigator.of(context).pushReplacementNamed(destinations[index].label); break;
+    }
+  }
+
 }
 
 /// A card that displays text with a title and main text body

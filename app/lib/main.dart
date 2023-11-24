@@ -1,14 +1,11 @@
 import 'package:app/pages/calendar.dart';
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
-import 'package:app/pages/new_entry.dart';
 import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/pages/welcome.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/provider/encryptor.dart' as encryptor;
-import 'package:app/provider/entry.dart' as entry;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

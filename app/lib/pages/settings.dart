@@ -184,7 +184,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               Theme.of(context).colorScheme.error.withRed(255),
                         ),
                       ],
-                    )),
+                    )
+                ),
 
                 // Enable/Disable encryption Button
                 Visibility(
