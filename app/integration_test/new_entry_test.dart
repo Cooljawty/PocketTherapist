@@ -1,7 +1,7 @@
-import 'package:app/helper/classes.dart';
+import 'package:app/provider/entry.dart';
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/uiwidgets/cards.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
 
@@ -147,21 +147,6 @@ void main() {
 
 	// Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
 	testWidgets('Tag button pulls up tag menu and correct tags are displayed', (WidgetTester tester) async {
-
-		// Initialize the tag list
-		settings.tagList = [
-			Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-			Tag(name: 'Centered', color: const Color(0xff794e5e)),
-			Tag(name: 'Content', color: const Color(0xfff1903b)),
-			Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-			Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-			Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-			Tag(name: 'Present', color: const Color(0xffff7070)),
-			Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-			Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-			Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-		];
-
 		await setUp(tester);
 
 		// Tap the tag button to bring up the tag menu
@@ -169,8 +154,8 @@ void main() {
 		await tester.pumpAndSettle();
 
 		// Find all the tags in the list and tap them
-		for (int i = 0; i < settings.tagList.length; i++) {
-			final tagKey = find.text(settings.tagList[i].name);
+		for (int i = 0; i < tagList.length; i++) {
+			final tagKey = find.text(tagList[i].name);
 			expect(tagKey, findsOneWidget);
 			await tester.tap(tagKey);
 			await tester.pumpAndSettle();
@@ -185,8 +170,8 @@ void main() {
 		final tagChips = find.byKey(const Key('TagChipsDisplay'));
 
 		// See if all the selected tags are on the page
-		for (int i = 0; i < settings.tagList.length; i++) {
-			final tagName = find.text(settings.tagList[i].name);
+		for (int i = 0; i < tagList.length; i++) {
+			final tagName = find.text(tagList[i].name);
 			await tester.pumpAndSettle();
 
 			// Confirm that the tag was seen
@@ -211,7 +196,7 @@ void main() {
 		await tester.pumpAndSettle();
 
 		// tap the last tag in the tag menu
-		final tagKey = find.text(settings.tagList.last.name).hitTestable();
+		final tagKey = find.text(tagList.last.name).hitTestable();
 		await tester.tap(tagKey);
 		await tester.pumpAndSettle();
 
@@ -220,7 +205,7 @@ void main() {
 		await tester.pumpAndSettle();
 
 		// check to see if the tag is there
-		final tagName = find.text(settings.tagList.last.name);
+		final tagName = find.text(tagList.last.name);
 		await tester.pumpAndSettle();
 		// It should not find it
 		expectLater(tagName, findsNothing);
@@ -236,8 +221,8 @@ void main() {
 		// Find the tags on the entry page
 		// i = 1 because we deleted the first tag
 		// length - 1 because we removed the last tag
-		for (int i = 1; i < settings.tagList.length -1 ; i++) {
-			final tagName = find.text('#${settings.tagList[i].name} ');
+		for (int i = 1; i < tagList.length -1 ; i++) {
+			final tagName = find.text('#${tagList[i].name} ');
 			await tester.pumpAndSettle();
 
 			// Confirm that the tag was seen
@@ -245,14 +230,14 @@ void main() {
 		}
 
 		// get the first tag that should have been deleted
-		final deletedTag = find.text('#${settings.tagList[0].name} ');
+		final deletedTag = find.text('#${tagList[0].name} ');
 		await tester.pumpAndSettle();
 
 		// Should not find that tag
 		expect(deletedTag, findsNothing);
 
 		// get the last tag that should have been deleted
-		final lastDeletedTag = find.text('#${settings.tagList.last.name} ');
+		final lastDeletedTag = find.text('#${tagList.last.name} ');
 		await tester.pumpAndSettle();
 
 		// Should not find that tag
@@ -261,18 +246,6 @@ void main() {
 
 	// Test if the emotions interact properly with the alert dialog, chip display, and the created journal entry page
 	testWidgets('Emotion button pulls up emotion menu and correct emotions are displayed', (WidgetTester tester) async {
-
-		// Initialize the emotion list
-		settings.emotionList = {
-			'Happy': const Color(0xfffddd68),
-			'Trust': const Color(0xff308c7e),
-			'Fear': const Color(0xff4c4e52),
-			'Sad': const Color(0xff1f3551),
-			'Disgust': const Color(0xff384e36),
-			'Anger': const Color(0xffb51c1c),
-			'Anticipation': const Color(0xffff8000),
-		};
-
 		await setUp(tester);
 
 		// Tap the emotion button to bring up the emotion menu
@@ -280,8 +253,8 @@ void main() {
 		await tester.pumpAndSettle();
 
 		// Find all the emotions in the list and tap them
-		for(int i = 0; i < settings.emotionList.length; i++){
-			final emotionKey = find.text(settings.emotionList.entries.elementAt(i).key);
+		for(int i = 0; i < emotionList.length; i++){
+			final emotionKey = find.text(emotionList.entries.elementAt(i).key);
 			expect(emotionKey, findsOneWidget);
 			await tester.tap(emotionKey);
 			await tester.pumpAndSettle();
@@ -296,8 +269,8 @@ void main() {
 		final emotionChips = find.byKey(const Key('EmotionChipsDisplay'));
 
 		// iterate through all of the emotions in the list and test the dial works
-		for(int i = 0; i < settings.emotionList.length; i++){
-			final emotionName = find.text(settings.emotionList.entries.elementAt(i).key);
+		for(int i = 0; i < emotionList.length; i++){
+			final emotionName = find.text(emotionList.entries.elementAt(i).key);
 			await tester.pumpAndSettle();
 
 			// Confirm that the emotion was seen
@@ -370,7 +343,7 @@ void main() {
 		await tester.pumpAndSettle();
 
 		// Find the last emotion in the list
-		final emotionKey = find.text(settings.emotionList.entries.last.key).hitTestable();
+		final emotionKey = find.text(emotionList.entries.last.key).hitTestable();
 		await tester.tap(emotionKey);
 		await tester.pumpAndSettle();
 
@@ -380,7 +353,7 @@ void main() {
 
 		// Check to see if the emotion is listed as a chip
 		// Confirm that the emotion was not seen
-		final emotionName = find.text(settings.emotionList.entries.last.key);
+		final emotionName = find.text(emotionList.entries.last.key);
 		await tester.pumpAndSettle();
 		expectLater(emotionName, findsNothing);
 
@@ -395,8 +368,8 @@ void main() {
 
 		// search for all clicked emotions
 		// length -1 because we removed the last emotion
-		for(int i = 0; i < settings.emotionList.length - 1; i++){
-			final emotionName = find.text('${settings.emotionList.entries.elementAt(i).key}: 75 ');
+		for(int i = 0; i < emotionList.length - 1; i++){
+			final emotionName = find.text('${emotionList.entries.elementAt(i).key}: 75 ');
 			await tester.pumpAndSettle();
 
 			// Confirm that the emotion was seen on the entry with the intensity correct value
@@ -404,7 +377,7 @@ void main() {
 		}
 
 		// Check to see that the last emotion is not there anymore
-		final emotionNameEntry = find.text('${settings.emotionList.entries.last.key}: 75 ');
+		final emotionNameEntry = find.text('${emotionList.entries.last.key}: 75 ');
 		await tester.pumpAndSettle();
 
 		// Confirm that the emotion was seen on the entry with the intensity correct value

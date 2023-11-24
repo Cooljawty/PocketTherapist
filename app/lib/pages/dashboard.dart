@@ -1,10 +1,7 @@
-import 'package:app/uiwidgets/navbar.dart';
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const DashboardPage());
-  }
 
   const DashboardPage({super.key });
 
@@ -24,16 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
 					],
 				),
 			),
-			bottomNavigationBar: NavBar(
-				selectedIndex: 0,
-				destinations: [
-					destinations['dashboard']!,
-					destinations['entries']!,
-					destinations['calendar']!,
-					destinations['plans']!,
-					destinations['settings']!,
-				],
-			),
+			bottomNavigationBar: CustomNavigationBar(selectedIndex: 0)
 		);
   }
 }

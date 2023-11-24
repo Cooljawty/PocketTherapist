@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 //import 'package:vector_math/vector_math_64.dart';
-import 'entry.dart';
+import '../provider/entry.dart';
 
-import 'package:app/helper/classes.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
 class NewEntryPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const NewEntryPage());
-  }
-
   const NewEntryPage({super.key});
 
   @override
@@ -20,7 +15,7 @@ class NewEntryPage extends StatefulWidget {
 class _NewEntryPageState extends State<NewEntryPage> {
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
-  final _emotionItems = settings.emotionList.entries.map((emotion) {
+  final _emotionItems = emotionList.entries.map((emotion) {
 
     return Emotion(name: emotion.key, color: emotion.value);
   }).toList();
@@ -176,7 +171,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             title: const Text("Select Tags"),
                             content: Wrap(
                               spacing: 5.0,
-                              children: settings.tagList.map((Tag tag) {
+                              children: tagList.map((Tag tag) {
                                 return FilterChip(
                                   label: Text(tag.name),
                                   selected: _selectedTags.contains(tag),

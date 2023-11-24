@@ -1,4 +1,4 @@
-import 'package:app/pages/entry.dart';
+import 'package:app/provider/entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/pages/entries.dart';
@@ -38,7 +38,7 @@ void main() {
   testWidgets('Remove an entry from the list.', (WidgetTester tester) async {
     await setUp(tester);
 
-    final entry = entries[0].getID().toString();
+    final entry = entries[0].id.toString();
     final entryKey = Key(entry);
     Finder entryFinder = find.byKey(ValueKey(entry));
     await tester.pump();

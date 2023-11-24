@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/main.dart' as app;
+import 'test_utils.dart';
 
 void main() async {
+
   testWidgets("Password Account creation", (widgetTester) async {
     const String password = "password123@";
 
-    app.main();
-    await widgetTester.pump();
+    await startApp(widgetTester);
 
     Finder startbutton = find.byKey(const Key("Start_Button"));
     await expectLater(startbutton, findsOneWidget);
-    await widgetTester.tap(startbutton);
-    await widgetTester.pump(); // First alert box - Enter password ---------------------------------------------[
+    await tap(widgetTester, startbutton);
 
     Finder encryptionAlert = find.byType(AlertDialog);
     await expectLater(encryptionAlert, findsOneWidget);
@@ -25,8 +25,7 @@ void main() async {
     await widgetTester.pump();
 
     /// Submit the first password ( stores it ) // Tap enter button to create password ----------------------------------------------
-    await widgetTester.tap(find.byKey(const Key('Create_Password')));
-    await widgetTester.pump();
+    await tap(widgetTester, find.byKey(const Key('Create_Password')));
 
     await expectLater(find.byType(AlertDialog),
         findsNWidgets(2)); // should be two alerts now, one on the other// Find the 2nd input box ---------------------------------------------------------
@@ -36,9 +35,7 @@ void main() async {
     ), findsOneWidget); // find the submit button on the 2nd alert -------------------------------------
     await expectLater(find.byKey(
         const Key('Verify_Password')), findsOneWidget); // Submit mismatched password -------------------------------------------------
-    await widgetTester.tap(find.byKey(
-        const Key('Verify_Password')));
-    await widgetTester.pump(); // Nothing should have happened as a result of this----------------------------// Submit exact password to the confirm password dialogue ----------------------
+    await tap(widgetTester, find.byKey(const Key('Verify_Password')));
 
     await widgetTester.showKeyboard(find.ancestor(
       of: find.text("Confirm Password"),
@@ -50,8 +47,6 @@ void main() async {
       of: find.text("Confirm Password"),
       matching: find.byType(TextFormField),
     ), password);
-    await widgetTester.tap(find.byKey(
-        const Key('Verify_Password')));
-    await widgetTester.pump();
+    await tap(widgetTester, find.byKey(const Key('Verify_Password')));
   });
 }

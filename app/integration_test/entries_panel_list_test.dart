@@ -1,40 +1,24 @@
 import 'package:app/pages/entries.dart' as entry;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:app/pages/entry.dart';
+import 'package:app/provider/entry.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
+
+import 'test_utils.dart';
 
 void main() {
 
 // Navigate to the entries panel
   @override
   Future<void> setUp(WidgetTester tester) async {
-    app.main();
-    await tester.pump();
-
-    // Set mock values in the settings
-    settings.setMockValues({
-      settings.configuredKey: true,
-      settings.encryptionToggleKey: false,
-    });
-
-    // Enter the app
-    Finder startButton = find.byKey(const Key("Start_Button"));
-    await tester.tap(startButton);
-
-    do {
-      await tester.pump();
-    } while (tester
-        .widgetList(find.byKey(const Key("Navbar_Destination_Entries")))
-        .isEmpty);
-
-    // Find the nav bar button for entries page
-    await tester.tap(find.byKey(const Key("Navbar_Destination_Entries")));
-    await tester.pumpAndSettle();
+    await startSkipFrontScreen(tester);
+    Finder finder = find.text('Entries');
+    await pumpUntilFound(tester, finder);
+    await tap(tester, finder);
   }
 
-  entry.entries.addAll([
+  entries.addAll([
     JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime(2022, 2, 7)),
     JournalEntry(title: "This is another entry", entryText: 'The next one wont have a body', date: DateTime(2022, 2, 6)),
     JournalEntry(title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
@@ -65,7 +49,7 @@ void main() {
 
     // Check to see if every entry is there
     for (int i = 0; i < entry.sortedItems.length; i++) {
-      final entryKey = find.byKey(Key(entry.sortedItems[i].getID().toString()));
+      final entryKey = find.byKey(Key(entry.sortedItems[i].id.toString()));
       // await tester.pumpWidget(myApp);
       await tester.pumpAndSettle();
 

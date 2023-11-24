@@ -56,10 +56,10 @@ void main() {
     await encrypter.setPassword(password); // reset the pasword
     cipher = encrypter.encrypt(message);
 
-    Map<String, dynamic> enc = encrypter.save();
+    encrypter.save();
 
     // Encryption key is encrypted inside this, w/ PBKDF
-    await expectLater(() => encrypter.load(enc), returnsNormally); // load the encryption key
+    await expectLater(() => encrypter.load(), returnsNormally); // load the encryption key
 
     // This will overwrite the encrypter with something else, so
     // If it can still decrypt the original cipher text, then it is correct.
