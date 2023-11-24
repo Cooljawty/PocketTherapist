@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:app/provider/entry.dart';
-import 'package:app/uiwidgets/buttons.dart';
 import 'package:app/uiwidgets/decorations.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/theme_settings.dart';

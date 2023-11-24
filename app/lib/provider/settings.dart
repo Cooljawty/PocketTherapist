@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:app/provider/entry.dart' as entry;
-
-import '../pages/dashboard.dart';
-import '../uiwidgets/fields.dart';
 
 /// Used for error messages
 const String preferencesPrefix = "pocket-therapist";

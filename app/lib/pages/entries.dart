@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
 
-
 // Display options
-final List<String> displayOptions = ['Week', 'Month', 'Year'];
-String? chosenDisplay = 'Week';
+const List<String> displayOptions = ['Week', 'Month', 'Year'];
+String chosenDisplay = 'Week';
 
 // Sort the Journal entries by most recent date
 late List<JournalEntry> sortedItems;
@@ -92,7 +91,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             .toList(),
                         // if changed set new display option
                         onChanged: (item) => setState(() {
-                          chosenDisplay = item;
+                          chosenDisplay = item ?? chosenDisplay;
                         }),
                       ),
                     ),
@@ -115,7 +114,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       } else {
                         // else check if same date by filters
                         isSameDate = time.isSameDate(
-                            sortedItems[index - 1].date, chosenDisplay!);
+                            sortedItems[index - 1].date, chosenDisplay);
                       }
                       return Column(
                           mainAxisAlignment: MainAxisAlignment
@@ -218,7 +217,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       },
     );
   }
-
 }
 
 class ExistingEntryPage extends StatefulWidget {

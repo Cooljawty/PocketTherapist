@@ -5,7 +5,6 @@ import 'package:app/exceptions/exception.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:app/provider/settings.dart' as settings;
-import 'package:flutter/foundation.dart' as foundation;
 
 String _passwordHash = "";
 String _keyCipher = "";

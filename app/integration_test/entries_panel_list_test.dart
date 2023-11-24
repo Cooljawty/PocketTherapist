@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:app/provider/entry.dart';
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/main.dart' as app;
 
 import 'test_utils.dart';
 

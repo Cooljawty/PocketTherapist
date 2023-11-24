@@ -5,6 +5,7 @@ import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:starsview/starsview.dart';
 import 'package:app/provider/theme_settings.dart';
+import 'package:app/provider/encryptor.dart' as encryptor;
 
 List<String> quotes = [
   "Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?",
@@ -132,6 +133,120 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
           nextQuote = widget.newQuote();
         });
       },
+    );
+  }
+}
+
+/// This is used as a password field, but can be used for any generic secrets
+/// It supports hintText from the TextFormField widget, and will display
+/// what you provide inside of the field
+///
+/// Use the validator to provide validation to your field, this is required
+/// and returns null if valid.
+class ControlledTextField extends StatefulWidget {
+  final String hintText;
+  final String? Function(String?) validator;
+  const ControlledTextField({
+    super.key,
+    this.hintText = "Password",
+    this.validator = encryptor.defaultValidator,
+  });
+
+  @override
+  State<ControlledTextField> createState() => _ControlledTextFieldState();
+}
+
+class _ControlledTextFieldState extends State<ControlledTextField> {
+  // This key is used only to differentiate it from everything else in the widget
+  // tree
+  final _formKey = GlobalKey<FormState>();
+  // this is used to control and track the text that is in the field
+  final textController = TextEditingController();
+  // This is used to request focus on the field
+  final textFocusNode = FocusNode();
+  // We obscure text by default
+  bool _isObscured = true;
+
+  @override
+  void dispose() {
+    textController.dispose();
+    textFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: TextFormField(
+          onFieldSubmitted: (_) => textController.clear,
+          //  This will only attempt to validate the field if user interacted
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          obscureText: _isObscured,
+          focusNode: textFocusNode,
+          // changes the keyboard that the system displays to one that supports
+          // email addressing with the @.
+          keyboardType: TextInputType.emailAddress,
+          controller: textController,
+          decoration: InputDecoration(
+            errorBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            suffixIcon: IconButton(
+              padding: const EdgeInsetsDirectional.only(end: 12.0),
+              icon: _isObscured
+                  ? const Icon(Icons.visibility)
+                  : const Icon(Icons.visibility_off),
+              // Updates the state of the widget, requests a redraw.
+              onPressed: () => setState(() => _isObscured = !_isObscured),
+            ),
+            hintText: widget.hintText,
+          ),
+          // Call whatever function is supplied.
+          validator: widget.validator,
+        ));
+  }
+}
+
+/// Button that can do something with an elevation component
+class StandardElevatedButton extends StatelessWidget {
+  final Widget child;
+  final Function()? onPressed;
+  final double elevation = 20.0;
+  const StandardElevatedButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color shadowColor = Theme.of(context).colorScheme.shadow;
+    Color backgroundColor = Theme.of(context).colorScheme.primary;
+    return SizedBox(
+        width: 350,
+        height: 50,
+        child: TextButton(
+          onPressed: onPressed,
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(
+              inherit: true,
+              fontSize: 16,
+            ),
+            elevation: elevation,
+            shadowColor: shadowColor,
+            backgroundColor: backgroundColor,
+            side: BorderSide(
+                color: darkenColor(Theme.of(context).colorScheme.primary, .1),
+                width: 3
+            ),
+          ),
+          child: child,
+        )
     );
   }
 }

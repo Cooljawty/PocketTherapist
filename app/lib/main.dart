@@ -9,7 +9,6 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 void main()  {
   //Things that need to be done before the application is ran.
   WidgetsFlutterBinding.ensureInitialized();
