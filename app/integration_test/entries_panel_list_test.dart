@@ -47,7 +47,7 @@ void main() {
   @override
   Future<void> testForItems(WidgetTester tester, String filter, bool show) async {
     // Show all items in the entry database
-    entry.showAllItems = show;
+    // entry.showAllItems = show;
     await setUp(tester);
 
     final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
@@ -62,8 +62,8 @@ void main() {
     expect(find.text(filter), findsOneWidget);
 
     // Check to see if every entry is there
-    for (int i = 0; i < entry.sortedItems.length; i++) {
-      final entryKey = find.byKey(Key(entry.sortedItems[i].id.toString()));
+    for (int i = 0; i < entries.length; i++) {
+      final entryKey = find.byKey(Key(entries[i].id.toString()));
       // await tester.pumpWidget(myApp);
       await tester.pumpAndSettle();
 

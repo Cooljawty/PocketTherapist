@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:app/provider/entry.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/settings.dart' as settings;
@@ -10,39 +11,38 @@ import '../uiwidgets/decorations.dart';
 const List<String> displayOptions = ['Week', 'Month', 'Year'];
 String chosenDisplay = 'Week';
 
-// Sort the Journal entries by most recent date
-late List<JournalEntry> sortedItems;
-bool showAllItems = true;
+//
+// /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
+// /// [items] = journal entry list;
+// /// [chosenDisplay] = 'Week', 'Month', 'Year';
+// /// [getCompletedList] = print the completed list
+// List<JournalEntry> getFilteredList(
+//     List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
+// // Sort the Journal entries by most recent date
+//   final sortedItems = items..sort();
+//   List<JournalEntry> filteredList = [];
+//
+//   for (int i = 0; i < sortedItems.length; i++) {
+//     if (getCompleteList) {
+//       filteredList.add(sortedItems[i]);
+//     } else {
+//       final firstItem = sortedItems[0]; // get the most recent entry
+//       final item = sortedItems[i]; // get the next item
+//       final time = firstItem.date; // get the date for the first item
+//
+//       // check to see if the item is in the filter
+//       bool isSameDate = time.isWithinDateRange(item.date, chosenDisplay!);
+//
+//       if (isSameDate) {
+//         // if item is in the filter, add it to the return list
+//         filteredList.add(sortedItems[i]);
+//       }
+//     }
+//   }
+//   return filteredList;
+// }
 
-// items = journal entry list;
-// chosenDisplay = 'Week', 'Month', 'Year';
-// getCompletedList = print the completed list
-List<JournalEntry> getFilteredList(
-    List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
-// Sort the Journal entries by most recent date
-  final sortedItems = items..sort();
-  List<JournalEntry> filteredList = [];
-
-  for (int i = 0; i < sortedItems.length; i++) {
-    if (getCompleteList) {
-      filteredList.add(sortedItems[i]);
-    } else {
-      final firstItem = sortedItems[0]; // get the most recent entry
-      final item = sortedItems[i]; // get the next item
-      final time = firstItem.date; // get the date for the first item
-
-      // check to see if the item is in the filter
-      bool isSameDate = time.isSameDate(item.date, chosenDisplay!);
-
-      if (isSameDate) {
-        // if item is in the filter, add it to the return list
-        filteredList.add(sortedItems[i]);
-      }
-    }
-  }
-  return filteredList;
-}
-
+/// [EntryPanelPage] is the page for all of the entries that user has entered.
 class EntryPanelPage extends StatefulWidget {
   const EntryPanelPage({super.key});
 
@@ -51,10 +51,13 @@ class EntryPanelPage extends StatefulWidget {
 }
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
+  bool showAllItems = true;
+  
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
+    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+    entries.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -100,10 +103,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                   //holds the list of entries
                   Expanded(
                       child: ListView.builder(
-                    itemCount: sortedItems.length,
+                    itemCount: entries.length,
                     itemBuilder: (context, index) {
                       // get one item
-                      final item = sortedItems[index];
+                      final item = entries[index];
                       final time = item.date;
 
                       // Dividers by filter
@@ -113,8 +116,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         isSameDate = false;
                       } else {
                         // else check if same date by filters
-                        isSameDate = time.isSameDate(
-                            sortedItems[index - 1].date, chosenDisplay);
+                        isSameDate = time.isWithinDateRange(
+                            entries[index - 1].date, chosenDisplay);
                       }
                       return Column(
                           mainAxisAlignment: MainAxisAlignment
@@ -161,7 +164,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                               onDismissed: (direction) {
                                 // Remove the item from the data source.
                                 setState(() {
-                                  items.removeAt(index);
+                                  entries.removeAt(index);
                                 });
 
                                 // Then show a snackBar w/ item name as dismissed message
@@ -205,6 +208,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
           ]),
           bottomNavigationBar: CustomNavigationBar(
             selectedIndex: 1,
+            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
             onDestinationSelected: (index) async {
               switch(index) {
                 case 2: await makeNewEntry(context); setState((){}); return;
@@ -219,113 +223,53 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   }
 }
 
-class ExistingEntryPage extends StatefulWidget {
-  final JournalEntry entry;
-  /// Route for navigator to open page with a given entry
-  static Route<dynamic> route({required JournalEntry entry}) {
-    return MaterialPageRoute(builder: (context) => ExistingEntryPage(entry: entry));
-  }
-
-  const ExistingEntryPage({super.key, required this.entry});
-
-  @override
-  State<ExistingEntryPage> createState() => _ExistingEntryPageState();
-}
-
-class _ExistingEntryPageState extends State<ExistingEntryPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            //Title
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: <Widget>[
-                  Text(widget.entry.title),
-                ],
-              ),
-            ),
-
-            // Tags
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: Wrap(direction: Axis.horizontal, children: [
-                for (var i in widget.entry.tags)
-                  Text("#${i.name} ",
-                      style: TextStyle(
-                          inherit: true,
-                          color: i.color,
-                          fontWeight: FontWeight.bold),
-                      selectionColor: i.color)
-              ]),
-            ),
-
-            // Emotions
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  for (var i in widget.entry.emotions)
-                    Text("${i.name}: ${i.strength} ",
-                        style: TextStyle(
-                            inherit: true,
-                            color: i.color,
-                            fontWeight: FontWeight.bold),
-                        selectionColor: i.color)
-                ],
-              ),
-            ),
-
-            //Entry text
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: <Widget>[
-                  Text(widget.entry.entryText),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NewEntryPage extends StatefulWidget {
-  const NewEntryPage({super.key});
+/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+/// creation of new entries, modification of them.
+class EntryPage extends StatefulWidget {
+  JournalEntry? entry;
+  EntryPage({
+    super.key,
+    this.entry
+  });
 
   @override
-  State<NewEntryPage> createState() => _NewEntryPageState();
+  State<EntryPage> createState() => _EntryPageState();
 }
 
-class _NewEntryPageState extends State<NewEntryPage> {
-  final ValueNotifier<double> _progress = ValueNotifier(0);
+class _EntryPageState extends State<EntryPage> {
+  final ValueNotifier<double> progress = ValueNotifier(0);
 
-  final _emotionItems = emotionList.entries.map((emotion) {
-
+  final emotionItems = emotionList.entries.map((emotion) {
     return Emotion(name: emotion.key, color: emotion.value);
   }).toList();
-
   // List of selected tags to keep track of when making the chip list
-  final List<Tag> _selectedTags = [];
-  final List<Emotion> _selectedEmotions = [];
+  List<Tag> selectedTags = [];
+  List<Emotion> selectedEmotions = [];
 
   // Add text controllers to retrieve text data
   final titleController = TextEditingController();
-  final journalController = TextEditingController();
+  final entryTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.entry != null) {
+      selectedTags = widget.entry!.tags;
+      selectedEmotions = widget.entry!.emotions;
+      titleController.text = widget.entry!.title;
+      entryTextController.text = widget.entry!.entryText;
+    } else {
+      selectedTags = [];
+      selectedEmotions = [];
+    }
+  }
+
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     titleController.dispose();
-    journalController.dispose();
+    entryTextController.dispose();
     super.dispose();
   }
 
@@ -333,7 +277,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Entry'),
+        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
         automaticallyImplyLeading: false,
         centerTitle: true,
         forceMaterialTransparency: true,
@@ -359,7 +303,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: TextField(
-                        controller: journalController,
+                        controller: entryTextController,
                         key: const Key("journalInput"),
                         decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
@@ -380,18 +324,17 @@ class _NewEntryPageState extends State<NewEntryPage> {
                           scrollDirection: Axis.horizontal,
                           child: Wrap(
                             spacing: 5,
-                            children: _selectedTags
+                            children: selectedTags
                                 .map((tag) => ActionChip(
                               label: Text(tag.name),
                               backgroundColor: tag.color,
                               onPressed: () {
                                 setState(() {
-                                  _selectedTags.removeWhere((element) =>
+                                  selectedTags.removeWhere((element) =>
                                   element.name == tag.name);
                                 });
                               },
-                            ))
-                                .toList(),
+                            )).toList(),
                           ),
                         ),
                       ),
@@ -406,7 +349,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                 scrollDirection: Axis.horizontal,
                                 child: Wrap(
                                   spacing: 5,
-                                  children: _selectedEmotions
+                                  children: selectedEmotions
                                       .map((Emotion emotion) => ActionChip(
                                     label: Text(emotion.name),
                                     backgroundColor: emotion.color,
@@ -465,13 +408,15 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   children: tagList.map((Tag tag) {
                                     return FilterChip(
                                       label: Text(tag.name),
-                                      selected: _selectedTags.contains(tag),
+                                      selected: selectedTags.any((element) => element.name == tag.name),
                                       showCheckmark: false,
                                       selectedColor: tag.color,
                                       onSelected: (bool selected) {
                                         stfSetState(() {
                                           setState(() {
-                                            selected ? _selectedTags.add(tag) : _selectedTags.remove(tag);
+                                            /// When the cooresponding tag is selected, add it or remove it based on the name
+                                            //TODO: Update this when references are added to work only with references.
+                                            selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
                                           });
                                         });
                                       },
@@ -506,16 +451,18 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                 title: const Text("Select Emotions"),
                                 content: Wrap(
                                   spacing: 5.0,
-                                  children: _emotionItems.map((Emotion emote) {
+                                  children: emotionItems.map((Emotion emote) {
                                     return FilterChip(
                                       label: Text(emote.name),
-                                      selected: _selectedEmotions.contains(emote),
+                                      selected: selectedEmotions.any((element) => element.name == emote.name),
                                       showCheckmark: false,
                                       selectedColor: emote.color,
                                       onSelected: (bool selected) {
                                         stfSetState(() {
                                           setState(() {
-                                            selected ? _selectedEmotions.add(emote) : _selectedEmotions.remove(emote);
+                                            /// When the cooresponding emote is selected, add it or remove it based on the name
+                                            //TODO: Update this when references are added to work only with references.
+                                            selected ? selectedEmotions.add(emote) : selectedEmotions.removeWhere((element) => element.name == emote.name);
                                           });
                                         });
                                       },
@@ -583,10 +530,10 @@ class _NewEntryPageState extends State<NewEntryPage> {
               dashWidth: 26,
               dashGap: 10,
               animation: false,
-              valueNotifier: _progress,
+              valueNotifier: progress,
               child: Center(
                 child: ValueListenableBuilder(
-                    valueListenable: _progress,
+                    valueListenable: progress,
                     builder: (_, double value, __) => Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -623,18 +570,34 @@ class _NewEntryPageState extends State<NewEntryPage> {
   }
 
   // Make the journal entry and save it
-  getEntry() {
+  JournalEntry? getEntry() {
     // Database entry point for creating journal entry
-    return JournalEntry(
-      title: titleController.text,
-      entryText: journalController.text,
-      date: DateTime.now(),
-      tags: _selectedTags,
-      emotions: _selectedEmotions,
-    );
+    if(widget.entry == null) {
+      //TODO: do databse things to save new journal entry: db.insert
+      return JournalEntry(
+        title: titleController.text,
+        entryText: entryTextController.text,
+        date: DateTime.now(),
+        tags: selectedTags,
+        emotions: selectedEmotions,
+      );
+    } 
+    else {
+      // entry exists, we are modifying
+      //TODO: do datbase things for updating journal entry
+      // I have the full record, just patch the record.
+      widget.entry!.update(
+        titleController.text,
+        entryTextController.text,
+        selectedTags,
+        selectedEmotions
+      );
+      return widget.entry!;
+    }
   }
 }
 
+/// [Formatter] is an extended DateTime Object that
 extension Formatter on DateTime {
   // Get the month string
   String formatDate() {
@@ -669,7 +632,7 @@ extension Formatter on DateTime {
   }
 
   // Check if entries are in the same filter date
-  bool isSameDate(DateTime other, String display) {
+  bool isWithinDateRange(DateTime other, String display) {
     switch (display) {
       // If week filter, then check if in the same year, month, and week
       case 'Week':

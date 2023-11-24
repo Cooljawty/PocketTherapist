@@ -390,8 +390,10 @@ class _DisplayCardState extends State<DisplayCard> {
 
       //Uses gesture detector to enable interactivity
       child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExistingEntryPage(entry: widget.entry),));
+        onTap: () async {
+          await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntryPage(entry: widget.entry),));
+          /// Rebuild THIS widget if any chgned were made
+          setState(() {});
         },
         child: Card(
           shape: RoundedRectangleBorder(
