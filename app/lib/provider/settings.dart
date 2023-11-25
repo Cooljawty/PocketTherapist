@@ -282,6 +282,7 @@ void verifyPassword(BuildContext context, String password) async {
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.hasData) {
                       if (snapshot.data!) {
+                        navigateToDashboard(context);
                         finalDisplay = [
                           const Text('Welcome Back',
                               style: TextStyle(
@@ -353,6 +354,15 @@ void verifyPassword(BuildContext context, String password) async {
   }*/
 }
 
+void navigateToDashboard(BuildContext context) async {
+  //add a slight delay before we update the screen
+  await Future.delayed(const Duration(milliseconds: 10)).whenComplete(() async {
+    Navigator.of(context).pop(); //pop loading screen
+    Navigator.of(context).pop(); //pop password prompt
+    Navigator.pushReplacement(context, DashboardPage.route());
+  });
+}
+
 void attemptLogin(BuildContext context) async {
   String passwordFieldText = "";
   await showDialog(
@@ -401,6 +411,8 @@ void finishConfiguration(BuildContext context, String password) async {
                     List<Widget> finalDisplay;
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.connectionState == ConnectionState.done) {
+                      //traverse to next page
+                      saveAndNavigateToDashboard(context);
                       finalDisplay = [
                         const Text("Your Digital Journal's Encryption is Ready",
                             style: TextStyle(
@@ -451,6 +463,17 @@ void finishConfiguration(BuildContext context, String password) async {
     setConfigured(true);
     await save();
   });*/
+}
+
+void saveAndNavigateToDashboard(BuildContext context) async {
+  //add a slight delay before we update the screen
+  await Future.delayed(const Duration(milliseconds: 10)).whenComplete(() async {
+    setConfigured(true);
+    Navigator.of(context).pop(); //pop loading screen
+    Navigator.of(context).pop(); //pop password prompt
+    Navigator.pushReplacement(context, DashboardPage.route());
+    await save();
+  });
 }
 
 void confirmPassword(BuildContext context, String password) async {
