@@ -11,7 +11,6 @@ enum PlanStatus {
 }
 
 class JournalEntry with DisplayOnCard {
-
   // unique id for each entry
   final int _id = UniqueKey().hashCode;
 
@@ -57,17 +56,26 @@ class JournalEntry with DisplayOnCard {
       emotionList: _emotions,
       tagList: _tags,
       title: _title,
+      planStatus: status
     );
 
     pageRoute = (() => EntryPage.route(entry: this));
   }
+
   int getID() => _id;
+
   String getPreviewText() => _previewText;
+
   String getEntryText() => _entryText;
+
   String getTitle() => _title;
+
   DateTime getCreationDate() => _creationDate;
+
   DateTime getDate() => _displayDate;
+
   List<Tag> getTags() => _tags;
+
   List<Emotion> getEmotions() => _emotions;
 
   // Get the strongest emotion in the entry
@@ -82,10 +90,12 @@ class JournalEntry with DisplayOnCard {
       return strongestEmotion;
     }
     return Emotion(
-        name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+        name: 'None',
+        strength: 0,
+        color: Colors.black); // This shouldn't happen
   }
 
-  /* TODO
+/* TODO
 	List<Image> pictures;
 
 	Tag getTagByTitle(String title);

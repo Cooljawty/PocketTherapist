@@ -5,6 +5,7 @@ import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/classes.dart';
+import '../pages/entry.dart';
 
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
@@ -13,17 +14,20 @@ class DisplayCard extends StatefulWidget {
   final DateTime date;
   final List<Tag> tagList;
   final List<Emotion> emotionList;
+  final PlanStatus planStatus;
 
   final dynamic page;
 
-  const DisplayCard(
-      {super.key,
-      required this.title,
-      required this.body,
-      required this.date,
-      this.page,
-      required this.tagList,
-      required this.emotionList});
+  const DisplayCard({
+    super.key,
+    required this.title,
+    required this.body,
+    required this.date,
+    this.page,
+    required this.tagList,
+    required this.emotionList,
+    required this.planStatus,
+  });
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -110,24 +114,35 @@ class _DisplayCardState extends State<DisplayCard> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                    // Title
-                    Text(
-                      (widget.title.length > 30)
-                          ? '${widget.title.substring(0, 30)}...'
-                          : widget.title,
-                      style: DefaultTextStyle.of(context).style.apply(
-                            fontSizeFactor: 1.3,
-                            fontWeightDelta: 1,
-                          ),
-                    ),
+                        // Title
+                        Text(
+                          (widget.title.length > 30)
+                              ? '${widget.title.substring(0, 30)}...'
+                              : widget.title,
+                          style: widget.planStatus == PlanStatus.finished
+                              ? DefaultTextStyle.of(context).style.apply(
+                                    fontSizeFactor: 1.3,
+                                    fontWeightDelta: 1,
+                                    decoration: TextDecoration.lineThrough,
+                                    decorationStyle: TextDecorationStyle.wavy,
+                                    decorationColor: Colors.orange,
+                                    // decorationThicknessFactor: 1.3,
+                                    // decorationThicknessDelta: 1,
+                                  )
+                              : DefaultTextStyle.of(context).style.apply(
+                                    fontSizeFactor: 1.3,
+                                    fontWeightDelta: 1,
+                                  ),
+                        ),
 
-                    // preview text
-                    Text(
-                      (widget.body.length >= 40) ?
-                      '${widget.body}...' : widget.body,
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ]),
+                        // preview text
+                        Text(
+                          (widget.body.length >= 40)
+                              ? '${widget.body}...'
+                              : widget.body,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ]),
 
                   // Date
                   Row(
@@ -174,8 +189,15 @@ mixin DisplayOnCard {
     DateTime date,
     List<Tag> tagList,
     List<Emotion> emotionList,
-  }) card =
-      (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
+    PlanStatus planStatus,
+  }) card = (
+    title: "",
+    body: "",
+    date: DateTime.now(),
+    tagList: [],
+    emotionList: [],
+    planStatus: PlanStatus.noPlan
+  );
   dynamic pageRoute;
 
   DisplayCard asDisplayCard() {
@@ -186,6 +208,7 @@ mixin DisplayOnCard {
       page: pageRoute,
       tagList: card.tagList,
       emotionList: card.emotionList,
+      planStatus: card.planStatus,
     );
   }
 }
