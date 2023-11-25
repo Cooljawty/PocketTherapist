@@ -37,8 +37,8 @@ Future<void> setPassword(String password) async {
 
   // Used for file encryption
   _encrypter = Encrypter(AES(signingKey, mode: AESMode.gcm));
-  _generateKeyEncryptionKey(password, signingKey);
-  _generateRecoveryPhrase(signingKey);
+  await _generateKeyEncryptionKey(password, signingKey);
+  await _generateRecoveryPhrase(signingKey);
   settings.setEncryptionStatus(true); // password is set, this is true.
 }
 
@@ -193,7 +193,7 @@ Future<bool> unlock(String passwordPhrase, [bool recovery = false]) async {
 /// [generateKeyEncryptionKey] Generates an encryption key based on the password supplied and uses it to
 /// Encrypt the provided signing Key.
 /// the [nonce] [_passwordHash] and [_keyCipher] are all modified by this method
-void _generateKeyEncryptionKey(String password, Key signingKey) async {
+Future _generateKeyEncryptionKey(String password, Key signingKey) async {
   // Encryption Setup
   Random rand = Random.secure();
   List<int> nonce = List<int>.generate(16, (index) => rand.nextInt(256));
@@ -204,7 +204,8 @@ void _generateKeyEncryptionKey(String password, Key signingKey) async {
       parallelism: parallelPower,
       memorySizeKB: consumeMemory);
   //Generate KEK for internal encryption of actual key
-  Argon2HashDigest keyEncryptionKey = hasher.convert(password.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, password.codeUnits);
   _passwordHash = keyEncryptionKey.encoded();
   // Used for Encrypting the secret key, temporary.
   Encrypter keyEncrypter = Encrypter(
@@ -220,7 +221,7 @@ void _generateKeyEncryptionKey(String password, Key signingKey) async {
 
 /// [generateRecoveryPhrase] Generates a recovery phrase and uses that to encrypt the provided signingKey
 /// The [_recovery] [_recoveryHash] and [_recoveryKeyCipher] are all modified by this method
-void _generateRecoveryPhrase(Key signingKey) async {
+Future _generateRecoveryPhrase(Key signingKey) async {
   Random rand = Random.secure();
   List<int> recIV = List<int>.generate(16, (index) => rand.nextInt(256));
   _recovery = Key.fromSecureRandom(20)
@@ -231,7 +232,8 @@ void _generateRecoveryPhrase(Key signingKey) async {
       iterations: iterations,
       parallelism: parallelPower,
       memorySizeKB: consumeMemory);
-  Argon2HashDigest keyEncryptionKey = hasher.convert(_recovery!.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, _recovery!.codeUnits);
   _recoveryHash = keyEncryptionKey.encoded();
   Encrypter keyEncrypter = Encrypter(
       AES(Key(Uint8List.fromList(keyEncryptionKey.bytes)), mode: AESMode.gcm));

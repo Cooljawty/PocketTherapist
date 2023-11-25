@@ -386,13 +386,71 @@ void attemptLogin(BuildContext context) async {
 }
 
 void finishConfiguration(BuildContext context, String password) async {
-  setPassword(password); // empty password no encryption
-  setConfigured(true);
+  //display loading screen while password is being set
+  await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            actions: [
+              FutureBuilder<void>(
+                  future: setPassword(password),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<void> snapshot,
+                  ) {
+                    List<Widget> finalDisplay;
+                    //once encryptor.unlock(password) is done then run code based off value
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      finalDisplay = [
+                        const Text("Your Digital Journal's Encryption is Ready",
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold)),
+                        TextButton(
+                          key: const Key('Correct_Password'),
+                          onPressed: () async {
+                            setConfigured(true);
+                            Navigator.of(context)
+                                .pop(); // remove current window
+                            Navigator.of(context)
+                                .pop(); // remove confirmation window
+                            Navigator.of(context)
+                                .pop(); // remove initial entry window
+                            Navigator.pushReplacement(
+                                context,
+                                DashboardPage
+                                    .route()); // Move to dashboard w/o encryption
+                            await save();
+                          },
+                          child: const Text("Enter"),
+                        )
+                      ];
+                    } else {
+                      //while it is loading display the loading widget
+                      finalDisplay = <Widget>[
+                        const SizedBox(
+                            width: 200, height: 200, child: LoadingAnimation()),
+                      ];
+                    }
+                    return Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: finalDisplay),
+                    );
+                  }),
+            ],
+          ));
+
+  /*
+  optional implementation that takes user to dashboard while password encryption is happening
   Navigator.of(context).pop(); // remove confirmation window
   Navigator.of(context).pop(); // remove initial entry window
   Navigator.pushReplacement(
       context, DashboardPage.route()); // Move to dashboard w/o encryption
-  await save();
+  // empty password no encryption, once encryption is done for password save to settings
+  setPassword(password).whenComplete(() async {
+    setConfigured(true);
+    await save();
+  });*/
 }
 
 void confirmPassword(BuildContext context, String password) async {
