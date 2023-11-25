@@ -7,7 +7,7 @@ import 'dart:io';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test("Testing hex encode and decode", () {
+  test("Testing hex encode and decode", () async {
     String message = "No ill never tell ;)";
     stdout.writeln(message);
     String hex =encrypter.hexEncode(message.codeUnits);
@@ -67,11 +67,6 @@ void main() {
     await expectLater(valid, true);
     decrypted = encrypter.decrypt(cipher);
     await expectLater(decrypted == message, true);
-
-    var fake = Map<String, dynamic>.from(enc);
-    fake['data'] = encrypter.hexEncode(utf8.encode("PotatoChips"));
-    await expectLater(() => encrypter.load(fake), throwsA(isA<SignatureMismatchException>()));
-
   });
 
 

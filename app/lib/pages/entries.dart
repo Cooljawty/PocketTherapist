@@ -239,9 +239,6 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   final ValueNotifier<double> progress = ValueNotifier(0);
 
-  final emotionItems = emotionList.entries.map((emotion) {
-    return Emotion(name: emotion.key, color: emotion.value);
-  }).toList();
   // List of selected tags to keep track of when making the chip list
   List<Tag> selectedTags = [];
   List<Emotion> selectedEmotions = [];
@@ -271,6 +268,42 @@ class _EntryPageState extends State<EntryPage> {
     titleController.dispose();
     entryTextController.dispose();
     super.dispose();
+  }
+
+  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
+    return tagList.map((tag) => FilterChip(
+        label: Text(tag.name),
+        selected: selectedTags.any((element) => element.name == tag.name),
+        showCheckmark: false,
+        selectedColor: tag.color,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding tag is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
+            });
+          });
+        },
+      )).toList();
+  }
+
+  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
+    return emotionList.entries.map((e) => FilterChip(
+        label: Text(e.key),
+        selected: selectedEmotions.any((element) => element.name == e.key),
+        showCheckmark: false,
+        selectedColor: e.value,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding emote is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedEmotions.add(Emotion(name: e.key, color: e.value)) : selectedEmotions.removeWhere((element) => element.name == e.key);
+            });
+          });
+        },
+    )).toList();
   }
 
   @override
@@ -405,30 +438,14 @@ class _EntryPageState extends State<EntryPage> {
                                 title: const Text("Select Tags"),
                                 content: Wrap(
                                   spacing: 5.0,
-                                  children: tagList.map((Tag tag) {
-                                    return FilterChip(
-                                      label: Text(tag.name),
-                                      selected: selectedTags.any((element) => element.name == tag.name),
-                                      showCheckmark: false,
-                                      selectedColor: tag.color,
-                                      onSelected: (bool selected) {
-                                        stfSetState(() {
-                                          setState(() {
-                                            /// When the cooresponding tag is selected, add it or remove it based on the name
-                                            //TODO: Update this when references are added to work only with references.
-                                            selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
-                                          });
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
+                                  children: createAvailableTagsList(stfSetState),
                                 ),
                                 actions: <Widget>[
                                   TextButton(
                                     key: const Key('saveTagsButton'),
                                     child: const Text('Save'),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      Navigator.of(stfContext).pop();
                                     },
                                   ),
                                 ],
@@ -451,30 +468,14 @@ class _EntryPageState extends State<EntryPage> {
                                 title: const Text("Select Emotions"),
                                 content: Wrap(
                                   spacing: 5.0,
-                                  children: emotionItems.map((Emotion emote) {
-                                    return FilterChip(
-                                      label: Text(emote.name),
-                                      selected: selectedEmotions.any((element) => element.name == emote.name),
-                                      showCheckmark: false,
-                                      selectedColor: emote.color,
-                                      onSelected: (bool selected) {
-                                        stfSetState(() {
-                                          setState(() {
-                                            /// When the cooresponding emote is selected, add it or remove it based on the name
-                                            //TODO: Update this when references are added to work only with references.
-                                            selected ? selectedEmotions.add(emote) : selectedEmotions.removeWhere((element) => element.name == emote.name);
-                                          });
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
+                                  children: createAvailableEmotionsList(stfSetState),
                                 ),
                                 actions: <Widget>[
                                   TextButton(
                                     key: const Key('saveEmotionsButton'),
                                     child: const Text('Save'),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      Navigator.of(stfContext).pop();
                                     },
                                   ),
                                 ],

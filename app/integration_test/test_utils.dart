@@ -13,13 +13,43 @@ Future<void> startApp(WidgetTester tester) async {
   }while(!settings.isInitialized());
 }
 
+/// [startAppBare] will start the application with all settings wiped.
+/// as though the application was just stared. Typically paired with
+Future<void> startAppBare(WidgetTester tester) async {
+  await settings.reset(true);
+  app.main();
+  do{
+    await tester.pump();
+  }while(!settings.isInitialized());
+}
+
+/// []
+Future<void> startAppWithSettings(WidgetTester tester, Map<String, Object> settingsMap) async {
+  await settings.reset(true);
+  settings.setMockValues(settingsMap);
+  await settings.save();
+  app.main();
+  do{
+    await tester.pump();
+  }while(!settings.isInitialized());
+}
+
 /// [startSkipFrontScreen] this starts the app by calling [startApp] and automatically
 /// moves the test into the actual app, leaving the tester on the dashboard.
 Future<void> startSkipFrontScreen(WidgetTester tester) async {
   await startApp(tester);
   // Enter the app
   Finder startButton = find.byKey(const Key("Start_Button"));
+  await pumpUntilFound(tester, startButton);
   await tap(tester, startButton);
+}
+
+/// [skipToEntriesPage] will skip throug the app from the login screen to the
+/// entries page
+Future<void> skipToEntriesPage(WidgetTester tester, [bool settle = false]) async {
+  await startSkipFrontScreen(tester);
+  await pumpUntilFound(tester, find.text("Entries"), settle);
+  await tap(tester, find.text("Entries"), settle);
 }
 
 /// [defaultSettings] configures the default settings for testing which includes
@@ -37,7 +67,7 @@ void defaultSettings() {
 /// use [settle] = true, to make it pumpAndSettle
 Future<void> pumpUntilFound(WidgetTester tester, Finder found, [bool settle = false, Duration? duration]) async {
   if(settle){
-    while(!found.hasFound){
+    while(found.evaluate().isEmpty){
       if (duration != null) {
         await tester.pumpAndSettle(duration);
       } else {
@@ -45,7 +75,7 @@ Future<void> pumpUntilFound(WidgetTester tester, Finder found, [bool settle = fa
       }
     }
   } else {
-    while(!found.hasFound){
+    while(found.evaluate().isEmpty){
       await tester.pump(duration);
     }
   }

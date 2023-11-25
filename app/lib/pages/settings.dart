@@ -254,18 +254,19 @@ class _TagSettingsState extends State<TagSettingsPage> {
 
   /// [tag] is that Tag that will be deleted, it always exists because this method cannot be called before such a time
   /// Even if the tag were not to exist, it is safe to call this, no error will occur.
-  void deleteTag(Tag tag) {
+  void deleteTag(Tag tag) async  {
     tagList.remove(tag);
-    //call save
-    settings.save();
+    await settings.save();
+    displayedTags = tagList.where((element) => element.name.contains(textController.text));
+    exactMatchFound = displayedTags.where((element) => element.name == textController.text).isNotEmpty;
     setState(() {});
   }
 
   /// [addTag] shows a dialogue that will accept the parameters to create a new [Tag]
   /// The name is required
-  void addTag(BuildContext context, String name) {
+  void addTag(BuildContext context, String name) async {
     Color color = Colors.grey;
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -302,15 +303,15 @@ class _TagSettingsState extends State<TagSettingsPage> {
             TextButton(
                 key: const Key('Save New Tag Button'),
                 child: const Text('Save'),
-                onPressed: () {
+                onPressed: () async {
                   final newTag = Tag(name: name, color: color);
                   tagList.add(newTag);
                   //call save
-                  settings.save();
+                  await settings.save();
 
                   //Update search bar with new name
                   textController.clear();
-                  Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                   displayedTags = tagList;
                   setState(() {});
                 }
@@ -337,7 +338,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
           StandardElevatedButton(
               key: const Key('Create Tag'),
               //on pressed adds the phrase in the text form field to the tag list
-              onPressed: () => addTag(context, textController.text),
+              onPressed: () async => addTag(context, textController.text),
               child: const Text('Create Tag')
           ));
     }
@@ -376,7 +377,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
                       //second is delete button
                       TextButton(
                           key: Key('Delete ${tag.name} Button'),
-                          onPressed: () => deleteTag(tag),
+                          onPressed: () async => deleteTag(tag),
                           child: Text('Delete',
                             style: Theme.of(context).textTheme.bodyMedium,
                           )),
