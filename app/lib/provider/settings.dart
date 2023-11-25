@@ -282,7 +282,14 @@ void verifyPassword(BuildContext context, String password) async {
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.hasData) {
                       if (snapshot.data!) {
-                        navigateToDashboard(context);
+                        //traverse to the dashboard page after updated prompt
+                        Future.delayed(const Duration(milliseconds: 10))
+                            .whenComplete(() async {
+                          Navigator.of(context).pop(); //pop loading screen
+                          Navigator.of(context).pop(); //pop password prompt
+                          Navigator.pushReplacement(
+                              context, DashboardPage.route());
+                        });
                         finalDisplay = [
                           const Text('Welcome Back',
                               style: TextStyle(
@@ -354,15 +361,6 @@ void verifyPassword(BuildContext context, String password) async {
   }*/
 }
 
-void navigateToDashboard(BuildContext context) async {
-  //add a slight delay before we update the screen
-  await Future.delayed(const Duration(milliseconds: 10)).whenComplete(() async {
-    Navigator.of(context).pop(); //pop loading screen
-    Navigator.of(context).pop(); //pop password prompt
-    Navigator.pushReplacement(context, DashboardPage.route());
-  });
-}
-
 void attemptLogin(BuildContext context) async {
   String passwordFieldText = "";
   await showDialog(
@@ -411,8 +409,19 @@ void finishConfiguration(BuildContext context, String password) async {
                     List<Widget> finalDisplay;
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.connectionState == ConnectionState.done) {
-                      //traverse to next page
-                      saveAndNavigateToDashboard(context);
+                      //traverse to next page once encryption is done, slight delay
+                      //for prompt to update
+                      Future.delayed(const Duration(milliseconds: 10))
+                          .whenComplete(() async {
+                        setConfigured(true);
+                        Navigator.of(context).pop(); //pop loading screen
+                        Navigator.of(context).pop(); //pop confirmation screen
+                        Navigator.of(context).pop(); //pop password prompt
+                        Navigator.pushReplacement(
+                            context, DashboardPage.route());
+                        await save();
+                      });
+                      //final display cant be null so we overwrite it to indicate success
                       finalDisplay = [
                         const Text("Your Digital Journal's Encryption is Ready",
                             style: TextStyle(
@@ -453,7 +462,7 @@ void finishConfiguration(BuildContext context, String password) async {
           ));
 
   /*
-  optional implementation that takes user to dashboard while password encryption is happening
+  optional implementation that takes user to dashboard while password encryption is happening in background
   Navigator.of(context).pop(); // remove confirmation window
   Navigator.of(context).pop(); // remove initial entry window
   Navigator.pushReplacement(
@@ -463,17 +472,6 @@ void finishConfiguration(BuildContext context, String password) async {
     setConfigured(true);
     await save();
   });*/
-}
-
-void saveAndNavigateToDashboard(BuildContext context) async {
-  //add a slight delay before we update the screen
-  await Future.delayed(const Duration(milliseconds: 10)).whenComplete(() async {
-    setConfigured(true);
-    Navigator.of(context).pop(); //pop loading screen
-    Navigator.of(context).pop(); //pop password prompt
-    Navigator.pushReplacement(context, DashboardPage.route());
-    await save();
-  });
 }
 
 void confirmPassword(BuildContext context, String password) async {
