@@ -4,24 +4,24 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-void main()  {
+void main() {
   //Things that need to be done before the application is ran.
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const RootApp());
+  //updated to load settings before displaying app
+  settings.load().whenComplete(() => runApp(const RootApp()));
 }
 
 /// This is the root application
 /// It contains the main functions and loading that will be necessary for
 /// the rest of the application to run.
 class RootApp extends StatefulWidget {
-  const RootApp({super.key}) ;
+  const RootApp({super.key});
 
   @override
   State<RootApp> createState() => _RootAppState();
 }
 
-class _RootAppState extends State<RootApp>  {
+class _RootAppState extends State<RootApp> {
   late final AppLifecycleListener _listener;
 
   @override
@@ -39,9 +39,8 @@ class _RootAppState extends State<RootApp>  {
       // specific state transitions.
       onStateChange: _handleStateChange,
     );
-
-    settings.load().whenComplete(() => null);
-
+    //is loaded before app init state
+    //settings.load().whenComplete(() => null);
   }
 
   @override
@@ -60,7 +59,6 @@ class _RootAppState extends State<RootApp>  {
             debugShowCheckedModeBanner: false,
             theme: provider.theme,
             home: const WelcomePage(),
-
           );
         });
   }
@@ -83,4 +81,3 @@ class _RootAppState extends State<RootApp>  {
     //TODO: Handle things that arent defual
   }
 }
-
