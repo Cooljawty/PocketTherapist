@@ -10,6 +10,7 @@ enum ThemeOption {
 
 class ThemeSettings with ChangeNotifier {
   // To change the theme
+
   static ThemeData darkTheme = ThemeData(
     //can be used to customize back button icon, left default
     //actionIconTheme: ,
@@ -32,7 +33,7 @@ class ThemeSettings with ChangeNotifier {
     buttonTheme: const ButtonThemeData(buttonColor: Colors.deepPurple),
 
     //updates default color of MaterialType.canvas Material, used to control color of drop down menu items
-    canvasColor: Colors.grey.shade400,
+    canvasColor: const Color(0xffc9a5cf),
 
     //Card color and theme is used to set the default of the Card widget class
     //cardColor: Colors.deepPurple, //The color of Material when it is used as a card
@@ -65,9 +66,10 @@ class ThemeSettings with ChangeNotifier {
       //these can be accessed by widgets to set their color to match the dark theme
       //used with standardButton
         brightness: Brightness.dark,
-        background: Colors.deepPurple.shade300,
-        onBackground: Colors.deepPurpleAccent,
-        primary: Colors.deepPurpleAccent,
+        background: const Color(0xff1B1734),
+        onBackground: darkenColor(const Color(0xff1B1734), .2),
+        secondary: const Color(0xff420264),
+        primary: const Color(0xff5C038C),
         primaryContainer: Colors.deepPurple,
         //color of hint validation text in text fields
         error: Colors.red),
@@ -139,7 +141,8 @@ class ThemeSettings with ChangeNotifier {
 
     //default input decoration for Textfield, TextformField, and DropdownButtonFormField
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Colors.grey.shade400,
+      //fillColor: settings.getCurrentTheme().colorScheme.background,
+      fillColor: Colors.purple.shade800,
       filled: true,
     ),
 
@@ -173,7 +176,7 @@ class ThemeSettings with ChangeNotifier {
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-          MaterialStatePropertyAll(Colors.deepPurple.withOpacity(0.5)),
+          MaterialStatePropertyAll(Colors.deepPurple.withOpacity(0.8)),
           foregroundColor: const MaterialStatePropertyAll(Colors.black),
         )),
 
@@ -211,8 +214,21 @@ class ThemeSettings with ChangeNotifier {
           color: Colors.white, fontSize: 10.0, fontWeight: FontWeight.w500),
     ),
 
-    useMaterial3: true,
+
+
   );
+
+
+
+
+
+
+
+
+
+
+
+
 
   static ThemeData lightTheme = ThemeData(
     //can be used to customize back button icon, left default
@@ -268,6 +284,7 @@ class ThemeSettings with ChangeNotifier {
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB388FF)).copyWith(
       //these can be accessed by widgets to set their color to match the light theme
       //used with standardButton
+
         brightness: Brightness.light,
         background: Colors.white,
         onBackground: Colors.deepPurple,
@@ -298,7 +315,7 @@ class ThemeSettings with ChangeNotifier {
     dropdownMenuTheme: DropdownMenuThemeData(
       //textStyle: , by default textstyle is set to lightTheme.textTheme
         menuStyle: MenuStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         ),
         inputDecorationTheme: const InputDecorationTheme(
             fillColor: Colors.deepPurple, filled: true)),
@@ -343,7 +360,7 @@ class ThemeSettings with ChangeNotifier {
 
     //default input decoration for Textfield, TextformField, and DropdownButtonFormField
     inputDecorationTheme: const InputDecorationTheme(
-      fillColor: Colors.grey,
+      fillColor: Colors.white,
       filled: true,
     ),
 
@@ -377,7 +394,7 @@ class ThemeSettings with ChangeNotifier {
     textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-          MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.5)),
+          MaterialStatePropertyAll(Colors.deepPurpleAccent.withOpacity(0.8)),
           foregroundColor: const MaterialStatePropertyAll(Colors.black),
         )),
 
@@ -440,4 +457,10 @@ class ThemeSettings with ChangeNotifier {
 
     notifyListeners();
   }
+}
+
+Color darkenColor(Color color, double amount) {
+  // Grab the hue, saturation, and lightness of the color
+  HSLColor hsl = HSLColor.fromColor(color);
+  return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
 }

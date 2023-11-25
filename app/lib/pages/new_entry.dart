@@ -55,7 +55,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
               width: MediaQuery.of(context).size.width,
               child: Column(
                   children: [
-
                 // Text field for the Journal Entry Title
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -68,6 +67,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     ),
                   ),
                 ),
+
 
                 // Text input field for the Journal Entry Body
                 Padding(
@@ -110,7 +110,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     ),
                   ),
                 ),
-
                 // Chip display for the emotions
                 Padding(
                     padding: const EdgeInsets.all(20),

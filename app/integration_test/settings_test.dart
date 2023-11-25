@@ -43,13 +43,15 @@ void main() {
       settings.encryptionToggleKey: false,
     });
     app.main();
-    await widgetTester.pumpAndSettle();
+    await widgetTester.pump();
 
     await widgetTester.tap(find.byKey(const Key("Settings_Button")));
-    await widgetTester.pumpAndSettle();
+
+    do{
+      await widgetTester.pump();
+    }while(widgetTester.widgetList(find.byKey(const ValueKey('StyleDropDown'))).isEmpty);
 
     // Find the drop down
-    
     final dropdown = find.byKey(const ValueKey('StyleDropDown'));
 
     // Tap the drop down
@@ -88,19 +90,19 @@ void main() {
     expect(Brightness.light, appState.theme?.brightness);
     expect(ThemeSettings.lightTheme.brightness, appState.theme?.brightness);
 
-    await widgetTester.tap(find.text('Edit Emotion List'));
-    await widgetTester.pumpAndSettle();
-
-    await widgetTester.tap(find.text('Enable/Disable Encryption'));
-    await widgetTester.pumpAndSettle();
-
-    await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
-    await widgetTester.pumpAndSettle();
-
     await widgetTester.tap(find.text('Edit Tag List'));
     await widgetTester.pumpAndSettle();
 
     await widgetTester.pageBack();
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.text('Edit Emotion List'));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.byKey(const Key('Enable/Disable Encryption')));
+    await widgetTester.pumpAndSettle();
+
+    await widgetTester.tap(find.byKey(const Key('Erase_Button')));
     await widgetTester.pumpAndSettle();
 
     await widgetTester.tap(find.text('Open Vault File'));
