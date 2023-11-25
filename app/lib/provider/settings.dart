@@ -10,6 +10,7 @@ import 'package:app/helper/classes.dart';
 
 import '../pages/dashboard.dart';
 import '../uiwidgets/fields.dart';
+import '../uiwidgets/decorations.dart';
 
 /// Used for error messages
 const String preferencesPrefix = "pocket-therapist";
@@ -89,10 +90,11 @@ Future<void> load() async {
         dynamicList = _settings['tags'];
         tagList = [];
         for (int i = 0; i < dynamicList.length; i++) {
-          tagList.add(Tag(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
+          tagList.add(Tag(
+              name: dynamicList[i]['name'],
+              color: Color(dynamicList[i]['color'])));
         }
       }
-
 
       //load emotions
       if (_settings['emotions'] != null) {
@@ -100,7 +102,8 @@ Future<void> load() async {
         emotionList = {};
         for (int i = 0; i < dynamicList.length; i++) {
           // emotionList.add(Emotion(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
-          emotionList.putIfAbsent(dynamicList[i]['name'], ()=> dynamicList[i]['color']);
+          emotionList.putIfAbsent(
+              dynamicList[i]['name'], () => dynamicList[i]['color']);
         }
       }
     }
@@ -162,10 +165,10 @@ Future<void> save() async {
   settings['enc'] = encrypted;
 
   //Add each tag as a map with its name and color
-	settings['tags'] = <Map<String, dynamic>>[];
-	for (final tag in tagList) {
-		settings['tags'].add({'name': tag.name, 'color': tag.color.value});
-	}
+  settings['tags'] = <Map<String, dynamic>>[];
+  for (final tag in tagList) {
+    settings['tags'].add({'name': tag.name, 'color': tag.color.value});
+  }
 
   // Save them to the file
   String jsonEncoding = json.encode(settings);
@@ -188,10 +191,14 @@ Future<void> reset() async {
 /// Setters --------------------------
 void setConfigured(bool value) => _settings[configuredKey] = value;
 void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
-void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
-void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
-void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
-Future<void> setPassword(String newPassword) async => encryptor.setPassword(newPassword);
+void setFontScale(double newFontScale) =>
+    _settings[fontScaleKey] = newFontScale;
+void setEncryptionStatus(bool newStatus) =>
+    _settings[encryptionToggleKey] = newStatus;
+void setAccentColor(Color newColor) =>
+    _settings[accentColorKey] = newColor.value;
+Future<void> setPassword(String newPassword) async =>
+    encryptor.setPassword(newPassword);
 
 void setMockValues(Map<String, dynamic> value) {
   reset();
@@ -226,7 +233,7 @@ String getVaultFolder() => _settingsStorageDirectory!.path;
 
 /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
 ///                                 all user data & passwords securely.
-void handleResetEverythingPress(BuildContext context)  {
+void handleResetEverythingPress(BuildContext context) {
   // if (settings.isConfigured()) {
   // await showDialog(
   //     context: context,
@@ -258,35 +265,92 @@ void handleResetEverythingPress(BuildContext context)  {
   // }
 }
 
-void verifyPassword(BuildContext context, String password) async  {
-  bool match = encryptor.unlock(password);
+void verifyPassword(BuildContext context, String password) async {
+  await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            actions: [
+              FutureBuilder(
+                  future: encryptor.unlock(password),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<bool> snapshot,
+                  ) {
+                    List<Widget> finalDisplay;
+                    //once encryptor.unlock(password) is done then run code based off value
+                    if (snapshot.hasData) {
+                      if (snapshot.data!) {
+                        finalDisplay = [
+                          const Text('Welcome Back',
+                              style: TextStyle(
+                                  fontSize: 15.0, fontWeight: FontWeight.bold)),
+                          TextButton(
+                            key: const Key('Correct_Password'),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              password = "";
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context, DashboardPage.route());
+                            },
+                            child: const Text("Enter"),
+                          )
+                        ];
+                      } else {
+                        finalDisplay = [
+                          const Text(
+                            'Incorrect Password:',
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            key: const Key('Incorrect_Password'),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Ok"),
+                          )
+                        ];
+                      }
+                    } else {
+                      finalDisplay = <Widget>[
+                        const SizedBox(
+                            width: 200, height: 200, child: LoadingAnimation()),
+                      ];
+                    }
+                    return Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: finalDisplay),
+                    );
+                  }),
+            ],
+          ));
+  /*bool match = await encryptor.unlock(password);
   if (match) {
     password = "";
     Navigator.of(context).pop();
     Navigator.pushReplacement(context, DashboardPage.route());
-  }
-  else {
+  } else {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.onBackground,
-          title: const Text("Incorrect Password"),
-          actions: [
-            TextButton(
-              key: const Key(
-                  'Incorrect_Password'),
-              onPressed: () async {
-                Navigator
-                    .of(context)
-                    .pop();
-              },
-              child: const Text("Ok"),
-            )
-          ],
-        )
-    );
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              title: const Text("Incorrect Password"),
+              actions: [
+                TextButton(
+                  key: const Key('Incorrect_Password'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Ok"),
+                )
+              ],
+            ));
     // I should never get here
-  }
+  }*/
 }
 
 void attemptLogin(BuildContext context) async {
@@ -294,30 +358,28 @@ void attemptLogin(BuildContext context) async {
   await showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .onBackground,
+      backgroundColor: Theme.of(context).colorScheme.onBackground,
       title: const Text("Welcome Back!"),
       content: ControlledTextField(
         key: const Key("Login_Password_Field"),
-        hintText: "Enter your password", validator: (value) {
-        passwordFieldText = value ?? "";
-        if (value == null || value.isEmpty) {
-          return "Field is empty!";
-        }
-        return null;
-      },),
+        hintText: "Enter your password",
+        validator: (value) {
+          passwordFieldText = value ?? "";
+          if (value == null || value.isEmpty) {
+            return "Field is empty!";
+          }
+          return null;
+        },
+      ),
       actions: [
         // Entering the password, verify, and then report to user.
         TextButton(
-          //add key for testing
+            //add key for testing
             key: const Key('Submit_Password'),
             onPressed: () async {
               verifyPassword(context, passwordFieldText);
             },
-            child: const Text("Enter")
-        ),
+            child: const Text("Enter")),
       ],
     ),
   );
@@ -341,23 +403,24 @@ void confirmPassword(BuildContext context, String password) async {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.onBackground,
-          title: const Text("Confirm your password"),
-          content: ControlledTextField(
-              key: const Key('Confirm_Password_Field'),
-              hintText: "Confirm Password",
-              validator: (value) {
-                match = password == value;
-                return match ? null : "Passwords do not match.";
-              }),
-          actions: [
-            TextButton(
-              key: const Key('Verify_Password'),
-              onPressed: () async => (match) ? finishConfiguration(context, password): null,
-              child: const Text("Enter"),
-            ),
-          ],
-        ));
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              title: const Text("Confirm your password"),
+              content: ControlledTextField(
+                  key: const Key('Confirm_Password_Field'),
+                  hintText: "Confirm Password",
+                  validator: (value) {
+                    match = password == value;
+                    return match ? null : "Passwords do not match.";
+                  }),
+              actions: [
+                TextButton(
+                  key: const Key('Verify_Password'),
+                  onPressed: () async =>
+                      (match) ? finishConfiguration(context, password) : null,
+                  child: const Text("Enter"),
+                ),
+              ],
+            ));
   }
   // No password supplied
   else {
@@ -365,25 +428,24 @@ void confirmPassword(BuildContext context, String password) async {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.onBackground,
-          title: const Text("No Encryption?"),
-          content: const Text(
-              'Encryption can keep your private thoughts, private. Continue?'),
-          actions: [
-            TextButton(
-                key: const Key('Confirm_No_Password'),
-                onPressed: () => finishConfiguration(context, password),
-                child: const Text("Yes")),
-            TextButton(
-                key: const Key('Cancel_No_Password'),
-                onPressed: () async {
-                  Navigator.of(context)
-                      .pop(); // remove confirmation window to entry password.
-                },
-                child: const Text("No")),
-          ],
-        )
-    );
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              title: const Text("No Encryption?"),
+              content: const Text(
+                  'Encryption can keep your private thoughts, private. Continue?'),
+              actions: [
+                TextButton(
+                    key: const Key('Confirm_No_Password'),
+                    onPressed: () => finishConfiguration(context, password),
+                    child: const Text("Yes")),
+                TextButton(
+                    key: const Key('Cancel_No_Password'),
+                    onPressed: () async {
+                      Navigator.of(context)
+                          .pop(); // remove confirmation window to entry password.
+                    },
+                    child: const Text("No")),
+              ],
+            ));
   }
   password = "";
   match = false;
@@ -395,33 +457,27 @@ Future<void> createPassword(BuildContext context) async {
   await showDialog(
     context: context,
     // Start user creation process.
-    builder: (context) =>
-        AlertDialog(
-          backgroundColor: Theme
-              .of(context)
-              .colorScheme
-              .onBackground,
-          title: const Text("Encryption?"),
-          // User enters password, which is either empty (no encryption)
-          // or is valid, and must be confirmed.
-          content: ControlledTextField(
-              key: const Key('Enter_Password_Field'),
-              hintText: "Enter a password (Optional)",
-              validator: (value) {
-                String? message = encryptor.defaultValidator(value);
-                password = value ?? "";
-                return message;
-              }
-          ),
-          actions: [
-            TextButton(
-                key: const Key('Create_Password'),
-                onPressed: () async =>  confirmPassword(context, password),
-                child: const Text("Enter")),
-          ],
-        ),
+    builder: (context) => AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      title: const Text("Encryption?"),
+      // User enters password, which is either empty (no encryption)
+      // or is valid, and must be confirmed.
+      content: ControlledTextField(
+          key: const Key('Enter_Password_Field'),
+          hintText: "Enter a password (Optional)",
+          validator: (value) {
+            String? message = encryptor.defaultValidator(value);
+            password = value ?? "";
+            return message;
+          }),
+      actions: [
+        TextButton(
+            key: const Key('Create_Password'),
+            onPressed: () async => confirmPassword(context, password),
+            child: const Text("Enter")),
+      ],
+    ),
   );
-
 }
 
 /// [_handleStartPress] handles taps of the start button, it uses the next 5
@@ -442,20 +498,16 @@ void handleStartPress(BuildContext context) async {
       // Password not set, but initialized, no check, just entry to dashboard.
       Navigator.pushReplacement(context, DashboardPage.route());
     }
-  }
-  else {
+  } else {
     await createPassword(context).whenComplete(() async {
-      if(isEncryptionEnabled()) {
+      if (isEncryptionEnabled()) {
         await showDialog(
             context: context,
             builder: (context) {
               String? recovery = encryptor.getRecoveryPhrase();
               return AlertDialog(
                   title: const Text("Recovery Phrase"),
-                  backgroundColor: Theme
-                      .of(context)
-                      .colorScheme
-                      .onBackground,
+                  backgroundColor: Theme.of(context).colorScheme.onBackground,
                   actions: [
                     TextButton(
                         key: const Key("Recovery_Phrase_Confirm"),
@@ -483,61 +535,129 @@ void handleResetPasswordPress(BuildContext context) async {
   if (isConfigured()) {
     await showDialog(
       context: context,
-      builder: (context) =>
-          AlertDialog(
-            backgroundColor: Theme
-                .of(context)
-                .colorScheme
-                .onBackground,
-            title: const Text("Reset Password"),
-            content: ControlledTextField(
-              key: const Key("Reset_Password_Field"),
-              hintText: "Enter your recovery phrase or password",
-              validator: (value) {
-                maybePasswordOrPhrase = value;
-                if (value == null || value.isEmpty){
-                  return "Field is required.";
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.onBackground,
+        title: const Text("Reset Password"),
+        content: ControlledTextField(
+          key: const Key("Reset_Password_Field"),
+          hintText: "Enter your recovery phrase or password",
+          validator: (value) {
+            maybePasswordOrPhrase = value;
+            if (value == null || value.isEmpty) {
+              return "Field is required.";
+            }
+            return null;
+          },
+        ),
+        actions: [
+          TextButton(
+              key: const Key('Reset_Password_Button'),
+              onPressed: () async {
+                //Future<bool> match = encryptor.resetCredentials(maybePasswordOrPhrase!);
+                await showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.onBackground,
+                          actions: [
+                            FutureBuilder(
+                                future: encryptor
+                                    .resetCredentials(maybePasswordOrPhrase!),
+                                builder: (
+                                  BuildContext context,
+                                  AsyncSnapshot<bool> snapshot,
+                                ) {
+                                  List<Widget> finalDisplay;
+                                  //once encryptor.unlock(password) is done then run code based off value
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data!) {
+                                      finalDisplay = [
+                                        const Text('Password Reset Successful',
+                                            style: TextStyle(
+                                                fontSize: 15.0,
+                                                fontWeight: FontWeight.bold)),
+                                        TextButton(
+                                            key:
+                                                const Key("Success_Pass_Reset"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text("Ok"))
+                                      ];
+                                    } else {
+                                      finalDisplay = [
+                                        const Text(
+                                          'Incorrect Password or Recovery Phrase',
+                                          style: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextButton(
+                                            key: const Key("Fail_Pass_Reset"),
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text("Ok")),
+                                      ];
+                                    }
+                                  } else {
+                                    finalDisplay = <Widget>[
+                                      const SizedBox(
+                                          width: 200,
+                                          height: 200,
+                                          child: LoadingAnimation()),
+                                    ];
+                                  }
+                                  return Center(
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: finalDisplay),
+                                  );
+                                }),
+                          ],
+                        ));
+                /*
+                bool match =
+                    await encryptor.resetCredentials(maybePasswordOrPhrase!);
+                if (match) {
+                  await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.onBackground,
+                              title: const Text("Password Reset Successful"),
+                              actions: [
+                                TextButton(
+                                    key: const Key("Success_Pass_Reset"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Ok"))
+                              ])).whenComplete(
+                      () async => handleStartPress(context));
+                } else {
+                  await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.onBackground,
+                              title: const Text(
+                                  "Incorrect Password or Recovery Phrase"),
+                              actions: [
+                                TextButton(
+                                    key: const Key("Fail_Pass_Reset"),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Ok"))
+                              ]));
                 }
-                return null;
+              */
               },
-            ),
-            actions: [
-              TextButton(
-                  key: const Key('Reset_Password_Button'),
-                  onPressed: () async {
-                    bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
-                    if(match) {
-                      await showDialog(context: context, builder: (context) => AlertDialog(
-                          backgroundColor: Theme
-                              .of(context)
-                              .colorScheme
-                              .onBackground,
-                          title: const Text("Password Reset Successful"),
-                          actions: [ TextButton(
-                              key: const Key("Success_Pass_Reset"),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Ok"))
-                          ]
-                      )).whenComplete(() async => handleStartPress(context));
-                    }
-                    else {
-                      await showDialog(context: context, builder: (context) => AlertDialog(
-                          backgroundColor: Theme
-                              .of(context)
-                              .colorScheme
-                              .onBackground,
-                          title: const Text("Incorrect Password or Recovery Phrase"),
-                          actions: [ TextButton(
-                              key: const Key("Fail_Pass_Reset"),
-                              onPressed: () => Navigator.pop(context), child: const Text("Ok"))]));
-                    }
-                  },
-                  child: const Text("Enter")),
-            ],
-          ),
+              child: const Text("Enter")),
+        ],
+      ),
     );
   }
 }
