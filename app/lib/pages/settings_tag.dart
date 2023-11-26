@@ -188,25 +188,28 @@ class _TagSettingsState extends State<TagSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         //app bar for back button
         appBar: AppBar(),
-        body: Stack(children: [
+        body: Stack(
+					children: [
           // Stripe in the background
           Transform.translate(
               offset: Offset(
-                  0, -(MediaQuery.of(context).padding.top + kToolbarHeight)),
+                  0, -(MediaQuery.of(context).padding.top + kToolbarHeight)
+							),
               // This is not const, it changes with theme, don't set it to be const
               // no matter how much the flutter gods beg
               // ignore: prefer_const_constructors
-              child: StripeBackground()),
+              child: StripeBackground()
+					),
 
           BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-              )),
+              )
+					),
 
           SafeArea(
             //Ensure that selected tags are returned after quitting
@@ -322,7 +325,7 @@ class _TagSettingsState extends State<TagSettingsPage> {
               ),
             ),
           ),
-        ),
+				],
 			),
 		);
   }

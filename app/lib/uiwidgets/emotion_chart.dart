@@ -92,7 +92,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 									TextSpan( 
 										text: "${value}%",
 										style: settings.getCurrentTheme().textTheme.displayMedium!.copyWith(
-											color: emotionlist[emotion]!.color
+											color: emotionlist[emotion]
 										),
 									)
 								]
@@ -124,7 +124,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 				lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 						show: entry.value.any((value) => value.y != 0),
 						spots: entry.value,
-						color: emotionlist[entry.key]!.color,
+						color: emotionlist[entry.key],
 						dotData: const FlDotData( show: false, ),
 						isCurved: true,
 						curveSmoothness: 0.5,
@@ -177,8 +177,8 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					dataSets: [
 						RadarDataSet(
 							entryRadius: 0.0,
-							borderColor: strongestEmotion?.color,
-							fillColor: strongestEmotion?.color.withOpacity(0.5),
+							borderColor: strongestEmotion,
+							fillColor: strongestEmotion?.withOpacity(0.5),
 							dataEntries: emotionValues,
 						),
 					],
@@ -205,10 +205,12 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	Widget build(BuildContext context) {
 		final entries = entriesBetween(widget.startDate, widget.endDate); 
 		_emotionData = Map.fromIterable(emotionlist.keys, value: (i) => List<FlSpot>.generate(getXFromDay(widget.endDate).floor()+1, (day) => FlSpot(day.toDouble(), 0)));
+		debugPrint("${_emotionData.keys}");
 
 		//Calculate sum strength for each emotion
 		for (var entry in entries){
 			for (var emotion in entry.getEmotions()){
+				debugPrint("${emotion.name} ${_emotionData[emotion.name]}");
 				final dayIndex = getX(entry).floor();
 				//Set the y position has the highest intensity of the day
 				if (dayIndex < _emotionData[emotion.name]!.length) {
@@ -249,13 +251,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 }
 
 //TEMPERARY Variables/Classes
-final emotionlist = {
-	"Happy": Emotion(name: "Happy", color: Colors.green, strength: 0), 
-	"Sad": Emotion(name: "Sad", color: Colors.blue, strength: 0), 
-	"Angry": Emotion(name: "Angry", color: Colors.red, strength: 0),
-	"Sonder": Emotion(name: "Sonder", color: Colors.orange, strength: 0),
-	"Calm": Emotion(name: "Calm", color: Colors.deepPurple, strength: 0),
-};
+final emotionlist = settings.emotionList;
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
 			JournalEntry(
@@ -290,7 +286,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 						strength: 30,
 					),
 					Emotion(
-						name: "Angry",
+						name: "Anger",
 						color: Colors.red,
 						strength: 8,
 					),
@@ -317,7 +313,18 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				date: DateTime(2023, 1, 3), 
 				emotions: [
 					Emotion(
-						name: "Angry",
+						name: "Anger",
+						color: Colors.red,
+						strength: 60,
+					),
+				]
+			),
+			JournalEntry(
+				title: "Sunday blues", entryText: "", 
+				date: DateTime(2023, 1, 7), 
+				emotions: [
+					Emotion(
+						name: "Sad",
 						color: Colors.red,
 						strength: 60,
 					),
@@ -355,7 +362,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 						strength: 30,
 					),
 					Emotion(
-						name: "Angry",
+						name: "Anger",
 						color: Colors.red,
 						strength: 8,
 					),
@@ -382,7 +389,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				date: DateTime(2023, 1, 12), 
 				emotions: [
 					Emotion(
-						name: "Angry",
+						name: "Anger",
 						color: Colors.red,
 						strength: 60,
 					),
@@ -418,7 +425,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 						strength: 30,
 					),
 					Emotion(
-						name: "Angry",
+						name: "Anger",
 						color: Colors.red,
 						strength: 30,
 					),
