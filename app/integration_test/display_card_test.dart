@@ -1,4 +1,3 @@
-// import 'package:app/helper/classes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +5,16 @@ import 'package:app/uiwidgets/cards.dart';
 import 'package:app/pages/entry.dart';
 
 void main() {
+  final shortEntry = JournalEntry(
+    title: "Short entry",
+    entryText: "One line preview",
+    creationDate: DateTime(2023, 11, 25),
+  );
+
   final entry = JournalEntry(
     title: "Title of entry text",
     entryText: "Actual text of entry.\nMade long to test preview",
-    date: DateTime(2023, 11, 4),
+    creationDate: DateTime(2023, 11, 4),
   );
 
   late Widget myApp;
@@ -19,24 +24,18 @@ void main() {
                 body: SafeArea(
           child: Column(
             children: [
+              shortEntry.asDisplayCard(),
               entry.asDisplayCard(),
             ],
           ),
         )))
       });
 
-  testWidgets('Test the DisplayCard constructor', (tester) async {
-    await tester.pumpWidget(myApp);
-
-    final cardFinder = find.byType(DisplayCard);
-    expect(cardFinder, findsNWidgets(1));
-  });
-
   testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
     await tester.pumpWidget(myApp);
 
-    final entryTitleFinder = find.text(entry.getTitle());
-    final entryPreviewFinder = find.text(entry.getPreviewText());
+    final entryTitleFinder = find.text(entry.title);
+    final entryPreviewFinder = find.text(entry.previewText);
 
     expect(entryTitleFinder, findsOneWidget);
     expect(entryPreviewFinder, findsOneWidget);
@@ -46,8 +45,8 @@ void main() {
       (tester) async {
     await tester.pumpWidget(myApp);
 
-    final entryTitleFinder = find.text(entry.getTitle());
-    final entryPreviewFinder = find.text(entry.getPreviewText());
+    final entryTitleFinder = find.text(entry.title);
+    final entryPreviewFinder = find.text(entry.previewText);
 
     expect(entryTitleFinder, findsOneWidget);
     expect(entryPreviewFinder, findsOneWidget);
@@ -63,8 +62,8 @@ void main() {
     await tester.tap(card);
     await tester.pumpAndSettle();
 
-    final title = find.text(entry.getTitle());
-    final text = find.text(entry.getEntryText());
+    final title = find.text(shortEntry.title);
+    final text = find.text(shortEntry.entryText);
 
     expect(title, findsOneWidget);
     expect(text, findsOneWidget);

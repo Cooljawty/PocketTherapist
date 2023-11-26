@@ -95,18 +95,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       scrollDirection: Axis.horizontal,
                       child: Wrap(
                         spacing: 5,
-                        children: _selectedTags
-                            .map((tag) => ActionChip(
-                                  label: Text(tag.name),
-                                  backgroundColor: tag.color,
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedTags.removeWhere((element) =>
-                                          element.name == tag.name);
-                                    });
-                                  },
-                                ))
-                            .toList(),
+                        children: tagChipList(),
                       ),
                     ),
                   ),
@@ -175,7 +164,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       selectedTime.minute,
                     );
                     isPlan = true;
-
                   }),
               /*
                   * Tag button
@@ -255,7 +243,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   selected: _selectedEmotions.contains(emote),
                                   showCheckmark: false,
                                   selectedColor: emote.color,
-                                  // Double enclosed setstate, because one
+                                  // Double enclosed setState, because one
                                   // doesn't update both alertdialog,
                                   // and the main app
                                   onSelected: (bool selected) {
@@ -370,15 +358,34 @@ class _NewEntryPageState extends State<NewEntryPage> {
         });
   }
 
+  /// Creates a list of tags that can be tapped
+  /// Tapping removes the tag from the display
+  List<ActionChip> tagChipList() {
+    return _selectedTags
+        .map((tag) => ActionChip(
+              label: Text(tag.name),
+              backgroundColor: tag.color,
+              onPressed: () {
+                setState(() {
+                  _selectedTags
+                      .removeWhere((element) => element.name == tag.name);
+                });
+              },
+            ))
+        .toList();
+  }
+
   // Make the journal entry and save it
   getEntry() {
+    debugPrint(_selectedEmotions.length.toString());
+    debugPrint(_selectedTags.length.toString());
     return JournalEntry(
       // User entered text
       title: titleController.text,
       entryText: journalController.text,
 
       // Date to show when displaying an entry
-      date: DateTime.now(),
+      creationDate: DateTime.now(),
       displayDate: datePicked,
 
       // Tags and emotions selected
@@ -386,7 +393,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       emotions: _selectedEmotions,
 
       // Is the entry a plan? If so, it is unfinished
-      planStatus: isPlan ? PlanStatus.unfinished : PlanStatus.noPlan,
+      planStatus: isPlan ? false : null,
     );
   }
 

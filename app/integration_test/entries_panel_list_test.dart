@@ -35,13 +35,13 @@ void main() {
   }
 
   entry.entries.addAll([
-    JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime(2022, 2, 7)),
-    JournalEntry(title: "This is another entry", entryText: 'The next one wont have a body', date: DateTime(2022, 2, 6)),
-    JournalEntry(title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
-    JournalEntry(title: "Could be better", entryText: 'I am running out of ideas', date: DateTime(2021, 3, 17)),
-    JournalEntry(title: "11sef sd63", entryText: ';)', date: DateTime(2021, 3, 5)),
-    JournalEntry(title: "This is a test", entryText: 'asdfhdf', date: DateTime(2020, 1, 2)),
-    JournalEntry(title: "This is the last entry", entryText: 'This is the last body', date: DateTime(2020, 7, 1)),
+    JournalEntry(title: "This is an entry", entryText: 'This is the body', creationDate: DateTime(2022, 2, 7)),
+    JournalEntry(title: "This is another entry", entryText: 'The next one wont have a body', creationDate: DateTime(2022, 2, 6)),
+    JournalEntry(title: "asdhfkjn", entryText: '', creationDate: DateTime(2022, 2, 5)),
+    JournalEntry(title: "Could be better", entryText: 'I am running out of ideas', creationDate: DateTime(2021, 3, 17)),
+    JournalEntry(title: "11sef sd63", entryText: ';)', creationDate: DateTime(2021, 3, 5)),
+    JournalEntry(title: "This is a test", entryText: 'asdfhdf', creationDate: DateTime(2020, 1, 2)),
+    JournalEntry(title: "This is the last entry", entryText: 'This is the last body', creationDate: DateTime(2020, 7, 1)),
   ]);
 
   @override
@@ -65,7 +65,7 @@ void main() {
 
     // Check to see if every entry is there
     for (int i = 0; i < entry.sortedItems.length; i++) {
-      final entryKey = find.byKey(Key(entry.sortedItems[i].getID().toString()));
+      final entryKey = find.byKey(Key(entry.sortedItems[i].id.toString()));
       // await tester.pumpWidget(myApp);
       await tester.pumpAndSettle();
 

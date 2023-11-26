@@ -177,6 +177,9 @@ void main() {
 		await tester.pumpAndSettle();
 		// Should be on Plans page
 		expect(find.text("Planned"), findsOneWidget);
+
+		// Tap the plan complete button
+		await tester.tap(find.byKey(const Key("PlanCompleteButton")));
 	});
 
 	// Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
