@@ -246,7 +246,7 @@ class JournalEntry implements Comparable<JournalEntry>{
 }
 
 Future<void> makeNewEntry(BuildContext context) async {
-  final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntryPage()));
+  final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EntryPage()));
   if (result is JournalEntry) {
     entries.add(result);
   }

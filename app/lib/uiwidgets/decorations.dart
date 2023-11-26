@@ -320,7 +320,7 @@ class StarBackground extends StatelessWidget {
 /// [destinations] is the list of destinations that this navigationbar should be able to reach
 /// [selectedIndex] is the starting index that we will display, by default its 0
 /// [onDestinationSelected] is the void Function(int) that should handle the routing of the navgations
-/// ignore: prefer_const_constructors_in_immutables
+// ignore: prefer_const_constructors_in_immutables
 class CustomNavigationBar extends StatelessWidget{
 
   static const List<NavigationDestination> defaultDestinations = [

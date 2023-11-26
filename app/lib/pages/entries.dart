@@ -226,8 +226,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 /// [EntryPage] is the page where an indivudal entry is displayed. it handles both
 /// creation of new entries, modification of them.
 class EntryPage extends StatefulWidget {
-  JournalEntry? entry;
-  EntryPage({
+  final JournalEntry? entry;
+  const EntryPage({
     super.key,
     this.entry
   });
