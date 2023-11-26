@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 //import 'package:vector_math/vector_math_64.dart';
 import 'entry.dart';
 
@@ -18,10 +19,12 @@ class NewEntryPage extends StatefulWidget {
 }
 
 class _NewEntryPageState extends State<NewEntryPage> {
+  DateTime? datePicked = DateTime.now();
+  bool isPlan = false;
+
   final ValueNotifier<double> _progress = ValueNotifier(0);
 
   final _emotionItems = settings.emotionList.entries.map((emotion) {
-
     return Emotion(name: emotion.key, color: emotion.value);
   }).toList();
 
@@ -53,8 +56,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
       body: SingleChildScrollView(
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Column(
-                  children: [
+              child: Column(children: [
                 // Text field for the Journal Entry Title
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -67,7 +69,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     ),
                   ),
                 ),
-
 
                 // Text input field for the Journal Entry Body
                 Padding(
@@ -94,18 +95,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                       scrollDirection: Axis.horizontal,
                       child: Wrap(
                         spacing: 5,
-                        children: _selectedTags
-                            .map((tag) => ActionChip(
-                                  label: Text(tag.name),
-                                  backgroundColor: tag.color,
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedTags.removeWhere((element) =>
-                                          element.name == tag.name);
-                                    });
-                                  },
-                                ))
-                            .toList(),
+                        children: tagChipList(),
                       ),
                     ),
                   ),
@@ -126,7 +116,6 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                         backgroundColor: emotion.color,
                                         onPressed: () =>
                                             _emotionalDial(context, emotion),
-
                                       ))
                                   .toList(),
                             )))),
@@ -157,8 +146,26 @@ class _NewEntryPageState extends State<NewEntryPage> {
               TextButton(
                   key: const Key("planButton"),
                   child: const Text('Plan'),
-                  onPressed: () {}),
-                 /*
+                  onPressed: () async {
+                    isPlan = false;
+                    datePicked = null;
+
+                    var selectedDate = await pickDate();
+                    if (selectedDate == null) return;
+
+                    var selectedTime = await pickTime();
+                    if (selectedTime == null) return;
+
+                    datePicked = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                    );
+                    isPlan = true;
+                  }),
+              /*
                   * Tag button
                   * Will create a multi select dialog field that will allow
                   * users to select the tags for the Journal Entry
@@ -183,9 +190,14 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   showCheckmark: false,
                                   selectedColor: tag.color,
                                   onSelected: (bool selected) {
+                                    // Double enclosed setstate, because one
+                                    // doesn't update both alertdialog,
+                                    // and the main app
                                     stfSetState(() {
                                       setState(() {
-                                        selected ? _selectedTags.add(tag) : _selectedTags.remove(tag);
+                                        selected
+                                            ? _selectedTags.add(tag)
+                                            : _selectedTags.remove(tag);
                                       });
                                     });
                                   },
@@ -207,6 +219,11 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     );
                   }),
 
+              /*
+                  * Emotion button
+                  * Will create a multi select dialog field that will allow
+                  * users to select the tags for the Journal Entry
+                  */
               TextButton(
                   key: const Key("emotionButton"),
                   child: const Text('Emotion'),
@@ -226,10 +243,15 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                   selected: _selectedEmotions.contains(emote),
                                   showCheckmark: false,
                                   selectedColor: emote.color,
+                                  // Double enclosed setState, because one
+                                  // doesn't update both alertdialog,
+                                  // and the main app
                                   onSelected: (bool selected) {
                                     stfSetState(() {
                                       setState(() {
-                                        selected ? _selectedEmotions.add(emote) : _selectedEmotions.remove(emote);
+                                        selected
+                                            ? _selectedEmotions.add(emote)
+                                            : _selectedEmotions.remove(emote);
                                       });
                                     });
                                   },
@@ -317,7 +339,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
             actions: [
               // pop the alert dialog off the screen and don't save the strength changes
               TextButton(
-                key: const Key('cancelDial'),
+                  key: const Key('cancelDial'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -325,7 +347,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
               // Save the strength changes and pop the dialog off the screen
               TextButton(
-                key: const Key('saveDial'),
+                  key: const Key('saveDial'),
                   onPressed: () {
                     emotion.strength = strength;
                     Navigator.of(context).pop();
@@ -336,14 +358,53 @@ class _NewEntryPageState extends State<NewEntryPage> {
         });
   }
 
+  /// Creates a list of tags that can be tapped
+  /// Tapping removes the tag from the display
+  List<ActionChip> tagChipList() {
+    return _selectedTags
+        .map((tag) => ActionChip(
+              label: Text(tag.name),
+              backgroundColor: tag.color,
+              onPressed: () {
+                setState(() {
+                  _selectedTags
+                      .removeWhere((element) => element.name == tag.name);
+                });
+              },
+            ))
+        .toList();
+  }
+
   // Make the journal entry and save it
   getEntry() {
+    debugPrint(_selectedEmotions.length.toString());
+    debugPrint(_selectedTags.length.toString());
     return JournalEntry(
+      // User entered text
       title: titleController.text,
       entryText: journalController.text,
-      date: DateTime.now(),
+
+      // Date to show when displaying an entry
+      creationDate: DateTime.now(),
+      displayDate: datePicked,
+
+      // Tags and emotions selected
       tags: _selectedTags,
       emotions: _selectedEmotions,
+
+      // Is the entry a plan? If so, it is unfinished
+      planStatus: isPlan ? false : null,
     );
   }
+
+  // Date picker
+  Future<DateTime?> pickDate() => showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: datePicked ?? DateTime.now());
+
+  // Time picker
+  Future<TimeOfDay?> pickTime() =>
+      showTimePicker(context: context, initialTime: TimeOfDay.now());
 }

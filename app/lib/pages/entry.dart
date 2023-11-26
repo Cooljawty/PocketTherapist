@@ -4,68 +4,74 @@ import 'package:app/helper/classes.dart';
 
 import 'dart:math';
 
-class JournalEntry with DisplayOnCard {
+class JournalEntry {
   // unique id for each entry
-  final int _id = UniqueKey().hashCode;
+  final int id = UniqueKey().hashCode;
 
   // Journal entry title and body
-  String _title = "";
-  String _entryText = "";
-  String _previewText = "";
+  String title = "";
+  String entryText = "";
+  String previewText = "";
 
   // year, month, day
-  DateTime current = DateTime.now();
-  DateTime _date = DateTime(1970, 12, 31);
-  List<Tag> _tags = [];
-  List<Emotion> _emotions = [];
+  DateTime creationDate = DateTime.now();
+  DateTime displayDate = DateTime(1970, 12, 31);
+  late List<Tag> tags;
+  late List<Emotion> emotions;
 
-  static const previewLength = 40;
+  static const previewLength = 35;
 
-  JournalEntry(
-      {required title, required entryText, required date, tags, emotions}) {
-    _title = title;
-    _entryText = entryText;
-    _date = date;
-    _tags = tags ?? [];
-    _emotions = emotions ?? [];
+  // Plan
+  late bool? completedStatus;
+  dynamic pageRoute;
 
-    final preview = _entryText.split("\n").first;
-    _previewText = preview.substring(0, min(previewLength, preview.length));
+  JournalEntry({
+    required this.title,
+    required this.entryText,
+    required this.creationDate,
+    displayDate,
+    tags,
+    emotions,
+    bool? planStatus,
+  }) {
+    this.tags = tags ?? [];
+    this.emotions = emotions ?? [];
+    this.displayDate = displayDate ?? creationDate;
+    completedStatus = planStatus;
 
-    card = (
-      body: _previewText,
-      date: _date,
-      emotionList: _emotions,
-      tagList: _tags,
-      title: _title,
-    );
+    final preview = entryText.split("\n").first;
+    if (entryText.length >= previewLength) {
+      previewText =
+          "${preview.substring(0, min(previewLength, preview.length))}...";
+    } else {
+      previewText = preview;
+    }
 
     pageRoute = (() => EntryPage.route(entry: this));
   }
-  int getID() => _id;
-  String getPreviewText() => _previewText;
-  String getEntryText() => _entryText;
-  String getTitle() => _title;
-  DateTime getDate() => _date;
-  List<Tag> getTags() => _tags;
-  List<Emotion> getEmotions() => _emotions;
 
   // Get the strongest emotion in the entry
-  Emotion getStrongestEmotion() {
-    if (_emotions.isNotEmpty) {
-      Emotion strongestEmotion = _emotions[0];
-      for (int i = 1; i < _emotions.length; i++) {
-        (strongestEmotion.strength < _emotions[i].strength)
-            ? strongestEmotion = _emotions[i]
+  Emotion? getStrongestEmotion() {
+    if (emotions.isNotEmpty) {
+      Emotion strongestEmotion = emotions[0];
+      for (int i = 1; i < emotions.length; i++) {
+        (strongestEmotion.strength < emotions[i].strength)
+            ? strongestEmotion = emotions[i]
             : 0;
       }
       return strongestEmotion;
     }
-    return Emotion(
-        name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+    return null;
   }
 
-  /* TODO
+  DisplayCard asDisplayCard() {
+    return DisplayCard(
+      page: pageRoute,
+      entry: this,
+    );
+  }
+
+/* TODO
 	List<Image> pictures;
 
 	Tag getTagByTitle(String title);
@@ -100,7 +106,7 @@ class _EntryPageState extends State<EntryPage> {
               child: Wrap(
                 direction: Axis.horizontal,
                 children: <Widget>[
-                  Text(widget.entry.getTitle()),
+                  Text(widget.entry.title),
                 ],
               ),
             ),
@@ -109,7 +115,7 @@ class _EntryPageState extends State<EntryPage> {
             Container(
               padding: const EdgeInsets.all(12),
               child: Wrap(direction: Axis.horizontal, children: [
-                for (var i in widget.entry.getTags())
+                for (var i in widget.entry.tags)
                   Text("#${i.name} ",
                       style: TextStyle(
                           inherit: true,
@@ -125,7 +131,7 @@ class _EntryPageState extends State<EntryPage> {
               child: Wrap(
                 direction: Axis.horizontal,
                 children: [
-                  for (var i in widget.entry.getEmotions())
+                  for (var i in widget.entry.emotions)
                     Text("${i.name}: ${i.strength} ",
                         style: TextStyle(
                             inherit: true,
@@ -142,7 +148,7 @@ class _EntryPageState extends State<EntryPage> {
               child: Wrap(
                 direction: Axis.horizontal,
                 children: <Widget>[
-                  Text(widget.entry.getEntryText()),
+                  Text(widget.entry.entryText),
                 ],
               ),
             ),

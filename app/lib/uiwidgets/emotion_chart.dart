@@ -52,7 +52,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	Map<String, List<FlSpot>> _emotionData = {};
 	
 	//X is the number of days from the start entry
-	double getX(JournalEntry entry) => entry.getDate().difference(widget.startDate).inDays.floorToDouble();
+	double getX(JournalEntry entry) => entry.displayDate.difference(widget.startDate).inDays.floorToDouble();
 	double getXFromDay(DateTime day) => day.difference(widget.startDate).inDays.toDouble().floorToDouble();
 	
 	Widget _getTimeChart(){
@@ -92,7 +92,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 									TextSpan( 
 										text: "${value}%",
 										style: settings.getCurrentTheme().textTheme.displayMedium!.copyWith(
-											color: emotionlist[emotion]
+											color: settings.emotionList[emotion]
 										),
 									)
 								]
@@ -124,7 +124,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 				lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 						show: entry.value.any((value) => value.y != 0),
 						spots: entry.value,
-						color: emotionlist[entry.key],
+						color: settings.emotionList[entry.key],
 						dotData: const FlDotData( show: false, ),
 						isCurved: true,
 						curveSmoothness: 0.5,
@@ -147,7 +147,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 
 		//Find the strongest emotion based on calculated radial values
 		var max = 0.0;
-		final strongestEmotion = emotionlist[_emotionData.keys.elementAt(emotionValues.lastIndexWhere((emotion) { 
+		final strongestEmotion = settings.emotionList[_emotionData.keys.elementAt(emotionValues.lastIndexWhere((emotion) { 
 			if (emotion.value > max) {
 				max = emotion.value;
 				return true;
@@ -178,7 +178,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						RadarDataSet(
 							entryRadius: 0.0,
 							borderColor: strongestEmotion,
-							fillColor: strongestEmotion?.withOpacity(0.5),
+							fillColor: strongestEmotion!.withOpacity(0.5),
 							dataEntries: emotionValues,
 						),
 					],
@@ -204,13 +204,11 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	@override
 	Widget build(BuildContext context) {
 		final entries = entriesBetween(widget.startDate, widget.endDate); 
-		_emotionData = Map.fromIterable(emotionlist.keys, value: (i) => List<FlSpot>.generate(getXFromDay(widget.endDate).floor()+1, (day) => FlSpot(day.toDouble(), 0)));
-		debugPrint("${_emotionData.keys}");
+		_emotionData = Map.fromIterable(settings.emotionList.keys, value: (i) => List<FlSpot>.generate(getXFromDay(widget.endDate).floor()+1, (day) => FlSpot(day.toDouble(), 0)));
 
 		//Calculate sum strength for each emotion
 		for (var entry in entries){
-			for (var emotion in entry.getEmotions()){
-				debugPrint("${emotion.name} ${_emotionData[emotion.name]}");
+			for (var emotion in entry.emotions){
 				final dayIndex = getX(entry).floor();
 				//Set the y position has the highest intensity of the day
 				if (dayIndex < _emotionData[emotion.name]!.length) {
@@ -251,12 +249,11 @@ class _EmotionGraphState extends State<EmotionGraph> {
 }
 
 //TEMPERARY Variables/Classes
-final emotionlist = settings.emotionList;
 List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 	final testEntries = <JournalEntry>[
 			JournalEntry(
 				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 1), 
+				creationDate: DateTime(2023, 1, 1), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -267,7 +264,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 1), 
+				creationDate: DateTime(2023, 1, 1), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -278,7 +275,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 2), 
+				creationDate: DateTime(2023, 1, 2), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -294,7 +291,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 3), 
+				creationDate: DateTime(2023, 1, 3), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -310,21 +307,10 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 3), 
+				creationDate: DateTime(2023, 1, 3), 
 				emotions: [
 					Emotion(
 						name: "Anger",
-						color: Colors.red,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Sunday blues", entryText: "", 
-				date: DateTime(2023, 1, 7), 
-				emotions: [
-					Emotion(
-						name: "Sad",
 						color: Colors.red,
 						strength: 60,
 					),
@@ -332,7 +318,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 17), 
+				creationDate: DateTime(2023, 1, 17), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -343,7 +329,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 25), 
+				creationDate: DateTime(2023, 1, 25), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -354,7 +340,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 30), 
+				creationDate: DateTime(2023, 1, 30), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -370,7 +356,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 26), 
+				creationDate: DateTime(2023, 1, 26), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -386,7 +372,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 12), 
+				creationDate: DateTime(2023, 1, 12), 
 				emotions: [
 					Emotion(
 						name: "Anger",
@@ -397,11 +383,11 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "", entryText: "", 
-				date: DateTime(2023, 1, 11), 
+				creationDate: DateTime(2023, 1, 11), 
 			),
 			JournalEntry(
 				title: "Happy day", entryText: "", 
-				date: DateTime(2023, 1, 24), 
+				creationDate: DateTime(2023, 1, 24), 
 				emotions: [
 					Emotion(
 						name: "Happy",
@@ -412,7 +398,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 			JournalEntry(
 				title: "Out of range entry", entryText: "", 
-				date: DateTime(2023, 1, 14), 
+				creationDate: DateTime(2023, 1, 14), 
 				emotions: [
 					Emotion(
 						name: "Sad",
@@ -433,7 +419,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 		];
 
-	testEntries.retainWhere((e) => ( !e.getDate().isBefore(start) && !e.getDate().isAfter(end)));
-	testEntries.sort((a, b) => a.getDate().compareTo(b.getDate()));
+	testEntries.retainWhere((e) => ( !e.creationDate.isBefore(start) && !e.creationDate.isAfter(end)));
+	testEntries.sort((a, b) => a.creationDate.compareTo(b.creationDate));
 	return testEntries;
 }
