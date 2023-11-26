@@ -21,14 +21,14 @@ class EmotionGraph extends StatefulWidget {
 		required this.startDate, 
 		required this.endDate, 
 		type 
-	}) : this.type = type ?? settings.getEmotionGraphType();
+	}) : type = type ?? settings.getEmotionGraphType();
 
 	@override
 	State<EmotionGraph> createState() => _EmotionGraphState();
 }
 
 class _EmotionGraphState extends State<EmotionGraph> {
-	static const MAX_STRENGTH = 60.0;
+	static const maxStrength = 60.0;
 
 	static const _months = [ null, 
 		"January", "February", 
@@ -78,15 +78,15 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						tooltipBorder: BorderSide(color: gridColor),
 						getTooltipItems: (spots) => spots.map( (spot) {
 							final emotion = _emotionData.keys.elementAt(spot.barIndex);
-							final value = ((spot.bar.spots[spot.spotIndex].y / MAX_STRENGTH) * 100).round();
+							final value = ((spot.bar.spots[spot.spotIndex].y / maxStrength) * 100).round();
 
 							return LineTooltipItem(
-								"${emotion}: ",
+								"$emotion: ",
 								settings.getCurrentTheme().textTheme.displayMedium!,
 								//Print value in emotion's color
 								children: [ 
 									TextSpan( 
-										text: "${value}%",
+										text: "$value%",
 										style: settings.getCurrentTheme().textTheme.displayMedium!.copyWith(
 											color: settings.emotionList[emotion]
 										),
@@ -98,7 +98,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 				),
 
 				minX: 0.0, maxX: getXFromDay(widget.endDate),
-				minY: 0.0, maxY: MAX_STRENGTH,
+				minY: 0.0, maxY: maxStrength,
 				gridData: FlGridData(
 					drawHorizontalLine: false,
 					drawVerticalLine: true,
@@ -138,7 +138,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 		//Summ up the strength of all entreis
 		final emotionValues = _emotionData.entries.map((entry) {
 			final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y); 
-			return RadarEntry(value: sum / (MAX_STRENGTH * getXFromDay(widget.endDate)) );
+			return RadarEntry(value: sum / (maxStrength * getXFromDay(widget.endDate)) );
 		}).toList();
 
 		//Find the strongest emotion based on calculated radial values
@@ -191,7 +191,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 			axisSide: meta.axisSide,
 			//Dont label last line if it's not the end of the week
 			child: Text(
-				(startOfWeek || getXFromDay(widget.endDate) <= 7.0) ? "${widget.startDate.month}/${day}" : "",
+				(startOfWeek || getXFromDay(widget.endDate) <= 7.0) ? "${widget.startDate.month}/$day" : "",
 				style: settings.getCurrentTheme().textTheme.labelMedium
 			),
 		);

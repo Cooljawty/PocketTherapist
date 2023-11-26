@@ -29,6 +29,7 @@ class Emotion extends Tag {
 enum GraphTypes{ 
 	time, frequency;
 	
-	String toString() => this.name.split('.').last; 
+	@override
+	String toString() => name.split('.').last; 
 }
 

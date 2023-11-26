@@ -215,11 +215,11 @@ void main() async {
       await widgetTester.enterText(passwordResetField, "PotatoChips");
       await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pump();
+			await widgetTester.pump(Duration(seconds: 1));
       Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pump();
+      await widgetTester.pump(Duration(seconds: 1));
       await widgetTester.enterText(passwordResetField, recovery);
       await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
@@ -282,11 +282,11 @@ void main() async {
       await widgetTester.enterText(passwordResetField, "PotatoChips");
       await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);
-      await widgetTester.pump();
+			await widgetTester.pump(Duration(seconds: 1));
       Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
       await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pump();
+      await widgetTester.pump(Duration(seconds: 1));
       await widgetTester.enterText(passwordResetField, password);
       await widgetTester.pump();
       await widgetTester.tap(resetPasswordbutton);

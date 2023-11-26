@@ -6,12 +6,10 @@ import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/main.dart' as app;
 import 'package:app/helper/classes.dart';
-import 'package:app/pages/entry.dart';
 import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:app/provider/settings.dart' as settings;
 
 void main() {
-  late Widget myApp;
 
   setUp(() {
     IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -40,9 +38,9 @@ void main() {
 		await tester.pump();
 
 		//Navigate to graph page
-		await tester.tap(find.byKey(Key("Start_Button")));
+		await tester.tap(find.byKey(const Key("Start_Button")));
     await tester.pumpAndSettle();
-		await tester.tap(find.byKey(Key("Navbar_Destination_Calendar")));
+		await tester.tap(find.byKey(const Key("Navbar_Destination_Calendar")));
     await tester.pumpAndSettle();
 
 		//Two graphs should exist
@@ -70,9 +68,9 @@ void main() {
 		await tester.pump();
 
 		//Navigate to graph page
-		await tester.tap(find.byKey(Key("Start_Button")));
+		await tester.tap(find.byKey(const Key("Start_Button")));
     await tester.pumpAndSettle();
-		await tester.tap(find.byKey(Key("Navbar_Destination_Calendar")));
+		await tester.tap(find.byKey(const Key("Navbar_Destination_Calendar")));
     await tester.pumpAndSettle();
 
 		//Two graphs should exist
