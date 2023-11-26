@@ -16,12 +16,12 @@ class EmotionGraph extends StatefulWidget {
 	final DateTime endDate;
 	final GraphTypes type;
 
-	const EmotionGraph({
+	EmotionGraph({
 		super.key, 
 		required this.startDate, 
 		required this.endDate, 
-		required this.type
-	});
+		type 
+	}) : this.type = type ?? settings.getEmotionGraphType();
 
 	@override
 	State<EmotionGraph> createState() => _EmotionGraphState();

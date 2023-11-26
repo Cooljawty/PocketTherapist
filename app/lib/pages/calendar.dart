@@ -24,7 +24,7 @@ class _CalendarPageState extends State<CalendarPage> {
 				child: Column(
 					children: [
 						Text('Calendar'),
-						EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7), type: settings.getEmotionGraphType()),
+						EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7)),
 					],
 				),
 			),
