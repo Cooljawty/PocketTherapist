@@ -100,7 +100,7 @@ Future<void> load() async {
         emotionList = {};
         for (int i = 0; i < dynamicList.length; i++) {
           // emotionList.add(Emotion(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
-          emotionList.putIfAbsent(dynamicList[i]['name'], ()=> dynamicList[i]['color']);
+          emotionList.putIfAbsent(dynamicList[i]['name'], ()=> Color(dynamicList[i]['color']));
         }
       }
     }
@@ -165,6 +165,12 @@ Future<void> save() async {
 	settings['tags'] = <Map<String, dynamic>>[];
 	for (final tag in tagList) {
 		settings['tags'].add({'name': tag.name, 'color': tag.color.value});
+	}
+
+  //Add each emotion as a map with its name and color
+	settings['emotions'] = <Map<String, dynamic>>[];
+	for (final emotion in emotionList.entries) {
+		settings['emotions'].add({'name': emotion.key, 'color': emotion.value.value});
 	}
 
   // Save them to the file
