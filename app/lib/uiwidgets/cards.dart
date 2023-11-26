@@ -4,19 +4,26 @@ import 'package:app/pages/entries.dart';
 import 'package:app/provider/settings.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/classes.dart';
 
-import '../pages/entry.dart';
-
-/// A card that displays an entry with a title and main text body
+/// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
-  final JournalEntry entry;
+  final String title;
+  final String body;
+  final DateTime date;
+  final List<Tag> tagList;
+  final List<Emotion> emotionList;
+
   final dynamic page;
 
-  const DisplayCard({
-    super.key,
-    this.page,
-    required this.entry,
-  });
+  const DisplayCard(
+      {super.key,
+      required this.title,
+      required this.body,
+      required this.date,
+      this.page,
+      required this.tagList,
+      required this.emotionList});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -59,33 +66,33 @@ class _DisplayCardState extends State<DisplayCard> {
                   end: Alignment.topRight,
                   colors: (() {
                     List<Color> bgCardColors = [];
-                    if (widget.entry.emotions.isNotEmpty) {
-                      if (widget.entry.emotions.length > 1) {
+                    if (widget.emotionList.isNotEmpty) {
+                      if (widget.emotionList.length > 1) {
                         for (int i = 0;
-                            i < min(widget.entry.emotions.length, 2);
-                            i++) {
-                          bgCardColors.add(
-                              widget.entry.emotions[i].color.withAlpha(150));
-                        }
-                      } else {
-                        bgCardColors
-                            .add(widget.entry.emotions[0].color.withAlpha(150));
-                        bgCardColors
-                            .add(widget.entry.emotions[0].color.withAlpha(150));
-                      }
-                    } else if (widget.entry.tags.isNotEmpty) {
-                      if (widget.entry.tags.length > 1) {
-                        for (int i = 0;
-                            i < min(widget.entry.tags.length, 2);
+                            i < min(widget.emotionList.length, 2);
                             i++) {
                           bgCardColors
-                              .add(widget.entry.tags[i].color.withAlpha(150));
+                              .add(widget.emotionList[i].color.withAlpha(150));
                         }
                       } else {
                         bgCardColors
-                            .add(widget.entry.tags[0].color.withAlpha(150));
+                            .add(widget.emotionList[0].color.withAlpha(150));
                         bgCardColors
-                            .add(widget.entry.tags[0].color.withAlpha(150));
+                            .add(widget.emotionList[0].color.withAlpha(150));
+                      }
+                    } else if (widget.tagList.isNotEmpty) {
+                      if (widget.tagList.length > 1) {
+                        for (int i = 0;
+                            i < min(widget.tagList.length, 2);
+                            i++) {
+                          bgCardColors
+                              .add(widget.tagList[i].color.withAlpha(150));
+                        }
+                      } else {
+                        bgCardColors
+                            .add(widget.tagList[0].color.withAlpha(150));
+                        bgCardColors
+                            .add(widget.tagList[0].color.withAlpha(150));
                       }
                     } else {
                       bgCardColors.add(Colors.grey.shade800.withAlpha(150));
@@ -103,62 +110,33 @@ class _DisplayCardState extends State<DisplayCard> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // Title
-                        Text(
-                          (widget.entry.title.length > 30)
-                              ? '${widget.entry.title.substring(0, 30)}...'
-                              : widget.entry.title,
-                          style: widget.entry.completedStatus == true
-                              // If plan is finished, show a strikethrough
-                              ? DefaultTextStyle.of(context).style.apply(
-                                    fontSizeFactor: 1.3,
-                                    fontWeightDelta: 1,
-                                    decoration: TextDecoration.lineThrough,
-                                    decorationStyle: TextDecorationStyle.wavy,
-                                    decorationColor: Colors.orange,
-                                    // decorationThicknessFactor: 1.3,
-                                    // decorationThicknessDelta: 1,
-                                  )
-                              // Otherwise no text style changes
-                              : DefaultTextStyle.of(context).style.apply(
-                                    fontSizeFactor: 1.3,
-                                    fontWeightDelta: 1,
-                                  ),
-                        ),
+                    // Title
+                    Text(
+                      (widget.title.length > 30)
+                          ? '${widget.title.substring(0, 30)}...'
+                          : widget.title,
+                      style: DefaultTextStyle.of(context).style.apply(
+                            fontSizeFactor: 1.3,
+                            fontWeightDelta: 1,
+                          ),
+                    ),
 
-                        // preview text
-                        Text(
-                          widget.entry.previewText,
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ]),
+                    // preview text
+                    Text(
+                      (widget.body.length >= 40) ?
+                      '${widget.body}...' : widget.body,
+                      style: const TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ]),
 
                   // Date
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // If not a plan, display no checkbox
-                      widget.entry.completedStatus == null
-                          ? Container()
-                          : IconButton(
-                              key: const Key("PlanCompleteButton"),
-                              // Show filled outline for completed
-                              icon: const Icon(Icons.check_box_outline_blank),
-                              selectedIcon: const Icon(Icons.check_box),
-                              isSelected: widget.entry.completedStatus == true,
-                              onPressed: (() {
-                                setState(() {
-                                  // Toggle plan completion status on press
-                                  if (widget.entry.completedStatus != null) {
-                                    widget.entry.completedStatus =
-                                        !widget.entry.completedStatus!;
-                                  }
-                                });
-                              })),
                       // Day
                       Text(
-                        widget.entry.displayDate.day.toString(),
+                        widget.date.day.toString(),
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
 
@@ -169,15 +147,13 @@ class _DisplayCardState extends State<DisplayCard> {
                           children: [
                             // First 3 letters of the month
                             Text(
-                              widget.entry.displayDate
-                                  .formatDate()
-                                  .substring(0, 3),
+                              widget.date.formatDate().substring(0, 3),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
 
                             // Year
                             Text(
-                              widget.entry.displayDate.year.toString(),
+                              widget.date.year.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ])
@@ -191,22 +167,25 @@ class _DisplayCardState extends State<DisplayCard> {
   }
 }
 
-// DisplayOnCard causes stack overflow with an entry when using
-// an actual entry, logic moved to Entry instead.
-// mixin DisplayOnCard {
-//   ({
-//     JournalEntry entry,
-//   }) card = (
-//     entry: JournalEntry(title: "",
-//         entryText: "",
-//         date: DateTime.now())
-//   );
-//   dynamic pageRoute;
-//
-//   DisplayCard asDisplayCard() {
-//     return DisplayCard(
-//       page: pageRoute,
-//       entry: card.entry,
-//     );
-//   }
-// }
+mixin DisplayOnCard {
+  ({
+    String title,
+    String body,
+    DateTime date,
+    List<Tag> tagList,
+    List<Emotion> emotionList,
+  }) card =
+      (title: "", body: "", date: DateTime.now(), tagList: [], emotionList: []);
+  dynamic pageRoute;
+
+  DisplayCard asDisplayCard() {
+    return DisplayCard(
+      title: card.title,
+      body: card.body,
+      date: card.date,
+      page: pageRoute,
+      tagList: card.tagList,
+      emotionList: card.emotionList,
+    );
+  }
+}

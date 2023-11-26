@@ -6,7 +6,7 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
 
 void main() {
-  entries.add(JournalEntry(title: "This is an entry", entryText: 'This is the body', creationDate: DateTime(2022, 2, 7)));
+  entries.add(JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime(2022, 2, 7)));
 
   // Navigate to the entries panel
   @override
@@ -38,7 +38,7 @@ void main() {
   testWidgets('Remove an entry from the list.', (WidgetTester tester) async {
     await setUp(tester);
 
-    final entry = entries[0].id.toString();
+    final entry = entries[0].getID().toString();
     final entryKey = Key(entry);
     Finder entryFinder = find.byKey(ValueKey(entry));
     await tester.pump();

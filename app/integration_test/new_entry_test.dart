@@ -138,48 +138,11 @@ void main() {
 		expect(text, findsOneWidget);
 	});
 
-	testWidgets('Test plan button', (WidgetTester tester) async {
+	// TODO: Test plan
+	testWidgets('Plan Button', (WidgetTester tester) async {
 		await setUp(tester);
-
-		await tester.tap(titleInput);
-		await tester.enterText(titleInput, "Planned");
+		await tester.tap(planButton);
 		await tester.pump();
-
-		// Test cancelling date picker
-		await tester.tap(planButton);
-		await tester.pumpAndSettle();
-		await tester.tap(find.text("Cancel"));
-		await tester.pumpAndSettle();
-
-		// Test advancing through date picker, no time
-		await tester.tap(planButton);
-		await tester.pumpAndSettle();
-		await tester.tap(find.text("OK"));
-		await tester.pumpAndSettle();
-		await tester.tap(find.text("Cancel"));
-		await tester.pumpAndSettle();
-
-		// Test advancing through date and time picker
-		await tester.tap(planButton);
-		await tester.pumpAndSettle();
-		await tester.tap(find.text("OK"));
-		await tester.pumpAndSettle();
-		await tester.tap(find.text("OK"));
-		await tester.pumpAndSettle();
-
-		// Save plan
-		await tester.tap(saveButton);
-		await tester.pumpAndSettle();
-
-		// Should not be on Entries page
-		expect(find.text("Planned"), findsNothing);
-		await tester.tap(find.byKey(const Key("Navbar_Destination_Plans")));
-		await tester.pumpAndSettle();
-		// Should be on Plans page
-		expect(find.text("Planned"), findsOneWidget);
-
-		// Tap the plan complete button
-		await tester.tap(find.byKey(const Key("PlanCompleteButton")));
 	});
 
 	// Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
