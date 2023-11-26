@@ -1,7 +1,6 @@
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
 import 'package:app/pages/calendar.dart';
-import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 
 import 'package:flutter/material.dart';
@@ -72,7 +71,7 @@ Map<String, Destination> destinations = {
 	"entries": Destination( 
 		label: "Entries", 
 		icon: Icons.feed,            
-		destination: (() => EntriesPage.route()),
+		destination: (() => EntriesPage.route(showPlans: false)),
 	),
 	"calendar": Destination( 
 		label: "Calendar", 
@@ -82,7 +81,7 @@ Map<String, Destination> destinations = {
 	"plans": Destination( 
 		label: "Plans", 
 		icon: Icons.event_note, 
-		destination: (() => PlansPage.route()),
+		destination: (() => EntriesPage.route(showPlans: true)),
 	),
 	"settings": Destination( 
 		label: "Settings", 
