@@ -8,10 +8,6 @@ import 'package:app/helper/classes.dart';
 import 'package:app/pages/entry.dart';
 
 import 'package:app/provider/settings.dart' as settings;
-
-
-enum GraphTypes{ time, frequency }
-
 /// [EmotionGraph] is a panel that grabs all entries withing a given date range and displys
 /// either a line plot of the intesity of that emotion over the range, or the relative
 /// intensities of each emotion in a radial chart

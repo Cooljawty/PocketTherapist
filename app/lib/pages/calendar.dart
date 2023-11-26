@@ -1,7 +1,8 @@
 import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:flutter/material.dart';
-
+import 'package:app/helper/classes.dart';
+import 'package:app/provider/settings.dart' as settings;
 
 class CalendarPage extends StatefulWidget {
   // This is the static route for drawing this page
@@ -23,7 +24,7 @@ class _CalendarPageState extends State<CalendarPage> {
 				child: Column(
 					children: [
 						Text('Calendar'),
-						EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7), type: GraphTypes.time),
+						EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7), type: settings.getEmotionGraphType()),
 					],
 				),
 			),

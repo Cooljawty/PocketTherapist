@@ -23,3 +23,12 @@ class Emotion extends Tag {
     required super.color,
   });
 }
+
+/// Graph Types
+/// An enum for each graph type an [EmotionGraph] can be displayed as
+enum GraphTypes{ 
+	time, frequency;
+	
+	String toString() => this.name.split('.').last; 
+}
+

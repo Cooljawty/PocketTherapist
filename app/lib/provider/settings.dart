@@ -37,6 +37,10 @@ const String encryptionToggleKey = 'encryption';
 
 const String accentColorKey = "accent";
 
+/// What the default emotion graph type to display
+
+const String emotionGraphTypeKey = 'emotionGraphType';
+
 //add tag list
 List<Tag> tagList = [];
 
@@ -52,6 +56,7 @@ Map<String, dynamic> _settings = {
   fontScaleKey: 1.0,
   encryptionToggleKey: false,
   accentColorKey: Colors.deepPurpleAccent[100]!.value,
+	emotionGraphTypeKey: GraphTypes.time.toString(),
 };
 
 Directory? _settingsStorageDirectory;
@@ -120,6 +125,7 @@ void _assignDefaults() async {
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
     accentColorKey: Colors.deepPurpleAccent[100]!.value,
+		emotionGraphTypeKey: GraphTypes.time.toString(),
   };
   tagList = [
     Tag(name: 'Calm', color: const Color(0xff90c6d0)),
@@ -185,6 +191,7 @@ Future<void> reset() async {
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
     accentColorKey: const Color(0xFFB388FF).value,
+		emotionGraphTypeKey: GraphTypes.time.toString(),
   };
   encryptor.reset();
   // Probably message database to reset as well....
@@ -197,6 +204,7 @@ void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
 void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
 void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
 void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
+void setEmotionGraphType(GraphTypes type) => _settings[emotionGraphTypeKey] = type.toString();
 Future<void> setPassword(String newPassword) async => encryptor.setPassword(newPassword);
 
 void setMockValues(Map<String, dynamic> value) {
@@ -229,6 +237,8 @@ Object? getOtherSetting(String key) {
 }
 
 String getVaultFolder() => _settingsStorageDirectory!.path;
+
+GraphTypes getEmotionGraphType() => GraphTypes.values.byName(_settings[emotionGraphTypeKey]);
 
 /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
 ///                                 all user data & passwords securely.
