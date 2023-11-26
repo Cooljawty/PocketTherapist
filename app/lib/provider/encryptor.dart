@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:app/exceptions/exception.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:app/provider/settings.dart' as settings;
@@ -251,7 +250,7 @@ void load() {
       dataSig = "";
       receivedSig = "";
       actualData.clear();
-      throw SignatureMismatchException(
+      throw Exception(
           "Signatures did not match, data integrity has been compromised!");
     }
     // Get the hash, salt is built into the hash

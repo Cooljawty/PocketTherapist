@@ -74,18 +74,6 @@ Future<void> load() async {
   }
 }
 
-void _assignDefaults() async {
-  // Enforce defaults
-  _settings = {
-    configuredKey: false,
-    themeKey: ThemeOption.light.index,
-    fontScaleKey: 1.0,
-    encryptionToggleKey: false,
-    accentColorKey: Colors.deepPurpleAccent[100]!.value,
-  };
-  
-
-}
 
 /// The saving function [save], will save settings to [_settingsStorageDirectory]
 /// in a file called "settings.yml".

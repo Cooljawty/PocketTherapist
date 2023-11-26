@@ -194,6 +194,29 @@ class JournalEntry implements Comparable<JournalEntry>{
     if(newEmotions != null) emotions = newEmotions;
   }
 
+  List<Color> getGradientColors() {
+    List<Color> colors = [];
+    if (emotions.length >= 2){
+      emotions.sort((e1, e2) => e1.strength > e2.strength ? 1 : 0);
+      colors.add(emotions[0].color);
+      colors.add(emotions[1].color);
+    } else if (emotions.isNotEmpty) {
+      colors.add(emotions[0].color);
+      colors.add(Colors.white24);
+    } else if (tags.length >= 2) {
+      colors.add(tags[0].color);
+      colors.add(tags[1].color);
+    } else if (tags.isNotEmpty){
+      colors.add(tags[0].color);
+      colors.add(Colors.white24);
+    } else {
+      colors.add(Colors.black12);
+      colors.add(Colors.white24);
+    }
+    return colors;
+  }
+
+
   // Get the strongest emotion in the entry
   Emotion getStrongestEmotion() {
     if (emotions.isNotEmpty) {
@@ -205,8 +228,7 @@ class JournalEntry implements Comparable<JournalEntry>{
       }
       return strongestEmotion;
     }
-    return Emotion(
-        name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+    return Emotion(name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
   }
 
   /* TODO

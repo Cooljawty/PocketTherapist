@@ -27,7 +27,6 @@ List<String> quotes = [
   "Only one man ever understood me, and he didn't understand me\n- G.W.F. Hegel",
 ];
 
-// For display quotes
 String currentQuote = "";
 String nextQuote = "";
 
@@ -47,6 +46,9 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
   // For quote fade in and out animations
   bool clicked = false;
   bool visible = true;
+
+// For display quotes
+
 
   @override
   void initState() {
@@ -380,6 +382,7 @@ class DisplayCard extends StatefulWidget {
 }
 
 class _DisplayCardState extends State<DisplayCard> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -406,32 +409,7 @@ class _DisplayCardState extends State<DisplayCard> {
             //width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: ((){
-                    List<Color> bgCardColors = [];
-                    if(widget.entry.emotions.isNotEmpty){
-                      if(widget.entry.emotions.length > 1){
-                        for (int i = 0; i < min(widget.entry.emotions.length, 3); i++) {
-                          bgCardColors.add(widget.entry.emotions[i].color);
-                        }
-                      }else{
-                        bgCardColors.add(widget.entry.emotions[0].color);
-                        bgCardColors.add(widget.entry.emotions[0].color);
-                      }
-                    }else if(widget.entry.tags.isNotEmpty){
-                      if(widget.entry.tags.length > 1){
-                        for (int i = 0; i < min(widget.entry.tags.length, 3); i++) {
-                          bgCardColors.add(widget.entry.tags[i].color);
-                        }
-                      }else{
-                        bgCardColors.add(widget.entry.tags[0].color);
-                        bgCardColors.add(widget.entry.tags[0].color);
-                      }
-                    }else{
-                      bgCardColors.add(Colors.grey.shade800);
-                      bgCardColors.add(Colors.grey.shade400);
-                    }
-                    return bgCardColors;
-                  }())
+                  colors: widget.entry.getGradientColors(),
               ),
             ),
 

@@ -206,7 +206,7 @@ void main() {
     }
 
     // Test the input text fields
-    testWidgets('title and body Creaiton', (WidgetTester tester) async {
+    testWidgets('title and body Creation', (WidgetTester tester) async {
       await setUp(tester);
       String newTitle = "Title!";
 
@@ -222,9 +222,20 @@ void main() {
       // Find the title on the entry page
       final title = find.text(newTitle);
       expect(title, findsNWidgets(2));
+
+      saveButton.tryEvaluate();
+      await tap(tester, saveButton, true); // save
+      await navigateToEntry(tester, newTitle);
+
+      titleInput.tryEvaluate(); // rerun the finder for the title
+      await tap(tester, titleInput);
+      await tester.enterText(titleInput, "newTitle?");
+
+      saveButton.tryEvaluate();
+      await tap(tester, saveButton, true); // save
+      expect(find.text("newTitle?"), findsOneWidget); // Find the updated title on the screen
     });
 
-    // TODO: Test plan
     testWidgets('Plan Button', (WidgetTester tester) async {
       await setUp(tester);
       await tap(tester, planButton);

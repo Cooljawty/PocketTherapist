@@ -80,7 +80,7 @@ void main() {
       String current = decorations.currentQuote;
       expect(find.text(current), findsOneWidget); // find the quote on screen
 
-      await tap(widgetTester, quoteButton, false, const Duration(seconds: 2));
+      await tap(widgetTester, quoteButton, true, const Duration(seconds: 5));
 
       String next = decorations.nextQuote;
       expect(find.text(current), findsNothing); // doesn't find old quote
