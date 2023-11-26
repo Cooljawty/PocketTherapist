@@ -149,6 +149,32 @@ class _SettingsPageState extends State<SettingsPage> {
                       ],
                     )),
 
+								//Toggleing emotion graph display type
+                StandardElevatedButton(
+                    onPressed: ()=> setState(() {
+											final otherGraphType = switch(settings.getEmotionGraphType()) {
+												GraphTypes.time => GraphTypes.frequency,
+												GraphTypes.frequency => GraphTypes.time,
+											};
+											settings.setEmotionGraphType(otherGraphType);
+										}),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Toggle Emotion Graph Display Type',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )),
+                        Text(settings.getEmotionGraphType().toString(),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      ],
+                    )),
+								//Opening valut file
                 StandardElevatedButton(
                     onPressed: loadFile,
                     child: Row(
