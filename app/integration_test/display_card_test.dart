@@ -1,3 +1,4 @@
+import 'package:app/helper/classes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
@@ -5,67 +6,95 @@ import 'package:app/uiwidgets/cards.dart';
 import 'package:app/pages/entry.dart';
 
 void main() {
-  final shortEntry = JournalEntry(
-    title: "Short entry",
-    entryText: "One line preview",
-    creationDate: DateTime(2023, 11, 25),
-  );
+	final entry = JournalEntry( 
+		title: "Title of entry text", 
+		entryText: "Actual text of entry.\nMade long to test preview",
+		date: DateTime(2023, 11, 4),
+	);
 
-  final entry = JournalEntry(
-    title: "Title of entry text",
-    entryText: "Actual text of entry.\nMade long to test preview",
-    creationDate: DateTime(2023, 11, 4),
-  );
+	final testObj = TestObject(
+		title: "Test Object Title",
+		body: "Body text of Test Object",
+		date: DateTime(2023, 11, 5),
+		tagList: [],
+		emotionList: [],
+	);
 
-  late Widget myApp;
+	late Widget myApp;
   setUp(() => {
-        myApp = MaterialApp(
-            home: Scaffold(
-                body: SafeArea(
-          child: Column(
-            children: [
-              shortEntry.asDisplayCard(),
-              entry.asDisplayCard(),
-            ],
-          ),
-        )))
-      });
+    myApp = MaterialApp(
+			home: Scaffold(
+				body: SafeArea(
+					child: Column(
+						children: [
+							DisplayCard(
+								title: entry.getTitle(), 
+								body: entry.getPreviewText(),
+								date: entry.getDate(),
+								page: () => EntryPage.route(entry: entry),
+								tagList: entry.getTags(),
+								emotionList: entry.getEmotions(),
+							),
+							testObj.asDisplayCard(),
+						],
+					),
+				)
+			)
+		)
+	});
 
-  testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
-    await tester.pumpWidget(myApp);
+	testWidgets('Test the DisplayCard constructor', (tester) async {
+		await tester.pumpWidget(myApp);
 
-    final entryTitleFinder = find.text(entry.title);
-    final entryPreviewFinder = find.text(entry.previewText);
+		final cardFinder = find.byType(DisplayCard);
+		expect(cardFinder, findsNWidgets(2));
+	});
 
-    expect(entryTitleFinder, findsOneWidget);
-    expect(entryPreviewFinder, findsOneWidget);
-  });
+	testWidgets('Content of entry is displayed on DisplayCard', (tester) async {
+		await tester.pumpWidget(myApp);
 
-  testWidgets('The asDisplayCard method displays an object in a DisplayCard',
-      (tester) async {
-    await tester.pumpWidget(myApp);
+		final entryTitleFinder = find.text(entry.getTitle());
+		final entryPreviewFinder = find.text(entry.getPreviewText());
 
-    final entryTitleFinder = find.text(entry.title);
-    final entryPreviewFinder = find.text(entry.previewText);
+		expect(entryTitleFinder, findsOneWidget);
+		expect(entryPreviewFinder, findsOneWidget);
+	});
 
-    expect(entryTitleFinder, findsOneWidget);
-    expect(entryPreviewFinder, findsOneWidget);
-  });
+	testWidgets('The asDisplayCard method displays an object in a DisplayCard', (tester) async {
+		await tester.pumpWidget(myApp);
 
-  testWidgets('Tapping on display card opens entry in new page',
-      (tester) async {
-    await tester.pumpWidget(myApp);
+		final entryTitleFinder = find.text(testObj.title);
+		final entryPreviewFinder = find.text(testObj.body);
 
-    final card = find.byType(DisplayCard).first;
+		expect(entryTitleFinder, findsOneWidget);
+		expect(entryPreviewFinder, findsOneWidget);
+	});
 
-    //Tap on display card and wait for new page to open
-    await tester.tap(card);
-    await tester.pumpAndSettle();
+	testWidgets('Tapping on display card opens entry in new page', (tester) async {
+		await tester.pumpWidget(myApp);
 
-    final title = find.text(shortEntry.title);
-    final text = find.text(shortEntry.entryText);
+		final card = find.byType(DisplayCard).first;
 
-    expect(title, findsOneWidget);
-    expect(text, findsOneWidget);
-  });
+		//Tap on display card and wait for new page to open
+		await tester.tap(card);
+		await tester.pumpAndSettle();
+
+		final title = find.text(entry.getTitle());
+		final text = find.text(entry.getEntryText());
+
+		expect(title, findsOneWidget);
+		expect(text, findsOneWidget);
+	});
+}
+
+class TestObject with DisplayOnCard{
+	String title;
+	String body;
+	DateTime date;
+	List<Tag> tagList;
+	List<Emotion> emotionList;
+
+	TestObject({this.title = "", required this.body, required this.date, required this.tagList, required this.emotionList}){
+		card = (title: title, body: body, date: date, tagList: tagList, emotionList: emotionList);
+	}
 }

@@ -5,19 +5,13 @@ import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
-// import 'package:app/helper/classes.dart';
 
 class EntriesPage extends StatefulWidget {
-  final bool showPlans;
-
-  static Route<dynamic> route({required bool showPlans}) {
-    return MaterialPageRoute(
-        // If showPlans is true, the list of plans is shown instead of entries
-        builder: (context) => EntriesPage(showPlans: showPlans));
+  static Route<dynamic> route() {
+    return MaterialPageRoute(builder: (context) => const EntriesPage());
   }
 
-  // Default creation of entry page to not show plans
-  const EntriesPage({super.key, this.showPlans = false});
+  const EntriesPage({super.key});
 
   @override
   State<EntriesPage> createState() => _EntriesPageState();
@@ -30,7 +24,7 @@ List<JournalEntry> entries = [
   //         'Today was my first day in Paris and it was absolutely magical. I woke up early and headed straight to the '
   //         'Eiffel Tower to catch the sunrise. The view from the top was breathtaking, with the sun just peeking over the horizon '
   //         'and casting a warm glow over the city.',
-  //     creationDate: DateTime(2022, 7, 12),
+  //     date: DateTime(2022, 7, 12),
   //     tags: [
   //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
   //       Tag(name: 'Present', color: const Color(0xffff7070)),
@@ -40,8 +34,7 @@ List<JournalEntry> entries = [
   //     emotions: [
   //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 90),
   //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 70),
-  //     ],
-  //     planStatus: true),
+  //     ]),
   //
   // JournalEntry(
   //     title: "What are my core values and how do they impact my decisions?",
@@ -57,8 +50,7 @@ List<JournalEntry> entries = [
   //     emotions: [
   //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 40),
   //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 70),
-  //     ],
-  // planStatus: PlanStatus.unfinished),
+  //     ]),
   //
   // JournalEntry(
   //     title: "Today was a good day",
@@ -176,17 +168,11 @@ List<JournalEntry> entries = [
   //     ]),
 ];
 
-List<JournalEntry> items = [];
-List<JournalEntry> entry =
-    entries.where((entry) => entry.completedStatus == null).toList();
-List<JournalEntry> plans =
-    entries.where((entry) => entry.completedStatus != null).toList();
+//Generated list of journal entries
+final items = entries;
 
 // Display options
-const List<String> displayOptions = ['Week', 'Month', 'Year'];
-final List<DropdownMenuItem<String>> displayDropDown = displayOptions
-    .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
-    .toList();
+final List<String> displayOptions = ['Week', 'Month', 'Year'];
 String? chosenDisplay = 'Week';
 
 // Sort the Journal entries by most recent date
@@ -196,7 +182,6 @@ bool showAllItems = true;
 class _EntriesPageState extends State<EntriesPage> {
   @override
   Widget build(BuildContext context) {
-    var items = widget.showPlans ? plans : entry;
     // Sort the Journal entries by most recent date
     sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
     return Consumer<ThemeSettings>(
@@ -212,9 +197,7 @@ class _EntriesPageState extends State<EntriesPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  widget.showPlans
-                      ? const Text("Plans")
-                      : const Text('Entries'),
+                  const Text('Entries'),
 
                   // Pad filter to the right
 
@@ -231,7 +214,10 @@ class _EntriesPageState extends State<EntriesPage> {
                         borderRadius: BorderRadius.circular(10.0),
                         // Set up the dropdown menu items
                         value: chosenDisplay,
-                        items: displayDropDown,
+                        items: displayOptions
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
                         // if changed set new display option
                         onChanged: (item) => setState(() {
                           chosenDisplay = item;
@@ -247,7 +233,7 @@ class _EntriesPageState extends State<EntriesPage> {
                     itemBuilder: (context, index) {
                       // get one item
                       final item = sortedItems[index];
-                      final time = item.displayDate;
+                      final time = item.getDate();
 
                       // Dividers by filter
                       bool isSameDate = true;
@@ -257,14 +243,35 @@ class _EntriesPageState extends State<EntriesPage> {
                       } else {
                         // else check if same date by filters
                         isSameDate = time.isSameDate(
-                            sortedItems[index - 1].displayDate, chosenDisplay!);
+                            sortedItems[index - 1].getDate(), chosenDisplay!);
                       }
                       return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          // if not same date or first in list make new list
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // if not same date or first in list make new list
                           children: [
                             if (index == 0 || !(isSameDate)) ...[
-                              parseRange(time)
+                              Text(() {
+                                // If weekly view, then calculate weeks of the year and display range in header
+                                if (chosenDisplay == 'Week') {
+                                  DateTime firstOfYear =
+                                      DateTime(DateTime.now().year, 1, 1);
+                                  int weekNum = firstOfYear.getWeekNumber(
+                                      firstOfYear, time);
+                                  DateTime upper = firstOfYear
+                                      .add(Duration(days: (weekNum * 7)));
+                                  DateTime lower =
+                                      upper.subtract(const Duration(days: 6));
+
+                                  // Range for the week
+                                  return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+                                } else if (chosenDisplay == 'Month') {
+                                  // If monthly, only display month and year
+                                  return '${time.formatDate()} ${time.year.toString()}';
+                                } else {
+                                  // If yearly, only display year
+                                  return time.year.toString();
+                                }
+                              }())
                             ],
                             Dismissible(
                               // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -273,7 +280,7 @@ class _EntriesPageState extends State<EntriesPage> {
                               // Issue with the key, needs to be specific id, not a
                               // name or will receive error that dismissible is still
                               // in the tree
-                              key: Key(item.id.toString()),
+                              key: Key(item.getID().toString()),
 
                               //prevents right swipes
                               direction: DismissDirection.endToStart,
@@ -289,8 +296,8 @@ class _EntriesPageState extends State<EntriesPage> {
                                 // Then show a snackBar w/ item name as dismissed message
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content:
-                                            Text('${item.title} deleted')));
+                                        content: Text(
+                                            '${item.getTitle()} deleted')));
                               },
                               confirmDismiss:
                                   (DismissDirection direction) async {
@@ -337,7 +344,7 @@ class _EntriesPageState extends State<EntriesPage> {
             ),
           ]),
           bottomNavigationBar: NavBar(
-            selectedIndex: widget.showPlans == false ? 1 : 3,
+            selectedIndex: 1,
             destinations: [
               destinations['dashboard']!,
               destinations['entries']!,
@@ -352,10 +359,9 @@ class _EntriesPageState extends State<EntriesPage> {
   }
 
   makeNewEntry() async {
-    final JournalEntry result =
-        await Navigator.push(context, NewEntryPage.route());
+    final result = await Navigator.push(context, NewEntryPage.route());
     setState(() {
-      result.completedStatus == null ? entry.add(result) : plans.add(result);
+      items.add(result);
     });
   }
 }
@@ -367,7 +373,7 @@ List<JournalEntry> getFilteredList(
     List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
 // Sort the Journal entries by most recent date
   final sortedItems = items
-    ..sort((item1, item2) => item2.displayDate.compareTo(item1.displayDate));
+    ..sort((item1, item2) => item2.getDate().compareTo(item1.getDate()));
   List<JournalEntry> filteredList = [];
 
   for (int i = 0; i < sortedItems.length; i++) {
@@ -376,10 +382,10 @@ List<JournalEntry> getFilteredList(
     } else {
       final firstItem = sortedItems[0]; // get the most recent entry
       final item = sortedItems[i]; // get the next item
-      final time = firstItem.displayDate; // get the date for the first item
+      final time = firstItem.getDate(); // get the date for the first item
 
       // check to see if the item is in the filter
-      bool isSameDate = time.isSameDate(item.displayDate, chosenDisplay!);
+      bool isSameDate = time.isSameDate(item.getDate(), chosenDisplay!);
 
       if (isSameDate) {
         // if item is in the filter, add it to the return list
@@ -453,27 +459,4 @@ extension Formatter on DateTime {
     // return the difference between the start and end date by week rounded up
     return (end.difference(start).inDays / 7).ceil();
   }
-}
-
-Text parseRange(DateTime time) {
-  // return Text(time.formatDate());
-
-  return Text(() {
-// If weekly view, then calculate weeks of the year and display range in header
-    if (chosenDisplay == 'Week') {
-      DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
-      int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
-      DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
-      DateTime lower = upper.subtract(const Duration(days: 6));
-
-// Range for the week
-      return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-    } else if (chosenDisplay == 'Month') {
-// If monthly, only display month and year
-      return '${time.formatDate()} ${time.year.toString()}';
-    } else {
-// If yearly, only display year
-      return time.year.toString();
-    }
-  }());
 }
