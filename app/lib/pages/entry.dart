@@ -61,6 +61,7 @@ class JournalEntry {
       }
       return strongestEmotion;
     }
+    return null;
   }
 
   DisplayCard asDisplayCard() {

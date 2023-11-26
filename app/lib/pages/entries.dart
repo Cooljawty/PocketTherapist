@@ -5,7 +5,7 @@ import 'package:app/pages/new_entry.dart';
 import 'package:app/uiwidgets/navbar.dart';
 import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
-import 'package:app/helper/classes.dart';
+// import 'package:app/helper/classes.dart';
 
 class EntriesPage extends StatefulWidget {
   final bool showPlans;
