@@ -484,6 +484,7 @@ class _DisplayCardState extends State<DisplayCard> {
                         ),
                       ]),
 
+                  // Spacer to force text to left and date to the right
                   const Spacer(),
 
                   widget.entry.planCompleted == null

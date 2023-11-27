@@ -45,6 +45,7 @@ String chosenDisplay = 'Week';
 class EntryPanelPage extends StatefulWidget {
   final bool showPlans;
 
+  /// [showPlans] to show either regular entries or plans
   const EntryPanelPage({super.key, this.showPlans = false});
 
   @override
