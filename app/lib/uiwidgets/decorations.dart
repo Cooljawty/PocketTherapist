@@ -335,12 +335,14 @@ class CustomNavigationBar extends StatelessWidget{
   final List<NavigationDestination> destinations;
   int selectedIndex;
   final ValueChanged<int>? onDestinationSelected;
+  bool noUpdateIndex;
 
   CustomNavigationBar({
     super.key,
     this.selectedIndex = 0,
     this.destinations = defaultDestinations,
     this.onDestinationSelected,
+    this.noUpdateIndex = false,
   });
 
   @override
@@ -350,7 +352,7 @@ class CustomNavigationBar extends StatelessWidget{
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if(index == selectedIndex) return;
+        if (!noUpdateIndex) if(index == selectedIndex) return;
         if(index >= destinations.length) return;
         onDestinationSelected == null ? defaultOnDestinationSelected(index, context) : onDestinationSelected!(index);
         selectedIndex = index;

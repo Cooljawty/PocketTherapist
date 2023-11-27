@@ -162,19 +162,23 @@ class JournalEntry implements Comparable<JournalEntry>{
   String previewText = "";
 
   // year, month, day
-  DateTime current = DateTime.now();
+  DateTime creationDate = DateTime.now();
   DateTime date = DateTime(1970, 12, 31);
   List<Tag> tags = [];
   List<Emotion> emotions = [];
 
   static const previewLength = 25;
 
+  // Plans
+  bool? planCompleted;
+
   JournalEntry({
     required this.title,
     required this.entryText,
     required this.date,
     this.tags = const [],
-    this.emotions = const []
+    this.emotions = const [],
+    this.planCompleted,
   }) {
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
