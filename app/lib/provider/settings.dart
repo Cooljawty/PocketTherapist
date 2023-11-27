@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/uiwidgets/decorations.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:app/helper/classes.dart';
-
-import '../pages/dashboard.dart';
-import '../uiwidgets/fields.dart';
-import '../uiwidgets/decorations.dart';
+import 'package:app/provider/entry.dart' as entry;
 
 /// Used for error messages
 const String preferencesPrefix = "pocket-therapist";
@@ -38,13 +36,6 @@ const String encryptionToggleKey = 'encryption';
 
 const String accentColorKey = "accent";
 
-//add tag list
-List<Tag> tagList = [];
-
-//add emotion list
-// List<Emotion> emotionList = [];
-Map<String, Color> emotionList = {};
-
 /// The color of all accents, like buttons and sizing.
 
 Map<String, dynamic> _settings = {
@@ -57,8 +48,9 @@ Map<String, dynamic> _settings = {
 
 Directory? _settingsStorageDirectory;
 File? _settingsFile;
-//Directory? _externalStorageDirectory;
 
+/// [load] this function loads or installed the defaults for settings.
+/// By default encryption is disabled, emotions are defaults, tags are defaults
 Future<void> load() async {
   _settingsStorageDirectory = await getApplicationSupportDirectory();
   _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
@@ -67,84 +59,20 @@ Future<void> load() async {
     // cannot create settings file
     // attempt to create the whole directory path if it doesn't exist.
     await _settingsFile!.create();
-    _assignDefaults();
+    await save();
   }
   // Else settings exists, load them.
   else {
     String fileContent = await _settingsFile!.readAsString();
-    if (fileContent.isEmpty) {
+    if (fileContent.isNotEmpty) {
       // Settings file exists but empty, save the defaults
-      _assignDefaults();
-    } else {
-      // settings file exists, load it
       _settings = json.decode(fileContent);
-      // Load encryption settings
-      encryptor.load(_settings['enc']);
-
-      // Erase from our reference, not used.
-      _settings['enc'] = null;
-
-      //load tags
-      List<dynamic> dynamicList;
-      if (_settings['tags'] != null) {
-        dynamicList = _settings['tags'];
-        tagList = [];
-        for (int i = 0; i < dynamicList.length; i++) {
-          tagList.add(Tag(
-              name: dynamicList[i]['name'],
-              color: Color(dynamicList[i]['color'])));
-        }
-      }
-
-      //load emotions
-      if (_settings['emotions'] != null) {
-        dynamicList = _settings['emotions'];
-        emotionList = {};
-        for (int i = 0; i < dynamicList.length; i++) {
-          // emotionList.add(Emotion(name: dynamicList[i]['name'], color: Color(dynamicList[i]['color'])));
-          emotionList.putIfAbsent(
-              dynamicList[i]['name'], () => dynamicList[i]['color']);
-        }
-      }
+      encryptor.load();
+      entry.loadTagsEmotions();
     }
 
-    /// settings are loaded
+    /// settings are loaded or defaults
   }
-
-  /// Settings - App is initialized
-  _init = true;
-}
-
-void _assignDefaults() async {
-  // Enforce defaults
-  _settings = {
-    configuredKey: false,
-    themeKey: ThemeOption.light.index,
-    fontScaleKey: 1.0,
-    encryptionToggleKey: false,
-    accentColorKey: Colors.deepPurpleAccent[100]!.value,
-  };
-  tagList = [
-    Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-    Tag(name: 'Centered', color: const Color(0xff794e5e)),
-    Tag(name: 'Content', color: const Color(0xfff1903b)),
-    Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-    Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-    Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-    Tag(name: 'Present', color: const Color(0xffff7070)),
-    Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-    Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-    Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-  ];
-  emotionList = {
-    'Happy': const Color(0xfffddd68),
-    'Trust': const Color(0xff308c7e),
-    'Fear': const Color(0xff4c4e52),
-    'Sad': const Color(0xff1f3551),
-    'Disgust': const Color(0xff384e36),
-    'Anger': const Color(0xffb51c1c),
-    'Anticipation': const Color(0xffff8000),
-  };
 }
 
 /// The saving function [save], will save settings to [_settingsStorageDirectory]
@@ -153,29 +81,20 @@ void _assignDefaults() async {
 Future<void> save() async {
   _settingsStorageDirectory = await getApplicationSupportDirectory();
   _settingsFile = File("${_settingsStorageDirectory!.path}/settings.yml");
+
   // first time setup
   if (!await _settingsFile!.exists()) {
     // cannot create settings file
     // attempt to create the whole directory path if it doesn't exist.
     await _settingsFile!.create();
   }
-  // Collect all the settings
-  Map<String, dynamic> encrypted = encryptor.save();
-  Map<String, dynamic> settings = Map.of(_settings);
-  settings['enc'] = encrypted;
-
-  //Add each tag as a map with its name and color
-  settings['tags'] = <Map<String, dynamic>>[];
-  for (final tag in tagList) {
-    settings['tags'].add({'name': tag.name, 'color': tag.color.value});
-  }
-
+  encryptor.save();
+  entry.saveTagsEmotions();
+  await _settingsFile!.writeAsString(json.encode(_settings));
   // Save them to the file
-  String jsonEncoding = json.encode(settings);
-  await _settingsFile!.writeAsString(jsonEncoding);
 }
 
-Future<void> reset() async {
+Future<void> reset([bool? all]) async {
   _settings = {
     configuredKey: false,
     themeKey: ThemeOption.light.index,
@@ -183,12 +102,21 @@ Future<void> reset() async {
     encryptionToggleKey: false,
     accentColorKey: const Color(0xFFB388FF).value,
   };
-  encryptor.reset();
+  if (all != null && all) {
+    // entry.reset();
+    encryptor.reset();
+    entry.saveTagsEmotions();
+    encryptor.save();
+  }
   // Probably message database to reset as well....
   await save();
 }
 
 /// Setters --------------------------
+void setInitialized() {
+  if (!_init) _init = true;
+}
+
 void setConfigured(bool value) => _settings[configuredKey] = value;
 void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
 void setFontScale(double newFontScale) =>
@@ -199,13 +127,12 @@ void setAccentColor(Color newColor) =>
     _settings[accentColorKey] = newColor.value;
 Future<void> setPassword(String newPassword) async =>
     encryptor.setPassword(newPassword);
+void setOtherSetting(String key, Object? value) => _settings[key] = value;
 
 void setMockValues(Map<String, dynamic> value) {
-  reset();
   _settings.addAll(value);
-  if (_settings.containsKey('enc')) {
-    encryptor.load(_settings['enc']);
-  }
+  encryptor.load();
+  entry.loadTagsEmotions();
 }
 
 /// Getters --------------------------
@@ -282,13 +209,12 @@ void verifyPassword(BuildContext context, String password) async {
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.hasData) {
                       if (snapshot.data!) {
-                        //traverse to the dashboard page after updated prompt
-                        Future.delayed(const Duration(milliseconds: 10))
+                        //traverse to the dashboard page after updated prompt automatically
+                        Future.delayed(const Duration(milliseconds: 1))
                             .whenComplete(() async {
                           Navigator.of(context).pop(); //pop loading screen
                           Navigator.of(context).pop(); //pop password prompt
-                          Navigator.pushReplacement(
-                              context, DashboardPage.route());
+                          Navigator.of(context).pushNamed("Dashboard");
                         });
                         finalDisplay = [
                           const Text('Welcome Back',
@@ -300,8 +226,7 @@ void verifyPassword(BuildContext context, String password) async {
                               Navigator.of(context).pop();
                               password = "";
                               Navigator.of(context).pop();
-                              Navigator.pushReplacement(
-                                  context, DashboardPage.route());
+                              Navigator.of(context).pushNamed("Dashboard");
                             },
                             child: const Text("Enter"),
                           )
@@ -336,27 +261,32 @@ void verifyPassword(BuildContext context, String password) async {
                   }),
             ],
           ));
-  /*bool match = await encryptor.unlock(password);
+  /*bool match = encryptor.unlock(password);
   if (match) {
     password = "";
     Navigator.of(context).pop();
-    Navigator.pushReplacement(context, DashboardPage.route());
-  } else {
+    Navigator.of(context).pushNamed("Dashboard");
+  }
+  else {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.onBackground,
-              title: const Text("Incorrect Password"),
-              actions: [
-                TextButton(
-                  key: const Key('Incorrect_Password'),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Ok"),
-                )
-              ],
-            ));
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
+          title: const Text("Incorrect Password"),
+          actions: [
+            TextButton(
+              key: const Key(
+                  'Incorrect_Password'),
+              onPressed: () async {
+                Navigator
+                    .of(context)
+                    .pop();
+              },
+              child: const Text("Ok"),
+            )
+          ],
+        )
+    );
     // I should never get here
   }*/
 }
@@ -394,7 +324,7 @@ void attemptLogin(BuildContext context) async {
 }
 
 void finishConfiguration(BuildContext context, String password) async {
-  //display loading screen while password is being set
+  //display loading screen while password is being saved
   await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -411,14 +341,13 @@ void finishConfiguration(BuildContext context, String password) async {
                     if (snapshot.connectionState == ConnectionState.done) {
                       //traverse to next page once encryption is done, slight delay
                       //for prompt to update
-                      Future.delayed(const Duration(milliseconds: 10))
+                      Future.delayed(const Duration(milliseconds: 1))
                           .whenComplete(() async {
                         setConfigured(true);
                         Navigator.of(context).pop(); //pop loading screen
                         Navigator.of(context).pop(); //pop confirmation screen
                         Navigator.of(context).pop(); //pop password prompt
-                        Navigator.pushReplacement(
-                            context, DashboardPage.route());
+                        Navigator.of(context).pushNamed("Dashboard");
                         await save();
                       });
                       //final display cant be null so we overwrite it to indicate success
@@ -436,10 +365,8 @@ void finishConfiguration(BuildContext context, String password) async {
                                 .pop(); // remove confirmation window
                             Navigator.of(context)
                                 .pop(); // remove initial entry window
-                            Navigator.pushReplacement(
-                                context,
-                                DashboardPage
-                                    .route()); // Move to dashboard w/o encryption
+                            Navigator.of(context).pushNamed(
+                                "Dashboard"); // Move to dashboard w/o encryption
                             await save();
                           },
                           child: const Text("Enter"),
@@ -460,18 +387,14 @@ void finishConfiguration(BuildContext context, String password) async {
                   }),
             ],
           ));
-
   /*
-  optional implementation that takes user to dashboard while password encryption is happening in background
+  setPassword(password); // empty password no encryption
+  setConfigured(true);
   Navigator.of(context).pop(); // remove confirmation window
   Navigator.of(context).pop(); // remove initial entry window
-  Navigator.pushReplacement(
-      context, DashboardPage.route()); // Move to dashboard w/o encryption
-  // empty password no encryption, once encryption is done for password save to settings
-  setPassword(password).whenComplete(() async {
-    setConfigured(true);
-    await save();
-  });*/
+  Navigator.of(context)
+      .pushNamed("Dashboard"); // Move to dashboard w/o encryption
+  await save();*/
 }
 
 void confirmPassword(BuildContext context, String password) async {
@@ -575,7 +498,7 @@ void handleStartPress(BuildContext context) async {
       attemptLogin(context);
     } else {
       // Password not set, but initialized, no check, just entry to dashboard.
-      Navigator.pushReplacement(context, DashboardPage.route());
+      Navigator.of(context).pushNamed("Dashboard");
     }
   } else {
     await createPassword(context).whenComplete(() async {
@@ -632,7 +555,6 @@ void handleResetPasswordPress(BuildContext context) async {
           TextButton(
               key: const Key('Reset_Password_Button'),
               onPressed: () async {
-                //Future<bool> match = encryptor.resetCredentials(maybePasswordOrPhrase!);
                 await showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -698,8 +620,7 @@ void handleResetPasswordPress(BuildContext context) async {
                           ],
                         ));
                 /*
-                bool match =
-                    await encryptor.resetCredentials(maybePasswordOrPhrase!);
+                bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
                 if (match) {
                   await showDialog(
                       context: context,
@@ -731,12 +652,17 @@ void handleResetPasswordPress(BuildContext context) async {
                                     onPressed: () => Navigator.pop(context),
                                     child: const Text("Ok"))
                               ]));
-                }
-              */
+                }*/
               },
               child: const Text("Enter")),
         ],
       ),
     );
   }
+}
+
+/// User picks a file, and once picked can read it
+/// After database, deserialize data in the file to be used
+void loadFile() async {
+  await FilePicker.platform.pickFiles();
 }

@@ -5,22 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_utils.dart';
 
 void main() {
-
   group("Password Field Tests", () {
     late Widget myApp;
     const Key testKey = Key("FindMePassword");
 
     setUp(() => {
-      myApp = MaterialApp(
-          home: Scaffold(
-              body: SafeArea(
-                child: decorations.ControlledTextField(
-                  key: testKey,
-                  hintText: "Password",
-                  validator: (textInField) => (textInField?.isEmpty ?? true) ? 'Field is required' : null,
-                ),
-              )))
-    });
+          myApp = MaterialApp(
+              home: Scaffold(
+                  body: SafeArea(
+            child: decorations.ControlledTextField(
+              key: testKey,
+              hintText: "Password",
+              validator: (textInField) =>
+                  (textInField?.isEmpty ?? true) ? 'Field is required' : null,
+            ),
+          )))
+        });
 
     testWidgets('Test Valid PasswordField', (tstr) async {
       await tstr.pumpWidget(myApp);
@@ -31,20 +31,18 @@ void main() {
       await tstr.enterText(find.byKey(testKey), "SuperSecretPassword");
       await tstr.pump();
 
-      var finder = find.descendant(of: find.byKey(testKey),
-          matching: find.byType(TextField));
+      var finder = find.descendant(
+          of: find.byKey(testKey), matching: find.byType(TextField));
       var field = tstr.firstWidget<TextField>(finder);
 
       expect(field.obscureText, true);
       finder = find.descendant(
-          of: find.byKey(testKey),
-          matching: find.byType(IconButton)
-      );
+          of: find.byKey(testKey), matching: find.byType(IconButton));
       await tap(tstr, finder, true);
 
       // You must  refind the TextField, it gets redrawn
-      finder = find.descendant(of: find.byKey(testKey),
-          matching: find.byType(TextField));
+      finder = find.descendant(
+          of: find.byKey(testKey), matching: find.byType(TextField));
       field = tstr.firstWidget<TextField>(finder);
 
       expect(field.obscureText, false);
@@ -60,18 +58,21 @@ void main() {
       await tstr.enterText(find.byKey(testKey), "");
       await tstr.pump();
       //Check if the current validator would have errored on the input text
-      expect(tstr.widget<TextFormField>(find.byType(TextFormField)).validator!(''), isNotNull);
+      expect(
+          tstr.widget<TextFormField>(find.byType(TextFormField)).validator!(''),
+          isNotNull);
     });
   });
 
   group("Quotes Tests", () {
-    testWidgets("Ensuring new quote Appears when pressed", (widgetTester) async {
+    testWidgets("Ensuring new quote Appears when pressed",
+        (widgetTester) async {
       //expected behavior, start button is present
       Widget myApp = MaterialApp(
           home: Scaffold(
               body: SafeArea(
-                child: decorations.Quote(),
-              )));
+        child: decorations.Quote(),
+      )));
       await widgetTester.pumpWidget(myApp);
       await widgetTester.pump();
 
@@ -93,7 +94,13 @@ void main() {
       await pumpUntilFound(tester, find.text("Dashboard"));
 
       //Navigate to each page
-      for (var page in ["Entries", "Calendar", "Plans", "Dashboard", "Settings"]){
+      for (var page in [
+        "Entries",
+        "Calendar",
+        "Plans",
+        "Dashboard",
+        "Settings"
+      ]) {
         Finder pg = find.text(page);
         await tester.pumpAndSettle();
         await tap(tester, pg);
@@ -105,8 +112,21 @@ void main() {
       await tester.pageBack();
       await tester.pump();
       expect(find.text("Dashboard"), findsWidgets);
-
     });
   });
-  
+  group("Animation Tests", () {
+    testWidgets("Ensuring The Loading Animation Appears", (widgetTester) async {
+      //expected behavior, start button is present
+      Widget myApp = const MaterialApp(
+          home: Scaffold(
+              body: SafeArea(
+        child: decorations.LoadingAnimation(),
+      )));
+      await widgetTester.pumpWidget(myApp);
+      await widgetTester.pump();
+
+      Finder animationWidget = find.byKey(const Key("Loading_Animation"));
+      expect(animationWidget, findsOneWidget); // find the animation
+    });
+  });
 }
