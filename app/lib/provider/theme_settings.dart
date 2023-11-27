@@ -218,18 +218,6 @@ class ThemeSettings with ChangeNotifier {
 
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
   static ThemeData lightTheme = ThemeData(
     //can be used to customize back button icon, left default
     //actionIconTheme: ,
