@@ -32,6 +32,7 @@ String nextQuote = "";
 
 class Quote extends StatefulWidget {
   final Random rand = Random();
+
   Quote({super.key});
 
   String newQuote() {
@@ -48,7 +49,6 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
   bool visible = true;
 
 // For display quotes
-
 
   @override
   void initState() {
@@ -148,6 +148,7 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
 class ControlledTextField extends StatefulWidget {
   final String hintText;
   final String? Function(String?) validator;
+
   const ControlledTextField({
     super.key,
     this.hintText = "Password",
@@ -162,10 +163,13 @@ class _ControlledTextFieldState extends State<ControlledTextField> {
   // This key is used only to differentiate it from everything else in the widget
   // tree
   final _formKey = GlobalKey<FormState>();
+
   // this is used to control and track the text that is in the field
   final textController = TextEditingController();
+
   // This is used to request focus on the field
   final textFocusNode = FocusNode();
+
   // We obscure text by default
   bool _isObscured = true;
 
@@ -219,6 +223,7 @@ class StandardElevatedButton extends StatelessWidget {
   final Widget child;
   final Function()? onPressed;
   final double elevation = 20.0;
+
   const StandardElevatedButton({
     super.key,
     required this.child,
@@ -244,12 +249,10 @@ class StandardElevatedButton extends StatelessWidget {
             backgroundColor: backgroundColor,
             side: BorderSide(
                 color: darkenColor(Theme.of(context).colorScheme.primary, .1),
-                width: 3
-            ),
+                width: 3),
           ),
           child: child,
-        )
-    );
+        ));
   }
 }
 
@@ -321,16 +324,15 @@ class StarBackground extends StatelessWidget {
 /// [selectedIndex] is the starting index that we will display, by default its 0
 /// [onDestinationSelected] is the void Function(int) that should handle the routing of the navgations
 // ignore: must_be_immutable
-class CustomNavigationBar extends StatelessWidget{
-
+class CustomNavigationBar extends StatelessWidget {
   static const List<NavigationDestination> defaultDestinations = [
-            NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
-            NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
-            NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
-            NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
-            NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
-            NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
-        ];
+    NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
+    NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
+    NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
+    NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
+    NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
+    NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
+  ];
 
   final List<NavigationDestination> destinations;
   int selectedIndex;
@@ -352,38 +354,41 @@ class CustomNavigationBar extends StatelessWidget{
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if (!allowReselect) if(index == selectedIndex) return;
-        if(index >= destinations.length) return;
-        onDestinationSelected == null ? defaultOnDestinationSelected(index, context) : onDestinationSelected!(index);
+        if (!allowReselect) if (index == selectedIndex) return;
+        if (index >= destinations.length) return;
+        onDestinationSelected == null
+            ? defaultOnDestinationSelected(index, context)
+            : onDestinationSelected!(index);
       },
     );
   }
 
   void defaultOnDestinationSelected(int index, BuildContext context) async {
-    switch(index) {
-      case 2: makeNewEntry(context); return;
-      case 5: Navigator.of(context).pushNamed(destinations[index].label); return;
-      case _: Navigator.of(context).pushReplacementNamed(destinations[index].label); break;
+    switch (index) {
+      case 2:
+        makeNewEntry(context);
+        return;
+      case 5:
+        Navigator.of(context).pushNamed(destinations[index].label);
+        return;
+      case _:
+        Navigator.of(context).pushReplacementNamed(destinations[index].label);
+        break;
     }
   }
-
 }
 
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
   final JournalEntry entry;
 
-  const DisplayCard({
-    super.key,
-    required this.entry
-  });
+  const DisplayCard({super.key, required this.entry});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
 }
 
 class _DisplayCardState extends State<DisplayCard> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -395,7 +400,10 @@ class _DisplayCardState extends State<DisplayCard> {
       //Uses gesture detector to enable interactivity
       child: GestureDetector(
         onTap: () async {
-          await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntryPage(entry: widget.entry),));
+          await Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => EntryPage(entry: widget.entry),
+          ));
+
           /// Rebuild THIS widget if any changes were made
           setState(() {});
         },
@@ -410,15 +418,16 @@ class _DisplayCardState extends State<DisplayCard> {
             //width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: widget.entry.getGradientColors(),
+                colors: widget.entry.getGradientColors(),
               ),
             ),
 
-            child: Row( // row to hold all information
+            child: Row(
+                // row to hold all information
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-
-                  Column( // Column to hold title and preview text
+                  Column(
+                      // Column to hold title and preview text
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -426,77 +435,111 @@ class _DisplayCardState extends State<DisplayCard> {
                         SizedBox(
                             width: MediaQuery.of(context).size.width - 150,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 10, top: 5,),
+                              padding: const EdgeInsets.only(
+                                left: 10,
+                                top: 5,
+                              ),
                               child: Text(
                                 widget.entry.title,
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
                                 style: widget.entry.planCompleted == true
-                                // If plan is finished, show a strikethrough
+                                    // If plan is finished, show a strikethrough
                                     ? DefaultTextStyle.of(context).style.apply(
-                                  fontSizeFactor: 1.3,
-                                  fontWeightDelta: 1,
-                                  decoration: TextDecoration.lineThrough,
-                                  decorationStyle: TextDecorationStyle.wavy,
-                                  decorationColor: Colors.orange,
-                                  // decorationThicknessFactor: 1.3,
-                                  // decorationThicknessDelta: 1,
-                                )
-                                // Otherwise no text style changes
+                                          fontSizeFactor: 1.3,
+                                          fontWeightDelta: 1,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          decorationStyle:
+                                              TextDecorationStyle.wavy,
+                                          decorationColor: Colors.orange,
+                                          // decorationThicknessFactor: 1.3,
+                                          // decorationThicknessDelta: 1,
+                                        )
+                                    // Otherwise no text style changes
                                     : DefaultTextStyle.of(context).style.apply(
-                                  fontSizeFactor: 1.3,
-                                  fontWeightDelta: 1,
-                                ),
+                                          fontSizeFactor: 1.3,
+                                          fontWeightDelta: 1,
+                                        ),
                               ),
-                            )
-                        ),
+                            )),
 
                         // preview text
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 150,
                           // height: 40,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 20, bottom: 10, top: 5),
+                            padding: const EdgeInsets.only(
+                                left: 20, bottom: 10, top: 5),
                             child: Text(
                               widget.entry.previewText,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               softWrap: false,
-                              style: const TextStyle(fontStyle: FontStyle.italic),
-                            ),),
+                              style:
+                                  const TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
                         ),
-                      ]
-                  ),
+                      ]),
+
+                  const Spacer(),
 
                   widget.entry.planCompleted == null
                       ? Container()
                       : IconButton(
-                      key: const Key("PlanCompleteButton"),
-                      // Show filled outline for completed
-                      icon: const Icon(Icons.check_box_outline_blank),
-                      selectedIcon: const Icon(Icons.check_box),
-                      isSelected: widget.entry.planCompleted == true,
-                      onPressed: (() {
-                        /// TODO: This might need to save to entries
-                        setState(() {
-                          // Toggle plan completion status on press
-                          if (widget.entry.planCompleted != null) {
-                            widget.entry.planCompleted =
-                            !widget.entry.planCompleted!;
-                          }
-                        });
-                      })),
+                          padding: const EdgeInsets.only(top: 10),
+                          key: const Key("PlanCompleteButton"),
+                          // Show filled outline for completed
+                          icon: const Icon(Icons.check_box_outline_blank),
+                          selectedIcon: const Icon(Icons.check_box),
+                          isSelected: widget.entry.planCompleted == true,
+                          onPressed: (() {
+                            /// TODO: This might need to save to entries
+                            setState(() {
+                              // Toggle plan completion status on press
+                              if (widget.entry.planCompleted != null) {
+                                widget.entry.planCompleted =
+                                    !widget.entry.planCompleted!;
+                              }
+                            });
+                          })),
 
                   // Date
-                  Container(
-                    padding: const EdgeInsets.all(7),
-                    child: Text(
-                      '${widget.entry.date.month.toString()}/${widget.entry.date.day.toString()}/${widget.entry.date.year.toString()}',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Day
+                        Text(
+                          widget.entry.date.day.toString(),
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+
+                        const Padding(padding: EdgeInsets.only(left: 5)),
+
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // First 3 letters of the month
+                              Text(
+                                widget.entry.date.formatDate().substring(0, 3),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+
+                              // Year
+                              Text(
+                                widget.entry.date.year.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ])
+                      ],
                     ),
-                  ),
-                ]
-            ),
+                  )
+                ]),
           ),
         ),
       ),

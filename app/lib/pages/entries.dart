@@ -75,7 +75,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Entries'),
+                    widget.showPlans
+                        ? const Text("Plans")
+                        : const Text('Entries'),
 
                     // Pad filter to the right
 
