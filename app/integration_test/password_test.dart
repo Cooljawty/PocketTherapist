@@ -50,6 +50,8 @@ void main() async {
     //wait until incorrect password prompt appears
     await pumpUntilFound(widgetTester, okResetPassButton);
     await tap(widgetTester, okResetPassButton);
+    //let dialog get dismissed
+    await widgetTester.pump();
 
     await widgetTester.enterText(passwordResetField, recovery);
     await widgetTester.pump();
@@ -59,11 +61,20 @@ void main() async {
     okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
     await pumpUntilFound(widgetTester, okResetPassButton);
     await tap(widgetTester, okResetPassButton);
-    await widgetTester.pump();
+    //minimum number of pumps needed to dismiss the 2 dialog boxes
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //instead of the pumps above we could use a pump with duration below
+    await widgetTester.pump(const Duration(milliseconds: 400));
+
     //reset button option should not be present but start button should be
-    expect(resetButton, findsNothing);
     expect(find.byKey(const Key("Start_Button")), findsOneWidget);
-  }, timeout: const Timeout(Duration(minutes: 4)));
+    expect(resetPasswordbutton, findsNothing);
+  }, timeout: const Timeout(Duration(minutes: 2)));
 
   testWidgets("Reset Password w/ password", (widgetTester) async {
     String password = "password123@";
@@ -111,7 +122,14 @@ void main() async {
     //wait until loading is done
     await pumpUntilFound(widgetTester, okResetPassButton);
     await widgetTester.tap(okResetPassButton);
-    await widgetTester.pump();
+    //minimum number of pumps needed to dismiss the 2 dialog boxes
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    await widgetTester.pump(const Duration(milliseconds: 400));
     //reset button option should not be present but start button should be
     expect(resetButton, findsNothing);
     expect(find.byKey(const Key("Start_Button")), findsOneWidget);
