@@ -45,7 +45,13 @@ String chosenDisplay = 'Week';
 
 /// [EntryPanelPage] is the page for all of the entries that user has entered.
 class EntryPanelPage extends StatefulWidget {
-  const EntryPanelPage({super.key});
+  const EntryPanelPage({super.key, this.targetDate});
+
+	final DateTime? targetDate;
+
+  static Route<dynamic> route({targetDate}) {
+    return MaterialPageRoute(builder: (context) => EntryPanelPage(targetDate: targetDate));
+  }
 
   @override
   State<EntryPanelPage> createState() => _EntryPanelPageState();
@@ -58,7 +64,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
 		//Show entreis in range of given date or from today
-		final today = widget.startDate ?? DateTime.now();
+		final today = widget.targetDate ?? DateTime.now();
 		switch(chosenDisplay) {
 			case "Week":
 				entries = entriesBetween(
@@ -77,7 +83,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 				);
 		}
 
-    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
     entries.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
@@ -812,6 +817,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 		];
 
-	testEntries.retainWhere((e) => ( !e.getDate().isBefore(start) && !e.getDate().isAfter(end)));
-	testEntries.sort((a, b) => a.getDate().compareTo(b.getDate()));
+	testEntries.retainWhere((e) => ( !e.date.isBefore(start) && !e.date.isAfter(end)));
+	testEntries.sort((a, b) => a.date.compareTo(b.date));
 	return testEntries;
+}

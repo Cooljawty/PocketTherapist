@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:app/helper/classes.dart';
-import 'package:app/pages/entry.dart';
+import 'package:app/provider/entry.dart';
 
 import 'package:app/helper/dates_and_times.dart';
 import 'package:app/provider/settings.dart' as settings;
@@ -27,7 +26,7 @@ class _CalendarState extends State<Calendar> {
 	///Displays a given day of the month in a container with the color set 
 	///according to the strongest emotion of that day (if any)
 	Widget _displayDay(day, {outOfRange = false}) => GestureDetector(
-		onTap: () => Navigator.of(context).push(EntriesPage.route(startDate: startDate.add(Duration(days: day)))),
+		onTap: () => Navigator.of(context).push(EntryPanelPage.route(targetDate: startDate.add(Duration(days: day)))),
 		child: Container(
 			key: const Key("Calendar_Day"),
 			alignment: Alignment.center,
@@ -73,8 +72,8 @@ class _CalendarState extends State<Calendar> {
 		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent));
 		for (var entry in entriesBetween(startDate, endDate)) {
 			final strongestEmotion = entry.getStrongestEmotion();
-			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.getDate())].strength) {
-				_emotionData[_daysFromDate(entry.getDate())] = (
+			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
+				_emotionData[_daysFromDate(entry.date)] = (
 					strength: strongestEmotion.strength, 
 					color: strongestEmotion.color
 				);
@@ -323,7 +322,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 			),
 		];
 
-	testEntries.retainWhere((e) => ( !e.getDate().isBefore(start) && !e.getDate().isAfter(end)));
-	testEntries.sort((a, b) => a.getDate().compareTo(b.getDate()));
+	testEntries.retainWhere((e) => ( !e.date.isBefore(start) && !e.date.isAfter(end)));
+	testEntries.sort((a, b) => a.date.compareTo(b.date));
 	return testEntries;
 }

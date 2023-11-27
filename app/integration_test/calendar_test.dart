@@ -3,7 +3,8 @@ import 'package:integration_test/integration_test.dart';
 
 import 'package:flutter/material.dart';
 import 'package:app/pages/calendar.dart';
-import 'package:app/uiwidgets/cards.dart';
+import 'package:app/provider/entry.dart';
+import 'package:app/uiwidgets/decorations.dart';
 
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/main.dart' as app;
@@ -120,7 +121,7 @@ void main() {
 		await tester.tap(find.byKey(const Key("emotionButton")));
 		await tester.pumpAndSettle();
 
-		final emotionKey = find.text(settings.emotionList.entries.first.key);
+		final emotionKey = find.text(emotionList.entries.first.key);
 		await tester.tap(emotionKey);
 		await tester.pumpAndSettle();
 
@@ -132,7 +133,7 @@ void main() {
 		// Find the chip display
 		final emotionChips = find.byKey(const Key('EmotionChipsDisplay'));
 
-		final emotionName = find.text(settings.emotionList.entries.first.key);
+		final emotionName = find.text(emotionList.entries.first.key);
 		await tester.pumpAndSettle();
 
 
@@ -168,7 +169,7 @@ void main() {
 			settings.configuredKey: true,
 			settings.encryptionToggleKey: false,
 		});
-		settings.emotionList = {
+		emotionList = {
 			'Happy': const Color(0xfffddd68),
 		};
 
@@ -194,7 +195,7 @@ void main() {
 
 		//Today should be colored according to the entry we just made
 		final todayColor = ((today as Container).decoration as ShapeDecoration).color; 
-		expect(todayColor, settings.emotionList["Happy"]);
+		expect(todayColor, emotionList["Happy"]);
 
 		await tester.tap(find.byWidget(today));
 		await tester.pumpAndSettle();
