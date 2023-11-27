@@ -43,7 +43,9 @@ String chosenDisplay = 'Week';
 
 /// [EntryPanelPage] is the page for all of the entries that user has entered.
 class EntryPanelPage extends StatefulWidget {
-  const EntryPanelPage({super.key});
+  final bool showPlans;
+
+  const EntryPanelPage({super.key, this.showPlans = false});
 
   @override
   State<EntryPanelPage> createState() => _EntryPanelPageState();
@@ -57,6 +59,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     // Sort the Journal entries by most recent date
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
     entries.sort();
+    List<JournalEntry> items = widget.showPlans
+        ? entries.where((entry) => entry.planCompleted != null).toList()
+        : entries.where((entry) => entry.planCompleted == null).toList();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -102,10 +107,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     //holds the list of entries
                     Expanded(
                         child: ListView.builder(
-                      itemCount: entries.length,
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
                         // get one item
-                        final item = entries[index];
+                        final item = items[index];
                         final time = item.date;
 
                         // Dividers by filter
@@ -116,7 +121,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         } else {
                           // else check if same date by filters
                           isSameDate = time.isWithinDateRange(
-                              entries[index - 1].date, chosenDisplay);
+                              items[index - 1].date, chosenDisplay);
                         }
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +147,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                 onDismissed: (direction) {
                                   // Remove the item from the data source.
                                   setState(() {
-                                    entries.removeAt(index);
+                                    entries.remove(items.removeAt(index));
                                   });
 
                                   // Then show a snackBar w/ item name as dismissed message
@@ -187,7 +192,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
               ),
             ]),
             bottomNavigationBar: CustomNavigationBar(
-                selectedIndex: 1,
+                selectedIndex: widget.showPlans ? 4 : 1,
 
                 /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
                 onDestinationSelected: (index) async {
@@ -416,7 +421,7 @@ class _EntryPageState extends State<EntryPage> {
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: CustomNavigationBar(
         selectedIndex: 3,
-        noUpdateIndex: true,
+        allowReselect: true,
         destinations: const [
           NavigationDestination(icon: Icon(Icons.more_time), label: "Plan"),
           NavigationDestination(icon: Icon(Icons.tag), label: "Tags"),

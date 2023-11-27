@@ -1,7 +1,6 @@
 import 'package:app/pages/calendar.dart';
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
-import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/pages/welcome.dart';
 import 'package:app/provider/theme_settings.dart';
@@ -66,7 +65,7 @@ class _RootAppState extends State<RootApp>  {
                 "Calendar": (context) => const CalendarPage(),
                 "Dashboard": (context) => const DashboardPage(),
                 "Entries":(context) => const EntryPanelPage(),
-                "Plans": (context) => const PlansPage(),
+                "Plans": (context) => const EntryPanelPage(showPlans: true),
                 "Settings": (context) => const SettingsPage(),
                 "Welcome": (context) => const WelcomePage(),
                 "Tags": (context) => const TagSettingsPage(),

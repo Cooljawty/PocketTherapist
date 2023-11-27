@@ -335,14 +335,14 @@ class CustomNavigationBar extends StatelessWidget{
   final List<NavigationDestination> destinations;
   int selectedIndex;
   final ValueChanged<int>? onDestinationSelected;
-  bool noUpdateIndex;
+  bool allowReselect;
 
   CustomNavigationBar({
     super.key,
     this.selectedIndex = 0,
     this.destinations = defaultDestinations,
     this.onDestinationSelected,
-    this.noUpdateIndex = false,
+    this.allowReselect = false,
   });
 
   @override
@@ -352,10 +352,9 @@ class CustomNavigationBar extends StatelessWidget{
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if (!noUpdateIndex) if(index == selectedIndex) return;
+        if (!allowReselect) if(index == selectedIndex) return;
         if(index >= destinations.length) return;
         onDestinationSelected == null ? defaultOnDestinationSelected(index, context) : onDestinationSelected!(index);
-        selectedIndex = index;
       },
     );
   }
@@ -397,7 +396,7 @@ class _DisplayCardState extends State<DisplayCard> {
       child: GestureDetector(
         onTap: () async {
           await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntryPage(entry: widget.entry),));
-          /// Rebuild THIS widget if any chgned were made
+          /// Rebuild THIS widget if any changes were made
           setState(() {});
         },
         child: Card(
@@ -433,7 +432,19 @@ class _DisplayCardState extends State<DisplayCard> {
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
-                                style: DefaultTextStyle.of(context).style.apply(
+                                style: widget.entry.planCompleted == true
+                                // If plan is finished, show a strikethrough
+                                    ? DefaultTextStyle.of(context).style.apply(
+                                  fontSizeFactor: 1.3,
+                                  fontWeightDelta: 1,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationStyle: TextDecorationStyle.wavy,
+                                  decorationColor: Colors.orange,
+                                  // decorationThicknessFactor: 1.3,
+                                  // decorationThicknessDelta: 1,
+                                )
+                                // Otherwise no text style changes
+                                    : DefaultTextStyle.of(context).style.apply(
                                   fontSizeFactor: 1.3,
                                   fontWeightDelta: 1,
                                 ),
@@ -457,8 +468,25 @@ class _DisplayCardState extends State<DisplayCard> {
                         ),
                       ]
                   ),
-                  // spacer to push the date to the right and the text to the left
-                  const Spacer(),
+
+                  widget.entry.planCompleted == null
+                      ? Container()
+                      : IconButton(
+                      key: const Key("PlanCompleteButton"),
+                      // Show filled outline for completed
+                      icon: const Icon(Icons.check_box_outline_blank),
+                      selectedIcon: const Icon(Icons.check_box),
+                      isSelected: widget.entry.planCompleted == true,
+                      onPressed: (() {
+                        /// TODO: This might need to save to entries
+                        setState(() {
+                          // Toggle plan completion status on press
+                          if (widget.entry.planCompleted != null) {
+                            widget.entry.planCompleted =
+                            !widget.entry.planCompleted!;
+                          }
+                        });
+                      })),
 
                   // Date
                   Container(
