@@ -5,8 +5,6 @@ import 'package:app/pages/settings.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:app/provider/theme_settings.dart';
 
-// Widget imports
-import 'package:app/uiwidgets/buttons.dart';
 import '../uiwidgets/decorations.dart';
 
 // Dependency imports
