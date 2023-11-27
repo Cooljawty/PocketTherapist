@@ -1,189 +1,63 @@
-import 'package:app/pages/entry.dart';
+import 'dart:core';
+import 'package:app/provider/entry.dart';
 import 'package:app/provider/theme_settings.dart';
+import 'package:app/provider/settings.dart' as settings;
+import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:app/pages/new_entry.dart';
-import 'package:app/uiwidgets/navbar.dart';
 import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
 
-class EntriesPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
-  }
+// Display options
+const List<String> displayOptions = ['Week', 'Month', 'Year'];
+String chosenDisplay = 'Week';
 
-  const EntriesPage({super.key});
+//
+// /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
+// /// [items] = journal entry list;
+// /// [chosenDisplay] = 'Week', 'Month', 'Year';
+// /// [getCompletedList] = print the completed list
+// List<JournalEntry> getFilteredList(
+//     List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
+// // Sort the Journal entries by most recent date
+//   final sortedItems = items..sort();
+//   List<JournalEntry> filteredList = [];
+//
+//   for (int i = 0; i < sortedItems.length; i++) {
+//     if (getCompleteList) {
+//       filteredList.add(sortedItems[i]);
+//     } else {
+//       final firstItem = sortedItems[0]; // get the most recent entry
+//       final item = sortedItems[i]; // get the next item
+//       final time = firstItem.date; // get the date for the first item
+//
+//       // check to see if the item is in the filter
+//       bool isSameDate = time.isWithinDateRange(item.date, chosenDisplay!);
+//
+//       if (isSameDate) {
+//         // if item is in the filter, add it to the return list
+//         filteredList.add(sortedItems[i]);
+//       }
+//     }
+//   }
+//   return filteredList;
+// }
+
+/// [EntryPanelPage] is the page for all of the entries that user has entered.
+class EntryPanelPage extends StatefulWidget {
+  const EntryPanelPage({super.key});
 
   @override
-  State<EntriesPage> createState() => _EntriesPageState();
+  State<EntryPanelPage> createState() => _EntryPanelPageState();
 }
 
-List<JournalEntry> entries = [
-  // JournalEntry(
-  //     title: "Location: Paris, France",
-  //     entryText:
-  //         'Today was my first day in Paris and it was absolutely magical. I woke up early and headed straight to the '
-  //         'Eiffel Tower to catch the sunrise. The view from the top was breathtaking, with the sun just peeking over the horizon '
-  //         'and casting a warm glow over the city.',
-  //     date: DateTime(2022, 7, 12),
-  //     tags: [
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //       Tag(name: 'Present', color: const Color(0xffff7070)),
-  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
-  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-  //     ],
-  //     emotions: [
-  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 90),
-  //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 70),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: "What are my core values and how do they impact my decisions?",
-  //     entryText:
-  //         'Today I’ve been considering my core values and how they impact the decisions I make in my life. I realize '
-  //         'that my values are an essential part of who I am, and they play a significant role in shaping my thoughts, actions, '
-  //         'and choices.',
-  //     date: DateTime(2023, 1, 15),
-  //     tags: [
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-  //     ],
-  //     emotions: [
-  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 40),
-  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 70),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: "Today was a good day",
-  //     entryText:
-  //         'Today was a busy day at work. I had a lot of meetings and deadlines to meet, which kept me on my toes all day. '
-  //         'I felt a little bit stressed at times, but overall, I was able to stay focused and get everything done that needed to '
-  //         'be done.',
-  //     date: DateTime(2023, 4, 27),
-  //     tags: [
-  //       Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-  //       Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-  //     ],
-  //     emotions: [
-  //       Emotion(name: 'Happy', color: const Color(0xfffddd68), strength: 80),
-  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
-  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 10),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: '“If not now, when?”',
-  //     entryText:
-  //         'Today, I decided to experiment with some mixed media art in my art journal. I started'
-  //         ' by collaging some old book pages onto the page, creating a textured background. Then, I used watercolors to paint over the top,'
-  //         ' blending different colors and creating a dreamy, abstract effect.',
-  //     date: DateTime(2022, 5, 12),
-  //     tags: [
-  //       Tag(name: 'Present', color: const Color(0xffff7070)),
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: "Mood",
-  //     entryText:
-  //         'I was late for work because of heavy traffic, and as soon as I walked into the office, my manager confronted me about '
-  //         'being late',
-  //     date: DateTime(2022, 8, 18),
-  //     emotions: [
-  //       //Emotion(name: 'Anticipation', color: const Color(0xffff8000), strength: 60),
-  //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
-  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 60),
-  //     ]),
-  //
-  // // JournalEntry(
-  // //     title: "Complete a 10k race in under an hour by the end of the year.",
-  // //     entryText: 'I want to complete a 10k race in under an hour by the end of the year because I want to challenge myself, push my limits,'
-  // //         ' and achieve something I’ve never done before.',
-  // //     date: DateTime(2022, 9, 14),
-  // //     emotions: [
-  // //       Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 100),
-  // //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 100),
-  // //     ]
-  // // ),
-  //
-  // JournalEntry(
-  //     title: "I am grateful for this moment of mindfulness",
-  //     entryText:
-  //         'Today, I took a few minutes to practice mindfulness during my lunch break. I closed my eyes and took a few deep breaths, '
-  //         'feeling the air fill my lungs and then releasing it slowly.',
-  //     date: DateTime(2022, 10, 21),
-  //     tags: [
-  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-  //       Tag(name: 'Present', color: const Color(0xffff7070)),
-  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
-  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
-  //       Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-  //       Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-  //     ],
-  //     emotions: [
-  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: "Extraordinary beauty of nature",
-  //     entryText:
-  //         'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
-  //         'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-  //     date: DateTime(2023, 5, 17),
-  //     tags: [
-  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
-  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
-  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-  //     ],
-  //     emotions: [
-  //       Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
-  //       Emotion(name: 'Trust', color: const Color(0xff308c7e), strength: 100),
-  //     ]),
-  //
-  // JournalEntry(
-  //     title: "Flying Over the Ocean",
-  //     entryText:
-  //         'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
-  //         'bright and the sky was a brilliant shade of blue. ',
-  //     date: DateTime(2022, 9, 12),
-  //     tags: [
-  //       Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-  //       Tag(name: 'Centered', color: const Color(0xff794e5e)),
-  //       Tag(name: 'Content', color: const Color(0xfff1903b)),
-  //       Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
-  //       Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-  //       Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
-  //       Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-  //     ],
-  //     emotions: [
-  //       Emotion(
-  //           name: 'Anticipation', color: const Color(0xffff8000), strength: 50),
-  //       Emotion(name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
-  //     ]),
-];
-
-//Generated list of journal entries
-final items = entries;
-
-// Display options
-final List<String> displayOptions = ['Week', 'Month', 'Year'];
-String? chosenDisplay = 'Week';
-
-// Sort the Journal entries by most recent date
-late List<JournalEntry> sortedItems;
-bool showAllItems = true;
-
-class _EntriesPageState extends State<EntriesPage> {
+class _EntryPanelPageState extends State<EntryPanelPage> {
+  bool showAllItems = true;
+  
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
+    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+    entries.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -220,7 +94,7 @@ class _EntriesPageState extends State<EntriesPage> {
                             .toList(),
                         // if changed set new display option
                         onChanged: (item) => setState(() {
-                          chosenDisplay = item;
+                          chosenDisplay = item ?? chosenDisplay;
                         }),
                       ),
                     ),
@@ -229,11 +103,11 @@ class _EntriesPageState extends State<EntriesPage> {
                   //holds the list of entries
                   Expanded(
                       child: ListView.builder(
-                    itemCount: sortedItems.length,
+                    itemCount: entries.length,
                     itemBuilder: (context, index) {
                       // get one item
-                      final item = sortedItems[index];
-                      final time = item.getDate();
+                      final item = entries[index];
+                      final time = item.date;
 
                       // Dividers by filter
                       bool isSameDate = true;
@@ -242,8 +116,8 @@ class _EntriesPageState extends State<EntriesPage> {
                         isSameDate = false;
                       } else {
                         // else check if same date by filters
-                        isSameDate = time.isSameDate(
-                            sortedItems[index - 1].getDate(), chosenDisplay!);
+                        isSameDate = time.isWithinDateRange(
+                            entries[index - 1].date, chosenDisplay);
                       }
                       return Column(
                           mainAxisAlignment: MainAxisAlignment
@@ -280,7 +154,7 @@ class _EntriesPageState extends State<EntriesPage> {
                               // Issue with the key, needs to be specific id, not a
                               // name or will receive error that dismissible is still
                               // in the tree
-                              key: Key(item.getID().toString()),
+                              key: Key(item.id.toString()),
 
                               //prevents right swipes
                               direction: DismissDirection.endToStart,
@@ -290,14 +164,14 @@ class _EntriesPageState extends State<EntriesPage> {
                               onDismissed: (direction) {
                                 // Remove the item from the data source.
                                 setState(() {
-                                  items.removeAt(index);
+                                  entries.removeAt(index);
                                 });
 
                                 // Then show a snackBar w/ item name as dismissed message
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
-                                            '${item.getTitle()} deleted')));
+                                            '${item.title} deleted')));
                               },
                               confirmDismiss:
                                   (DismissDirection direction) async {
@@ -323,79 +197,408 @@ class _EntriesPageState extends State<EntriesPage> {
                                   },
                                 );
                               },
-                              child: item.asDisplayCard(),
+                              child: DisplayCard(entry: item),
                             )
                           ]); // if in the same filter header list, then just make a new entry
                     },
                   )),
-                  Align(
-                      alignment: Alignment.center,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            makeNewEntry();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                          ),
-                          key: const Key("New Entry"),
-                          child: const Icon(Icons.add))),
                 ],
               ),
             ),
           ]),
-          bottomNavigationBar: NavBar(
+          bottomNavigationBar: CustomNavigationBar(
             selectedIndex: 1,
-            destinations: [
-              destinations['dashboard']!,
-              destinations['entries']!,
-              destinations['calendar']!,
-              destinations['plans']!,
-              destinations['settings']!,
-            ],
-          ),
+            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+            onDestinationSelected: (index) async {
+              switch(index) {
+                case 2: await makeNewEntry(context); setState((){}); return;
+                case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
+                case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
+              }
+            }
+          )
         );
       },
     );
   }
-
-  makeNewEntry() async {
-    final result = await Navigator.push(context, NewEntryPage.route());
-    setState(() {
-      items.add(result);
-    });
-  }
 }
 
-// items = journal entry list;
-// chosenDisplay = 'Week', 'Month', 'Year';
-// getCompletedList = print the completed list
-List<JournalEntry> getFilteredList(
-    List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
-// Sort the Journal entries by most recent date
-  final sortedItems = items
-    ..sort((item1, item2) => item2.getDate().compareTo(item1.getDate()));
-  List<JournalEntry> filteredList = [];
+/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+/// creation of new entries, modification of them.
+class EntryPage extends StatefulWidget {
+  final JournalEntry? entry;
+  const EntryPage({
+    super.key,
+    this.entry
+  });
 
-  for (int i = 0; i < sortedItems.length; i++) {
-    if (getCompleteList) {
-      filteredList.add(sortedItems[i]);
+  @override
+  State<EntryPage> createState() => _EntryPageState();
+}
+
+class _EntryPageState extends State<EntryPage> {
+  final ValueNotifier<double> progress = ValueNotifier(0);
+
+  // List of selected tags to keep track of when making the chip list
+  List<Tag> selectedTags = [];
+  List<Emotion> selectedEmotions = [];
+
+  // Add text controllers to retrieve text data
+  final titleController = TextEditingController();
+  final entryTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.entry != null) {
+      selectedTags = widget.entry!.tags;
+      selectedEmotions = widget.entry!.emotions;
+      titleController.text = widget.entry!.title;
+      entryTextController.text = widget.entry!.entryText;
     } else {
-      final firstItem = sortedItems[0]; // get the most recent entry
-      final item = sortedItems[i]; // get the next item
-      final time = firstItem.getDate(); // get the date for the first item
-
-      // check to see if the item is in the filter
-      bool isSameDate = time.isSameDate(item.getDate(), chosenDisplay!);
-
-      if (isSameDate) {
-        // if item is in the filter, add it to the return list
-        filteredList.add(sortedItems[i]);
-      }
+      selectedTags = [];
+      selectedEmotions = [];
     }
   }
-  return filteredList;
+
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    titleController.dispose();
+    entryTextController.dispose();
+    super.dispose();
+  }
+
+  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
+    return tagList.map((tag) => FilterChip(
+        label: Text(tag.name),
+        selected: selectedTags.any((element) => element.name == tag.name),
+        showCheckmark: false,
+        selectedColor: tag.color,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding tag is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
+            });
+          });
+        },
+      )).toList();
+  }
+
+  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
+    return emotionList.entries.map((e) => FilterChip(
+        label: Text(e.key),
+        selected: selectedEmotions.any((element) => element.name == e.key),
+        showCheckmark: false,
+        selectedColor: e.value,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding emote is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedEmotions.add(Emotion(name: e.key, color: e.value)) : selectedEmotions.removeWhere((element) => element.name == e.key);
+            });
+          });
+        },
+    )).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                  children: [
+                    // Text field for the Journal Entry Title
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(
+                        controller: titleController,
+                        key: const Key("titleInput"),
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Title',
+                        ),
+                      ),
+                    ),
+                    // Text input field for the Journal Entry Body
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(
+                        controller: entryTextController,
+                        key: const Key("journalInput"),
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Journal Entry',
+                        ),
+                        maxLines: 8,
+                        minLines: 1,
+                      ),
+                    ),
+
+                    // Chip display for the tags
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      // Make the chips scrollable
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          key: const Key('TagChipsDisplay'),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            spacing: 5,
+                            children: selectedTags
+                                .map((tag) => ActionChip(
+                              label: Text(tag.name),
+                              backgroundColor: tag.color,
+                              onPressed: () {
+                                setState(() {
+                                  selectedTags.removeWhere((element) =>
+                                  element.name == tag.name);
+                                });
+                              },
+                            )).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Chip display for the emotions
+                    Padding(
+                        padding: const EdgeInsets.all(20),
+                        // Make the chips scrollable
+                        child: Scrollbar(
+                            child: SingleChildScrollView(
+                                key: const Key('EmotionChipsDisplay'),
+                                scrollDirection: Axis.horizontal,
+                                child: Wrap(
+                                  spacing: 5,
+                                  children: selectedEmotions
+                                      .map((Emotion emotion) => ActionChip(
+                                    label: Text(emotion.name),
+                                    backgroundColor: emotion.color,
+                                    onPressed: () =>
+                                        _emotionalDial(context, emotion),
+
+                                  ))
+                                      .toList(),
+                                )))),
+                  ]))),
+
+      // Plan save tag in replacement of the nav bar
+      bottomNavigationBar: Container(
+          transform: Matrix4.translationValues(0, 3, 0),
+          decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
+                  side: BorderSide(
+                    width: 3,
+                    color: settings.getCurrentTheme().colorScheme.primary,
+                  ))),
+          margin: EdgeInsets.only(
+              left: (MediaQuery.of(context).size.width / 10),
+              right: (MediaQuery.of(context).size.width / 10)),
+
+          // Keep all the button spaced evenly and centered on the page
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //crossAxisAlignment: CrossAxisAlignment.baseline,
+            children: [
+              // Plan button
+              TextButton(
+                  key: const Key("planButton"),
+                  child: const Text('Plan'),
+                  onPressed: () {}),
+              /*
+                  * Tag button
+                  * Will create a multi select dialog field that will allow
+                  * users to select the tags for the Journal Entry
+                  */
+              TextButton(
+                  key: const Key("tagButton"),
+                  child: const Text('Tag'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                              return AlertDialog(
+                                title: const Text("Select Tags"),
+                                content: Wrap(
+                                  spacing: 5.0,
+                                  children: createAvailableTagsList(stfSetState),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    key: const Key('saveTagsButton'),
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      Navigator.of(stfContext).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    );
+                  }),
+
+              TextButton(
+                  key: const Key("emotionButton"),
+                  child: const Text('Emotion'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                              return AlertDialog(
+                                title: const Text("Select Emotions"),
+                                content: Wrap(
+                                  spacing: 5.0,
+                                  children: createAvailableEmotionsList(stfSetState),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    key: const Key('saveEmotionsButton'),
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      Navigator.of(stfContext).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    );
+                  }),
+
+              // Save button
+              TextButton(
+                  key: const Key("saveButton"),
+                  child: const Text('Save'),
+                  onPressed: () {
+                    Navigator.pop(context, getEntry());
+                  }),
+            ],
+          )),
+    );
+  }
+
+  // Make an Alert Dialog Box that will display the emotional dial and a save button
+  dynamic _emotionalDial(BuildContext context, Emotion emotion) async {
+    int strength = 0;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: CircularSeekBar(
+              key: const Key('EmotionalDial'),
+              width: double.infinity,
+              height: 175,
+              progress: emotion.strength.toDouble(),
+              barWidth: 8,
+              startAngle: 5,
+              sweepAngle: 360,
+              strokeCap: StrokeCap.butt,
+              progressGradientColors: const [
+                Colors.red,
+                Colors.orange,
+                Colors.yellow,
+                Colors.green,
+                Colors.blue,
+                Colors.indigo,
+                Colors.purple
+              ],
+              innerThumbRadius: 5,
+              innerThumbStrokeWidth: 3,
+              innerThumbColor: Colors.white,
+              outerThumbRadius: 5,
+              outerThumbStrokeWidth: 10,
+              outerThumbColor: Colors.blueAccent,
+              dashWidth: 26,
+              dashGap: 10,
+              animation: false,
+              valueNotifier: progress,
+              child: Center(
+                child: ValueListenableBuilder(
+                    valueListenable: progress,
+                    builder: (_, double value, __) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(() {
+                          // on changed, set the strength
+                          strength = value.round();
+                          return '${value.round()}';
+                        }()),
+                        const Text('progress'),
+                      ],
+                    )),
+              ),
+            ),
+            actions: [
+              // pop the alert dialog off the screen and don't save the strength changes
+              TextButton(
+                  key: const Key('cancelDial'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel")),
+
+              // Save the strength changes and pop the dialog off the screen
+              TextButton(
+                  key: const Key('saveDial'),
+                  onPressed: () {
+                    emotion.strength = strength;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Save")),
+            ],
+          );
+        });
+  }
+
+  // Make the journal entry and save it
+  JournalEntry? getEntry() {
+    // Database entry point for creating journal entry
+    if(widget.entry == null) {
+      //TODO: do databse things to save new journal entry: db.insert
+      return JournalEntry(
+        title: titleController.text,
+        entryText: entryTextController.text,
+        date: DateTime.now(),
+        tags: selectedTags,
+        emotions: selectedEmotions,
+      );
+    } 
+    else {
+      // entry exists, we are modifying
+      //TODO: do datbase things for updating journal entry
+      // I have the full record, just patch the record.
+      widget.entry!.update(
+        titleController.text,
+        entryTextController.text,
+        selectedTags,
+        selectedEmotions
+      );
+      return widget.entry!;
+    }
+  }
 }
 
+/// [Formatter] is an extended DateTime Object that
 extension Formatter on DateTime {
   // Get the month string
   String formatDate() {
@@ -430,7 +633,7 @@ extension Formatter on DateTime {
   }
 
   // Check if entries are in the same filter date
-  bool isSameDate(DateTime other, String display) {
+  bool isWithinDateRange(DateTime other, String display) {
     switch (display) {
       // If week filter, then check if in the same year, month, and week
       case 'Week':

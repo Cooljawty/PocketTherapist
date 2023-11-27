@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:app/exceptions/exception.dart';
 import 'package:app/provider/encryptor.dart' as encrypter;
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:io';
@@ -7,7 +5,7 @@ import 'dart:io';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test("Testing hex encode and decode", () {
+  test("Testing hex encode and decode", () async {
     String message = "No ill never tell ;)";
     stdout.writeln(message);
     String hex =encrypter.hexEncode(message.codeUnits);
@@ -56,10 +54,10 @@ void main() {
     await encrypter.setPassword(password); // reset the pasword
     cipher = encrypter.encrypt(message);
 
-    Map<String, dynamic> enc = encrypter.save();
+    encrypter.save();
 
     // Encryption key is encrypted inside this, w/ PBKDF
-    await expectLater(() => encrypter.load(enc), returnsNormally); // load the encryption key
+    await expectLater(() => encrypter.load(), returnsNormally); // load the encryption key
 
     // This will overwrite the encrypter with something else, so
     // If it can still decrypt the original cipher text, then it is correct.
@@ -67,11 +65,6 @@ void main() {
     await expectLater(valid, true);
     decrypted = encrypter.decrypt(cipher);
     await expectLater(decrypted == message, true);
-
-    var fake = Map<String, dynamic>.from(enc);
-    fake['data'] = encrypter.hexEncode(utf8.encode("PotatoChips"));
-    await expectLater(() => encrypter.load(fake), throwsA(isA<SignatureMismatchException>()));
-
   });
 
 

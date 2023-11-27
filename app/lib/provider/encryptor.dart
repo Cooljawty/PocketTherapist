@@ -1,8 +1,6 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:app/exceptions/exception.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:app/provider/settings.dart' as settings;
@@ -230,41 +228,50 @@ String compressContents() =>
     hexEncode(utf8.encode(
         "$_passwordHash#$_keyCipher#$_recoveryKeyCipher#$_recoveryHash"));
 
-UnmodifiableMapView<String, dynamic> save() =>
-    UnmodifiableMapView({
+void save() {
+     Map<String, String> x = {
       "data": compressContents(),
       "sig": sha512sum(compressContents()),
-    });
+    };
+    settings.setOtherSetting("enc", x);
+}
 
-void load(Map<String, dynamic> map) {
-  String data = map['data'];
-  List<String> actualData = utf8.decode(hexDecode(data)).split('#');
+void load() {
+  Object? map = settings.getOtherSetting('enc');
+  if(map != null && map is Map<String, dynamic>){
+    String data = map['data']!;
+    List<String> actualData = utf8.decode(hexDecode(data)).split('#');
 
-  String dataSig = sha512sum(data);
-  String receivedSig = map['sig'];
-  data = "";
-  map = {};
-  if (dataSig != receivedSig) {
-    dataSig = "";
-    receivedSig = "";
+    String dataSig = sha512sum(data);
+    String receivedSig = map['sig']!;
+    data = "";
+    map = {};
+    if (dataSig != receivedSig) {
+      dataSig = "";
+      receivedSig = "";
+      actualData.clear();
+      throw Exception(
+          "Signatures did not match, data integrity has been compromised!");
+    }
+    // Get the hash, salt is built into the hash
+    _passwordHash = actualData[0];
+    // Get the cipher
+    _keyCipher = actualData[1];
+    _recoveryKeyCipher = actualData[2];
+    _recoveryHash = actualData[3];
+
     actualData.clear();
-    throw SignatureMismatchException(
-        "Signatures did not match, data integrity has been compromised!");
   }
-  // Get the hash, salt is built into the hash
-  _passwordHash = actualData[0];
-  // Get the cipher
-  _keyCipher = actualData[1];
-  _recoveryKeyCipher = actualData[2];
-  _recoveryHash = actualData[3];
 
-  actualData.clear();
 }
 
 void reset() {
   _encrypter = null;
   _passwordHash = "";
   _keyCipher = "";
+  _recoveryKeyCipher = "";
+  _recoveryHash = "";
+  _recovery = "";
 }
 
 /// Password can be empty, this is only used if the password is supplied
