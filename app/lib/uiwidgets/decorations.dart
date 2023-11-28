@@ -327,32 +327,32 @@ class CustomNavigationBar extends StatelessWidget{
             NavigationDestination(
 							icon: Icon(Icons.dashboard), 
 							label: "Dashboard", 
-							key: const Key("Navigation_Destination_Dashboard")
+							key: Key("Navigation_Destination_Dashboard")
 						),
             NavigationDestination(
 							icon: Icon(Icons.feed),
 							label: "Entries",
-							key: const Key("Navigation_Destination_Entries"),
+							key: Key("Navigation_Destination_Entries"),
 						),
             NavigationDestination(
 							icon: Icon(Icons.add),
 							label: "NewEntry",
-							key: const Key("Navigation_Destination_NewEntry"),
+							key: Key("Navigation_Destination_NewEntry"),
 						),
             NavigationDestination(
 							icon: Icon(Icons.calendar_month),
 							label: "Calendar",
-							key: const Key("Navigation_Destination_Calendar"),
+							key: Key("Navigation_Destination_Calendar"),
 						),
             NavigationDestination(
 							icon: Icon(Icons.event_note),
 							label: "Plans",
-							key: const Key("Navigation_Destination_Plans"),
+							key: Key("Navigation_Destination_Plans"),
 						),
             NavigationDestination(
 							icon: Icon(Icons.settings),
 							label: "Settings",
-							key: const Key("Navigation_Destination_Settings"),
+							key: Key("Navigation_Destination_Settings"),
 						),
         ];
 

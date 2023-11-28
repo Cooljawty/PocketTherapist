@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'test_utils.dart';
 
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:app/pages/entries.dart';
 import 'package:app/uiwidgets/decorations.dart';
 
 import 'package:app/provider/settings.dart' as settings;
-import 'package:app/main.dart' as app;
 import 'package:app/provider/entry.dart';
 
 void main() {
@@ -32,7 +30,7 @@ void main() {
 		//Ensuere the right number of days are on grid
 		final today = DateTime.now();
 		final firstOfTheMonth = DateTime(today.year, today.month, 1);
-		final lastOfTheMonth = DateTime(today.month < DateTime.december ? today.year : today.year+1, today.month < DateTime.december ? today.month + 1 : 1, 1).subtract(Duration(days: 1));
+		final lastOfTheMonth = DateTime(today.month < DateTime.december ? today.year : today.year+1, today.month < DateTime.december ? today.month + 1 : 1, 1).subtract(const Duration(days: 1));
 
 		final firstWeekPadding = firstOfTheMonth.weekday - 1;
 		final lastWeekPadding = 7 - lastOfTheMonth.weekday;
@@ -59,7 +57,7 @@ void main() {
 			}
 
 			final firstOfTheMonth = DateTime(date.year, date.month, 1);
-			final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(Duration(days: 1));
+			final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(const Duration(days: 1));
 
 			final firstWeekPadding = firstOfTheMonth.weekday - 1;
 			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
@@ -82,11 +80,11 @@ void main() {
 		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
 		while( date.isAfter(DateTime(DateTime.now().year - 4, DateTime.now().month, 1)) ){
 			//Calculate date of previous month
-			final lastOfPreviousMonth = date.subtract(Duration(days: 1));
+			final lastOfPreviousMonth = date.subtract(const Duration(days: 1));
 			date = DateTime(lastOfPreviousMonth.year, lastOfPreviousMonth.month, 1);
 
 		final firstOfTheMonth = DateTime(date.year, date.month, 1);
-		final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(Duration(days: 1));
+		final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(const Duration(days: 1));
 
 			final firstWeekPadding = firstOfTheMonth.weekday - 1;
 			final lastWeekPadding = 7 - lastOfTheMonth.weekday;

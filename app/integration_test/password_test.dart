@@ -34,6 +34,7 @@ void main () async {
       await startAppWithSettings(widgetTester, settingsMap);
       await pumpUntilFound(widgetTester, find.byKey(const Key("Reset_Button")));
 
+
       Finder resetButton = find.byKey(const Key("Reset_Button"));
         await tap(widgetTester, resetButton);
         Finder passwordResetField = find.byKey(const Key("Reset_Password_Field"));
@@ -43,9 +44,12 @@ void main () async {
 
         Finder resetPasswordbutton = find.byKey(const Key("Reset_Password_Button"));
         await tap(widgetTester, resetPasswordbutton);
+				await widgetTester.pump(Duration(seconds: 1));
 
         Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
+				await expectLater(okResetPassButton, findsOneWidget);
         await tap(widgetTester, okResetPassButton);
+				await widgetTester.pump(Duration(seconds: 1));
 
         await widgetTester.enterText(passwordResetField, recovery);
         await widgetTester.pump();
@@ -98,10 +102,12 @@ void main () async {
 
       Finder resetPasswordbutton = find.byKey(const Key("Reset_Password_Button"));
       await tap(widgetTester, resetPasswordbutton);
+			await widgetTester.pump(Duration(seconds: 1));
 
       Finder okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
+			await expectLater(okResetPassButton, findsOneWidget);
       await widgetTester.tap(okResetPassButton);
-      await widgetTester.pump();
+			await widgetTester.pump(Duration(seconds: 1));
       await expectLater(find.text("Encryption?"), findsOneWidget);
     } , timeout: const Timeout(Duration(minutes: 2)));
 }

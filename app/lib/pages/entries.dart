@@ -10,10 +10,16 @@ import 'package:app/helper/dates_and_times.dart';
 
 // Display options
 enum DisplayOption{ 
-	Week, Month, Year; 
- String toString() => this.name.split('.').last;
+	week, month, year; 
+
+	@override
+	String toString() => switch(this) {
+		DisplayOption.week => "Week",
+		DisplayOption.month => "Month",
+		DisplayOption.year => "Year",
+	};
 }
-DisplayOption chosenDisplay = DisplayOption.Week;
+DisplayOption chosenDisplay = DisplayOption.week;
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -69,14 +75,14 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 		//Show entreis in range of given date or from today
 		final today = widget.targetDate ?? DateTime.now();
 		final startDate = switch(chosenDisplay) {
-			DisplayOption.Week => today.subtract(Duration(days: today.weekday - 1)), 
-			DisplayOption.Month => DateTime(today.year, today.month, 1), 
-			DisplayOption.Year => DateTime(today.year, 1, 1), 
+			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
+			DisplayOption.month => DateTime(today.year, today.month, 1), 
+			DisplayOption.year => DateTime(today.year, 1, 1), 
 		};
 		final endDate = switch(chosenDisplay) {
-			DisplayOption.Week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.Month => DateTime(today.year, today.month, 0),
-			DisplayOption.Year => DateTime(today.year, 12, 0),
+			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
+			DisplayOption.month => DateTime(today.year, today.month, 0),
+			DisplayOption.year => DateTime(today.year, 12, 0),
 		};
 		final filteredEntries = entriesInDateRange( context, startDate, endDate).toList();
     filteredEntries.sort();
@@ -117,10 +123,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         // if changed set new display option
                         onChanged: (item) => setState(() {
                           chosenDisplay = switch(item) {
-														"Week" => DisplayOption.Week,
-														"Month" => DisplayOption.Month,
-														"Year" => DisplayOption.Year,
-														_ => DisplayOption.Week,
+														"Week" => DisplayOption.week,
+														"Month" => DisplayOption.month,
+														"Year" => DisplayOption.year,
+														_ => null,
 													} ?? chosenDisplay;
                         }),
                       ),
@@ -153,7 +159,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 															if (index == 0 || !(isSameDate)) ...[
 																Text(() {
 																	// If weekly view, then calculate weeks of the year and display range in header
-																	if (chosenDisplay == DisplayOption.Week) {
+																	if (chosenDisplay == DisplayOption.week) {
 																		DateTime firstOfYear =
 																				DateTime(DateTime.now().year, 1, 1);
 																		int weekNum = firstOfYear.getWeekNumber(
@@ -165,7 +171,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
 																		// Range for the week
 																		return '${lower.formatDate().month} ${lower.day.toString()} - ${upper.formatDate().month} ${upper.day.toString()}, ${time.year.toString()}';
-																	} else if (chosenDisplay == DisplayOption.Month) {
+																	} else if (chosenDisplay == DisplayOption.month) {
 																		// If monthly, only display month and year
 																		return '${time.formatDate().month} ${time.year.toString()}';
 																	} else {
@@ -779,7 +785,7 @@ List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
 				emotions: [
 					Emotion(
 						name: "Happy",
-						color: Color(0xfffddd68),
+						color: const Color(0xfffddd68),
 						strength: 30,
 					),
 				]

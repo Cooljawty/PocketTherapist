@@ -1,5 +1,5 @@
 extension Formatter on DateTime {
-	static const DATE_ERROR_STRING = 'Date is Wrong';
+	static const formatErrorString = 'Date is Wrong';
 
   // Get the month string
   ({String day, String month, String weekday}) formatDate() {
@@ -17,7 +17,7 @@ extension Formatter on DateTime {
 				DateTime.october =>'October',
 				DateTime.november =>'November',
 				DateTime.december =>'December',
-				_ => DATE_ERROR_STRING, // This should never happen
+				_ => formatErrorString, // This should never happen
 			},
 			weekday: switch (weekday) {
 				DateTime.monday => "Monday",
@@ -27,7 +27,7 @@ extension Formatter on DateTime {
 				DateTime.friday => "Friday",
 				DateTime.saturday => "Saturday",
 				DateTime.sunday => "Sunday",
-				_ => DATE_ERROR_STRING, // This should never happen
+				_ => formatErrorString, // This should never happen
 			},
 			day: switch (day) {
 				1 => "1st",
@@ -35,7 +35,7 @@ extension Formatter on DateTime {
 				3 => "3rd",
 				_ when day < 31 => "${day}th",
 				31 => "31st",
-				_ => DATE_ERROR_STRING, // This should never happen
+				_ => formatErrorString, // This should never happen
 			},
 		);
   }

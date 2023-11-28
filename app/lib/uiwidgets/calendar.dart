@@ -9,6 +9,7 @@ import 'package:app/pages/entries.dart';
 
 
 class Calendar extends StatefulWidget {
+	const Calendar({super.key});
 
 	@override
 	State<Calendar> createState() => _CalendarState();
@@ -21,7 +22,7 @@ class _CalendarState extends State<Calendar> {
 	List<({int strength, Color color})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
-	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(Duration(days: 1));
+	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
 
 
 	///Displays a given day of the month in a container with the color set 
@@ -34,7 +35,7 @@ class _CalendarState extends State<Calendar> {
 			margin: const EdgeInsets.all(4.0),
 			decoration: ShapeDecoration(
 				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
-				shape: CircleBorder(),
+				shape: const CircleBorder(),
 			),
 			child: Text(
 				"${day+1}", 
@@ -56,7 +57,7 @@ class _CalendarState extends State<Calendar> {
 		}
 
 		//Fill the start and end to line up weekdays
-		final startFirstWeek = startDate!.subtract(Duration(days: startDate.weekday));
+		final startFirstWeek = startDate.subtract(Duration(days: startDate.weekday));
 		final prePaddedDays = List<Widget>.generate(startDate.weekday - 1, (day) {
 			return _displayDay( startFirstWeek.day + day, outOfRange: true);
 		});
@@ -90,20 +91,20 @@ class _CalendarState extends State<Calendar> {
 				children: [
 					//Calendar title and time range changerj
 					Container(
-						margin: const EdgeInsets.only(top: 13) + EdgeInsets.symmetric(horizontal: 14),
+						margin: const EdgeInsets.only(top: 13) + const EdgeInsets.symmetric(horizontal: 14),
 						child: Row( 
 							children: [
 								IconButton(
 									key: const Key("Date_Previous"),
 									icon: const Icon( Icons.navigate_before, ),
 									onPressed: ()=> setState(() {
-										endDate = startDate.subtract(Duration(days: 1));
+										endDate = startDate.subtract(const Duration(days: 1));
 										startDate = DateTime(endDate.year, endDate.month, 1);
 									}),
 								),
 								Expanded( 
 									child: Text(
-										"${startDate.formatDate().month}" 
+										startDate.formatDate().month 
 										//Add year if nessicary
 										+ ((startDate.year != DateTime.now().year) ? " ${startDate.year}" : ""), 
 										style: settings.getCurrentTheme().textTheme.titleLarge,
@@ -114,14 +115,14 @@ class _CalendarState extends State<Calendar> {
 									key: const Key("Date_Next"),
 									icon: const Icon( Icons.navigate_next, ),
 									onPressed: ()=> setState(() {
-										startDate = endDate.add(Duration(days: 1));
+										startDate = endDate.add(const Duration(days: 1));
 										endDate = _getLastOfTheMonth(startDate);
 									}),
 								),
 							]
 						),
 					),
-					Divider(),
+					const Divider(),
 					//Weekday header
 					Row( 
 						children: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((weekday) {
