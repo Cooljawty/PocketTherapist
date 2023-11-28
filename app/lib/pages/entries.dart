@@ -296,7 +296,7 @@ class _EntryPageState extends State<EntryPage> {
               onSelected: (bool selected) {
                 stfSetState(() {
                   setState(() {
-                    /// When the cooresponding tag is selected, add it or remove it based on the name
+                    /// When the corresponding tag is selected, add it or remove it based on the name
                     //TODO: Update this when references are added to work only with references.
                     selected
                         ? selectedTags.add(tag)
@@ -426,11 +426,18 @@ class _EntryPageState extends State<EntryPage> {
         selectedIndex: 3,
         allowReselect: true,
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.more_time), label: "Plan"),
-          NavigationDestination(icon: Icon(Icons.tag), label: "Tags"),
           NavigationDestination(
-              icon: Icon(Icons.emoji_emotions), label: "Emotions"),
-          NavigationDestination(icon: Icon(Icons.save), label: "Save"),
+              key: Key("planButton"),
+              icon: Icon(Icons.more_time),
+              label: "Plan"),
+          NavigationDestination(
+              key: Key("tagButton"), icon: Icon(Icons.tag), label: "Tags"),
+          NavigationDestination(
+              key: Key("emotionButton"),
+              icon: Icon(Icons.emoji_emotions),
+              label: "Emotions"),
+          NavigationDestination(
+              key: Key("saveButton"), icon: Icon(Icons.save), label: "Save"),
         ],
         onDestinationSelected: (index) async {
           switch (index) {
