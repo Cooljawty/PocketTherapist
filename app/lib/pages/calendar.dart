@@ -15,6 +15,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+			key: const Key("Calendar_Page"),
 			body: SafeArea(
 				child: Padding(
 					padding: const EdgeInsets.fromLTRB(12, 12, 12, 18),

@@ -7,6 +7,7 @@ import 'package:app/provider/settings.dart' as settings;
 
 import 'package:app/pages/entries.dart';
 
+
 class Calendar extends StatefulWidget {
 
 	@override
@@ -68,9 +69,171 @@ class _CalendarState extends State<Calendar> {
 	
 	@override
 	Widget build(BuildContext context) {
+		//Temp entries
+		entries.add([
+				JournalEntry(
+					title: "day one entry 1", entryText: "", 
+					date: DateTime(2023, 11, 1), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 60,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day one entry 2", entryText: "", 
+					date: DateTime(2023, 11, 1), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 30,
+						),
+					]
+				),
+				JournalEntry(
+					title: "", entryText: "", 
+					date: DateTime(2023, 11, 2), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 30,
+						),
+						Emotion(
+							name: "Angry",
+							color: Colors.red,
+							strength: 8,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day thrree entry 1", entryText: "", 
+					date: DateTime(2023, 11, 3), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 15,
+						),
+						Emotion(
+							name: "Happy",
+							color: Colors.green,
+							strength: 30,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day thrree entry 2", entryText: "", 
+					date: DateTime(2023, 11, 3), 
+					emotions: [
+						Emotion(
+							name: "Angry",
+							color: Colors.red,
+							strength: 60,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day one entry 1", entryText: "", 
+					date: DateTime(2023, 11, 17), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 60,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day one entry 2", entryText: "", 
+					date: DateTime(2023, 11, 25), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 30,
+						),
+					]
+				),
+				JournalEntry(
+					title: "", entryText: "", 
+					date: DateTime(2023, 11, 30), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 30,
+						),
+						Emotion(
+							name: "Angry",
+							color: Colors.red,
+							strength: 8,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day thrree entry 1", entryText: "", 
+					date: DateTime(2023, 11, 26), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 15,
+						),
+						Emotion(
+							name: "Happy",
+							color: Colors.green,
+							strength: 30,
+						),
+					]
+				),
+				JournalEntry(
+					title: "day thrree entry 2", entryText: "", 
+					date: DateTime(2023, 11, 12), 
+					emotions: [
+						Emotion(
+							name: "Angry",
+							color: Colors.red,
+							strength: 60,
+						),
+					]
+				),
+				JournalEntry(
+					title: "", entryText: "", 
+					date: DateTime(2023, 11, 11), 
+				),
+				JournalEntry(
+					title: "out of range entry", entryText: "", 
+					date: DateTime(2023, 11, 14), 
+					emotions: [
+						Emotion(
+							name: "Sad",
+							color: Colors.blue,
+							strength: 60,
+						),
+						Emotion(
+							name: "Happy",
+							color: Colors.green,
+							strength: 30,
+						),
+						Emotion(
+							name: "Angry",
+							color: Colors.red,
+							strength: 30,
+						),
+					]
+				),
+		]);
 		//Calculate the emotion data for each day
 		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent));
-		for (var entry in entriesBetween(startDate, endDate)) {
+		final filterdEntries = entries.where((entry) {
+			return (entry.date.isBefore(endDate) && entry.date.isAfter(startDate))
+				|| entry.date.isAtSameMomentAs(endDate) || entry.date.isAtSameMomentAs(startDate);
+		});
+		for (var entry in filterdEntries) {
 			final strongestEmotion = entry.getStrongestEmotion();
 			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
 				_emotionData[_daysFromDate(entry.date)] = (
@@ -140,189 +303,3 @@ class _CalendarState extends State<Calendar> {
 	}
 }
 
-//TODO replace with database
-List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
-	final testEntries = <JournalEntry>[
-			JournalEntry(
-				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 11, 1), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 11, 1), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 11, 2), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 8,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 11, 3), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 15,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 11, 3), 
-				emotions: [
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 11, 17), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 11, 25), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 11, 30), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 8,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 11, 26), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 15,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 11, 12), 
-				emotions: [
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 11, 11), 
-			),
-			JournalEntry(
-				title: "Happy day", entryText: "", 
-				date: DateTime.now(), 
-				emotions: [
-					Emotion(
-						name: "Happy",
-						color: Color(0xfffddd68),
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Happy day", entryText: "", 
-				date: DateTime(2023, 11, 24), 
-				emotions: [
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Out of range entry", entryText: "", 
-				date: DateTime(2023, 11, 14), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-					Emotion(
-						name: "Angry",
-						color: Colors.red,
-						strength: 30,
-					),
-				]
-			),
-		];
-
-	testEntries.retainWhere((e) => ( !e.date.isBefore(start) && !e.date.isAfter(end)));
-	testEntries.sort((a, b) => a.date.compareTo(b.date));
-	return testEntries;
-}
