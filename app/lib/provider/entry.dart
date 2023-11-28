@@ -188,6 +188,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     String? newEntryText,
     List<Tag>? newTags,
     List<Emotion>? newEmotions,
+    DateTime? newDate,
   ]) {
     if (newTitle != null) title = newTitle;
     if (newEntryText != null) {
@@ -197,6 +198,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     }
     if (newTags != null) tags = newTags;
     if (newEmotions != null) emotions = newEmotions;
+    if (newDate != null) date = newDate;
   }
 
   List<Color> getGradientColors() {

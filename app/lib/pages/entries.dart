@@ -276,6 +276,7 @@ class _EntryPageState extends State<EntryPage> {
       selectedEmotions = widget.entry!.emotions;
       titleController.text = widget.entry!.title;
       entryTextController.text = widget.entry!.entryText;
+      datePicked = widget.entry!.date;
     } else {
       selectedTags = [];
       selectedEmotions = [];
@@ -631,7 +632,7 @@ class _EntryPageState extends State<EntryPage> {
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
       widget.entry!.update(titleController.text, entryTextController.text,
-          selectedTags, selectedEmotions);
+          selectedTags, selectedEmotions, datePicked);
       return widget.entry!;
     }
   }

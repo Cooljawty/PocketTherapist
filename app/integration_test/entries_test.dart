@@ -275,7 +275,10 @@ void main() {
       // Tap the tag button to bring up the tag menu
       await tap(tester, tagButton, true);
       // Chip in the list
-      await tap(tester, find.byType(FilterChip).first);
+      var tagChip = find.byType(FilterChip).first;
+      await tap(tester, tagChip); // Add
+      await tap(tester, tagChip); // Remove
+      await tap(tester, tagChip); // Add again
       // Tap on save button
       await tap(tester, find.byKey(const Key('saveTagsButton')), true);
       // chip on the page
@@ -291,7 +294,10 @@ void main() {
       // Tap the tag button to bring up the tag menu
       await tap(tester, emotionButton, true);
       // Chip in the list
-      await tap(tester, find.byType(FilterChip).first);
+      var emoteChip = find.byType(FilterChip).first;
+      await tap(tester, emoteChip); // Add
+      await tap(tester, emoteChip); // Remove
+      await tap(tester, emoteChip); // Add again
       // Tap on save button
       await tap(tester, find.byKey(const Key('saveEmotionsButton')), true);
       // chip on the page

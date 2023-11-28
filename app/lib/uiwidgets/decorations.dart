@@ -410,6 +410,12 @@ class DisplayCard extends StatefulWidget {
 }
 
 class _DisplayCardState extends State<DisplayCard> {
+  void toggleEntry() {
+    setState(() {
+      widget.entry.toggleCompletion();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -516,11 +522,7 @@ class _DisplayCardState extends State<DisplayCard> {
                       icon: const Icon(Icons.check_box_outline_blank),
                       selectedIcon: const Icon(Icons.check_box),
                       isSelected: widget.entry.planCompleted == true,
-                      onPressed: () {
-                        setState(() {
-                          widget.entry.toggleCompletion();
-                        });
-                      },
+                      onPressed: toggleEntry,
                     ),
 
                   // Date
