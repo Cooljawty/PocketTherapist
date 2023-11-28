@@ -59,10 +59,11 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+
+    // Select appropriate list to display
     entries.sort();
-    List<JournalEntry> items = widget.showPlans
-        ? entries.where((entry) => entry.planCompleted != null).toList()
-        : entries.where((entry) => entry.planCompleted == null).toList();
+    plans.sort();
+    List<JournalEntry> items = widget.showPlans ? plans : entries;
     // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {

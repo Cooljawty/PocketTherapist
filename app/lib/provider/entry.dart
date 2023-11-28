@@ -4,6 +4,7 @@ import 'package:app/provider/settings.dart' as settings;
 import 'dart:math';
 
 List<JournalEntry> entries = [];
+List<JournalEntry> plans = [];
 
 //add tag list
 List<Tag> tagList = [
@@ -252,6 +253,10 @@ class JournalEntry implements Comparable<JournalEntry>{
 Future<void> makeNewEntry(BuildContext context) async {
   final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EntryPage()));
   if (result is JournalEntry) {
-    entries.add(result);
+    if (result.planCompleted == null) {
+      entries.add(result);
+    } else {
+      plans.add(result);
+    }
   }
 }
