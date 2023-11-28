@@ -301,10 +301,11 @@ void main() {
       expect(emotionalDial, findsOneWidget);
 
       // Set a value on the emotional dial
+      // Drag direction is weird because of the way the circle is divided
       await tester.drag(
-          find.byKey(const Key('EmotionalDial')), const Offset(100, 0));
+          find.byKey(const Key('EmotionalDial')), const Offset(100, 10));
       await tester.pump();
-      expect(find.text('75'), findsOneWidget);
+      expect(find.text('45'), findsOneWidget);
     });
   });
 
