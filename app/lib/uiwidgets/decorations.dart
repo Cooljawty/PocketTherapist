@@ -324,12 +324,36 @@ class StarBackground extends StatelessWidget {
 class CustomNavigationBar extends StatelessWidget{
 
   static const List<NavigationDestination> defaultDestinations = [
-            NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
-            NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
-            NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
-            NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
-            NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
-            NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
+            NavigationDestination(
+							icon: Icon(Icons.dashboard), 
+							label: "Dashboard", 
+							key: const Key("Navigation_Destination_Dashboard")
+						),
+            NavigationDestination(
+							icon: Icon(Icons.feed),
+							label: "Entries",
+							key: const Key("Navigation_Destination_Entries"),
+						),
+            NavigationDestination(
+							icon: Icon(Icons.add),
+							label: "NewEntry",
+							key: const Key("Navigation_Destination_NewEntry"),
+						),
+            NavigationDestination(
+							icon: Icon(Icons.calendar_month),
+							label: "Calendar",
+							key: const Key("Navigation_Destination_Calendar"),
+						),
+            NavigationDestination(
+							icon: Icon(Icons.event_note),
+							label: "Plans",
+							key: const Key("Navigation_Destination_Plans"),
+						),
+            NavigationDestination(
+							icon: Icon(Icons.settings),
+							label: "Settings",
+							key: const Key("Navigation_Destination_Settings"),
+						),
         ];
 
   final List<NavigationDestination> destinations;
