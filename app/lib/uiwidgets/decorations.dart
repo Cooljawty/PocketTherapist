@@ -425,7 +425,7 @@ class _DisplayCardState extends State<DisplayCard> {
             builder: (context) => EntryPage(entry: widget.entry),
           ));
 
-          /// Rebuild the card for potential edits made
+          // Rebuild the card for potential edits made
           setState(() {});
         },
         child: Card(
@@ -507,6 +507,7 @@ class _DisplayCardState extends State<DisplayCard> {
                   // Spacer to force text to left and date to the right
                   const Spacer(),
 
+                  // Checkbox to mark plans as completed
                   if (widget.entry.planCompleted != null)
                     IconButton(
                       padding: const EdgeInsets.only(top: 10),
