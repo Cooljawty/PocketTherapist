@@ -10,6 +10,7 @@ import '../uiwidgets/decorations.dart';
 // Display options
 const List<String> displayOptions = ['Week', 'Month', 'Year'];
 String chosenDisplay = 'Week';
+TextEditingController filterInputController = TextEditingController(text: '');
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -52,7 +53,26 @@ class EntryPanelPage extends StatefulWidget {
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
   bool showAllItems = true;
-  
+  List<JournalEntry> filteredDisplayList = entries;
+
+  //create function to update the filtered list to only contain compatable entries
+  void updateFilteredList(String input) {
+    //first trim off excess spaces from the left and right side of input
+    input = input.trim();
+    List<JournalEntry> newFilteredDisplayList = [];
+    //iterate through list to determine if an entry is compatable
+    //if it is then add it to the new list
+    for (int i = 0; i < entries.length; i++) {
+      //to handle casing we will compare lower case version of the title
+      //and of the input
+      if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
+        newFilteredDisplayList.add(entries[i]);
+      }
+    }
+    //update the displayed list in real time when the user is searching
+    setState(() => filteredDisplayList = newFilteredDisplayList);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
@@ -61,163 +81,186 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
-          body: Stack(children: [
-            // This is not const, it changes with theme, don't set it to be const
-            // no matter how much the flutter gods beg
-            // ignore: prefer_const_constructors
-            StarBackground(),
+            body: Stack(children: [
+              // This is not const, it changes with theme, don't set it to be const
+              // no matter how much the flutter gods beg
+              // ignore: prefer_const_constructors
+              StarBackground(),
 
-            SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Entries'),
+              SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Entries'),
 
-                  // Pad filter to the right
+                    // Pad filter to the right
 
-                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            key: const Key('FilterByTextForm'),
+                            controller: filterInputController,
+                            textAlign: TextAlign.center,
+                            onChanged: updateFilteredList,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Enter a journal title',
+                                fillColor: Colors.transparent),
+                          )),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+
+                        // Dropdown for filter by date
+                        child: DropdownButtonFormField<String>(
+                          key: const Key("SortByDateDropDown"),
+                          borderRadius: BorderRadius.circular(10.0),
+                          // Set up the dropdown menu items
+                          value: chosenDisplay,
+                          items: displayOptions
+                              .map((item) => DropdownMenuItem<String>(
+                                  value: item, child: Text(item)))
+                              .toList(),
+                          // if changed set new display option
+                          onChanged: (item) => setState(() {
+                            chosenDisplay = item ?? chosenDisplay;
+                          }),
+                        ),
                       ),
+                    ]),
 
-                      // Dropdown for filter by date
-                      child: DropdownButtonFormField<String>(
-                        key: const Key("SortByDateDropDown"),
-                        borderRadius: BorderRadius.circular(10.0),
-                        // Set up the dropdown menu items
-                        value: chosenDisplay,
-                        items: displayOptions
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
-                            .toList(),
-                        // if changed set new display option
-                        onChanged: (item) => setState(() {
-                          chosenDisplay = item ?? chosenDisplay;
-                        }),
-                      ),
-                    ),
-                  ]),
+                    //holds the list of entries
+                    Expanded(
+                        child: ListView.builder(
+                      itemCount: filteredDisplayList.length,
+                      itemBuilder: (context, index) {
+                        // get one item
+                        final JournalEntry item = filteredDisplayList[index];
+                        final DateTime time = item.date;
 
-                  //holds the list of entries
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      // get one item
-                      final item = entries[index];
-                      final time = item.date;
+                        // Dividers by filter
+                        bool isSameDate = true;
+                        if (index == 0) {
+                          // if first in list
+                          isSameDate = false;
+                        } else {
+                          // else check if same date by filters
+                          isSameDate = time.isWithinDateRange(
+                              filteredDisplayList[index - 1].date,
+                              chosenDisplay);
+                        }
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // if not same date or first in list make new list
+                            children: [
+                              if (index == 0 || !(isSameDate)) ...[
+                                Text(() {
+                                  // If weekly view, then calculate weeks of the year and display range in header
+                                  if (chosenDisplay == 'Week') {
+                                    DateTime firstOfYear =
+                                        DateTime(DateTime.now().year, 1, 1);
+                                    int weekNum = firstOfYear.getWeekNumber(
+                                        firstOfYear, time);
+                                    DateTime upper = firstOfYear
+                                        .add(Duration(days: (weekNum * 7)));
+                                    DateTime lower =
+                                        upper.subtract(const Duration(days: 6));
 
-                      // Dividers by filter
-                      bool isSameDate = true;
-                      if (index == 0) {
-                        // if first in list
-                        isSameDate = false;
-                      } else {
-                        // else check if same date by filters
-                        isSameDate = time.isWithinDateRange(
-                            entries[index - 1].date, chosenDisplay);
-                      }
-                      return Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // if not same date or first in list make new list
-                          children: [
-                            if (index == 0 || !(isSameDate)) ...[
-                              Text(() {
-                                // If weekly view, then calculate weeks of the year and display range in header
-                                if (chosenDisplay == 'Week') {
-                                  DateTime firstOfYear =
-                                      DateTime(DateTime.now().year, 1, 1);
-                                  int weekNum = firstOfYear.getWeekNumber(
-                                      firstOfYear, time);
-                                  DateTime upper = firstOfYear
-                                      .add(Duration(days: (weekNum * 7)));
-                                  DateTime lower =
-                                      upper.subtract(const Duration(days: 6));
+                                    // Range for the week
+                                    return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+                                  } else if (chosenDisplay == 'Month') {
+                                    // If monthly, only display month and year
+                                    return '${time.formatDate()} ${time.year.toString()}';
+                                  } else {
+                                    // If yearly, only display year
+                                    return time.year.toString();
+                                  }
+                                }())
+                              ],
+                              Dismissible(
+                                // Each Dismissible must contain a Key. Keys allow Flutter to
+                                // uniquely identify widgets.
 
-                                  // Range for the week
-                                  return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-                                } else if (chosenDisplay == 'Month') {
-                                  // If monthly, only display month and year
-                                  return '${time.formatDate()} ${time.year.toString()}';
-                                } else {
-                                  // If yearly, only display year
-                                  return time.year.toString();
-                                }
-                              }())
-                            ],
-                            Dismissible(
-                              // Each Dismissible must contain a Key. Keys allow Flutter to
-                              // uniquely identify widgets.
+                                // Issue with the key, needs to be specific id, not a
+                                // name or will receive error that dismissible is still
+                                // in the tree
+                                key: Key(item.id.toString()),
 
-                              // Issue with the key, needs to be specific id, not a
-                              // name or will receive error that dismissible is still
-                              // in the tree
-                              key: Key(item.id.toString()),
+                                //prevents right swipes
+                                direction: DismissDirection.endToStart,
 
-                              //prevents right swipes
-                              direction: DismissDirection.endToStart,
+                                // Provide a function that tells the app
+                                // what to do after an item has been swiped away.
+                                onDismissed: (direction) {
+                                  // Remove the item from the data source.
+                                  setState(() {
+                                    entries.removeAt(index);
+                                  });
 
-                              // Provide a function that tells the app
-                              // what to do after an item has been swiped away.
-                              onDismissed: (direction) {
-                                // Remove the item from the data source.
-                                setState(() {
-                                  entries.removeAt(index);
-                                });
-
-                                // Then show a snackBar w/ item name as dismissed message
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            '${item.title} deleted')));
-                              },
-                              confirmDismiss:
-                                  (DismissDirection direction) async {
-                                return await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Entry?"),
-                                      content: const Text(
-                                          "Are you sure you wish to delete this entry?"),
-                                      actions: <Widget>[
-                                        TextButton(
+                                  // Then show a snackBar w/ item name as dismissed message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('${item.title} deleted')));
+                                },
+                                confirmDismiss:
+                                    (DismissDirection direction) async {
+                                  return await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Entry?"),
+                                        content: const Text(
+                                            "Are you sure you wish to delete this entry?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: const Text("DELETE")),
+                                          TextButton(
                                             onPressed: () =>
-                                                Navigator.of(context).pop(true),
-                                            child: const Text("DELETE")),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(false),
-                                          child: const Text("CANCEL"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: DisplayCard(entry: item),
-                            )
-                          ]); // if in the same filter header list, then just make a new entry
-                    },
-                  )),
-                ],
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                            child: const Text("CANCEL"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: DisplayCard(entry: item),
+                              ),
+                            ]); // if in the same filter header list, then just make a new entry
+                      },
+                    )),
+                  ],
+                ),
               ),
-            ),
-          ]),
-          bottomNavigationBar: CustomNavigationBar(
-            selectedIndex: 1,
-            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
-            onDestinationSelected: (index) async {
-              switch(index) {
-                case 2: await makeNewEntry(context); setState((){}); return;
-                case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
-                case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
-              }
-            }
-          )
-        );
+            ]),
+            bottomNavigationBar: CustomNavigationBar(
+                selectedIndex: 1,
+
+                /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+                onDestinationSelected: (index) async {
+                  switch (index) {
+                    case 2:
+                      await makeNewEntry(context);
+                      setState(() {});
+                      return;
+                    case 5:
+                      Navigator.of(context).pushNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      return;
+                    case _:
+                      Navigator.of(context).pushReplacementNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      break;
+                  }
+                }));
       },
     );
   }
@@ -227,10 +270,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 /// creation of new entries, modification of them.
 class EntryPage extends StatefulWidget {
   final JournalEntry? entry;
-  const EntryPage({
-    super.key,
-    this.entry
-  });
+  const EntryPage({super.key, this.entry});
 
   @override
   State<EntryPage> createState() => _EntryPageState();
@@ -250,7 +290,7 @@ class _EntryPageState extends State<EntryPage> {
   @override
   void initState() {
     super.initState();
-    if(widget.entry != null) {
+    if (widget.entry != null) {
       selectedTags = widget.entry!.tags;
       selectedEmotions = widget.entry!.emotions;
       titleController.text = widget.entry!.title;
@@ -261,7 +301,6 @@ class _EntryPageState extends State<EntryPage> {
     }
   }
 
-
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -271,39 +310,51 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
-    return tagList.map((tag) => FilterChip(
-        label: Text(tag.name),
-        selected: selectedTags.any((element) => element.name == tag.name),
-        showCheckmark: false,
-        selectedColor: tag.color,
-        onSelected: (bool selected) {
-          stfSetState(() {
-            setState(() {
-              /// When the cooresponding tag is selected, add it or remove it based on the name
-              //TODO: Update this when references are added to work only with references.
-              selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
-            });
-          });
-        },
-      )).toList();
+    return tagList
+        .map((tag) => FilterChip(
+              label: Text(tag.name),
+              selected: selectedTags.any((element) => element.name == tag.name),
+              showCheckmark: false,
+              selectedColor: tag.color,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the cooresponding tag is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedTags.add(tag)
+                        : selectedTags
+                            .removeWhere((element) => element.name == tag.name);
+                  });
+                });
+              },
+            ))
+        .toList();
   }
 
   List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
-    return emotionList.entries.map((e) => FilterChip(
-        label: Text(e.key),
-        selected: selectedEmotions.any((element) => element.name == e.key),
-        showCheckmark: false,
-        selectedColor: e.value,
-        onSelected: (bool selected) {
-          stfSetState(() {
-            setState(() {
-              /// When the cooresponding emote is selected, add it or remove it based on the name
-              //TODO: Update this when references are added to work only with references.
-              selected ? selectedEmotions.add(Emotion(name: e.key, color: e.value)) : selectedEmotions.removeWhere((element) => element.name == e.key);
-            });
-          });
-        },
-    )).toList();
+    return emotionList.entries
+        .map((e) => FilterChip(
+              label: Text(e.key),
+              selected:
+                  selectedEmotions.any((element) => element.name == e.key),
+              showCheckmark: false,
+              selectedColor: e.value,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the cooresponding emote is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedEmotions
+                            .add(Emotion(name: e.key, color: e.value))
+                        : selectedEmotions
+                            .removeWhere((element) => element.name == e.key);
+                  });
+                });
+              },
+            ))
+        .toList();
   }
 
   @override
@@ -318,81 +369,80 @@ class _EntryPageState extends State<EntryPage> {
       body: SingleChildScrollView(
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Column(
-                  children: [
-                    // Text field for the Journal Entry Title
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: TextField(
-                        controller: titleController,
-                        key: const Key("titleInput"),
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Title',
-                        ),
-                      ),
+              child: Column(children: [
+                // Text field for the Journal Entry Title
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: titleController,
+                    key: const Key("titleInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Title',
                     ),
-                    // Text input field for the Journal Entry Body
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: TextField(
-                        controller: entryTextController,
-                        key: const Key("journalInput"),
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Journal Entry',
-                        ),
-                        maxLines: 8,
-                        minLines: 1,
-                      ),
+                  ),
+                ),
+                // Text input field for the Journal Entry Body
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: entryTextController,
+                    key: const Key("journalInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Journal Entry',
                     ),
+                    maxLines: 8,
+                    minLines: 1,
+                  ),
+                ),
 
-                    // Chip display for the tags
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      // Make the chips scrollable
-                      child: Scrollbar(
+                // Chip display for the tags
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  // Make the chips scrollable
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      key: const Key('TagChipsDisplay'),
+                      scrollDirection: Axis.horizontal,
+                      child: Wrap(
+                        spacing: 5,
+                        children: selectedTags
+                            .map((tag) => ActionChip(
+                                  label: Text(tag.name),
+                                  backgroundColor: tag.color,
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedTags.removeWhere((element) =>
+                                          element.name == tag.name);
+                                    });
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ),
+                // Chip display for the emotions
+                Padding(
+                    padding: const EdgeInsets.all(20),
+                    // Make the chips scrollable
+                    child: Scrollbar(
                         child: SingleChildScrollView(
-                          key: const Key('TagChipsDisplay'),
-                          scrollDirection: Axis.horizontal,
-                          child: Wrap(
-                            spacing: 5,
-                            children: selectedTags
-                                .map((tag) => ActionChip(
-                              label: Text(tag.name),
-                              backgroundColor: tag.color,
-                              onPressed: () {
-                                setState(() {
-                                  selectedTags.removeWhere((element) =>
-                                  element.name == tag.name);
-                                });
-                              },
-                            )).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Chip display for the emotions
-                    Padding(
-                        padding: const EdgeInsets.all(20),
-                        // Make the chips scrollable
-                        child: Scrollbar(
-                            child: SingleChildScrollView(
-                                key: const Key('EmotionChipsDisplay'),
-                                scrollDirection: Axis.horizontal,
-                                child: Wrap(
-                                  spacing: 5,
-                                  children: selectedEmotions
-                                      .map((Emotion emotion) => ActionChip(
-                                    label: Text(emotion.name),
-                                    backgroundColor: emotion.color,
-                                    onPressed: () =>
-                                        _emotionalDial(context, emotion),
-
-                                  ))
-                                      .toList(),
-                                )))),
-                  ]))),
+                            key: const Key('EmotionChipsDisplay'),
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 5,
+                              children: selectedEmotions
+                                  .map((Emotion emotion) => ActionChip(
+                                        label: Text(emotion.name),
+                                        backgroundColor: emotion.color,
+                                        onPressed: () =>
+                                            _emotionalDial(context, emotion),
+                                      ))
+                                  .toList(),
+                            )))),
+              ]))),
 
       // Plan save tag in replacement of the nav bar
       bottomNavigationBar: Container(
@@ -434,23 +484,23 @@ class _EntryPageState extends State<EntryPage> {
                       builder: (dialogContext) {
                         return StatefulBuilder(
                             builder: (stfContext, stfSetState) {
-                              return AlertDialog(
-                                title: const Text("Select Tags"),
-                                content: Wrap(
-                                  spacing: 5.0,
-                                  children: createAvailableTagsList(stfSetState),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    key: const Key('saveTagsButton'),
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      Navigator.of(stfContext).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
+                          return AlertDialog(
+                            title: const Text("Select Tags"),
+                            content: Wrap(
+                              spacing: 5.0,
+                              children: createAvailableTagsList(stfSetState),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                key: const Key('saveTagsButton'),
+                                child: const Text('Save'),
+                                onPressed: () {
+                                  Navigator.of(stfContext).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                       },
                     );
                   }),
@@ -464,23 +514,24 @@ class _EntryPageState extends State<EntryPage> {
                       builder: (dialogContext) {
                         return StatefulBuilder(
                             builder: (stfContext, stfSetState) {
-                              return AlertDialog(
-                                title: const Text("Select Emotions"),
-                                content: Wrap(
-                                  spacing: 5.0,
-                                  children: createAvailableEmotionsList(stfSetState),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    key: const Key('saveEmotionsButton'),
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      Navigator.of(stfContext).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
+                          return AlertDialog(
+                            title: const Text("Select Emotions"),
+                            content: Wrap(
+                              spacing: 5.0,
+                              children:
+                                  createAvailableEmotionsList(stfSetState),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                key: const Key('saveEmotionsButton'),
+                                child: const Text('Save'),
+                                onPressed: () {
+                                  Navigator.of(stfContext).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                       },
                     );
                   }),
@@ -536,16 +587,16 @@ class _EntryPageState extends State<EntryPage> {
                 child: ValueListenableBuilder(
                     valueListenable: progress,
                     builder: (_, double value, __) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(() {
-                          // on changed, set the strength
-                          strength = value.round();
-                          return '${value.round()}';
-                        }()),
-                        const Text('progress'),
-                      ],
-                    )),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(() {
+                              // on changed, set the strength
+                              strength = value.round();
+                              return '${value.round()}';
+                            }()),
+                            const Text('progress'),
+                          ],
+                        )),
               ),
             ),
             actions: [
@@ -573,7 +624,7 @@ class _EntryPageState extends State<EntryPage> {
   // Make the journal entry and save it
   JournalEntry? getEntry() {
     // Database entry point for creating journal entry
-    if(widget.entry == null) {
+    if (widget.entry == null) {
       //TODO: do databse things to save new journal entry: db.insert
       return JournalEntry(
         title: titleController.text,
@@ -582,17 +633,12 @@ class _EntryPageState extends State<EntryPage> {
         tags: selectedTags,
         emotions: selectedEmotions,
       );
-    } 
-    else {
+    } else {
       // entry exists, we are modifying
       //TODO: do datbase things for updating journal entry
       // I have the full record, just patch the record.
-      widget.entry!.update(
-        titleController.text,
-        entryTextController.text,
-        selectedTags,
-        selectedEmotions
-      );
+      widget.entry!.update(titleController.text, entryTextController.text,
+          selectedTags, selectedEmotions);
       return widget.entry!;
     }
   }
