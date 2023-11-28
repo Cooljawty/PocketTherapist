@@ -9,8 +9,11 @@ import '../uiwidgets/decorations.dart';
 import 'package:app/helper/dates_and_times.dart';
 
 // Display options
-const List<String> displayOptions = ['Week', 'Month', 'Year'];
-String chosenDisplay = 'Week';
+enum DisplayOption{ 
+	Week, Month, Year; 
+ String toString() => this.name.split('.').last;
+}
+DisplayOption chosenDisplay = DisplayOption.Week;
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -65,25 +68,18 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     // Sort the Journal entries by most recent date
 		//Show entreis in range of given date or from today
 		final today = widget.targetDate ?? DateTime.now();
-		switch(chosenDisplay) {
-			case "Week":
-				entries = entriesBetween(
-					today.subtract(Duration(days: today.weekday - 1)), 
-					today.add(Duration(days: 7 - today.weekday))
-				);
-			case "Month":
-				entries = entriesBetween(
-					DateTime(today.year, today.month, 1), 
-					DateTime(today.year, today.month, 0)
-				);
-			case "Year":
-				entries = entriesBetween(
-					DateTime(today.year, 1, 1), 
-					DateTime(today.year, 12, 0)
-				);
-		}
-
-    entries.sort();
+		final startDate = switch(chosenDisplay) {
+			DisplayOption.Week => today.subtract(Duration(days: today.weekday - 1)), 
+			DisplayOption.Month => DateTime(today.year, today.month, 1), 
+			DisplayOption.Year => DateTime(today.year, 1, 1), 
+		};
+		final endDate = switch(chosenDisplay) {
+			DisplayOption.Week => today.add(Duration(days: 7 - today.weekday)),
+			DisplayOption.Month => DateTime(today.year, today.month, 0),
+			DisplayOption.Year => DateTime(today.year, 12, 0),
+		};
+		final filteredEntries = entriesInDateRange( context, startDate, endDate).toList();
+    filteredEntries.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -113,144 +109,149 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         key: const Key("SortByDateDropDown"),
                         borderRadius: BorderRadius.circular(10.0),
                         // Set up the dropdown menu items
-                        value: chosenDisplay,
-                        items: displayOptions
+                        value: chosenDisplay.toString(),
+                        items: DisplayOption.values
                             .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                                value: item.toString(), child: Text(item.toString())))
                             .toList(),
                         // if changed set new display option
                         onChanged: (item) => setState(() {
-                          chosenDisplay = item ?? chosenDisplay;
+                          chosenDisplay = switch(item) {
+														"Week" => DisplayOption.Week,
+														"Month" => DisplayOption.Month,
+														"Year" => DisplayOption.Year,
+														_ => DisplayOption.Week,
+													} ?? chosenDisplay;
                         }),
                       ),
                     ),
                   ]),
 
-                  //holds the list of entries
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      // get one item
-                      final item = entries[index];
-                      final time = item.date;
+										//holds the list of entries
+										Expanded(
+												child: ListView.builder(
+											itemCount: filteredEntries.length,
+											itemBuilder: (context, index) {
+												// get one item
+												final item = filteredEntries[index];
+												final time = item.date;
 
-                      // Dividers by filter
-                      bool isSameDate = true;
-                      if (index == 0) {
-                        // if first in list
-                        isSameDate = false;
-                      } else {
-                        // else check if same date by filters
-                        isSameDate = time.isWithinDateRange(
-                            entries[index - 1].date, chosenDisplay);
-                      }
-                      return Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // if not same date or first in list make new list
-                          children: [
-                            if (index == 0 || !(isSameDate)) ...[
-                              Text(() {
-                                // If weekly view, then calculate weeks of the year and display range in header
-                                if (chosenDisplay == 'Week') {
-                                  DateTime firstOfYear =
-                                      DateTime(DateTime.now().year, 1, 1);
-                                  int weekNum = firstOfYear.getWeekNumber(
-                                      firstOfYear, time);
-                                  DateTime upper = firstOfYear
-                                      .add(Duration(days: (weekNum * 7)));
-                                  DateTime lower =
-                                      upper.subtract(const Duration(days: 6));
+												// Dividers by filter
+												bool isSameDate = true;
+												if (index == 0) {
+													// if first in list
+													isSameDate = false;
+												} else {
+													// else check if same date by filters
+													isSameDate = time.isWithinDateRange(
+															filteredEntries[index - 1].date, chosenDisplay.toString());
+												}
+												return Column(
+														mainAxisAlignment: MainAxisAlignment
+																.center, // if not same date or first in list make new list
+														children: [
+															if (index == 0 || !(isSameDate)) ...[
+																Text(() {
+																	// If weekly view, then calculate weeks of the year and display range in header
+																	if (chosenDisplay == DisplayOption.Week) {
+																		DateTime firstOfYear =
+																				DateTime(DateTime.now().year, 1, 1);
+																		int weekNum = firstOfYear.getWeekNumber(
+																				firstOfYear, time);
+																		DateTime upper = firstOfYear
+																				.add(Duration(days: (weekNum * 7)));
+																		DateTime lower =
+																				upper.subtract(const Duration(days: 6));
 
-                                  // Range for the week
-                                  return '${lower.formatDate().month} ${lower.day.toString()} - ${upper.formatDate().month} ${upper.day.toString()}, ${time.year.toString()}';
-                                } else if (chosenDisplay == 'Month') {
-                                  // If monthly, only display month and year
-                                  return '${time.formatDate().month} ${time.year.toString()}';
-                                } else {
-                                  // If yearly, only display year
-                                  return time.year.toString();
-                                }
-                              }())
-                            ],
-                            Dismissible(
-                              // Each Dismissible must contain a Key. Keys allow Flutter to
-                              // uniquely identify widgets.
+																		// Range for the week
+																		return '${lower.formatDate().month} ${lower.day.toString()} - ${upper.formatDate().month} ${upper.day.toString()}, ${time.year.toString()}';
+																	} else if (chosenDisplay == DisplayOption.Month) {
+																		// If monthly, only display month and year
+																		return '${time.formatDate().month} ${time.year.toString()}';
+																	} else {
+																		// If yearly, only display year
+																		return time.year.toString();
+																	}
+																}())
+															],
+															Dismissible(
+																// Each Dismissible must contain a Key. Keys allow Flutter to
+																// uniquely identify widgets.
 
-                              // Issue with the key, needs to be specific id, not a
-                              // name or will receive error that dismissible is still
-                              // in the tree
-                              key: Key(item.id.toString()),
+																// Issue with the key, needs to be specific id, not a
+																// name or will receive error that dismissible is still
+																// in the tree
+																key: Key(item.id.toString()),
 
-                              //prevents right swipes
-                              direction: DismissDirection.endToStart,
+																//prevents right swipes
+																direction: DismissDirection.endToStart,
 
-                              // Provide a function that tells the app
-                              // what to do after an item has been swiped away.
-                              onDismissed: (direction) {
-                                // Remove the item from the data source.
-                                setState(() {
-                                  entries.removeAt(index);
-                                });
+																// Provide a function that tells the app
+																// what to do after an item has been swiped away.
+																onDismissed: (direction) {
+																	// Remove the item from the data source.
+																	setState(() {
+																		entries.remove(filteredEntries[index]);
+																	});
 
-                                // Then show a snackBar w/ item name as dismissed message
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            '${item.title} deleted')));
-                              },
-                              confirmDismiss:
-                                  (DismissDirection direction) async {
-                                return await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Entry?"),
-                                      content: const Text(
-                                          "Are you sure you wish to delete this entry?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(true),
-                                            child: const Text("DELETE")),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(false),
-                                          child: const Text("CANCEL"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: DisplayCard(entry: item),
-                            )
-                          ]); // if in the same filter header list, then just make a new entry
-                    },
-                  )),
-                ],
-              ),
-            ),
-          ]),
-          bottomNavigationBar: CustomNavigationBar(
-            selectedIndex: 1,
-            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
-            onDestinationSelected: (index) async {
-              switch(index) {
-                case 2: await makeNewEntry(context); setState((){}); return;
-                case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
-                case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
-              }
-            }
-          )
-        );
-      },
-    );
-  }
-}
+																	// Then show a snackBar w/ item name as dismissed message
+																	ScaffoldMessenger.of(context).showSnackBar(
+																			SnackBar(
+																					content: Text(
+																							'${item.title} deleted')));
+																},
+																confirmDismiss:
+																		(DismissDirection direction) async {
+																	return await showDialog(
+																		context: context,
+																		builder: (BuildContext context) {
+																			return AlertDialog(
+																				title: const Text("Delete Entry?"),
+																				content: const Text(
+																						"Are you sure you wish to delete this entry?"),
+																				actions: <Widget>[
+																					TextButton(
+																							onPressed: () =>
+																									Navigator.of(context).pop(true),
+																							child: const Text("DELETE")),
+																					TextButton(
+																						onPressed: () =>
+																								Navigator.of(context).pop(false),
+																						child: const Text("CANCEL"),
+																					),
+																				],
+																			);
+																		},
+																	);
+																},
+																child: DisplayCard(entry: item),
+															)
+														]); // if in the same filter header list, then just make a new entry
+											},
+										)),
+									],
+								),
+							),
+						]),
+						bottomNavigationBar: CustomNavigationBar(
+							selectedIndex: 1,
+							/// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+							onDestinationSelected: (index) async {
+								switch(index) {
+									case 2: await makeNewEntry(context); setState((){}); return;
+									case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
+									case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
+								}
+							}
+						)
+					);
+				},
+			);
+		}
+	}
 
-/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
-/// creation of new entries, modification of them.
+	/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+	/// creation of new entries, modification of them.
 class EntryPage extends StatefulWidget {
   final JournalEntry? entry;
   const EntryPage({
