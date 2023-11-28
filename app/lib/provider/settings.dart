@@ -216,20 +216,11 @@ void verifyPassword(BuildContext context, String password) async {
                           Navigator.of(context).pop(); //pop password prompt
                           Navigator.of(context).pushNamed("Dashboard");
                         });
+                        //update prompt to indicate success
                         finalDisplay = [
                           const Text('Welcome Back',
                               style: TextStyle(
                                   fontSize: 15.0, fontWeight: FontWeight.bold)),
-                          TextButton(
-                            key: const Key('Correct_Password'),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              password = "";
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushNamed("Dashboard");
-                            },
-                            child: const Text("Enter"),
-                          )
                         ];
                       } else {
                         finalDisplay = [
@@ -261,34 +252,6 @@ void verifyPassword(BuildContext context, String password) async {
                   }),
             ],
           ));
-  /*bool match = encryptor.unlock(password);
-  if (match) {
-    password = "";
-    Navigator.of(context).pop();
-    Navigator.of(context).pushNamed("Dashboard");
-  }
-  else {
-    await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.onBackground,
-          title: const Text("Incorrect Password"),
-          actions: [
-            TextButton(
-              key: const Key(
-                  'Incorrect_Password'),
-              onPressed: () async {
-                Navigator
-                    .of(context)
-                    .pop();
-              },
-              child: const Text("Ok"),
-            )
-          ],
-        )
-    );
-    // I should never get here
-  }*/
 }
 
 void attemptLogin(BuildContext context) async {
@@ -355,22 +318,6 @@ void finishConfiguration(BuildContext context, String password) async {
                         const Text("Your Digital Journal's Encryption is Ready",
                             style: TextStyle(
                                 fontSize: 15.0, fontWeight: FontWeight.bold)),
-                        TextButton(
-                          key: const Key('Correct_Password'),
-                          onPressed: () async {
-                            setConfigured(true);
-                            Navigator.of(context)
-                                .pop(); // remove current window
-                            Navigator.of(context)
-                                .pop(); // remove confirmation window
-                            Navigator.of(context)
-                                .pop(); // remove initial entry window
-                            Navigator.of(context).pushNamed(
-                                "Dashboard"); // Move to dashboard w/o encryption
-                            await save();
-                          },
-                          child: const Text("Enter"),
-                        )
                       ];
                     } else {
                       //while it is loading display the loading widget
@@ -387,14 +334,6 @@ void finishConfiguration(BuildContext context, String password) async {
                   }),
             ],
           ));
-  /*
-  setPassword(password); // empty password no encryption
-  setConfigured(true);
-  Navigator.of(context).pop(); // remove confirmation window
-  Navigator.of(context).pop(); // remove initial entry window
-  Navigator.of(context)
-      .pushNamed("Dashboard"); // Move to dashboard w/o encryption
-  await save();*/
 }
 
 void confirmPassword(BuildContext context, String password) async {
@@ -619,40 +558,6 @@ void handleResetPasswordPress(BuildContext context) async {
                                 }),
                           ],
                         ));
-                /*
-                bool match = encryptor.resetCredentials(maybePasswordOrPhrase!);
-                if (match) {
-                  await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.onBackground,
-                              title: const Text("Password Reset Successful"),
-                              actions: [
-                                TextButton(
-                                    key: const Key("Success_Pass_Reset"),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Ok"))
-                              ])).whenComplete(
-                      () async => handleStartPress(context));
-                } else {
-                  await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.onBackground,
-                              title: const Text(
-                                  "Incorrect Password or Recovery Phrase"),
-                              actions: [
-                                TextButton(
-                                    key: const Key("Fail_Pass_Reset"),
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text("Ok"))
-                              ]));
-                }*/
               },
               child: const Text("Enter")),
         ],

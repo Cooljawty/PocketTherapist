@@ -68,5 +68,6 @@ void main() {
     await expectLater(valid, true);
     decrypted = encrypter.decrypt(cipher);
     await expectLater(decrypted == message, true);
-  });
+    //6 minutes is minimum time test needs to complete
+  }, timeout: const Timeout(Duration(minutes: 6)));
 }

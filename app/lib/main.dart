@@ -79,13 +79,12 @@ class _RootAppState extends State<RootApp> {
                       initialRoute: "Welcome",
                     );
                   })
-              : Directionality(
+              : const Directionality(
                   textDirection: TextDirection.ltr,
                   child: Center(
-                      child: Container(
-                    color: Colors.white,
-                    child: const LoadingAnimation(),
-                  ))),
+                    //reverted because loading screen image is not always loaded before showing this screen
+                    child: CircularProgressIndicator(),
+                  )),
     );
   }
 
