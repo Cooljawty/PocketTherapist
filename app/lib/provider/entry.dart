@@ -253,8 +253,8 @@ Future<void> makeNewEntry(BuildContext context) async {
 }
 
 Iterable<JournalEntry> entriesInDateRange(BuildContext context, DateTime startDate, DateTime endDate) {
-		return entries.where((entry) {
-			return (entry.date.isBefore(endDate) && entry.date.isAfter(startDate))
-				|| entry.date.isAtSameMomentAs(endDate) || entry.date.isAtSameMomentAs(startDate);
+		return entries.where((entry) { 
+			return entry.date.isBefore(endDate.add(const Duration(days: 1)))
+			|| entry.date.isAfter(startDate.subtract(const Duration(days: 1)));
 		});
 }
