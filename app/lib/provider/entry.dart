@@ -193,7 +193,7 @@ class JournalEntry implements Comparable<JournalEntry>{
     if(newTitle != null) title = newTitle;
     if(newEntryText != null) {
       entryText = newEntryText;
-      previewText = previewText.substring(0, min(previewLength, entryText.length));
+      previewText = entryText.substring(0, min(previewLength, entryText.length));
     }
     if(newTags != null) tags = newTags;
     if(newEmotions != null) emotions = newEmotions;

@@ -425,7 +425,7 @@ class _DisplayCardState extends State<DisplayCard> {
             builder: (context) => EntryPage(entry: widget.entry),
           ));
 
-          /// Rebuild THIS widget if any changes were made
+          /// Rebuild the card for potential edits made
           setState(() {});
         },
         child: Card(
