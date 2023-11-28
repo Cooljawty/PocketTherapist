@@ -1,4 +1,4 @@
-import 'package:app/uiwidgets/navbar.dart';
+import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter/material.dart';
 
 class PlansPage extends StatefulWidget {
@@ -22,16 +22,7 @@ class _PlansPageState extends State<PlansPage> {
 					],
 				),
 			),
-			bottomNavigationBar: NavBar(
-				selectedIndex: 1,
-				destinations: [
-					destinations['dashboard']!,
-					destinations['entries']!,
-					destinations['calendar']!,
-					destinations['plans']!,
-					destinations['settings']!,
-				],
-			),
+			bottomNavigationBar: CustomNavigationBar(selectedIndex: 4),
     );
   }
 }

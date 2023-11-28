@@ -1,0 +1,71 @@
+import 'package:app/provider/encryptor.dart' as encrypter;
+import 'package:flutter_test/flutter_test.dart';
+import 'dart:io';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test("Testing hex encode and decode", () async {
+    String message = "No ill never tell ;)";
+    stdout.writeln(message);
+    String hex =encrypter.hexEncode(message.codeUnits);
+    stdout.writeln(hex);
+    expect(message != hex, true);
+    List<int> stringCodeUnits = encrypter.hexDecode(hex);
+    String original = String.fromCharCodes(stringCodeUnits);
+    stdout.writeln(original);
+    expect(message == original, true);
+  });
+
+  test("Testing encryption and decryption", () async {
+    String message = "No ill never tell ;)";
+    String password = "password123@";
+    // After setting the password we should be able to encrypt and decrypt
+    await encrypter.setPassword(password);
+    String recoveryPhrase1 = encrypter.getRecoveryPhrase()!;
+
+    // reset unlocks with all combinations
+    bool value = encrypter.verifyPassword(password);
+    await expectLater(value , true);
+    value = encrypter.unlock(password);
+    await expectLater(value, true);
+    value = encrypter.unlock(recoveryPhrase1);
+    await expectLater(value, false); // fails because not in recovery mode
+    value = encrypter.unlock(recoveryPhrase1, true);
+    await expectLater(value, true);
+    value = encrypter.verifyRecoveryPhrase(recoveryPhrase1);
+    await expectLater(value, true);
+
+    String cipher = encrypter.encrypt(message);
+    await expectLater(cipher != message, true);
+    String decrypted = encrypter.decrypt(cipher);
+    await expectLater(decrypted == message, true);
+
+    // Erase the encryption key
+    bool diff = ! encrypter.resetCredentials("${password}diff");
+    await expectLater(diff, true); // fail to erase cause wrong password
+
+    await encrypter.setPassword(password); // reset w/ savme password
+    String recoveryPhrase2 = encrypter.getRecoveryPhrase()!;
+    await expectLater(recoveryPhrase1 != recoveryPhrase2, true); // should be different recovery phrases
+    diff = !encrypter.resetCredentials(recoveryPhrase2); // reset with the passphrase
+    // If password isnt set then we will have no password.
+    await expectLater(diff, false);
+    await encrypter.setPassword(password); // reset the pasword
+    cipher = encrypter.encrypt(message);
+
+    encrypter.save();
+
+    // Encryption key is encrypted inside this, w/ PBKDF
+    await expectLater(() => encrypter.load(), returnsNormally); // load the encryption key
+
+    // This will overwrite the encrypter with something else, so
+    // If it can still decrypt the original cipher text, then it is correct.
+    bool valid = encrypter.unlock(password);
+    await expectLater(valid, true);
+    decrypted = encrypter.decrypt(cipher);
+    await expectLater(decrypted == message, true);
+  });
+
+
+}

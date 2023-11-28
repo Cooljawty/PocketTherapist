@@ -1,338 +1,656 @@
-import 'package:app/pages/entry.dart';
+import 'dart:core';
+import 'package:app/provider/entry.dart';
+import 'package:app/provider/theme_settings.dart';
+import 'package:app/provider/settings.dart' as settings;
+import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:app/pages/new_entry.dart';
-import 'package:app/uiwidgets/navbar.dart';
-
-class EntriesPage extends StatefulWidget {
-  static Route<dynamic> route() {
-    return MaterialPageRoute(builder: (context) => const EntriesPage());
-  }
-
-  const EntriesPage({super.key});
-
-  @override
-  State<EntriesPage> createState() => _EntriesPageState();
-}
-
-List<JournalEntry> entries = [
-  // JournalEntry(title: "Entry 0", entryText: 'This is the body', date: DateTime(2023, 2, 27)),
-  // JournalEntry(title: "Entry 1", entryText: 'This is the body', date: DateTime(2023, 2, 18)),
-  // JournalEntry(title: "Entry 2", entryText: 'This is the body', date: DateTime(2023, 2, 15)),
-  // JournalEntry(title: "Entry 3", entryText: 'This is the body', date: DateTime(2023, 2, 1)),
-  // JournalEntry(title: "Entry 4", entryText: 'This is the body', date: DateTime(2023, 1, 27)),
-  // JournalEntry(title: "Entry 5", entryText: 'This is the body', date: DateTime(2022, 1, 29)),
-  // JournalEntry(title: "Entry 6", entryText: 'This is the body', date: DateTime(2022, 1, 5)),
-  // JournalEntry(title: "Entry 7", entryText: 'This is the body', date: DateTime(2021, 7, 29)),
-  // JournalEntry(title: "Entry 8", entryText: 'This is the body', date: DateTime(2020, 9, 29)),
-];
-
-//Generated list of journal entries, update final to var to use list in search
-var items = entries;
+import 'package:provider/provider.dart';
+import '../uiwidgets/decorations.dart';
 
 // Display options
-final List<String> displayOptions = ['Week', 'Month', 'Year'];
-String? chosenDisplay = 'Week';
+const List<String> displayOptions = ['Week', 'Month', 'Year'];
+String chosenDisplay = 'Week';
 
-// Filter options
-final List<String> filterOptions = ['Title', 'Tag'];
-String? chosenFilter = 'Title';
-TextEditingController filterInputController = TextEditingController(text: '');
+//
+// /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
+// /// [items] = journal entry list;
+// /// [chosenDisplay] = 'Week', 'Month', 'Year';
+// /// [getCompletedList] = print the completed list
+// List<JournalEntry> getFilteredList(
+//     List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
+// // Sort the Journal entries by most recent date
+//   final sortedItems = items..sort();
+//   List<JournalEntry> filteredList = [];
+//
+//   for (int i = 0; i < sortedItems.length; i++) {
+//     if (getCompleteList) {
+//       filteredList.add(sortedItems[i]);
+//     } else {
+//       final firstItem = sortedItems[0]; // get the most recent entry
+//       final item = sortedItems[i]; // get the next item
+//       final time = firstItem.date; // get the date for the first item
+//
+//       // check to see if the item is in the filter
+//       bool isSameDate = time.isWithinDateRange(item.date, chosenDisplay!);
+//
+//       if (isSameDate) {
+//         // if item is in the filter, add it to the return list
+//         filteredList.add(sortedItems[i]);
+//       }
+//     }
+//   }
+//   return filteredList;
+// }
 
-// Sort the Journal entries by most recent date
-late List<JournalEntry> sortedItems;
-bool showAllItems = true;
+/// [EntryPanelPage] is the page for all of the entries that user has entered.
+class EntryPanelPage extends StatefulWidget {
+  const EntryPanelPage({super.key});
 
-class _EntriesPageState extends State<EntriesPage> {
+  @override
+  State<EntryPanelPage> createState() => _EntryPanelPageState();
+}
 
+class _EntryPanelPageState extends State<EntryPanelPage> {
+  bool showAllItems = true;
+  
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
-    //showAllItems = false;
-    sortedItems = getFilteredList(items, chosenDisplay, showAllItems);
+    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+    entries.sort();
+    return Consumer<ThemeSettings>(
+      builder: (context, value, child) {
+        return Scaffold(
+          body: Stack(children: [
+            // This is not const, it changes with theme, don't set it to be const
+            // no matter how much the flutter gods beg
+            // ignore: prefer_const_constructors
+            StarBackground(),
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const Text('Entries'),
+            SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Entries'),
 
-            //add a row which will hold the search bar
-            Row(
-              children: [
-                Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      key: const Key('FilterByTextForm'),
-                      controller: filterInputController,
-                      textAlign: TextAlign.center,
-                      onChanged: (value) {
-                        setState(() {
-                          updateFilteredList(value);
-                        });
-                      },
-                    )),
-                // Dropdown for filter by title or tag
-                //mimics logic from filter by date
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    key: const Key('FilterByDropDown'),
-                    dropdownColor: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10.0),
-                    value: chosenFilter,
-                    items: filterOptions
-                        .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item,
-                                style: const TextStyle(color: Colors.black))))
-                        .toList(),
-                    onChanged: (item) => setState(() {
-                      chosenFilter = item;
-                      //update filtered list to match new option
-                      updateFilteredList(filterInputController.text);
-                    }),
-                  ),
-                ),
-              ],
-            ),
-            // Pad filter to the right
-            Padding(padding: const EdgeInsets.fromLTRB(250, 20, 20, 20),
-              child: Container(
-                // Push text to the right a little bit
-                padding: const EdgeInsets.only(left: 15),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+                  // Pad filter to the right
 
-                // Dropdown for filter by date
-                child: DropdownButtonFormField<String>(
-                  key: const Key("SortByDateDropDown"),
-                  dropdownColor: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10.0),
-                  // Set up the dropdown menu items
-                  value: chosenDisplay,
-                  items: displayOptions.map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item, style: const TextStyle(color: Colors.black))
-                  )).toList(),
-                  // if changed set new display option
-                  onChanged: (item) => setState(() {
-                    chosenDisplay = item;
-                  }),
-                ),
-              ),
-            ),
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
 
-            //holds the list of entries
-            Expanded(
-                child: ListView.builder(
-                  itemCount: sortedItems.length,
-                  itemBuilder: (context, index) {
-                    // get one item
-                    final item = sortedItems[index];
-                    final time = item.getDate();
+                      // Dropdown for filter by date
+                      child: DropdownButtonFormField<String>(
+                        key: const Key("SortByDateDropDown"),
+                        borderRadius: BorderRadius.circular(10.0),
+                        // Set up the dropdown menu items
+                        value: chosenDisplay,
+                        items: displayOptions
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
+                        // if changed set new display option
+                        onChanged: (item) => setState(() {
+                          chosenDisplay = item ?? chosenDisplay;
+                        }),
+                      ),
+                    ),
+                  ]),
 
-                    // Dividers by filter
-                    bool isSameDate = true;
-                    if (index == 0) { // if first in list
-                      isSameDate = false;
-                    } else { // else check if same date by filters
-                      isSameDate = time.isSameDate(sortedItems[index - 1].getDate(), chosenDisplay!);
-                    }
-                    return Column(  // if not same date or first in list make new list
-                      children:[
-                        if (index == 0 || !(isSameDate))...[
-                          Text(() {
-                              // If weekly view, then calculate weeks of the year and display range in header
-                              if (chosenDisplay == 'Week') {
-                                DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
-                                int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
-                                DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
-                                DateTime lower = upper.subtract(const Duration(days: 6));
+                  //holds the list of entries
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      // get one item
+                      final item = entries[index];
+                      final time = item.date;
 
-                                // Range for the week
-                                return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-                              } else if (chosenDisplay == 'Month') {
-                                // If monthly, only display month and year
-                                return '${time.formatDate()} ${time.year.toString()}';
-                              } else {
-                                // If yearly, only display year
-                                return time.year.toString();
-                              }
-                          }())
-                        ],
+                      // Dividers by filter
+                      bool isSameDate = true;
+                      if (index == 0) {
+                        // if first in list
+                        isSameDate = false;
+                      } else {
+                        // else check if same date by filters
+                        isSameDate = time.isWithinDateRange(
+                            entries[index - 1].date, chosenDisplay);
+                      }
+                      return Column(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // if not same date or first in list make new list
+                          children: [
+                            if (index == 0 || !(isSameDate)) ...[
+                              Text(() {
+                                // If weekly view, then calculate weeks of the year and display range in header
+                                if (chosenDisplay == 'Week') {
+                                  DateTime firstOfYear =
+                                      DateTime(DateTime.now().year, 1, 1);
+                                  int weekNum = firstOfYear.getWeekNumber(
+                                      firstOfYear, time);
+                                  DateTime upper = firstOfYear
+                                      .add(Duration(days: (weekNum * 7)));
+                                  DateTime lower =
+                                      upper.subtract(const Duration(days: 6));
 
-                        Dismissible(
-                          // Each Dismissible must contain a Key. Keys allow Flutter to
-                          // uniquely identify widgets.
-                          key: Key(item.getTitle()),
-                          // this has to change later
-                          //prevents right swipes
-                          direction: DismissDirection.endToStart,
+                                  // Range for the week
+                                  return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+                                } else if (chosenDisplay == 'Month') {
+                                  // If monthly, only display month and year
+                                  return '${time.formatDate()} ${time.year.toString()}';
+                                } else {
+                                  // If yearly, only display year
+                                  return time.year.toString();
+                                }
+                              }())
+                            ],
+                            Dismissible(
+                              // Each Dismissible must contain a Key. Keys allow Flutter to
+                              // uniquely identify widgets.
 
-                          // Provide a function that tells the app
-                          // what to do after an item has been swiped away.
-                          onDismissed: (direction) {
-                            // Remove the item from the data source.
-                            setState(() {
-                              items.removeAt(index);
-                            });
+                              // Issue with the key, needs to be specific id, not a
+                              // name or will receive error that dismissible is still
+                              // in the tree
+                              key: Key(item.id.toString()),
 
-                            // Then show a snackBar w/ item name as dismissed message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('${item.getTitle()} deleted')));
-                          },
-                          confirmDismiss: (DismissDirection direction) async {
-                            return await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text("Delete Entry?"),
-                                  content: const Text("Are you sure you wish to delete this entry?"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                        onPressed: () => Navigator.of(context).pop(true),
-                                        child: const Text("DELETE")),
-                                    TextButton(
-                                      onPressed: () => Navigator.of(context).pop(false),
-                                      child: const Text("CANCEL"),
-                                    ),
-                                  ],
+                              //prevents right swipes
+                              direction: DismissDirection.endToStart,
+
+                              // Provide a function that tells the app
+                              // what to do after an item has been swiped away.
+                              onDismissed: (direction) {
+                                // Remove the item from the data source.
+                                setState(() {
+                                  entries.removeAt(index);
+                                });
+
+                                // Then show a snackBar w/ item name as dismissed message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            '${item.title} deleted')));
+                              },
+                              confirmDismiss:
+                                  (DismissDirection direction) async {
+                                return await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Delete Entry?"),
+                                      content: const Text(
+                                          "Are you sure you wish to delete this entry?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                            child: const Text("DELETE")),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text("CANCEL"),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                          child: item.asDisplayCard(),
-                        )
-                      ]
-                    );// if in the same filter header list, then just make a new entry
-                  },
-                )),
-            ElevatedButton(
-                onPressed: () {
-                  makeNewEntry();
-                },
-                key: const Key("New Entry"),
-                child: const Text('New Entry')
+                              child: DisplayCard(entry: item),
+                            )
+                          ]); // if in the same filter header list, then just make a new entry
+                    },
+                  )),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: NavBar(
-        selectedIndex: 1,
-        destinations: [
-          destinations['dashboard']!,
-          destinations['entries']!,
-          destinations['calendar']!,
-          destinations['plans']!,
-          destinations['settings']!,
-        ],
-      ),
+          ]),
+          bottomNavigationBar: CustomNavigationBar(
+            selectedIndex: 1,
+            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+            onDestinationSelected: (index) async {
+              switch(index) {
+                case 2: await makeNewEntry(context); setState((){}); return;
+                case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
+                case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
+              }
+            }
+          )
+        );
+      },
     );
   }
-  makeNewEntry() async {
-    final result = await Navigator.push(context, NewEntryPage.route());
-    setState(() {
-      items.add(result);
-    });
-  }
 }
 
-// items = journal entry list;
-// chosenDisplay = 'Week', 'Month', 'Year';
-// getCompletedList = print the completed list
-List<JournalEntry> getFilteredList(List<JournalEntry> items, String? chosenDisplay, bool getCompleteList) {
-// Sort the Journal entries by most recent date
-  final sortedItems = items..sort((item1, item2) => item2.getDate().compareTo(item1.getDate()));
-  List<JournalEntry> filteredList = [];
+/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+/// creation of new entries, modification of them.
+class EntryPage extends StatefulWidget {
+  final JournalEntry? entry;
+  const EntryPage({
+    super.key,
+    this.entry
+  });
 
-  for (int i = 0; i < sortedItems.length; i++) {
-    if (getCompleteList) {
-      filteredList.add(sortedItems[i]);
-    }else {
-      final firstItem = sortedItems[0]; // get the most recent entry
-      final item = sortedItems[i];      // get the next item
-      final time = firstItem.getDate(); // get the date for the first item
+  @override
+  State<EntryPage> createState() => _EntryPageState();
+}
 
-      // check to see if the item is in the filter
-      bool isSameDate = time.isSameDate(item.getDate(), chosenDisplay!);
+class _EntryPageState extends State<EntryPage> {
+  final ValueNotifier<double> progress = ValueNotifier(0);
 
-      if (isSameDate) { // if item is in the filter, add it to the return list
-        filteredList.add(sortedItems[i]);
-      }
+  // List of selected tags to keep track of when making the chip list
+  List<Tag> selectedTags = [];
+  List<Emotion> selectedEmotions = [];
+
+  // Add text controllers to retrieve text data
+  final titleController = TextEditingController();
+  final entryTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.entry != null) {
+      selectedTags = widget.entry!.tags;
+      selectedEmotions = widget.entry!.emotions;
+      titleController.text = widget.entry!.title;
+      entryTextController.text = widget.entry!.entryText;
+    } else {
+      selectedTags = [];
+      selectedEmotions = [];
     }
   }
-  return filteredList;
-}
-// Are we not using this anymore?
-// Shouldn't this be in new_entry.dart?
-//
-// class Bar extends StatelessWidget {
-//   const Bar({super.key});
-//
-//   @override
-//   //Creates the OverflowBar for the plan, tag, and save buttons
-//   Widget build(BuildContext context) {
-//     return Container(
-//         color: getCurrentTheme().colorScheme.onBackground,
-//         child: Row(
-//           children: [
-//             OverflowBar(
-//               spacing: 50,
-//               overflowAlignment: OverflowBarAlignment.center,
-//               children: <Widget>[
-//                 TextButton(
-//                     key: const Key("planButton"),
-//                     child: const Text('Plan'),
-//                     onPressed: () {}),
-//                 TextButton(
-//                     key: const Key("tagButton"),
-//                     child: const Text('Tag'),
-//                     onPressed: () {}),
-//                 TextButton(
-//                     key: const Key("saveButton"),
-//                     child: const Text('Save'),
-//                     onPressed: () {}),
-//               ],
-//             )
-//           ],
-//         ));
-//   }
-// }
 
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    titleController.dispose();
+    entryTextController.dispose();
+    super.dispose();
+  }
+
+  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
+    return tagList.map((tag) => FilterChip(
+        label: Text(tag.name),
+        selected: selectedTags.any((element) => element.name == tag.name),
+        showCheckmark: false,
+        selectedColor: tag.color,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding tag is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
+            });
+          });
+        },
+      )).toList();
+  }
+
+  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
+    return emotionList.entries.map((e) => FilterChip(
+        label: Text(e.key),
+        selected: selectedEmotions.any((element) => element.name == e.key),
+        showCheckmark: false,
+        selectedColor: e.value,
+        onSelected: (bool selected) {
+          stfSetState(() {
+            setState(() {
+              /// When the cooresponding emote is selected, add it or remove it based on the name
+              //TODO: Update this when references are added to work only with references.
+              selected ? selectedEmotions.add(Emotion(name: e.key, color: e.value)) : selectedEmotions.removeWhere((element) => element.name == e.key);
+            });
+          });
+        },
+    )).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                  children: [
+                    // Text field for the Journal Entry Title
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(
+                        controller: titleController,
+                        key: const Key("titleInput"),
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Title',
+                        ),
+                      ),
+                    ),
+                    // Text input field for the Journal Entry Body
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(
+                        controller: entryTextController,
+                        key: const Key("journalInput"),
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Journal Entry',
+                        ),
+                        maxLines: 8,
+                        minLines: 1,
+                      ),
+                    ),
+
+                    // Chip display for the tags
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      // Make the chips scrollable
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          key: const Key('TagChipsDisplay'),
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            spacing: 5,
+                            children: selectedTags
+                                .map((tag) => ActionChip(
+                              label: Text(tag.name),
+                              backgroundColor: tag.color,
+                              onPressed: () {
+                                setState(() {
+                                  selectedTags.removeWhere((element) =>
+                                  element.name == tag.name);
+                                });
+                              },
+                            )).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Chip display for the emotions
+                    Padding(
+                        padding: const EdgeInsets.all(20),
+                        // Make the chips scrollable
+                        child: Scrollbar(
+                            child: SingleChildScrollView(
+                                key: const Key('EmotionChipsDisplay'),
+                                scrollDirection: Axis.horizontal,
+                                child: Wrap(
+                                  spacing: 5,
+                                  children: selectedEmotions
+                                      .map((Emotion emotion) => ActionChip(
+                                    label: Text(emotion.name),
+                                    backgroundColor: emotion.color,
+                                    onPressed: () =>
+                                        _emotionalDial(context, emotion),
+
+                                  ))
+                                      .toList(),
+                                )))),
+                  ]))),
+
+      // Plan save tag in replacement of the nav bar
+      bottomNavigationBar: Container(
+          transform: Matrix4.translationValues(0, 3, 0),
+          decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
+                  side: BorderSide(
+                    width: 3,
+                    color: settings.getCurrentTheme().colorScheme.primary,
+                  ))),
+          margin: EdgeInsets.only(
+              left: (MediaQuery.of(context).size.width / 10),
+              right: (MediaQuery.of(context).size.width / 10)),
+
+          // Keep all the button spaced evenly and centered on the page
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //crossAxisAlignment: CrossAxisAlignment.baseline,
+            children: [
+              // Plan button
+              TextButton(
+                  key: const Key("planButton"),
+                  child: const Text('Plan'),
+                  onPressed: () {}),
+              /*
+                  * Tag button
+                  * Will create a multi select dialog field that will allow
+                  * users to select the tags for the Journal Entry
+                  */
+              TextButton(
+                  key: const Key("tagButton"),
+                  child: const Text('Tag'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                              return AlertDialog(
+                                title: const Text("Select Tags"),
+                                content: Wrap(
+                                  spacing: 5.0,
+                                  children: createAvailableTagsList(stfSetState),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    key: const Key('saveTagsButton'),
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      Navigator.of(stfContext).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    );
+                  }),
+
+              TextButton(
+                  key: const Key("emotionButton"),
+                  child: const Text('Emotion'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                            builder: (stfContext, stfSetState) {
+                              return AlertDialog(
+                                title: const Text("Select Emotions"),
+                                content: Wrap(
+                                  spacing: 5.0,
+                                  children: createAvailableEmotionsList(stfSetState),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    key: const Key('saveEmotionsButton'),
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      Navigator.of(stfContext).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    );
+                  }),
+
+              // Save button
+              TextButton(
+                  key: const Key("saveButton"),
+                  child: const Text('Save'),
+                  onPressed: () {
+                    Navigator.pop(context, getEntry());
+                  }),
+            ],
+          )),
+    );
+  }
+
+  // Make an Alert Dialog Box that will display the emotional dial and a save button
+  dynamic _emotionalDial(BuildContext context, Emotion emotion) async {
+    int strength = 0;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: CircularSeekBar(
+              key: const Key('EmotionalDial'),
+              width: double.infinity,
+              height: 175,
+              progress: emotion.strength.toDouble(),
+              barWidth: 8,
+              startAngle: 5,
+              sweepAngle: 360,
+              strokeCap: StrokeCap.butt,
+              progressGradientColors: const [
+                Colors.red,
+                Colors.orange,
+                Colors.yellow,
+                Colors.green,
+                Colors.blue,
+                Colors.indigo,
+                Colors.purple
+              ],
+              innerThumbRadius: 5,
+              innerThumbStrokeWidth: 3,
+              innerThumbColor: Colors.white,
+              outerThumbRadius: 5,
+              outerThumbStrokeWidth: 10,
+              outerThumbColor: Colors.blueAccent,
+              dashWidth: 26,
+              dashGap: 10,
+              animation: false,
+              valueNotifier: progress,
+              child: Center(
+                child: ValueListenableBuilder(
+                    valueListenable: progress,
+                    builder: (_, double value, __) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(() {
+                          // on changed, set the strength
+                          strength = value.round();
+                          return '${value.round()}';
+                        }()),
+                        const Text('progress'),
+                      ],
+                    )),
+              ),
+            ),
+            actions: [
+              // pop the alert dialog off the screen and don't save the strength changes
+              TextButton(
+                  key: const Key('cancelDial'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel")),
+
+              // Save the strength changes and pop the dialog off the screen
+              TextButton(
+                  key: const Key('saveDial'),
+                  onPressed: () {
+                    emotion.strength = strength;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Save")),
+            ],
+          );
+        });
+  }
+
+  // Make the journal entry and save it
+  JournalEntry? getEntry() {
+    // Database entry point for creating journal entry
+    if(widget.entry == null) {
+      //TODO: do databse things to save new journal entry: db.insert
+      return JournalEntry(
+        title: titleController.text,
+        entryText: entryTextController.text,
+        date: DateTime.now(),
+        tags: selectedTags,
+        emotions: selectedEmotions,
+      );
+    } 
+    else {
+      // entry exists, we are modifying
+      //TODO: do datbase things for updating journal entry
+      // I have the full record, just patch the record.
+      widget.entry!.update(
+        titleController.text,
+        entryTextController.text,
+        selectedTags,
+        selectedEmotions
+      );
+      return widget.entry!;
+    }
+  }
+}
+
+/// [Formatter] is an extended DateTime Object that
 extension Formatter on DateTime {
   // Get the month string
   String formatDate() {
     switch (month) {
-      case 1: return 'January';
-      case 2: return 'February';
-      case 3: return 'March';
-      case 4: return 'April';
-      case 5: return 'May';
-      case 6: return 'June';
-      case 7: return 'July';
-      case 8: return 'August';
-      case 9: return 'September';
-      case 10: return 'October';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return 'Date is Wrong'; // This should never happen
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return 'Date is Wrong'; // This should never happen
     }
   }
 
   // Check if entries are in the same filter date
-  bool isSameDate(DateTime other, String display) {
+  bool isWithinDateRange(DateTime other, String display) {
     switch (display) {
       // If week filter, then check if in the same year, month, and week
       case 'Week':
         final firstWeek = DateTime(DateTime.now().year, 1, 1);
-        return (year == other.year && month == other.month && (getWeekNumber(firstWeek, this) == getWeekNumber(firstWeek, other)));
+        return (year == other.year &&
+            month == other.month &&
+            (getWeekNumber(firstWeek, this) ==
+                getWeekNumber(firstWeek, other)));
       // if month filter, then check for same year and month
-      case 'Month': return (year == other.year && month == other.month);
+      case 'Month':
+        return (year == other.year && month == other.month);
       // if year filter, then check for same year
-      case 'Year': return (year == other.year);
+      case 'Year':
+        return (year == other.year);
       // This should never happen
-      default: return false;
+      default:
+        return false;
     }
   }
 
@@ -344,41 +662,4 @@ extension Formatter on DateTime {
     // return the difference between the start and end date by week rounded up
     return (end.difference(start).inDays / 7).ceil();
   }
-}
-
-//create function to update the filtered list to only contain compatable entries
-
-void updateFilteredList(String input) {
-  //create 1 list for each type of sort
-  List<JournalEntry> filteredList = [];
-  //iterate through list to determine if an entry is compatable
-  //if it is then add it to the new list
-  for (int i = 0; i < entries.length; i++) {
-    //check is based off filter type
-    if (chosenFilter == 'Title') {
-      //to handle casing we will compare lower case version of the title
-      //and of the input
-      if (entries[i].getTitle().toLowerCase().contains(input.toLowerCase())) {
-        filteredList.add(entries[i]);
-      }
-    } else if (chosenFilter == 'Tags') {
-      /*
-      //currently there is no tag array apart of journal entries
-      //if we add one the implementation would be as follows
-      List<Tag> taglist = entries[i].getTags();
-      for(int j = 0; j < taglist.length; j++)
-      {
-        if (taglist[j].name.toLowerCase().contains(input.toLowerCase())) {
-          //because we only want to add the value one time we
-          //break the loop after one valid tag is found within
-          //the tag list
-          tagFilter.add(entries[i]);
-          j = taglist.length;
-        }
-      }
-      */
-    }
-  }
-  //update the list thats on the screen
-  items = filteredList;
 }

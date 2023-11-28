@@ -1,106 +1,168 @@
-import 'package:integration_test/integration_test.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/main.dart' as app;
 import 'package:app/provider/settings.dart' as settings;
+
+import 'test_utils.dart';
 
 void main() {
 
+  group("Overall Settings Test", () {
 
-  tearDown(() async => await settings.reset());
+    tearDown(() async => await settings.reset());
 
+    testWidgets("Settings works...", (tester) async {
+      const String password = "password123@";
+      settings.setFontScale(1.5);
+      settings.setTheme(ThemeOption.dark);
+      settings.setAccentColor(Colors.blueAccent);
+      await startAppWithSettings(tester, {
+        settings.fontScaleKey: 1.5,
+        settings.themeKey: ThemeOption.dark.index,
+        settings.accentColorKey: Colors.blueAccent.value,
+      });
+      await settings.setPassword(password);
 
-  test("Settings works...", () async {
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+      expect(settings.getCurrentTheme().brightness, ThemeSettings.darkTheme.brightness);
+      expect(settings.getFontScale(), 1.5);
+      expect(settings.getAccentColor().value, Colors.blueAccent.value);
+      expect(settings.getOtherSetting(settings.preferencesPrefix), null);
+      expect(settings.getOtherSetting(settings.fontScaleKey), 1.5);
+    });
 
-    const String password = "password123@";
-    await settings.load();
-    settings.setMockValues({});
-    settings.setFontScale(1.5);
-    settings.setTheme(ThemeOption.dark);
-    settings.setAccentColor(Colors.blueAccent);
-    settings.setConfigured(true);
-    settings.setPassword(password);
-    settings.setEncryptionStatus(true);
-    await settings.save();
+    testWidgets("Theme changes with different selections", (widgetTester) async {
+      await startApp(widgetTester);
+      await pumpUntilFound(widgetTester, find.byKey(const Key("Settings_Button")));
+      await tap(widgetTester, find.byKey(const Key("Settings_Button")));
 
-    app.main();
-    expect(settings.isInitialized(), true);
-    expect(settings.getCurrentTheme().brightness, ThemeSettings.darkTheme.brightness);
-    expect(settings.getFontScale(), 1.5);
-    expect(settings.getAccentColor().value, Colors.blueAccent.value);
-    expect(settings.isConfigured(), true);
-    expect(settings.isEncryptionEnabled(), true);
+      Finder dropdown = find.byKey(const ValueKey('StyleDropDown'));
+      await pumpUntilFound(widgetTester, dropdown);
+      await tap(widgetTester, dropdown);
 
-    expect(settings.getOtherSetting(settings.prefrencesPrefix), null);
-    expect(settings.getOtherSetting(settings.fontScaleKey), 1.5);
+      // Find the dark option
+      final darkDropDown = find.text('Dark').last;
+
+      // Select the drop down and expect to be replaced with dark
+      await tap(widgetTester, darkDropDown);
+      expect(find.text('Dark'), findsOneWidget);
+
+      //Find the provider & give me the state
+      MaterialApp appState = widgetTester.widget(find.byType(MaterialApp));
+      // Test if the Theme is dark
+      expect(Brightness.dark, appState.theme?.brightness);
+      expect(ThemeSettings.darkTheme.brightness, appState.theme?.brightness);
+      // Tap the drop down again
+
+      await tap(widgetTester, dropdown, true);
+
+      // Find the light option
+      final lightDropDown = find.text('Light').first;
+
+      // Select the drop down and expect to be replaced with light
+
+      await tap(widgetTester, lightDropDown, true);
+
+      // Find the light option
+      expect(find.text('Light'), findsOneWidget);
+
+      appState = widgetTester.widget(find.byType(MaterialApp));
+      // Test if the Theme is light
+      expect(Brightness.light, appState.theme?.brightness);
+      expect(ThemeSettings.lightTheme.brightness, appState.theme?.brightness);
+
+      await tap(widgetTester, find.text('Edit Tag List'), true);
+
+      await widgetTester.pageBack();
+      await widgetTester.pump();
+
+      await tap(widgetTester, find.text('Edit Emotion List'), true);
+      await tap(widgetTester, find.byKey(const Key('Enable/Disable Encryption')), true);
+      await tap(widgetTester, find.byKey(const Key('Erase_Button')), true);
+      await tap(widgetTester, find.text('Open Vault File'), true);
+    });
   });
 
-  testWidgets("Theme changes with different selections", (widgetTester) async {
-    settings.setMockValues({
-      settings.configuredKey: true,
-      settings.encryptionToggleKey: false,
-    });
-    app.main();
-    await widgetTester.pumpAndSettle();
+  group("Editing Tags Tests", () {
+    const String filter = 'test';
 
-    await widgetTester.tap(find.byKey(const Key("Settings_Button")));
-    await widgetTester.pumpAndSettle();
+    //Initial test used to make sure that no create tag button is displayed
+    testWidgets("Tag List Tests", (widgetTester) async {
+          //traverse to tag settings -------------------------------------------------
+          await startAppBare(widgetTester);
 
-    // Find the drop down
-    
-    final dropdown = find.byKey(const ValueKey('StyleDropDown'));
+          Finder settingsButton = find.byKey(const Key("Settings_Button"));
+          await pumpUntilFound(widgetTester, settingsButton);
+          await tap(widgetTester, settingsButton);
 
-    // Tap the drop down
-    await widgetTester.tap(dropdown);
-    await widgetTester.pumpAndSettle();
+          Finder tagList = find.text("Edit Tag List");
+          await pumpUntilFound(widgetTester, tagList);
+          await tap(widgetTester, tagList, true);
 
-    // Find the dark option
-    final darkDropDown = find.text('Dark').last;
+          Finder target = find.byKey(const Key('Create Tag'));
+          expect(target, findsNothing);
 
-    // Select the drop down and expect to be replaced with dark
-    await widgetTester.tap(darkDropDown);
-    await widgetTester.pumpAndSettle();
-    expect(find.text('Dark'), findsOneWidget);
+          //check a tag that we know doesnt exist ------------------------------------
+          target = find.byKey(const Key('Tag Search Bar'));
+          await widgetTester.enterText(target, filter);
+          await widgetTester.pump();
 
-    //Find the provider & give me the state
-    MaterialApp appState = widgetTester.widget(find.byType(MaterialApp));
-    // Test if the Theme is dark
-    expect(Brightness.dark, appState.theme?.brightness);
-    expect(ThemeSettings.darkTheme.brightness, appState.theme?.brightness);
-    // Tap the drop down again
-    await widgetTester.tap(dropdown);
-    await widgetTester.pumpAndSettle();
+          target = find.byKey(const Key('Create Tag'));
+          await tap(widgetTester, target, true);
 
-    // Find the light option
-    final lightDropDown = find.text('Light').first;
+          //Enter a new tag name
+          target = find.byKey(const Key('Tag Name Field'));
+          await widgetTester.enterText(target, filter);
 
-    // Select the drop down and expect to be replaced with light
-    await widgetTester.tap(lightDropDown);
-    await widgetTester.pumpAndSettle();
+          //Confirm new tag
+          target = find.byKey(const Key('Save New Tag Button'));
+          await tap(widgetTester, target, true);
 
-    // Find the light option
-    expect(find.text('Light'), findsOneWidget);
 
-    appState = widgetTester.widget(find.byType(MaterialApp));
-    // Test if the Theme is light
-    expect(Brightness.light, appState.theme?.brightness);
-    expect(ThemeSettings.lightTheme.brightness, appState.theme?.brightness);
+          //Empty tag search bar
+          target = find.byKey(const Key('Tag Search Bar'));
+          await widgetTester.enterText(target, "");
+          await widgetTester.pump();
 
-    await widgetTester.tap(find.text('Edit Emotion List'));
-    await widgetTester.pumpAndSettle();
+          //try to delete tag
+          await widgetTester.enterText(target, filter);
+          await widgetTester.pump();
+          target = find.byKey(const Key('Delete $filter Button'));
+          await tap(widgetTester, target, true);
 
-    await widgetTester.tap(find.text('Enable/Disable Encryption'));
-    await widgetTester.pumpAndSettle();
+          //expect no delete button and create tag button again
+          target = find.byKey(const Key('Tag Search Bar'));
+          await widgetTester.enterText(target, filter);
+          await widgetTester.pump();
+          target = find.byKey(const Key('Delete $filter Button'));
+          expect(target, findsNothing);
 
-    await widgetTester.tap(find.text('Open Vault File'));
-    await widgetTester.pumpAndSettle();
+          //Recreate tag
+          target = find.byKey(const Key('Create Tag'));
+          await tap(widgetTester, target);
 
-    await widgetTester.tap(find.byKey(const Key('Select_New_Vault')));
-    await widgetTester.pumpAndSettle();
+          //Enter a new tag name
+          target = find.byKey(const Key('Tag Name Field'));
+          await widgetTester.enterText(target, filter);
 
-    await widgetTester.tap(find.text('Edit Tag List'));
-    await widgetTester.pumpAndSettle();
+          //Confirm new tag
+          target = find.byKey(const Key('Save New Tag Button'));
+          await tap(widgetTester, target);
+
+
+          //check field submission with text and without -----------------------------
+          target = find.byKey(const Key('Tag Search Bar'));
+          //try empty text field
+          await widgetTester.enterText(target, '');
+          await widgetTester.pump();
+          target = find.byKey(const Key('Create Tag'));
+          expect(target, findsNothing);
+          //try with known good tag
+          target = find.byKey(const Key('Tag Search Bar'));
+          await widgetTester.enterText(target, filter);
+          await widgetTester.testTextInput.receiveAction(TextInputAction.done);
+          await widgetTester.pump();
+          target = find.byKey(const Key('Create Tag'));
+          expect(target, findsNothing);
+        });
   });
 }
