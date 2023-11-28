@@ -194,6 +194,7 @@ void handleResetEverythingPress(BuildContext context) {
 
 void verifyPassword(BuildContext context, String password) async {
   await showDialog(
+      barrierColor: Colors.transparent,
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
@@ -256,6 +257,7 @@ Future skipToDashboard(BuildContext context) async {
 void attemptLogin(BuildContext context) async {
   String passwordFieldText = "";
   await showDialog(
+    barrierColor: Colors.black.withOpacity(0.2),
     context: context,
     builder: (context) => AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -288,6 +290,8 @@ void attemptLogin(BuildContext context) async {
 void finishConfiguration(BuildContext context, String password) async {
   //display loading screen while password is being saved
   await showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -327,6 +331,8 @@ void confirmPassword(BuildContext context, String password) async {
   if (password.isNotEmpty) {
     // begin confirmation loop (verification)
     await showDialog(
+        //update to remove any barrier color after the first one due to color issue
+        barrierColor: Colors.transparent,
         context: context,
         builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -352,6 +358,8 @@ void confirmPassword(BuildContext context, String password) async {
   else {
     //Password is empty, prompt for confirmation (ensure no encryption)
     await showDialog(
+        //update to remove any barrier color after the first one due to color issue
+        barrierColor: Colors.transparent,
         context: context,
         builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -381,6 +389,7 @@ Future<void> createPassword(BuildContext context) async {
   String password = "";
   // Not initialized
   await showDialog(
+    barrierColor: Colors.black.withOpacity(0.2),
     context: context,
     // Start user creation process.
     builder: (context) => AlertDialog(
@@ -428,6 +437,7 @@ void handleStartPress(BuildContext context) async {
     await createPassword(context).whenComplete(() async {
       if (isEncryptionEnabled()) {
         await showDialog(
+            barrierColor: Colors.transparent,
             context: context,
             builder: (context) {
               String? recovery = encryptor.getRecoveryPhrase();
@@ -460,6 +470,7 @@ void handleResetPasswordPress(BuildContext context) async {
   String? maybePasswordOrPhrase = "";
   if (isConfigured()) {
     await showDialog(
+      barrierColor: Colors.black.withOpacity(0.2),
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -480,6 +491,7 @@ void handleResetPasswordPress(BuildContext context) async {
               key: const Key('Reset_Password_Button'),
               onPressed: () async {
                 await showDialog(
+                    barrierColor: Colors.transparent,
                     barrierDismissible: false,
                     context: context,
                     builder: (context) => AlertDialog(
@@ -531,7 +543,9 @@ void handleResetPasswordPress(BuildContext context) async {
                                       const SizedBox(
                                           width: 200,
                                           height: 200,
-                                          child: LoadingAnimation()),
+                                          child: LoadingAnimation(
+                                            loadingString: 'Verifying password',
+                                          )),
                                     ];
                                   }
                                   return Center(

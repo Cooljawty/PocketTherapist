@@ -499,7 +499,7 @@ class _LoadingAnimationState extends State<LoadingAnimation>
       upperBound: 6.283)
     ..repeat();
   final loadingImage = Image.asset(
-    'assets/logoSmall.png',
+    'assets/CenteredGlassesFrame.png',
     key: const Key('Loading_Animation'),
   );
   final dots = [".   ", "..  ", "... ", "...."];
