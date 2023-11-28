@@ -469,18 +469,14 @@ class _EntryPageState extends State<EntryPage> {
               width: double.infinity,
               height: 175,
               progress: emotion.strength.toDouble(),
+              maxProgress: 60,
               barWidth: 8,
               startAngle: 5,
               sweepAngle: 360,
               strokeCap: StrokeCap.butt,
-              progressGradientColors: const [
-                Colors.red,
-                Colors.orange,
-                Colors.yellow,
-                Colors.green,
-                Colors.blue,
-                Colors.indigo,
-                Colors.purple
+              progressGradientColors: [
+                emotion.color.withAlpha(128),
+                emotion.color,
               ],
               innerThumbRadius: 5,
               innerThumbStrokeWidth: 3,
@@ -488,10 +484,12 @@ class _EntryPageState extends State<EntryPage> {
               outerThumbRadius: 5,
               outerThumbStrokeWidth: 10,
               outerThumbColor: Colors.blueAccent,
-              dashWidth: 26,
+              dashWidth: 20,
               dashGap: 10,
               animation: false,
               valueNotifier: progress,
+
+              /// TODO: Remove the child center that displays the strength?
               child: Center(
                 child: ValueListenableBuilder(
                     valueListenable: progress,
@@ -503,7 +501,7 @@ class _EntryPageState extends State<EntryPage> {
                               strength = value.round();
                               return '${value.round()}';
                             }()),
-                            const Text('progress'),
+                            const Text('Strength'),
                           ],
                         )),
               ),
