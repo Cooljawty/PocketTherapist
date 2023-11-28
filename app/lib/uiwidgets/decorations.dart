@@ -454,7 +454,7 @@ class _DisplayCardState extends State<DisplayCard> {
                       children: <Widget>[
                         // Title
                         SizedBox(
-                            width: MediaQuery.of(context).size.width - 150,
+                            width: MediaQuery.of(context).size.width - 175,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 10,
@@ -487,7 +487,7 @@ class _DisplayCardState extends State<DisplayCard> {
 
                         // preview text
                         SizedBox(
-                          width: MediaQuery.of(context).size.width - 150,
+                          width: MediaQuery.of(context).size.width - 175,
                           // height: 40,
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -507,29 +507,28 @@ class _DisplayCardState extends State<DisplayCard> {
                   // Spacer to force text to left and date to the right
                   const Spacer(),
 
-                  widget.entry.planCompleted == null
-                      ? Container()
-                      : IconButton(
-                          padding: const EdgeInsets.only(top: 10),
-                          key: const Key("PlanCompleteButton"),
-                          // Show filled outline for completed
-                          icon: const Icon(Icons.check_box_outline_blank),
-                          selectedIcon: const Icon(Icons.check_box),
-                          isSelected: widget.entry.planCompleted == true,
-                          onPressed: (() {
-                            /// TODO: This might need to save to entries
-                            setState(() {
-                              // Toggle plan completion status on press
-                              if (widget.entry.planCompleted != null) {
-                                widget.entry.planCompleted =
-                                    !widget.entry.planCompleted!;
-                              }
-                            });
-                          })),
+                  if (widget.entry.planCompleted != null) IconButton(
+                      padding: const EdgeInsets.only(top: 10),
+                      key: const Key("PlanCompleteButton"),
+                      // Show filled outline for completed
+                      icon: const Icon(Icons.check_box_outline_blank),
+                      selectedIcon: const Icon(Icons.check_box),
+                      isSelected: widget.entry.planCompleted == true,
+                      onPressed: (() {
+                        /// TODO: This might need to save to entries
+                        setState(() {
+                          // Toggle plan completion status on press
+                          if (widget.entry.planCompleted != null) {
+                            widget.entry.planCompleted =
+                            !widget.entry.planCompleted!;
+                          }
+                        });
+                      })),
+
 
                   // Date
                   Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 5),
+                    padding: const EdgeInsets.only(top: 12, right: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,

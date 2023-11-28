@@ -8,6 +8,9 @@ import '../uiwidgets/decorations.dart';
 
 // Display options
 const List<String> displayOptions = ['Week', 'Month', 'Year'];
+final List<DropdownMenuItem<String>> displayDropDown = displayOptions
+    .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
+    .toList();
 String chosenDisplay = 'Week';
 
 //
@@ -97,10 +100,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           borderRadius: BorderRadius.circular(10.0),
                           // Set up the dropdown menu items
                           value: chosenDisplay,
-                          items: displayOptions
-                              .map((item) => DropdownMenuItem<String>(
-                                  value: item, child: Text(item)))
-                              .toList(),
+                          items: displayDropDown,
                           // if changed set new display option
                           onChanged: (item) => setState(() {
                             chosenDisplay = item ?? chosenDisplay;
@@ -133,7 +133,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             // if not same date or first in list make new list
                             children: [
                               if (index == 0 || !(isSameDate)) ...[
-                                parseRange(time)
+                                Text(getTimeRange(time))
                               ],
                               Dismissible(
                                 // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -152,7 +152,12 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                 onDismissed: (direction) {
                                   // Remove the item from the data source.
                                   setState(() {
-                                    entries.remove(items.removeAt(index));
+                                    JournalEntry entry = items.removeAt(index);
+                                    if (!widget.showPlans) {
+                                      entries.remove(entry);
+                                    } else {
+                                      plans.remove(entry);
+                                    }
                                   });
 
                                   // Then show a snackBar w/ item name as dismissed message
@@ -220,25 +225,22 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     );
   }
 
-  Text parseRange(DateTime time) {
-    return Text(() {
-      // If weekly view, then calculate weeks of the year and display range in header
-      if (chosenDisplay == 'Week') {
-        DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
-        int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
-        DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
-        DateTime lower = upper.subtract(const Duration(days: 6));
+  String getTimeRange(DateTime time) {
+    if (chosenDisplay == 'Week') {
+      DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+      int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
+      DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
+      DateTime lower = upper.subtract(const Duration(days: 6));
 
-        // Range for the week
-        return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-      } else if (chosenDisplay == 'Month') {
-        // If monthly, only display month and year
-        return '${time.formatDate()} ${time.year.toString()}';
-      } else {
-        // If yearly, only display year
-        return time.year.toString();
-      }
-    }());
+      // Range for the week
+      return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+    } else if (chosenDisplay == 'Month') {
+      // If monthly, only display month and year
+      return '${time.formatDate()} ${time.year.toString()}';
+    } else {
+      // If yearly, only display year
+      return time.year.toString();
+    }
   }
 }
 
