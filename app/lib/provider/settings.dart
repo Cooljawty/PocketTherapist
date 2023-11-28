@@ -126,7 +126,7 @@ void setEncryptionStatus(bool newStatus) =>
 void setAccentColor(Color newColor) =>
     _settings[accentColorKey] = newColor.value;
 Future<void> setPassword(String newPassword) async =>
-    encryptor.setPassword(newPassword);
+    await encryptor.setPassword(newPassword);
 void setOtherSetting(String key, Object? value) => _settings[key] = value;
 
 void setMockValues(Map<String, dynamic> value) {
@@ -205,22 +205,19 @@ void verifyPassword(BuildContext context, String password) async {
                     BuildContext context,
                     AsyncSnapshot<bool> snapshot,
                   ) {
-                    List<Widget> finalDisplay;
+                    List<Widget> finalDisplay = <Widget>[
+                      const SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: LoadingAnimation(loadingString: 'Logging In')),
+                    ];
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.hasData) {
                       if (snapshot.data!) {
                         //gets called to change screen after future builder is done
                         skipToDashboard(context);
-                        //update prompt to indicate success
-                        finalDisplay = [
-                          const Text(
-                            'Welcome Back',
-                            style: TextStyle(
-                                fontSize: 15.0, fontWeight: FontWeight.bold),
-                            key: Key('Successful_Password'),
-                          ),
-                        ];
                       } else {
+                        //on bad password we update the prompt
                         finalDisplay = [
                           const Text(
                             'Incorrect Password:',
@@ -236,11 +233,6 @@ void verifyPassword(BuildContext context, String password) async {
                           )
                         ];
                       }
-                    } else {
-                      finalDisplay = <Widget>[
-                        const SizedBox(
-                            width: 200, height: 200, child: LoadingAnimation()),
-                      ];
                     }
                     return Center(
                       child: Column(
@@ -306,32 +298,23 @@ void finishConfiguration(BuildContext context, String password) async {
                     BuildContext context,
                     AsyncSnapshot<void> snapshot,
                   ) {
-                    List<Widget> finalDisplay;
                     //once encryptor.unlock(password) is done then run code based off value
                     if (snapshot.connectionState == ConnectionState.done) {
-                      //traverse to next page once encryption is done, slight delay
-                      //for prompt to update
-                      skipToDashboard(context);
-                      //final display cant be null so we overwrite it to indicate success
-                      finalDisplay = [
-                        const Text(
-                          "Your Digital Journal's Encryption is Ready",
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                          key: Key('Initialization_Complete'),
-                        ),
-                      ];
-                    } else {
-                      //while it is loading display the loading widget
-                      finalDisplay = <Widget>[
-                        const SizedBox(
-                            width: 200, height: 200, child: LoadingAnimation()),
-                      ];
+                      //save configuration before changing screens
+                      setConfigured(true);
+                      //traverse to next page once encryption is done
+                      save().whenComplete(() => skipToDashboard(context));
                     }
-                    return Center(
+                    return const Center(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: finalDisplay),
+                          children: [
+                            SizedBox(
+                                width: 200,
+                                height: 200,
+                                child: LoadingAnimation(
+                                    loadingString: 'Generating Keys')),
+                          ]),
                     );
                   }),
             ],

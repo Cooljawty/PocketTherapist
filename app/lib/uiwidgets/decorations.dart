@@ -481,7 +481,9 @@ class _DisplayCardState extends State<DisplayCard> {
 }
 
 class LoadingAnimation extends StatefulWidget {
-  const LoadingAnimation({super.key});
+  final String? loadingString;
+
+  const LoadingAnimation({super.key, this.loadingString});
 
   @override
   State<LoadingAnimation> createState() => _LoadingAnimationState();
@@ -500,8 +502,7 @@ class _LoadingAnimationState extends State<LoadingAnimation>
     'assets/logoSmall.png',
     key: const Key('Loading_Animation'),
   );
-  final words = ["Loading.   ", "Loading..  ", "Loading... ", "Loading...."];
-
+  final dots = [".   ", "..  ", "... ", "...."];
   @override
   void dispose() {
     _animationController.dispose();
@@ -511,7 +512,7 @@ class _LoadingAnimationState extends State<LoadingAnimation>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, //const Color.fromRGBO(0, 0, 0, 75),
+      backgroundColor: Colors.transparent,
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -529,17 +530,20 @@ class _LoadingAnimationState extends State<LoadingAnimation>
                         );
                       })),
             ),
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) =>
-                        //2 pi to even quarters
-                        Text(
-                          words[((_animationController.value) / (6.283 / 4.0))
-                              .truncate()],
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ))),
+            //either uses the text passed in or uses default loading text
+            Expanded(
+              child: Text(widget.loadingString ?? "Loading",
+                  style: Theme.of(context).textTheme.titleLarge),
+            ),
+            AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) =>
+                    //2 pi to even quarters
+                    Text(
+                      dots[((_animationController.value) / (6.283 / 4.0))
+                          .truncate()],
+                      style: Theme.of(context).textTheme.titleLarge,
+                    )),
           ],
         ),
       ),

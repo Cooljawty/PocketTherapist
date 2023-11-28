@@ -126,7 +126,7 @@ Future<bool> resetCredentials(String phrase) async {
     settings.setConfigured(false);
     settings.setEncryptionStatus(false); // Prevents a soft lock out of the app
     // Externally should call setPassword to complete the reset process.
-    await settings.save().whenComplete(() => null);
+    settings.save().whenComplete(() => null);
     return true;
   }
   return false; // Entered is neither password nor recovery phrase...
