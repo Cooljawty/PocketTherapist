@@ -104,6 +104,11 @@ void main() async {
 // Find the confirm button ---------------------------------------------------------
       Finder confirmNoPasswordButton = find.text("Yes");
       await tap(widgetTester, confirmNoPasswordButton);
+      //Successful login, on dashboard
+      Finder dashboard = find.text("Dashboard");
+      //wait until incorrect password is found
+      await pumpUntilFound(widgetTester, dashboard);
+      await expectLater(find.text("Dashboard"), findsNWidgets(2));
     });
 
     testWidgets("No Password Cancel", (widgetTester) async {
