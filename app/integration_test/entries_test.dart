@@ -362,9 +362,8 @@ void main() {
       expect(find.text(filter), findsOneWidget);
 
       // Check to see if every entry is there
-      for (int i = 0; i < entries.length; i++) {
-        final entryKey = find.byKey(Key(entries[i].id.toString()));
-        // await tester.pumpWidget(myApp);
+      for (JournalEntry entry in entries.where((e) => e.planCompleted == null)) {
+        final entryKey = find.byKey(Key(entry.id.toString()));
         await tester.pump();
         await tester.scrollUntilVisible(entryKey, 1);
         // Confirm that the entry was seen

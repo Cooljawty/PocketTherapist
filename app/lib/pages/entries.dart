@@ -63,6 +63,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     List<JournalEntry> items = widget.showPlans
         ? entries.where((entry) => entry.planCompleted != null).toList()
         : entries.where((entry) => entry.planCompleted == null).toList();
+    // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -240,7 +241,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   }
 }
 
-/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+/// [EntryPage] is the page where an individual entry is displayed. it handles both
 /// creation of new entries, modification of them.
 class EntryPage extends StatefulWidget {
   final JournalEntry? entry;
