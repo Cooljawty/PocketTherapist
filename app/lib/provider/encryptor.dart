@@ -20,7 +20,8 @@ Encrypter? _encrypter;
 // Argon2 parameters
 const int parallelPower = 4;
 const int consumeMemory = 500000;
-const int iterations = 9; // 2x recommended minimum
+const int iterations =
+    6; //9 2x recommended minimum, updated to 6 to speed up unit test
 //------------------------------------------------------------------------------
 const int pwHashLength = 32;
 
