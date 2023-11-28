@@ -334,9 +334,14 @@ class CustomNavigationBar extends StatelessWidget {
     NavigationDestination(key: Key("navSettings"), icon: Icon(Icons.settings), label: "Settings"),
   ];
 
+  /// [destinations] is the different icons at the bottom that a user could tap on to visit
   final List<NavigationDestination> destinations;
+  /// [selectedIndex] is the currently selected destination as its place in the destination list.
   int selectedIndex;
+  /// [onDestinationSelected] is a function that should be called every time a selection is made, which will
+  /// update the navigation bar and perform any other necessary tasks for this navigation.
   final ValueChanged<int>? onDestinationSelected;
+  /// [allowReselect] fill this in here
   bool allowReselect;
 
   CustomNavigationBar({
@@ -354,11 +359,14 @@ class CustomNavigationBar extends StatelessWidget {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if (!allowReselect) if (index == selectedIndex) return;
+        if (!allowReselect && index == selectedIndex) return;
         if (index >= destinations.length) return;
         onDestinationSelected == null
             ? defaultOnDestinationSelected(index, context)
             : onDestinationSelected!(index);
+
+        // this may need a bool around it to enable your functionality.
+        selectedIndex = index; // This needs to be here to properly update the icons on other pages, as well as prevent re-evaluation of the navigation if we are already on that page.
       },
     );
   }
