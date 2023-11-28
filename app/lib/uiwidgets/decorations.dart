@@ -514,36 +514,45 @@ class _LoadingAnimationState extends State<LoadingAnimation>
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: AnimatedBuilder(
-                      animation: _animationController,
-                      child: loadingImage,
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _animationController.value,
-                          child: child,
-                        );
-                      })),
-            ),
-            //either uses the text passed in or uses default loading text
-            Expanded(
-              child: Text(widget.loadingString ?? "Loading",
-                  style: Theme.of(context).textTheme.titleLarge),
-            ),
-            AnimatedBuilder(
+            //first sized box used to control image size
+            SizedBox(
+              width: 130,
+              height: 130,
+              child: AnimatedBuilder(
                 animation: _animationController,
-                builder: (context, child) =>
-                    //2 pi to even quarters
-                    Text(
-                      dots[((_animationController.value) / (6.283 / 4.0))
-                          .truncate()],
-                      style: Theme.of(context).textTheme.titleLarge,
-                    )),
+                child: loadingImage,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _animationController.value,
+                    child: child,
+                  );
+                },
+              ),
+            ),
+            //second sized box used to add spacing between image and text
+            const SizedBox(
+              height: 20,
+            ),
+            //update to move text below loading image
+            Row(
+              children: [
+                //either uses the text passed in or uses default loading text
+                Text(widget.loadingString ?? "Loading",
+                    style: Theme.of(context).textTheme.titleLarge),
+                AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) =>
+                        //2 pi to even quarters
+                        Text(
+                          dots[((_animationController.value) / (6.283 / 4.0))
+                              .truncate()],
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
+              ],
+            )
           ],
         ),
       ),

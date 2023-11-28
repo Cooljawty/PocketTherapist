@@ -149,7 +149,7 @@ Future<bool> verifyRecoveryPhrase(String phrase) async {
   Argon2HashDigest keyEncryptionKey =
       await thread.compute(hasher.convert, phrase.codeUnits);
   String maybe = keyEncryptionKey.encoded();
-  return Future<bool>.value(maybe == _recoveryHash);
+  return maybe == _recoveryHash;
 }
 
 /// [unlock] is responsible for unlocking and initializing the application after password has been set
