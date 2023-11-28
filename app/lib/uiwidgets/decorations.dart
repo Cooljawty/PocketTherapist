@@ -326,21 +326,34 @@ class StarBackground extends StatelessWidget {
 // ignore: must_be_immutable
 class CustomNavigationBar extends StatelessWidget {
   static const List<NavigationDestination> defaultDestinations = [
-    NavigationDestination(key: Key("navDashboard"), icon: Icon(Icons.dashboard), label: "Dashboard"),
-    NavigationDestination(key: Key("navEntries"), icon: Icon(Icons.feed), label: "Entries"),
-    NavigationDestination(key: Key("navNewEntry"), icon: Icon(Icons.add), label: "NewEntry"),
-    NavigationDestination(key: Key("navCalendar"), icon: Icon(Icons.calendar_month), label: "Calendar"),
-    NavigationDestination(key: Key("navPlans"), icon: Icon(Icons.event_note), label: "Plans"),
-    NavigationDestination(key: Key("navSettings"), icon: Icon(Icons.settings), label: "Settings"),
+    NavigationDestination(
+        key: Key("navDashboard"),
+        icon: Icon(Icons.dashboard),
+        label: "Dashboard"),
+    NavigationDestination(
+        key: Key("navEntries"), icon: Icon(Icons.feed), label: "Entries"),
+    NavigationDestination(
+        key: Key("navNewEntry"), icon: Icon(Icons.add), label: "NewEntry"),
+    NavigationDestination(
+        key: Key("navCalendar"),
+        icon: Icon(Icons.calendar_month),
+        label: "Calendar"),
+    NavigationDestination(
+        key: Key("navPlans"), icon: Icon(Icons.event_note), label: "Plans"),
+    NavigationDestination(
+        key: Key("navSettings"), icon: Icon(Icons.settings), label: "Settings"),
   ];
 
   /// [destinations] is the different icons at the bottom that a user could tap on to visit
   final List<NavigationDestination> destinations;
+
   /// [selectedIndex] is the currently selected destination as its place in the destination list.
   int selectedIndex;
+
   /// [onDestinationSelected] is a function that should be called every time a selection is made, which will
   /// update the navigation bar and perform any other necessary tasks for this navigation.
   final ValueChanged<int>? onDestinationSelected;
+
   /// [allowReselect] fill this in here
   bool allowReselect;
 
@@ -366,7 +379,7 @@ class CustomNavigationBar extends StatelessWidget {
             : onDestinationSelected!(index);
 
         // this may need a bool around it to enable your functionality.
-        selectedIndex = index; // This needs to be here to properly update the icons on other pages, as well as prevent re-evaluation of the navigation if we are already on that page.
+        // selectedIndex = index; // This needs to be here to properly update the icons on other pages, as well as prevent re-evaluation of the navigation if we are already on that page.
       },
     );
   }
@@ -454,22 +467,21 @@ class _DisplayCardState extends State<DisplayCard> {
                                 softWrap: false,
                                 style: widget.entry.planCompleted == true
                                     // If plan is finished, show a strikethrough
-                                    ? DefaultTextStyle.of(context).style.apply(
-                                          fontSizeFactor: 1.3,
-                                          fontWeightDelta: 1,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                          decorationStyle:
-                                              TextDecorationStyle.wavy,
-                                          decorationColor: Colors.orange,
-                                          // decorationThicknessFactor: 1.3,
-                                          // decorationThicknessDelta: 1,
-                                        )
+                                    ? TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationStyle:
+                                            TextDecorationStyle.wavy,
+                                        decorationColor:
+                                            Theme.of(context).primaryColor,
+                                        decorationThickness: 2,
+                                      )
                                     // Otherwise no text style changes
-                                    : DefaultTextStyle.of(context).style.apply(
-                                          fontSizeFactor: 1.3,
-                                          fontWeightDelta: 1,
-                                        ),
+                                    : const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                               ),
                             )),
 
