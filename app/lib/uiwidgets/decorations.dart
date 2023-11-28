@@ -507,24 +507,20 @@ class _DisplayCardState extends State<DisplayCard> {
                   // Spacer to force text to left and date to the right
                   const Spacer(),
 
-                  if (widget.entry.planCompleted != null) IconButton(
+                  if (widget.entry.planCompleted != null)
+                    IconButton(
                       padding: const EdgeInsets.only(top: 10),
                       key: const Key("PlanCompleteButton"),
                       // Show filled outline for completed
                       icon: const Icon(Icons.check_box_outline_blank),
                       selectedIcon: const Icon(Icons.check_box),
                       isSelected: widget.entry.planCompleted == true,
-                      onPressed: (() {
-                        /// TODO: This might need to save to entries
+                      onPressed: () {
                         setState(() {
-                          // Toggle plan completion status on press
-                          if (widget.entry.planCompleted != null) {
-                            widget.entry.planCompleted =
-                            !widget.entry.planCompleted!;
-                          }
+                          widget.entry.toggleCompletion();
                         });
-                      })),
-
+                      },
+                    ),
 
                   // Date
                   Padding(

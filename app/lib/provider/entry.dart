@@ -65,18 +65,17 @@ void loadTagsEmotions() {
   //  tags.clear();
   //  foundTags.forEach((key, value) => tags[key] = Tag(name: key, color: Color(value)));
   //}
-  if (foundTags !=null && foundTags is Map<String, int>){
+  if (foundTags != null && foundTags is Map<String, int>) {
     tagList.clear();
-    for(final MapEntry<String, int>(:key, :value) in foundTags.entries){
+    for (final MapEntry<String, int>(:key, :value) in foundTags.entries) {
       tagList.add(Tag(name: key, color: Color(value)));
     }
   }
 
-
   Object? foundEmotions = settings.getOtherSetting('emotions');
   if (foundEmotions != null && foundEmotions is Map<String, int>) {
     emotionList.clear();
-    for(final MapEntry<String, int>(:key, :value) in foundEmotions.entries){
+    for (final MapEntry<String, int>(:key, :value) in foundEmotions.entries) {
       emotionList[key] = Color(value);
     }
   }
@@ -92,7 +91,7 @@ void loadTagsEmotions() {
 void saveTagsEmotions() {
   Map<String, int> map = {};
   //tags.forEach((key, value) => map[key] = value.color.value);
-  for(final Tag element in tagList) {
+  for (final Tag element in tagList) {
     map[element.name] = element.color.value;
   }
   settings.setOtherSetting('tags', Map<String, int>.of(map));
@@ -153,7 +152,7 @@ class Emotion {
   });
 }
 
-class JournalEntry implements Comparable<JournalEntry>{
+class JournalEntry implements Comparable<JournalEntry> {
   // unique id for each entry
   final int id = UniqueKey().hashCode;
 
@@ -190,18 +189,19 @@ class JournalEntry implements Comparable<JournalEntry>{
     List<Tag>? newTags,
     List<Emotion>? newEmotions,
   ]) {
-    if(newTitle != null) title = newTitle;
-    if(newEntryText != null) {
+    if (newTitle != null) title = newTitle;
+    if (newEntryText != null) {
       entryText = newEntryText;
-      previewText = entryText.substring(0, min(previewLength, entryText.length));
+      previewText =
+          entryText.substring(0, min(previewLength, entryText.length));
     }
-    if(newTags != null) tags = newTags;
-    if(newEmotions != null) emotions = newEmotions;
+    if (newTags != null) tags = newTags;
+    if (newEmotions != null) emotions = newEmotions;
   }
 
   List<Color> getGradientColors() {
     List<Color> colors = [];
-    if (emotions.length >= 2){
+    if (emotions.length >= 2) {
       emotions.sort((e1, e2) => e1.strength > e2.strength ? 1 : 0);
       colors.add(emotions[0].color);
       colors.add(emotions[1].color);
@@ -211,7 +211,7 @@ class JournalEntry implements Comparable<JournalEntry>{
     } else if (tags.length >= 2) {
       colors.add(tags[0].color);
       colors.add(tags[1].color);
-    } else if (tags.isNotEmpty){
+    } else if (tags.isNotEmpty) {
       colors.add(tags[0].color);
       colors.add(Colors.white24);
     } else {
@@ -220,7 +220,6 @@ class JournalEntry implements Comparable<JournalEntry>{
     }
     return colors;
   }
-
 
   // Get the strongest emotion in the entry
   Emotion getStrongestEmotion() {
@@ -233,7 +232,10 @@ class JournalEntry implements Comparable<JournalEntry>{
       }
       return strongestEmotion;
     }
-    return Emotion(name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+    return Emotion(
+        name: 'None',
+        strength: 0,
+        color: Colors.black); // This shouldn't happen
   }
 
   /* TODO
@@ -245,13 +247,18 @@ class JournalEntry implements Comparable<JournalEntry>{
   /// we will compare them based on the [title]
   @override
   int compareTo(JournalEntry other) {
-    int order = other.date.compareTo(date) ;
+    int order = other.date.compareTo(date);
     return order == 0 ? other.title.compareTo(title) : order;
+  }
+
+  void toggleCompletion() {
+    if (planCompleted != null) planCompleted = !planCompleted!;
   }
 }
 
 Future<void> makeNewEntry(BuildContext context) async {
-  final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EntryPage()));
+  final JournalEntry? result = await Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => const EntryPage()));
   if (result is JournalEntry) {
     if (result.planCompleted == null) {
       entries.add(result);
