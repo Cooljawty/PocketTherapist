@@ -617,17 +617,25 @@ class _EntryPageState extends State<EntryPage> {
   // Make the journal entry and save it
   JournalEntry? getEntry() {
     // Database entry point for creating journal entry
-    if (widget.entry == null) {
+    if (widget.entry == null && !isPlan) {
       //TODO: do database things to save new journal entry: db.insert
       return JournalEntry(
         title: titleController.text,
         entryText: entryTextController.text,
         tags: selectedTags,
         emotions: selectedEmotions,
-        planCompleted: isPlan ? false : null,
-        date: datePicked ?? DateTime.now(),
+        date: DateTime.now(),
       );
-    } else {
+    } else if (widget.entry == null) {
+      return Plan(
+        title: titleController.text,
+        entryText: entryTextController.text,
+        tags: selectedTags,
+        emotions: selectedEmotions,
+        date: datePicked!,
+      );
+    }
+    else {
       // entry exists, we are modifying
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.

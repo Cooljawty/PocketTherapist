@@ -4,7 +4,7 @@ import 'package:app/provider/settings.dart' as settings;
 import 'dart:math';
 
 List<JournalEntry> entries = [];
-List<JournalEntry> plans = [];
+List<Plan> plans = [];
 
 //add tag list
 List<Tag> tagList = [
@@ -169,16 +169,12 @@ class JournalEntry implements Comparable<JournalEntry> {
 
   static const previewLength = 25;
 
-  // Plans
-  bool? planCompleted;
-
   JournalEntry({
     required this.title,
     required this.entryText,
     required this.date,
     this.tags = const [],
     this.emotions = const [],
-    this.planCompleted,
   }) {
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
@@ -252,20 +248,38 @@ class JournalEntry implements Comparable<JournalEntry> {
     int order = other.date.compareTo(date);
     return order == 0 ? other.title.compareTo(title) : order;
   }
+}
 
+/// [Plan]s can be marked as completed and store the date at which it was completed
+class Plan extends JournalEntry {
+  DateTime? completionDate;
+  late bool planCompleted;
+
+  Plan({
+    required super.title,
+    required super.entryText,
+    required super.date,
+    super.tags,
+    super.emotions,
+  }) {
+    planCompleted = false;
+  }
+
+  /// Toggle completion status
+  /// If marked as completed, set completed time to current time
+  /// Otherwise, delete the completion time
   void toggleCompletion() {
-    if (planCompleted != null) planCompleted = !planCompleted!;
+    planCompleted = !planCompleted;
+    completionDate = planCompleted ? DateTime.now() : null;
   }
 }
 
 Future<void> makeNewEntry(BuildContext context) async {
   final JournalEntry? result = await Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => const EntryPage()));
-  if (result is JournalEntry) {
-    if (result.planCompleted == null) {
-      entries.add(result);
-    } else {
-      plans.add(result);
-    }
+  if (result is Plan) {
+    plans.add(result);
+  } else if (result is JournalEntry) {
+    entries.add(result);
   }
 }

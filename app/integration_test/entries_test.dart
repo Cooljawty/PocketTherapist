@@ -441,13 +441,13 @@ void main() {
 
       //Drag the entry, then tap cancel button
       await tester.drag(entryFinder, const Offset(-500, 0));
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tap(tester, find.text("CANCEL"), true);
       expect(find.byKey(entryKey), findsOneWidget);
 
       //Drag the entry, then tap delete button
       await tester.drag(entryFinder, const Offset(-500, 0));
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tap(tester, find.text("DELETE"), true);
       expect(find.byKey(entryKey), findsNothing);
     });

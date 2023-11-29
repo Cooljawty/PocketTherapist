@@ -412,7 +412,7 @@ class DisplayCard extends StatefulWidget {
 class _DisplayCardState extends State<DisplayCard> {
   void toggleEntry() {
     setState(() {
-      widget.entry.toggleCompletion();
+      (widget.entry as Plan).toggleCompletion();
     });
   }
 
@@ -471,7 +471,9 @@ class _DisplayCardState extends State<DisplayCard> {
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
-                                style: widget.entry.planCompleted == true
+                                style: widget.entry is Plan &&
+                                        (widget.entry as Plan).planCompleted ==
+                                            true
                                     // If plan is finished, show a strikethrough
                                     ? TextStyle(
                                         fontSize: 16,
@@ -514,14 +516,14 @@ class _DisplayCardState extends State<DisplayCard> {
                   const Spacer(),
 
                   // Checkbox to mark plans as completed
-                  if (widget.entry.planCompleted != null)
+                  if (widget.entry is Plan)
                     IconButton(
                       padding: const EdgeInsets.only(top: 10),
                       key: const Key("PlanCompleteButton"),
                       // Show filled outline for completed
                       icon: const Icon(Icons.check_box_outline_blank),
                       selectedIcon: const Icon(Icons.check_box),
-                      isSelected: widget.entry.planCompleted == true,
+                      isSelected: (widget.entry as Plan).planCompleted == true,
                       onPressed: toggleEntry,
                     ),
 
