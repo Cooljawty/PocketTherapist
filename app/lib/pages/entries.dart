@@ -261,7 +261,6 @@ class _EntryPageState extends State<EntryPage> {
     }
   }
 
-
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -306,6 +305,35 @@ class _EntryPageState extends State<EntryPage> {
     )).toList();
   }
 
+  void requestEntryTemplate(BuildContext context) async {
+    String category = "";
+    int questions = 6;
+    await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width/2,
+            height: MediaQuery.of(context).size.width/1.5,
+            child: DropdownMenu<String>(
+              key: const Key("Template_Selection"),
+              dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+              onSelected: (value) {
+                category = value!;
+              },
+            )
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
+          ],
+        ),
+    );
+    DateTime today = new DateTime.now();
+    /// Format [dateSlug] is yyyy-mm-dd
+    String dateSlug ="${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
+    titleController.text = "$dateSlug - $category";
+    entryTextController.text = getTemplateEntryBody(category, questions);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -335,15 +363,20 @@ class _EntryPageState extends State<EntryPage> {
                     // Text input field for the Journal Entry Body
                     Padding(
                       padding: const EdgeInsets.all(20),
-                      child: TextField(
-                        controller: entryTextController,
-                        key: const Key("journalInput"),
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Journal Entry',
+                      child: GestureDetector(
+                        onLongPress: () async {
+                            setState(() => requestEntryTemplate(context));
+                          },
+                        child: TextField(
+                          controller: entryTextController,
+                          key: const Key("journalInput"),
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Journal Entry',
+                          ),
+                          maxLines: 8,
+                          minLines: 1,
                         ),
-                        maxLines: 8,
-                        minLines: 1,
                       ),
                     ),
 

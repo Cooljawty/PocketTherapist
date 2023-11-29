@@ -251,27 +251,30 @@ Future skipToDashboard(BuildContext context) async {
     Navigator.of(context).pop(); //pop loading screen
     Navigator.of(context).pop(); //pop password prompt
     Navigator.of(context).pushNamed("Dashboard");
-    await showDialog(
-        barrierColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          String? recovery = encryptor.getRecoveryPhrase();
-          return AlertDialog(
-              title: const Text("Recovery Phrase"),
-              backgroundColor: Theme.of(context).colorScheme.onBackground,
-              actions: [
-                TextButton(
-                    key: const Key("Recovery_Phrase_Confirm"),
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Ok")),
-                TextButton(
-                    key: const Key("Recovery_Phrase_Copy"),
-                    onPressed: () =>
-                        Clipboard.setData(ClipboardData(text: recovery!)),
-                    child: const Text("Copy")),
-              ],
-              content: Text('Here is your recovery phrase $recovery!\n\nKeep it safe!'));
-        });
+    if (isEncryptionEnabled()) {
+      await showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          builder: (context) {
+            String? recovery = encryptor.getRecoveryPhrase();
+            return AlertDialog(
+                title: const Text("Recovery Phrase"),
+                backgroundColor: Theme.of(context).colorScheme.onBackground,
+                actions: [
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Confirm"),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Ok")),
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Copy"),
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: recovery!)),
+                      child: const Text("Copy")),
+                ],
+                content: Text(
+                    'Here is your recovery phrase $recovery!\n\nKeep it safe!'));
+          });
+    }
   });
 }
 
