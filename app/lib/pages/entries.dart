@@ -12,6 +12,7 @@ final List<DropdownMenuItem<String>> displayDropDown = displayOptions
     .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
     .toList();
 String chosenDisplay = 'Week';
+List<Tag> selectedTags = [];
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -70,6 +71,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     if (widget.showPlans) {
       items = plans;
     }
+    if (selectedTags.isNotEmpty) {
+      items = filterByTag();
+    }
     // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
@@ -122,6 +126,36 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         ),
                       ),
                     ]),
+                    //create new row for tag list
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: tagList
+                            .map(
+                              (tagName) => FilterChip(
+                                  selected: selectedTags.contains(tagName),
+                                  label: Text(tagName.name),
+                                  selectedColor: Color.alphaBlend(
+                                      tagName.color,
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer),
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      //update to add or remove tag
+                                      selectedTags.contains(tagName)
+                                          ? selectedTags.remove(tagName)
+                                          : selectedTags.add(tagName);
+                                    });
+                                  }),
+                            )
+                            .toList(),
+                      ),
+                    ),
 
                     //holds the list of entries
                     Expanded(
@@ -273,6 +307,47 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     }
     //update the displayed list in real time when the user is searching
     setState(() => items = newFilteredDisplayList);
+  }
+
+//filter by tag will check the items list for all compatable journal entries
+  List<JournalEntry> filterByTag() {
+    List<JournalEntry> filteredList = [];
+    List<Tag> journalTagList = [];
+    //compare each journal entries tag list
+    for (int i = 0; i < items.length; i++) {
+      journalTagList = items[i].tags;
+      //compare the tag list and if there is one tag in both list then add it to the display
+      for (int j = 0; j < journalTagList.length; j++) {
+        for (int k = 0; k < selectedTags.length; k++) {
+          //triple nested is not ideal but name check must be used to compare tags
+          if (selectedTags[k].name == journalTagList[j].name) {
+            //check to only add one to the list
+            if (!filteredList.contains(items[i])) {
+              filteredList.add(items[i]);
+            }
+          }
+          //if there is a tag in the selected list that is not in the entry
+          //then remove the entry from filtered list and end loop
+          if (selectedTags[k].name != journalTagList[j].name) {}
+        }
+        //alternative implementation with one less loop but does not function as intended, never finds pairs
+        //if (selectedTags.contains(journalTagList[j])) {
+        //  //add journal entry to list filtered list and break loop
+        //  filteredList.add(items[i]);
+        //  j = journalTagList.length;
+        //}
+        //if (journalTagList.contains(selectedTags[j])) {
+        //  //add journal entry to list filtered list and break loop
+        //  filteredList.add(items[i]);
+        //  j = journalTagList.length;
+        //}
+        //else
+        //{
+        //
+        //}
+      }
+    }
+    return filteredList;
   }
 }
 
