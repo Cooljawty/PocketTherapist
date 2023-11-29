@@ -318,34 +318,35 @@ void main() {
   group("Entry Display Tests", () {
 // Navigate to the entries panel
     Future<void> setUp(WidgetTester tester) async {
-      entries.addAll([
-        JournalEntry(
-            title: "This is an entry",
-            entryText: 'This is the body',
-            date: DateTime(2022, 2, 7)),
-        JournalEntry(
-            title: "This is another entry",
-            entryText: 'The next one wont have a body',
-            date: DateTime(2022, 2, 6)),
-        JournalEntry(
-            title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
-        JournalEntry(
-            title: "Could be better",
-            entryText: 'I am running out of ideas',
-            date: DateTime(2021, 3, 17)),
-        JournalEntry(
-            title: "11sef sd63", entryText: ';)', date: DateTime(2021, 3, 5)),
-        JournalEntry(
-            title: "This is a test",
-            entryText: 'asdfhdf',
-            date: DateTime(2020, 1, 2)),
-        JournalEntry(
-            title: "This is the last entry",
-            entryText: 'This is the last body',
-            date: DateTime(2020, 7, 1)),
-      ]);
       await skipToEntriesPage(tester);
     }
+
+		entries.addAll([
+			JournalEntry(
+					title: "This is an entry",
+					entryText: 'This is the body',
+					date: DateTime(2022, 2, 7)),
+			JournalEntry(
+					title: "This is another entry",
+					entryText: 'The next one wont have a body',
+					date: DateTime(2022, 2, 6)),
+			JournalEntry(
+					title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
+			JournalEntry(
+					title: "Could be better",
+					entryText: 'I am running out of ideas',
+					date: DateTime(2021, 3, 17)),
+			JournalEntry(
+					title: "11sef sd63", entryText: ';)', date: DateTime(2021, 3, 5)),
+			JournalEntry(
+					title: "This is a test",
+					entryText: 'asdfhdf',
+					date: DateTime(2020, 1, 2)),
+			JournalEntry(
+					title: "This is the last entry",
+					entryText: 'This is the last body',
+					date: DateTime(2020, 7, 1)),
+		]);
 
     @override
     Future<void> testForItems(
@@ -371,9 +372,8 @@ void main() {
       for (JournalEntry entry in entries) {
         final entryKey = find.byKey(Key(entry.id.toString()));
         print(entry.id.toString());
-        await tester.pumpAndSettle();
+        await tester.pump();
         await tester.scrollUntilVisible(entryKey, 1);
-        await tester.pumpAndSettle();
         // Confirm that the entry was seen
         await expectLater(entryKey, findsOneWidget);
         await tester.pump();

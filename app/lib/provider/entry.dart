@@ -285,7 +285,7 @@ Future<void> makeNewEntry(BuildContext context) async {
 }
 
 Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate) =>
-    entries.where((entry) => (entry.date.isBefore(endDate.add(const Duration(days: 1))) && entry.date.isAfter(startDate.subtract(const Duration(days: 1)))));
+  entries.where((entry) => (entry.date.isBefore(endDate.add(const Duration(days: 1))) && entry.date.isAfter(startDate.subtract(const Duration(days: 1)))));
 Iterable<JournalEntry> plansInDateRange(DateTime startDate, DateTime endDate) =>
-plans.where((plans) => (plans.date.isBefore(endDate.add(const Duration(days: 1))) && plans.date.isAfter(startDate.subtract(const Duration(days: 1)))));
+	plans.where((plans) => (plans.date.isBefore(endDate.add(const Duration(days: 1))) && plans.date.isAfter(startDate.subtract(const Duration(days: 1)))));
 

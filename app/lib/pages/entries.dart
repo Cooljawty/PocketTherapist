@@ -86,8 +86,12 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 		};
 		final endDate = switch(chosenDisplay) {
 			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => DateTime(today.year, today.month, 0),
-			DisplayOption.year => DateTime(today.year, 12, 0),
+			DisplayOption.month => today.month < DateTime.december
+				? DateTime(today.year, today.month + 1, 1).subtract(const Duration(days: 1))
+				: DateTime(today.year+1, 1, 1).subtract(const Duration(days: 1)),
+			DisplayOption.year => today.month < DateTime.december
+				? DateTime(today.year+1, today.month+1, 1).subtract(const Duration(days: 1))
+				: DateTime(today.year+2, 1, 1).subtract(const Duration(days: 1)),
 		};
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
