@@ -57,6 +57,7 @@ class EntryPanelPage extends StatefulWidget {
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
   bool showAllItems = true;
+  List<JournalEntry> items = entries;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     // Select appropriate list to display
     entries.sort();
     plans.sort();
-    List<JournalEntry> items = widget.showPlans ? plans : entries;
+    if (widget.showPlans) {
+      items = plans;
+    }
     // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
@@ -88,6 +91,17 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     // Pad filter to the right
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            key: const Key('FilterByTextForm'),
+                            textAlign: TextAlign.center,
+                            onChanged: updateFilteredList,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Enter a journal title',
+                                fillColor: Colors.transparent),
+                          )),
                       Container(
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
@@ -242,6 +256,24 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       return time.year.toString();
     }
   }
+
+  //create function to update the filtered list to only contain compatable entries
+  void updateFilteredList(String input) {
+    //first trim off excess spaces from the left and right side of input
+    input = input.trim();
+    List<JournalEntry> newFilteredDisplayList = [];
+    //iterate through list to determine if an entry is compatable
+    //if it is then add it to the new list
+    for (int i = 0; i < entries.length; i++) {
+      //to handle casing we will compare lower case version of the title
+      //and of the input
+      if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
+        newFilteredDisplayList.add(entries[i]);
+      }
+    }
+    //update the displayed list in real time when the user is searching
+    setState(() => items = newFilteredDisplayList);
+  }
 }
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
@@ -328,16 +360,16 @@ class _EntryPageState extends State<EntryPage> {
                 child: ValueListenableBuilder(
                     valueListenable: progress,
                     builder: (_, double value, __) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(() {
-                          // on changed, set the strength
-                          strength = value.round();
-                          return '$strength';
-                        }()),
-                        const Text('Strength'),
-                      ],
-                    )),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(() {
+                              // on changed, set the strength
+                              strength = value.round();
+                              return '$strength';
+                            }()),
+                            const Text('Strength'),
+                          ],
+                        )),
               ),
             ),
             actions: [
@@ -364,17 +396,17 @@ class _EntryPageState extends State<EntryPage> {
 
   // Date picker
   Future<DateTime?> pickDate() => showDatePicker(
-    context: context,
-    firstDate: DateTime.now(),
-    lastDate: DateTime.now().add(const Duration(days: 365)),
-    initialDate: datePicked ?? DateTime.now(),
-  );
+        context: context,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
+        initialDate: datePicked ?? DateTime.now(),
+      );
 
   // Time picker
   Future<TimeOfDay?> pickTime() => showTimePicker(
-    context: context,
-    initialTime: TimeOfDay.now(),
-  );
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
 
   Future<DateTime?> pickPlanDate() async {
     var selectedDate = await pickDate();
@@ -464,8 +496,7 @@ class _EntryPageState extends State<EntryPage> {
         emotions: selectedEmotions,
         date: datePicked!,
       );
-    }
-    else {
+    } else {
       // entry exists, we are modifying
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
@@ -526,25 +557,25 @@ class _EntryPageState extends State<EntryPage> {
   List<ActionChip> createSelectedTagList() {
     return selectedTags
         .map((tag) => ActionChip(
-      label: Text(tag.name),
-      backgroundColor: tag.color,
-      onPressed: () {
-        setState(() {
-          selectedTags.removeWhere((element) =>
-          element.name == tag.name);
-        });
-      },
-    ))
+              label: Text(tag.name),
+              backgroundColor: tag.color,
+              onPressed: () {
+                setState(() {
+                  selectedTags
+                      .removeWhere((element) => element.name == tag.name);
+                });
+              },
+            ))
         .toList();
   }
 
   List<ActionChip> createSelectedEmotionList() {
     return selectedEmotions
         .map((Emotion emotion) => ActionChip(
-      label: Text(emotion.name),
-      backgroundColor: emotion.color,
-      onPressed: () => _emotionalDial(context, emotion),
-    ))
+              label: Text(emotion.name),
+              backgroundColor: emotion.color,
+              onPressed: () => _emotionalDial(context, emotion),
+            ))
         .toList();
   }
 
