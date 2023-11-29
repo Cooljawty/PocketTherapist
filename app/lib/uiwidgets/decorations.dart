@@ -148,7 +148,6 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
 class ControlledTextField extends StatefulWidget {
   final String hintText;
   final String? Function(String?) validator;
-
   const ControlledTextField({
     super.key,
     this.hintText = "Password",
@@ -163,13 +162,10 @@ class _ControlledTextFieldState extends State<ControlledTextField> {
   // This key is used only to differentiate it from everything else in the widget
   // tree
   final _formKey = GlobalKey<FormState>();
-
   // this is used to control and track the text that is in the field
   final textController = TextEditingController();
-
   // This is used to request focus on the field
   final textFocusNode = FocusNode();
-
   // We obscure text by default
   bool _isObscured = true;
 
@@ -397,6 +393,7 @@ class CustomNavigationBar extends StatelessWidget {
         break;
     }
   }
+
 }
 
 /// A card that displays text with a title and main text body
@@ -562,6 +559,85 @@ class _DisplayCardState extends State<DisplayCard> {
                   )
                 ]),
           ),
+        ),
+      ),
+  }
+}
+
+class LoadingAnimation extends StatefulWidget {
+  final String? loadingString;
+
+  const LoadingAnimation({super.key, this.loadingString});
+
+  @override
+  State<LoadingAnimation> createState() => _LoadingAnimationState();
+}
+
+class _LoadingAnimationState extends State<LoadingAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+      lowerBound: 0.0,
+      //approximately 2*pi for full spin
+      upperBound: 6.283)
+    ..repeat();
+  final loadingImage = Image.asset(
+    'assets/CenteredGlassesFrame.png',
+    key: const Key('Loading_Animation'),
+  );
+  final dots = [".   ", "..  ", "... ", "...."];
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //first sized box used to control image size
+            SizedBox(
+              width: 130,
+              height: 130,
+              child: AnimatedBuilder(
+                animation: _animationController,
+                child: loadingImage,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _animationController.value,
+                    child: child,
+                  );
+                },
+              ),
+            ),
+            //second sized box used to add spacing between image and text
+            const SizedBox(
+              height: 20,
+            ),
+            //update to move text below loading image
+            Row(
+              children: [
+                //either uses the text passed in or uses default loading text
+                Text(widget.loadingString ?? "Loading",
+                    style: Theme.of(context).textTheme.titleLarge),
+                AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) =>
+                        //2 pi to even quarters
+                        Text(
+                          dots[((_animationController.value) / (6.283 / 4.0))
+                              .truncate()],
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
+              ],
+            )
+          ],
         ),
       ),
     );
