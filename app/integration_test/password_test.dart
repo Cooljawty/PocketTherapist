@@ -45,7 +45,7 @@ void main() async {
 
 		Finder resetPasswordbutton = find.byKey(const Key("Reset_Password_Button"));
 		await tap(widgetTester, resetPasswordbutton);
-		await widgetTester.pump(Duration(seconds: 1));
+		await widgetTester.pump(const Duration(seconds: 1));
 
 		Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
     //wait until incorrect password prompt appears
@@ -118,7 +118,7 @@ void main() async {
 
 		Finder resetPasswordbutton = find.byKey(const Key("Reset_Password_Button"));
 		await tap(widgetTester, resetPasswordbutton);
-		await widgetTester.pump(Duration(seconds: 1));
+		await widgetTester.pump(const Duration(seconds: 1));
 
 		Finder okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
     //wait until loading is done
