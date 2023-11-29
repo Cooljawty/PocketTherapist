@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:app/provider/settings.dart' as settings;
+import 'package:flutter/foundation.dart' as thread;
 
 String _passwordHash = "";
 String _keyCipher = "";
@@ -19,7 +20,8 @@ Encrypter? _encrypter;
 // Argon2 parameters
 const int parallelPower = 4;
 const int consumeMemory = 500000;
-const int iterations = 9; // 2x recommended minimum
+const int iterations =
+    6; //9 2x recommended minimum, updated to 6 to speed up unit test
 //------------------------------------------------------------------------------
 const int pwHashLength = 32;
 
@@ -34,14 +36,15 @@ Future<void> setPassword(String password) async {
 
   // Used for file encryption
   _encrypter = Encrypter(AES(signingKey, mode: AESMode.gcm));
-  _generateKeyEncryptionKey(password, signingKey);
-  _generateRecoveryPhrase(signingKey);
+  await _generateKeyEncryptionKey(password, signingKey);
+  await _generateRecoveryPhrase(signingKey);
   settings.setEncryptionStatus(true); // password is set, this is true.
 }
 
 /// [getRecoveryPhrase] only works once after calling [generateRecoveryPhrase].
 String? getRecoveryPhrase() {
-  String? temp = _recovery; // This varibel will be cleared once this ends so the phrase is secure.
+  String? temp =
+      _recovery; // This varibel will be cleared once this ends so the phrase is secure.
   _recovery = null;
   return temp;
 }
@@ -55,15 +58,17 @@ String? getRecoveryPhrase() {
 ///
 /// Either password or recovery phrase will work with this, but it expects
 /// the recovery phrase first.
-bool resetCredentials(String phrase) {
+Future<bool> resetCredentials(String phrase) async {
   // Try to unlock assuming password
   // Then try to unlock assuming recovery phrase
-  if (verifyPassword(phrase)) {
-    Argon2 hasher = Argon2.fromEncoded(_passwordHash);
+  if (await verifyPassword(phrase)) {
+    Argon2 hasher = await thread.compute(Argon2.fromEncoded, _passwordHash);
     //Generate KEK for internal encryption of actual key
-    Argon2HashDigest keyEncryptionKey = hasher.convert(phrase.codeUnits);
+    Argon2HashDigest keyEncryptionKey =
+        await thread.compute(hasher.convert, phrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter =
+        Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
     List<String> package = _keyCipher.split(':');
     IV secretIV = IV.fromBase64(package[0]);
@@ -71,7 +76,8 @@ bool resetCredentials(String phrase) {
     package.clear(); // Dont need package anymore
 
     // the encrypter internall decodes it into a string, so we just re-encode it to get the bytes
-    Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
+    Uint8List keyBytes =
+        Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
     Key signingKey = Key(keyBytes);
     //Decrypt database
     signingKey;
@@ -88,12 +94,14 @@ bool resetCredentials(String phrase) {
     settings.save().whenComplete(() => null);
     return true;
   }
-  if (verifyRecoveryPhrase(phrase)){
-    Argon2 hasher = Argon2.fromEncoded(_recoveryHash);
+  if (await verifyRecoveryPhrase(phrase)) {
+    Argon2 hasher = await thread.compute(Argon2.fromEncoded, _recoveryHash);
     //Generate KEK for internal encryption of actual key
-    Argon2HashDigest keyEncryptionKey = hasher.convert(phrase.codeUnits);
+    Argon2HashDigest keyEncryptionKey =
+        await thread.compute(hasher.convert, phrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter =
+        Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
     List<String> package = _recoveryKeyCipher.split(':');
     IV secretIV = IV.fromBase64(package[0]);
@@ -101,7 +109,8 @@ bool resetCredentials(String phrase) {
     package.clear(); // Dont need package anymore
 
     // the encrypter internall decodes it into a string, so we just re-encode it to get the bytes
-    Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
+    Uint8List keyBytes =
+        Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
 
     Key signingKey = Key(keyBytes);
     signingKey;
@@ -124,19 +133,21 @@ bool resetCredentials(String phrase) {
 }
 
 /// [verifyPassword] returns true iff the password parameter matches the stored hash.
-bool verifyPassword(String password) {
-  Argon2 hasher = Argon2.fromEncoded(_passwordHash);
+Future<bool> verifyPassword(String password) async {
+  Argon2 hasher = await thread.compute(Argon2.fromEncoded, _passwordHash);
   //Generate KEK for internal encryption of actual key
-  Argon2HashDigest keyEncryptionKey = hasher.convert(password.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, password.codeUnits);
   String maybe = keyEncryptionKey.encoded();
   return maybe == _passwordHash;
 }
 
 /// [verifyRecoveryPhrase] returns true iff the recovery phrase matches the stored hash.
-bool verifyRecoveryPhrase(String phrase) {
-  Argon2 hasher = Argon2.fromEncoded(_recoveryHash);
+Future<bool> verifyRecoveryPhrase(String phrase) async {
+  Argon2 hasher = await thread.compute(Argon2.fromEncoded, _recoveryHash);
   //Generate KEK for internal encryption of actual key
-  Argon2HashDigest keyEncryptionKey = hasher.convert(phrase.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, phrase.codeUnits);
   String maybe = keyEncryptionKey.encoded();
   return maybe == _recoveryHash;
 }
@@ -144,22 +155,29 @@ bool verifyRecoveryPhrase(String phrase) {
 /// [unlock] is responsible for unlocking and initializing the application after password has been set
 /// The recovery boolean indicates if we are unlocking with the recovery method, this should
 /// lead to a password reset, but it is not required.
-bool unlock(String passwordPhrase, [bool recovery = false])  {
-  bool valid = !recovery ? verifyPassword(passwordPhrase) : verifyRecoveryPhrase(passwordPhrase);
-  if (valid){
-    Argon2 hasher = Argon2.fromEncoded(!recovery? _passwordHash : _recoveryHash);
+Future<bool> unlock(String passwordPhrase, [bool recovery = false]) async {
+  Future<bool> valid = !recovery
+      ? verifyPassword(passwordPhrase)
+      : verifyRecoveryPhrase(passwordPhrase);
+  if (await valid) {
+    Argon2 hasher = await thread.compute(
+        Argon2.fromEncoded, (!recovery ? _passwordHash : _recoveryHash));
     //Generate KEK for internal encryption of actual key
-    Argon2HashDigest keyEncryptionKey = hasher.convert(passwordPhrase.codeUnits);
+    Argon2HashDigest keyEncryptionKey =
+        await thread.compute(hasher.convert, passwordPhrase.codeUnits);
     // Used for Encrypting the secret key, temporary.
-    Encrypter keyEncrypter = Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
+    Encrypter keyEncrypter =
+        Encrypter(AES(Key(keyEncryptionKey.bytes), mode: AESMode.gcm));
     // Split the package between the IV and the cipher K
-    List<String> package = (recovery ? _recoveryKeyCipher.split(':') : _keyCipher.split(':'));
+    List<String> package =
+        (recovery ? _recoveryKeyCipher.split(':') : _keyCipher.split(':'));
     IV secretIV = IV.fromBase64(package[0]);
     Encrypted eKey = Encrypted.fromBase64(package[1]);
     package.clear(); // Dont need package anymore
 
     // the encrypter internall decodes it into a string, so we just re-encode it to get the bytes
-    Uint8List keyBytes = Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
+    Uint8List keyBytes =
+        Uint8List.fromList(keyEncrypter.decryptBytes(eKey, iv: secretIV));
 
     // Then we form the key from this and make the encryptor
     _encrypter = Encrypter(AES(Key(keyBytes), mode: AESMode.gcm));
@@ -168,24 +186,25 @@ bool unlock(String passwordPhrase, [bool recovery = false])  {
   } else {
     return false;
   }
-
 }
 
 // Utilities --------------------------------------
 /// [generateKeyEncryptionKey] Generates an encryption key based on the password supplied and uses it to
 /// Encrypt the provided signing Key.
 /// the [nonce] [_passwordHash] and [_keyCipher] are all modified by this method
-void _generateKeyEncryptionKey(String password, Key signingKey) {
+Future _generateKeyEncryptionKey(String password, Key signingKey) async {
   // Encryption Setup
   Random rand = Random.secure();
   List<int> nonce = List<int>.generate(16, (index) => rand.nextInt(256));
-  Argon2 hasher = Argon2(salt: nonce,
+  Argon2 hasher = Argon2(
+      salt: nonce,
       hashLength: pwHashLength,
       iterations: iterations,
       parallelism: parallelPower,
       memorySizeKB: consumeMemory);
   //Generate KEK for internal encryption of actual key
-  Argon2HashDigest keyEncryptionKey = hasher.convert(password.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, password.codeUnits);
   _passwordHash = keyEncryptionKey.encoded();
   // Used for Encrypting the secret key, temporary.
   Encrypter keyEncrypter = Encrypter(
@@ -194,51 +213,51 @@ void _generateKeyEncryptionKey(String password, Key signingKey) {
   // Generate random IV for key signing
   // Need 96 bit IV for clear GCM mode
   IV secretKeyIV = IV.fromSecureRandom(12); // 12 bytes = 8 * 12 = 96 bit
-  Encrypted cryptoKey = keyEncrypter.encryptBytes(
-      signingKey.bytes, iv: secretKeyIV);
+  Encrypted cryptoKey =
+      keyEncrypter.encryptBytes(signingKey.bytes, iv: secretKeyIV);
   _keyCipher = "${secretKeyIV.base64}:${cryptoKey.base64}";
 }
 
 /// [generateRecoveryPhrase] Generates a recovery phrase and uses that to encrypt the provided signingKey
 /// The [_recovery] [_recoveryHash] and [_recoveryKeyCipher] are all modified by this method
-void _generateRecoveryPhrase(Key signingKey) {
+Future _generateRecoveryPhrase(Key signingKey) async {
   Random rand = Random.secure();
   List<int> recIV = List<int>.generate(16, (index) => rand.nextInt(256));
-  _recovery = Key
-      .fromSecureRandom(20)
+  _recovery = Key.fromSecureRandom(20)
       .base64; // Generate random passphrase of sufficient length (stored for user)
-  Argon2 hasher = Argon2(salt: recIV,
+  Argon2 hasher = Argon2(
+      salt: recIV,
       hashLength: pwHashLength,
       iterations: iterations,
       parallelism: parallelPower,
       memorySizeKB: consumeMemory);
-  Argon2HashDigest keyEncryptionKey = hasher.convert(_recovery!.codeUnits);
+  Argon2HashDigest keyEncryptionKey =
+      await thread.compute(hasher.convert, _recovery!.codeUnits);
   _recoveryHash = keyEncryptionKey.encoded();
   Encrypter keyEncrypter = Encrypter(
       AES(Key(Uint8List.fromList(keyEncryptionKey.bytes)), mode: AESMode.gcm));
 
   // Recovery key encryptor
   IV secretKeyIV = IV.fromSecureRandom(12);
-  Encrypted cryptoKey = keyEncrypter.encryptBytes(
-      signingKey.bytes, iv: secretKeyIV);
+  Encrypted cryptoKey =
+      keyEncrypter.encryptBytes(signingKey.bytes, iv: secretKeyIV);
   _recoveryKeyCipher = "${secretKeyIV.base64}:${cryptoKey.base64}";
 }
 
-String compressContents() =>
-    hexEncode(utf8.encode(
-        "$_passwordHash#$_keyCipher#$_recoveryKeyCipher#$_recoveryHash"));
+String compressContents() => hexEncode(utf8
+    .encode("$_passwordHash#$_keyCipher#$_recoveryKeyCipher#$_recoveryHash"));
 
 void save() {
-     Map<String, String> x = {
-      "data": compressContents(),
-      "sig": sha512sum(compressContents()),
-    };
-    settings.setOtherSetting("enc", x);
+  Map<String, String> x = {
+    "data": compressContents(),
+    "sig": sha512sum(compressContents()),
+  };
+  settings.setOtherSetting("enc", x);
 }
 
 void load() {
   Object? map = settings.getOtherSetting('enc');
-  if(map != null && map is Map<String, dynamic>){
+  if (map != null && map is Map<String, dynamic>) {
     String data = map['data']!;
     List<String> actualData = utf8.decode(hexDecode(data)).split('#');
 
@@ -262,7 +281,6 @@ void load() {
 
     actualData.clear();
   }
-
 }
 
 void reset() {
@@ -282,10 +300,11 @@ bool validatePassword(String password) =>
         password.contains(RegExp(r'\d+'))); // contains at least 1 num
 
 /// This is used within any field that needs to validate a password input.
-String? defaultValidator(String? value) =>
-    (value == null || value.isEmpty || validatePassword(value)) ?
-    null :
-    "Passwords must have the following:\n1. 10 or more characters\n2. At least one special character\n3.at least one number (!@#\$%^&*())";
+String? defaultValidator(String? value) => (value == null ||
+        value.isEmpty ||
+        validatePassword(value))
+    ? null
+    : "Passwords must have the following:\n1. 10 or more characters\n2. At least one special character\n3.at least one number (!@#\$%^&*())";
 
 // Encryption -------------------------------------
 String encrypt(String plainText) {
@@ -293,6 +312,7 @@ String encrypt(String plainText) {
   final encrypted = _encrypter!.encrypt(plainText, iv: secretIV);
   return '${secretIV.base64}:${encrypted.base64}';
 }
+
 String decrypt(String cipherTextb64) {
   List<String> package = cipherTextb64.split(":");
   IV secretIV = IV.fromBase64(package[0]);
@@ -312,6 +332,7 @@ String hexEncode(List<int> bytes) {
   }
   return String.fromCharCodes(charCodes);
 }
+
 List<int> hexDecode(String hexString) {
   var bytes = <int>[];
   for (var i = 0; i < hexString.length; i += 2) {

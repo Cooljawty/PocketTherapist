@@ -49,7 +49,6 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
 
 // For display quotes
 
-
   @override
   void initState() {
     super.initState();
@@ -244,12 +243,10 @@ class StandardElevatedButton extends StatelessWidget {
             backgroundColor: backgroundColor,
             side: BorderSide(
                 color: darkenColor(Theme.of(context).colorScheme.primary, .1),
-                width: 3
-            ),
+                width: 3),
           ),
           child: child,
-        )
-    );
+        ));
   }
 }
 
@@ -321,16 +318,15 @@ class StarBackground extends StatelessWidget {
 /// [selectedIndex] is the starting index that we will display, by default its 0
 /// [onDestinationSelected] is the void Function(int) that should handle the routing of the navgations
 // ignore: must_be_immutable
-class CustomNavigationBar extends StatelessWidget{
-
+class CustomNavigationBar extends StatelessWidget {
   static const List<NavigationDestination> defaultDestinations = [
-            NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
-            NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
-            NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
-            NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
-            NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
-            NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
-        ];
+    NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
+    NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
+    NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
+    NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
+    NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
+    NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
+  ];
 
   final List<NavigationDestination> destinations;
   int selectedIndex;
@@ -350,39 +346,42 @@ class CustomNavigationBar extends StatelessWidget{
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if(index == selectedIndex) return;
-        if(index >= destinations.length) return;
-        onDestinationSelected == null ? defaultOnDestinationSelected(index, context) : onDestinationSelected!(index);
+        if (index == selectedIndex) return;
+        if (index >= destinations.length) return;
+        onDestinationSelected == null
+            ? defaultOnDestinationSelected(index, context)
+            : onDestinationSelected!(index);
         selectedIndex = index;
       },
     );
   }
 
   void defaultOnDestinationSelected(int index, BuildContext context) async {
-    switch(index) {
-      case 2: makeNewEntry(context); return;
-      case 5: Navigator.of(context).pushNamed(destinations[index].label); return;
-      case _: Navigator.of(context).pushReplacementNamed(destinations[index].label); break;
+    switch (index) {
+      case 2:
+        makeNewEntry(context);
+        return;
+      case 5:
+        Navigator.of(context).pushNamed(destinations[index].label);
+        return;
+      case _:
+        Navigator.of(context).pushReplacementNamed(destinations[index].label);
+        break;
     }
   }
-
 }
 
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
   final JournalEntry entry;
 
-  const DisplayCard({
-    super.key,
-    required this.entry
-  });
+  const DisplayCard({super.key, required this.entry});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
 }
 
 class _DisplayCardState extends State<DisplayCard> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -394,7 +393,10 @@ class _DisplayCardState extends State<DisplayCard> {
       //Uses gesture detector to enable interactivity
       child: GestureDetector(
         onTap: () async {
-          await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntryPage(entry: widget.entry),));
+          await Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => EntryPage(entry: widget.entry),
+          ));
+
           /// Rebuild THIS widget if any chgned were made
           setState(() {});
         },
@@ -409,15 +411,16 @@ class _DisplayCardState extends State<DisplayCard> {
             //width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: widget.entry.getGradientColors(),
+                colors: widget.entry.getGradientColors(),
               ),
             ),
 
-            child: Row( // row to hold all information
+            child: Row(
+                // row to hold all information
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-
-                  Column( // Column to hold title and preview text
+                  Column(
+                      // Column to hold title and preview text
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -425,36 +428,40 @@ class _DisplayCardState extends State<DisplayCard> {
                         SizedBox(
                             width: MediaQuery.of(context).size.width - 150,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 10, top: 5,),
+                              padding: const EdgeInsets.only(
+                                left: 10,
+                                top: 5,
+                              ),
                               child: Text(
                                 widget.entry.title,
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
                                 style: DefaultTextStyle.of(context).style.apply(
-                                  fontSizeFactor: 1.3,
-                                  fontWeightDelta: 1,
-                                ),
+                                      fontSizeFactor: 1.3,
+                                      fontWeightDelta: 1,
+                                    ),
                               ),
-                            )
-                        ),
+                            )),
 
                         // preview text
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 150,
                           // height: 40,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 20, bottom: 10, top: 5),
+                            padding: const EdgeInsets.only(
+                                left: 20, bottom: 10, top: 5),
                             child: Text(
                               widget.entry.previewText,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               softWrap: false,
-                              style: const TextStyle(fontStyle: FontStyle.italic),
-                            ),),
+                              style:
+                                  const TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
                         ),
-                      ]
-                  ),
+                      ]),
                   // spacer to push the date to the right and the text to the left
                   const Spacer(),
 
@@ -465,9 +472,88 @@ class _DisplayCardState extends State<DisplayCard> {
                       '${widget.entry.date.month.toString()}/${widget.entry.date.day.toString()}/${widget.entry.date.year.toString()}',
                     ),
                   ),
-                ]
-            ),
+                ]),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingAnimation extends StatefulWidget {
+  final String? loadingString;
+
+  const LoadingAnimation({super.key, this.loadingString});
+
+  @override
+  State<LoadingAnimation> createState() => _LoadingAnimationState();
+}
+
+class _LoadingAnimationState extends State<LoadingAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+      lowerBound: 0.0,
+      //approximately 2*pi for full spin
+      upperBound: 6.283)
+    ..repeat();
+  final loadingImage = Image.asset(
+    'assets/CenteredGlassesFrame.png',
+    key: const Key('Loading_Animation'),
+  );
+  final dots = [".   ", "..  ", "... ", "...."];
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //first sized box used to control image size
+            SizedBox(
+              width: 130,
+              height: 130,
+              child: AnimatedBuilder(
+                animation: _animationController,
+                child: loadingImage,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _animationController.value,
+                    child: child,
+                  );
+                },
+              ),
+            ),
+            //second sized box used to add spacing between image and text
+            const SizedBox(
+              height: 20,
+            ),
+            //update to move text below loading image
+            Row(
+              children: [
+                //either uses the text passed in or uses default loading text
+                Text(widget.loadingString ?? "Loading",
+                    style: Theme.of(context).textTheme.titleLarge),
+                AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) =>
+                        //2 pi to even quarters
+                        Text(
+                          dots[((_animationController.value) / (6.283 / 4.0))
+                              .truncate()],
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
+              ],
+            )
+          ],
         ),
       ),
     );
