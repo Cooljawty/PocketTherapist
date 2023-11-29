@@ -132,7 +132,7 @@ class _WelcomePageState extends State<WelcomePage>
                                   transform: Matrix4.translationValues(0, -37, 0),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    width: 190,
+                                    width: MediaQuery.of(context).size.width/2,
                                     height: 30,
                                     decoration: BoxDecoration(
                                       color: darkenColor(
