@@ -72,7 +72,7 @@ class _CalendarState extends State<Calendar> {
 	Widget build(BuildContext context) {
 		//Calculate the emotion data for each day
 		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent));
-		for (var entry in entriesInDateRange(context, startDate, endDate).toList()) {
+		for (var entry in entriesInDateRange(startDate, endDate).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
 			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
 				_emotionData[_daysFromDate(entry.date)] = (

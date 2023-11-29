@@ -92,8 +92,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
     // Select appropriate list to display
-		final filteredEntries = entriesInDateRange( context, startDate, endDate).toList();
-		final filteredPlans = plansInDateRange( context, startDate, endDate).toList();
+		final filteredEntries = entriesInDateRange(startDate, endDate).toList();
+		final filteredPlans = plansInDateRange(startDate, endDate).toList();
 
     filteredEntries.sort();
     filteredPlans.sort();
@@ -229,7 +229,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                     },
                                   );
                                 },
-                                child: DisplayCard(entry: item),
+                                child: DisplayCard(key: Key(item.id.toString()), entry: item),
                               )
                             ]); // if in the same filter header list, then just make a new entry
                       },
@@ -595,6 +595,7 @@ class _EntryPageState extends State<EntryPage> {
         forceMaterialTransparency: true,
       ),
       body: SingleChildScrollView(
+        key: const Key("ScrollMe"),
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Column(children: [
