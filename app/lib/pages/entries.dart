@@ -291,178 +291,8 @@ class _EntryPageState extends State<EntryPage> {
     super.dispose();
   }
 
-  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
-    return tagList
-        .map((tag) => FilterChip(
-              label: Text(tag.name),
-              selected: selectedTags.any((element) => element.name == tag.name),
-              showCheckmark: false,
-              selectedColor: tag.color,
-              onSelected: (bool selected) {
-                stfSetState(() {
-                  setState(() {
-                    /// When the corresponding tag is selected, add it or remove it based on the name
-                    //TODO: Update this when references are added to work only with references.
-                    selected
-                        ? selectedTags.add(tag)
-                        : selectedTags
-                            .removeWhere((element) => element.name == tag.name);
-                  });
-                });
-              },
-            ))
-        .toList();
-  }
-
-  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
-    return emotionList.entries
-        .map((e) => FilterChip(
-              label: Text(e.key),
-              selected:
-                  selectedEmotions.any((element) => element.name == e.key),
-              showCheckmark: false,
-              selectedColor: e.value,
-              onSelected: (bool selected) {
-                stfSetState(() {
-                  setState(() {
-                    /// When the corresponding emote is selected, add it or remove it based on the name
-                    //TODO: Update this when references are added to work only with references.
-                    selected
-                        ? selectedEmotions
-                            .add(Emotion(name: e.key, color: e.value))
-                        : selectedEmotions
-                            .removeWhere((element) => element.name == e.key);
-                  });
-                });
-              },
-            ))
-        .toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        forceMaterialTransparency: true,
-      ),
-      body: SingleChildScrollView(
-          child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(children: [
-                // Text field for the Journal Entry Title
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextField(
-                    controller: titleController,
-                    key: const Key("titleInput"),
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Title',
-                    ),
-                  ),
-                ),
-                // Text input field for the Journal Entry Body
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextField(
-                    controller: entryTextController,
-                    key: const Key("journalInput"),
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Journal Entry',
-                    ),
-                    maxLines: 8,
-                    minLines: 1,
-                  ),
-                ),
-
-                // Chip display for the tags
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  // Make the chips scrollable
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      key: const Key('TagChipsDisplay'),
-                      scrollDirection: Axis.horizontal,
-                      child: Wrap(
-                        spacing: 5,
-                        children: selectedTags
-                            .map((tag) => ActionChip(
-                                  label: Text(tag.name),
-                                  backgroundColor: tag.color,
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedTags.removeWhere((element) =>
-                                          element.name == tag.name);
-                                    });
-                                  },
-                                ))
-                            .toList(),
-                      ),
-                    ),
-                  ),
-                ),
-                // Chip display for the emotions
-                Padding(
-                    padding: const EdgeInsets.all(20),
-                    // Make the chips scrollable
-                    child: Scrollbar(
-                        child: SingleChildScrollView(
-                            key: const Key('EmotionChipsDisplay'),
-                            scrollDirection: Axis.horizontal,
-                            child: Wrap(
-                              spacing: 5,
-                              children: selectedEmotions
-                                  .map((Emotion emotion) => ActionChip(
-                                        label: Text(emotion.name),
-                                        backgroundColor: emotion.color,
-                                        onPressed: () =>
-                                            _emotionalDial(context, emotion),
-                                      ))
-                                  .toList(),
-                            )))),
-              ]))),
-
-      // Plan save tag in replacement of the nav bar
-      bottomNavigationBar: CustomNavigationBar(
-        selectedIndex: 3,
-        allowReselect: true,
-        destinations: const [
-          NavigationDestination(
-              key: Key("planButton"),
-              icon: Icon(Icons.more_time),
-              label: "Plan"),
-          NavigationDestination(
-              key: Key("tagButton"), icon: Icon(Icons.tag), label: "Tags"),
-          NavigationDestination(
-              key: Key("emotionButton"),
-              icon: Icon(Icons.emoji_emotions),
-              label: "Emotions"),
-          NavigationDestination(
-              key: Key("saveButton"), icon: Icon(Icons.save), label: "Save"),
-        ],
-        onDestinationSelected: (index) async {
-          switch (index) {
-            case 0:
-              datePicked = await pickPlanDate();
-              isPlan = datePicked != null;
-            case 1:
-              showTagPicker();
-            case 2:
-              showEmotionPicker();
-            case 3:
-              Navigator.pop(context, getEntry());
-          }
-        },
-      ),
-    );
-  }
-
   // Make an Alert Dialog Box that will display the emotional dial and a save button
-  dynamic _emotionalDial(BuildContext context, Emotion emotion) async {
+  void _emotionalDial(BuildContext context, Emotion emotion) async {
     int strength = 0;
     return showDialog(
         context: context,
@@ -498,16 +328,16 @@ class _EntryPageState extends State<EntryPage> {
                 child: ValueListenableBuilder(
                     valueListenable: progress,
                     builder: (_, double value, __) => Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(() {
-                              // on changed, set the strength
-                              strength = value.round();
-                              return '${value.round()}';
-                            }()),
-                            const Text('Strength'),
-                          ],
-                        )),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(() {
+                          // on changed, set the strength
+                          strength = value.round();
+                          return '$strength';
+                        }()),
+                        const Text('Strength'),
+                      ],
+                    )),
               ),
             ),
             actions: [
@@ -534,17 +364,17 @@ class _EntryPageState extends State<EntryPage> {
 
   // Date picker
   Future<DateTime?> pickDate() => showDatePicker(
-        context: context,
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 365)),
-        initialDate: datePicked ?? DateTime.now(),
-      );
+    context: context,
+    firstDate: DateTime.now(),
+    lastDate: DateTime.now().add(const Duration(days: 365)),
+    initialDate: datePicked ?? DateTime.now(),
+  );
 
   // Time picker
   Future<TimeOfDay?> pickTime() => showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
+    context: context,
+    initialTime: TimeOfDay.now(),
+  );
 
   Future<DateTime?> pickPlanDate() async {
     var selectedDate = await pickDate();
@@ -643,6 +473,183 @@ class _EntryPageState extends State<EntryPage> {
           selectedTags, selectedEmotions, datePicked);
       return widget.entry!;
     }
+  }
+
+  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
+    return tagList
+        .map((tag) => FilterChip(
+              label: Text(tag.name),
+              selected: selectedTags.any((element) => element.name == tag.name),
+              showCheckmark: false,
+              selectedColor: tag.color,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the corresponding tag is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedTags.add(tag)
+                        : selectedTags
+                            .removeWhere((element) => element.name == tag.name);
+                  });
+                });
+              },
+            ))
+        .toList();
+  }
+
+  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
+    return emotionList.entries
+        .map((e) => FilterChip(
+              label: Text(e.key),
+              selected:
+                  selectedEmotions.any((element) => element.name == e.key),
+              showCheckmark: false,
+              selectedColor: e.value,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the corresponding emote is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedEmotions
+                            .add(Emotion(name: e.key, color: e.value))
+                        : selectedEmotions
+                            .removeWhere((element) => element.name == e.key);
+                  });
+                });
+              },
+            ))
+        .toList();
+  }
+
+  List<ActionChip> createSelectedTagList() {
+    return selectedTags
+        .map((tag) => ActionChip(
+      label: Text(tag.name),
+      backgroundColor: tag.color,
+      onPressed: () {
+        setState(() {
+          selectedTags.removeWhere((element) =>
+          element.name == tag.name);
+        });
+      },
+    ))
+        .toList();
+  }
+
+  List<ActionChip> createSelectedEmotionList() {
+    return selectedEmotions
+        .map((Emotion emotion) => ActionChip(
+      label: Text(emotion.name),
+      backgroundColor: emotion.color,
+      onPressed: () => _emotionalDial(context, emotion),
+    ))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(children: [
+                // Text field for the Journal Entry Title
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: titleController,
+                    key: const Key("titleInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Title',
+                    ),
+                  ),
+                ),
+                // Text input field for the Journal Entry Body
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: entryTextController,
+                    key: const Key("journalInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Journal Entry',
+                    ),
+                    maxLines: 8,
+                    minLines: 1,
+                  ),
+                ),
+
+                // Chip display for the tags
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  // Make the chips scrollable
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      key: const Key('TagChipsDisplay'),
+                      scrollDirection: Axis.horizontal,
+                      child: Wrap(
+                        spacing: 5,
+                        children: createSelectedTagList(),
+                      ),
+                    ),
+                  ),
+                ),
+                // Chip display for the emotions
+                Padding(
+                    padding: const EdgeInsets.all(20),
+                    // Make the chips scrollable
+                    child: Scrollbar(
+                        child: SingleChildScrollView(
+                            key: const Key('EmotionChipsDisplay'),
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 5,
+                              children: createSelectedEmotionList(),
+                            )))),
+              ]))),
+
+      // Plan save tag in replacement of the nav bar
+      bottomNavigationBar: CustomNavigationBar(
+        selectedIndex: 3,
+        allowReselect: true,
+        destinations: const [
+          NavigationDestination(
+              key: Key("planButton"),
+              icon: Icon(Icons.more_time),
+              label: "Plan"),
+          NavigationDestination(
+              key: Key("tagButton"), icon: Icon(Icons.tag), label: "Tags"),
+          NavigationDestination(
+              key: Key("emotionButton"),
+              icon: Icon(Icons.emoji_emotions),
+              label: "Emotions"),
+          NavigationDestination(
+              key: Key("saveButton"), icon: Icon(Icons.save), label: "Save"),
+        ],
+        onDestinationSelected: (index) async {
+          switch (index) {
+            case 0:
+              datePicked = await pickPlanDate();
+              isPlan = datePicked != null;
+            case 1:
+              showTagPicker();
+            case 2:
+              showEmotionPicker();
+            case 3:
+              Navigator.pop(context, getEntry());
+          }
+        },
+      ),
+    );
   }
 }
 
