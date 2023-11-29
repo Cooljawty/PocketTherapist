@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:app/provider/entry.dart';
 import 'package:app/provider/theme_settings.dart';
-import 'package:app/provider/settings.dart' as settings;
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +8,9 @@ import '../uiwidgets/decorations.dart';
 
 // Display options
 const List<String> displayOptions = ['Week', 'Month', 'Year'];
+final List<DropdownMenuItem<String>> displayDropDown = displayOptions
+    .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
+    .toList();
 String chosenDisplay = 'Week';
 
 //
@@ -44,7 +46,10 @@ String chosenDisplay = 'Week';
 
 /// [EntryPanelPage] is the page for all of the entries that user has entered.
 class EntryPanelPage extends StatefulWidget {
-  const EntryPanelPage({super.key});
+  final bool showPlans;
+
+  /// [showPlans] to show either regular entries or plans
+  const EntryPanelPage({super.key, this.showPlans = false});
 
   @override
   State<EntryPanelPage> createState() => _EntryPanelPageState();
@@ -52,185 +57,200 @@ class EntryPanelPage extends StatefulWidget {
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
   bool showAllItems = true;
-  
+
   @override
   Widget build(BuildContext context) {
     // Sort the Journal entries by most recent date
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+
+    // Select appropriate list to display
     entries.sort();
+    plans.sort();
+    List<JournalEntry> items = widget.showPlans ? plans : entries;
+    // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
-          body: Stack(children: [
-            // This is not const, it changes with theme, don't set it to be const
-            // no matter how much the flutter gods beg
-            // ignore: prefer_const_constructors
-            StarBackground(),
+            body: Stack(children: [
+              // This is not const, it changes with theme, don't set it to be const
+              // no matter how much the flutter gods beg
+              // ignore: prefer_const_constructors
+              StarBackground(),
 
-            SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Entries'),
+              SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    widget.showPlans
+                        ? const Text("Plans")
+                        : const Text('Entries'),
 
-                  // Pad filter to the right
+                    // Pad filter to the right
 
-                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+
+                        // Dropdown for filter by date
+                        child: DropdownButtonFormField<String>(
+                          key: const Key("SortByDateDropDown"),
+                          borderRadius: BorderRadius.circular(10.0),
+                          // Set up the dropdown menu items
+                          value: chosenDisplay,
+                          items: displayDropDown,
+                          // if changed set new display option
+                          onChanged: (item) => setState(() {
+                            chosenDisplay = item ?? chosenDisplay;
+                          }),
+                        ),
                       ),
+                    ]),
 
-                      // Dropdown for filter by date
-                      child: DropdownButtonFormField<String>(
-                        key: const Key("SortByDateDropDown"),
-                        borderRadius: BorderRadius.circular(10.0),
-                        // Set up the dropdown menu items
-                        value: chosenDisplay,
-                        items: displayOptions
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
-                            .toList(),
-                        // if changed set new display option
-                        onChanged: (item) => setState(() {
-                          chosenDisplay = item ?? chosenDisplay;
-                        }),
-                      ),
-                    ),
-                  ]),
+                    //holds the list of entries
+                    Expanded(
+                        child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        // get one item
+                        final item = items[index];
+                        final time = widget.showPlans ? item.scheduledDate! : item.creationDate;
 
-                  //holds the list of entries
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      // get one item
-                      final item = entries[index];
-                      final time = item.date;
+                        // Dividers by filter
+                        bool isSameDate = true;
+                        if (index == 0) {
+                          // if first in list
+                          isSameDate = false;
+                        } else {
+                          // else check if same date by filters
+                          isSameDate = time.isWithinDateRange(
+                              widget.showPlans ? items[index - 1].scheduledDate!
+                                  : items[index - 1].creationDate, chosenDisplay);
+                        }
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // if not same date or first in list make new list
+                            children: [
+                              if (index == 0 || !(isSameDate)) ...[
+                                Text(getTimeRange(time))
+                              ],
+                              Dismissible(
+                                // Each Dismissible must contain a Key. Keys allow Flutter to
+                                // uniquely identify widgets.
 
-                      // Dividers by filter
-                      bool isSameDate = true;
-                      if (index == 0) {
-                        // if first in list
-                        isSameDate = false;
-                      } else {
-                        // else check if same date by filters
-                        isSameDate = time.isWithinDateRange(
-                            entries[index - 1].date, chosenDisplay);
-                      }
-                      return Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // if not same date or first in list make new list
-                          children: [
-                            if (index == 0 || !(isSameDate)) ...[
-                              Text(() {
-                                // If weekly view, then calculate weeks of the year and display range in header
-                                if (chosenDisplay == 'Week') {
-                                  DateTime firstOfYear =
-                                      DateTime(DateTime.now().year, 1, 1);
-                                  int weekNum = firstOfYear.getWeekNumber(
-                                      firstOfYear, time);
-                                  DateTime upper = firstOfYear
-                                      .add(Duration(days: (weekNum * 7)));
-                                  DateTime lower =
-                                      upper.subtract(const Duration(days: 6));
+                                // Issue with the key, needs to be specific id, not a
+                                // name or will receive error that dismissible is still
+                                // in the tree
+                                key: Key(item.id.toString()),
 
-                                  // Range for the week
-                                  return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-                                } else if (chosenDisplay == 'Month') {
-                                  // If monthly, only display month and year
-                                  return '${time.formatDate()} ${time.year.toString()}';
-                                } else {
-                                  // If yearly, only display year
-                                  return time.year.toString();
-                                }
-                              }())
-                            ],
-                            Dismissible(
-                              // Each Dismissible must contain a Key. Keys allow Flutter to
-                              // uniquely identify widgets.
+                                //prevents right swipes
+                                direction: DismissDirection.endToStart,
 
-                              // Issue with the key, needs to be specific id, not a
-                              // name or will receive error that dismissible is still
-                              // in the tree
-                              key: Key(item.id.toString()),
+                                // Provide a function that tells the app
+                                // what to do after an item has been swiped away.
+                                onDismissed: (direction) {
+                                  // Remove the item from the data source.
+                                  setState(() {
+                                    JournalEntry entry = items.removeAt(index);
+                                    if (!widget.showPlans) {
+                                      entries.remove(entry);
+                                    } else {
+                                      plans.remove(entry);
+                                    }
+                                  });
 
-                              //prevents right swipes
-                              direction: DismissDirection.endToStart,
-
-                              // Provide a function that tells the app
-                              // what to do after an item has been swiped away.
-                              onDismissed: (direction) {
-                                // Remove the item from the data source.
-                                setState(() {
-                                  entries.removeAt(index);
-                                });
-
-                                // Then show a snackBar w/ item name as dismissed message
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            '${item.title} deleted')));
-                              },
-                              confirmDismiss:
-                                  (DismissDirection direction) async {
-                                return await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Delete Entry?"),
-                                      content: const Text(
-                                          "Are you sure you wish to delete this entry?"),
-                                      actions: <Widget>[
-                                        TextButton(
+                                  // Then show a snackBar w/ item name as dismissed message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('${item.title} deleted')));
+                                },
+                                confirmDismiss:
+                                    (DismissDirection direction) async {
+                                  return await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Entry?"),
+                                        content: const Text(
+                                            "Are you sure you wish to delete this entry?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: const Text("DELETE")),
+                                          TextButton(
                                             onPressed: () =>
-                                                Navigator.of(context).pop(true),
-                                            child: const Text("DELETE")),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(false),
-                                          child: const Text("CANCEL"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: DisplayCard(entry: item),
-                            )
-                          ]); // if in the same filter header list, then just make a new entry
-                    },
-                  )),
-                ],
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                            child: const Text("CANCEL"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: DisplayCard(entry: item),
+                              )
+                            ]); // if in the same filter header list, then just make a new entry
+                      },
+                    )),
+                  ],
+                ),
               ),
-            ),
-          ]),
-          bottomNavigationBar: CustomNavigationBar(
-            selectedIndex: 1,
-            /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
-            onDestinationSelected: (index) async {
-              switch(index) {
-                case 2: await makeNewEntry(context); setState((){}); return;
-                case 5: Navigator.of(context).pushNamed(CustomNavigationBar.defaultDestinations[index].label); return;
-                case _: Navigator.of(context).pushReplacementNamed(CustomNavigationBar.defaultDestinations[index].label); break;
-              }
-            }
-          )
-        );
+            ]),
+            bottomNavigationBar: CustomNavigationBar(
+                selectedIndex: widget.showPlans ? 4 : 1,
+
+                /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+                onDestinationSelected: (index) async {
+                  switch (index) {
+                    case 2:
+                      await makeNewEntry(context);
+                      setState(() {});
+                      return;
+                    case 5:
+                      Navigator.of(context).pushNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      return;
+                    case _:
+                      Navigator.of(context).pushReplacementNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      break;
+                  }
+                }));
       },
     );
   }
+
+  String getTimeRange(DateTime time) {
+    if (chosenDisplay == 'Week') {
+      DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+      int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
+      DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
+      DateTime lower = upper.subtract(const Duration(days: 6));
+
+      // Range for the week
+      return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+    } else if (chosenDisplay == 'Month') {
+      // If monthly, only display month and year
+      return '${time.formatDate()} ${time.year.toString()}';
+    } else {
+      // If yearly, only display year
+      return time.year.toString();
+    }
+  }
 }
 
-/// [EntryPage] is the page where an indivudal entry is displayed. it handles both
+/// [EntryPage] is the page where an individual entry is displayed. it handles both
 /// creation of new entries, modification of them.
 class EntryPage extends StatefulWidget {
   final JournalEntry? entry;
-  const EntryPage({
-    super.key,
-    this.entry
-  });
+
+  const EntryPage({super.key, this.entry});
 
   @override
   State<EntryPage> createState() => _EntryPageState();
@@ -238,6 +258,8 @@ class EntryPage extends StatefulWidget {
 
 class _EntryPageState extends State<EntryPage> {
   final ValueNotifier<double> progress = ValueNotifier(0);
+  DateTime? datePicked;
+  bool isPlan = false;
 
   // List of selected tags to keep track of when making the chip list
   List<Tag> selectedTags = [];
@@ -250,12 +272,15 @@ class _EntryPageState extends State<EntryPage> {
   @override
   void initState() {
     super.initState();
-    if(widget.entry != null) {
+    if (widget.entry != null) {
       selectedTags = widget.entry!.tags;
       selectedEmotions = widget.entry!.emotions;
       titleController.text = widget.entry!.title;
       entryTextController.text = widget.entry!.entryText;
-    } else {
+      isPlan = widget.entry!.scheduledDate == null;
+      datePicked = widget.entry!.scheduledDate;
+    }
+    else {
       selectedTags = [];
       selectedEmotions = [];
     }
@@ -269,269 +294,54 @@ class _EntryPageState extends State<EntryPage> {
     super.dispose();
   }
 
-  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
-    return tagList.map((tag) => FilterChip(
-        label: Text(tag.name),
-        selected: selectedTags.any((element) => element.name == tag.name),
-        showCheckmark: false,
-        selectedColor: tag.color,
-        onSelected: (bool selected) {
-          stfSetState(() {
-            setState(() {
-              /// When the cooresponding tag is selected, add it or remove it based on the name
-              //TODO: Update this when references are added to work only with references.
-              selected ? selectedTags.add(tag) : selectedTags.removeWhere((element) => element.name == tag.name);
-            });
-          });
-        },
-      )).toList();
-  }
-
-  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
-    return emotionList.entries.map((e) => FilterChip(
-        label: Text(e.key),
-        selected: selectedEmotions.any((element) => element.name == e.key),
-        showCheckmark: false,
-        selectedColor: e.value,
-        onSelected: (bool selected) {
-          stfSetState(() {
-            setState(() {
-              /// When the cooresponding emote is selected, add it or remove it based on the name
-              //TODO: Update this when references are added to work only with references.
-              selected ? selectedEmotions.add(Emotion(name: e.key, color: e.value)) : selectedEmotions.removeWhere((element) => element.name == e.key);
-            });
-          });
-        },
-    )).toList();
-  }
-
   void requestEntryTemplate(BuildContext context) async {
     String category = "";
     int questions = 6;
     await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width/2,
-            height: MediaQuery.of(context).size.width/1.5,
-            child: DropdownMenu<String>(
-              key: const Key("Template_Selection"),
-              dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
-              onSelected: (value) {
-                category = value!;
-              },
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Guided Journaling"),
+        content: SizedBox(
+            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.width/3,
+            child: Row(
+              children: [
+                const Text('Category: '),
+                DropdownMenu<String>(
+                  key: const Key("Template_Selection"),
+                  dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                  onSelected: (value) {
+                    category = value!;
+                  },
+                ),
+            ],
             )
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
-          ],
         ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
+        ],
+      ),
     );
-    DateTime today = new DateTime.now();
+    if(category == "") return;
+    DateTime today = DateTime.now();
     /// Format [dateSlug] is yyyy-mm-dd
     String dateSlug ="${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
-    titleController.text = "$dateSlug - $category";
+    if (titleController.text.isEmpty) {
+      titleController.text = "$dateSlug - $category";
+    }
     entryTextController.text = getTemplateEntryBody(category, questions);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        forceMaterialTransparency: true,
-      ),
-      body: SingleChildScrollView(
-          child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                  children: [
-                    // Text field for the Journal Entry Title
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: TextField(
-                        controller: titleController,
-                        key: const Key("titleInput"),
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Title',
-                        ),
-                      ),
-                    ),
-                    // Text input field for the Journal Entry Body
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: GestureDetector(
-                        onLongPress: () async {
-                            setState(() => requestEntryTemplate(context));
-                          },
-                        child: TextField(
-                          controller: entryTextController,
-                          key: const Key("journalInput"),
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'Journal Entry',
-                          ),
-                          maxLines: 8,
-                          minLines: 1,
-                        ),
-                      ),
-                    ),
-
-                    // Chip display for the tags
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      // Make the chips scrollable
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          key: const Key('TagChipsDisplay'),
-                          scrollDirection: Axis.horizontal,
-                          child: Wrap(
-                            spacing: 5,
-                            children: selectedTags
-                                .map((tag) => ActionChip(
-                              label: Text(tag.name),
-                              backgroundColor: tag.color,
-                              onPressed: () {
-                                setState(() {
-                                  selectedTags.removeWhere((element) =>
-                                  element.name == tag.name);
-                                });
-                              },
-                            )).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Chip display for the emotions
-                    Padding(
-                        padding: const EdgeInsets.all(20),
-                        // Make the chips scrollable
-                        child: Scrollbar(
-                            child: SingleChildScrollView(
-                                key: const Key('EmotionChipsDisplay'),
-                                scrollDirection: Axis.horizontal,
-                                child: Wrap(
-                                  spacing: 5,
-                                  children: selectedEmotions
-                                      .map((Emotion emotion) => ActionChip(
-                                    label: Text(emotion.name),
-                                    backgroundColor: emotion.color,
-                                    onPressed: () =>
-                                        _emotionalDial(context, emotion),
-
-                                  ))
-                                      .toList(),
-                                )))),
-                  ]))),
-
-      // Plan save tag in replacement of the nav bar
-      bottomNavigationBar: Container(
-          transform: Matrix4.translationValues(0, 3, 0),
-          decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
-                  side: BorderSide(
-                    width: 3,
-                    color: settings.getCurrentTheme().colorScheme.primary,
-                  ))),
-          margin: EdgeInsets.only(
-              left: (MediaQuery.of(context).size.width / 10),
-              right: (MediaQuery.of(context).size.width / 10)),
-
-          // Keep all the button spaced evenly and centered on the page
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //crossAxisAlignment: CrossAxisAlignment.baseline,
-            children: [
-              // Plan button
-              TextButton(
-                  key: const Key("planButton"),
-                  child: const Text('Plan'),
-                  onPressed: () {}),
-              /*
-                  * Tag button
-                  * Will create a multi select dialog field that will allow
-                  * users to select the tags for the Journal Entry
-                  */
-              TextButton(
-                  key: const Key("tagButton"),
-                  child: const Text('Tag'),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return StatefulBuilder(
-                            builder: (stfContext, stfSetState) {
-                              return AlertDialog(
-                                title: const Text("Select Tags"),
-                                content: Wrap(
-                                  spacing: 5.0,
-                                  children: createAvailableTagsList(stfSetState),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    key: const Key('saveTagsButton'),
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      Navigator.of(stfContext).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                    );
-                  }),
-
-              TextButton(
-                  key: const Key("emotionButton"),
-                  child: const Text('Emotion'),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return StatefulBuilder(
-                            builder: (stfContext, stfSetState) {
-                              return AlertDialog(
-                                title: const Text("Select Emotions"),
-                                content: Wrap(
-                                  spacing: 5.0,
-                                  children: createAvailableEmotionsList(stfSetState),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    key: const Key('saveEmotionsButton'),
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      Navigator.of(stfContext).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                    );
-                  }),
-
-              // Save button
-              TextButton(
-                  key: const Key("saveButton"),
-                  child: const Text('Save'),
-                  onPressed: () {
-                    Navigator.pop(context, getEntry());
-                  }),
-            ],
-          )),
-    );
+  void getRandomQuestion() {
+    (String, String) results = getTemplateRandom();
+    if (titleController.text.isEmpty) {
+      titleController.text = results.$1;
+    }
+    entryTextController.text += "${results.$2}\n\n";
   }
 
   // Make an Alert Dialog Box that will display the emotional dial and a save button
-  dynamic _emotionalDial(BuildContext context, Emotion emotion) async {
+  void _emotionalDial(BuildContext context, Emotion emotion) async {
     int strength = 0;
     return showDialog(
         context: context,
@@ -542,18 +352,14 @@ class _EntryPageState extends State<EntryPage> {
               width: double.infinity,
               height: 175,
               progress: emotion.strength.toDouble(),
+              maxProgress: 60,
               barWidth: 8,
               startAngle: 5,
               sweepAngle: 360,
               strokeCap: StrokeCap.butt,
-              progressGradientColors: const [
-                Colors.red,
-                Colors.orange,
-                Colors.yellow,
-                Colors.green,
-                Colors.blue,
-                Colors.indigo,
-                Colors.purple
+              progressGradientColors: [
+                emotion.color.withAlpha(128),
+                emotion.color,
               ],
               innerThumbRadius: 5,
               innerThumbStrokeWidth: 3,
@@ -561,10 +367,12 @@ class _EntryPageState extends State<EntryPage> {
               outerThumbRadius: 5,
               outerThumbStrokeWidth: 10,
               outerThumbColor: Colors.blueAccent,
-              dashWidth: 26,
+              dashWidth: 20,
               dashGap: 10,
               animation: false,
               valueNotifier: progress,
+
+              /// TODO: Remove the child center that displays the strength?
               child: Center(
                 child: ValueListenableBuilder(
                     valueListenable: progress,
@@ -574,9 +382,9 @@ class _EntryPageState extends State<EntryPage> {
                         Text(() {
                           // on changed, set the strength
                           strength = value.round();
-                          return '${value.round()}';
+                          return '$strength';
                         }()),
-                        const Text('progress'),
+                        const Text('Strength'),
                       ],
                     )),
               ),
@@ -603,31 +411,311 @@ class _EntryPageState extends State<EntryPage> {
         });
   }
 
+  // Date picker
+  Future<DateTime?> pickDate() => showDatePicker(
+    context: context,
+    firstDate: DateTime.now(),
+    lastDate: DateTime.now().add(const Duration(days: 365)),
+    initialDate: datePicked ?? DateTime.now(),
+  );
+
+  // Time picker
+  Future<TimeOfDay?> pickTime() => showTimePicker(
+    context: context,
+    initialTime: TimeOfDay.now(),
+  );
+
+  Future<DateTime?> pickPlanDate() async {
+    var selectedDate = await pickDate();
+    if (selectedDate == null) return null;
+
+    var selectedTime = await pickTime();
+    if (selectedTime == null) return null;
+
+    return selectedDate.toLocal();
+  }
+
+  void showTagPicker() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(builder: (stfContext, stfSetState) {
+          return AlertDialog(
+            title: const Text("Select Tags"),
+            content: Wrap(
+              spacing: 5.0,
+              children: createAvailableTagsList(stfSetState),
+            ),
+            actions: <Widget>[
+              TextButton(
+                key: const Key('saveTagsButton'),
+                child: const Text('Save'),
+                onPressed: () {
+                  Navigator.of(stfContext).pop();
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  void showEmotionPicker() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(builder: (stfContext, stfSetState) {
+          return AlertDialog(
+            title: const Text("Select Emotions"),
+            content: Wrap(
+              spacing: 5.0,
+              children: createAvailableEmotionsList(stfSetState),
+            ),
+            actions: <Widget>[
+              TextButton(
+                key: const Key('saveEmotionsButton'),
+                child: const Text('Save'),
+                onPressed: () {
+                  Navigator.of(stfContext).pop();
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
   // Make the journal entry and save it
-  JournalEntry? getEntry() {
+  JournalEntry? saveEntry() {
     // Database entry point for creating journal entry
-    if(widget.entry == null) {
-      //TODO: do databse things to save new journal entry: db.insert
+    if (widget.entry == null && !isPlan) {
+      //TODO: do database things to save new journal entry: db.insert
       return JournalEntry(
         title: titleController.text,
         entryText: entryTextController.text,
-        date: DateTime.now(),
         tags: selectedTags,
         emotions: selectedEmotions,
       );
-    } 
+    } else if (widget.entry == null) {
+      return Plan(
+        title: titleController.text,
+        entryText: entryTextController.text,
+        tags: selectedTags,
+        emotions: selectedEmotions,
+        scheduledDate: datePicked!,
+      );
+    }
     else {
       // entry exists, we are modifying
-      //TODO: do datbase things for updating journal entry
+      //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
-      widget.entry!.update(
-        titleController.text,
-        entryTextController.text,
-        selectedTags,
-        selectedEmotions
-      );
+      if(widget.entry! is Plan){
+        widget.entry!.update(
+            titleController.text,
+            entryTextController.text,
+            selectedTags,
+            selectedEmotions,
+            datePicked
+        );
+      } else {
+        widget.entry!.update(
+            titleController.text,
+            entryTextController.text,
+            selectedTags,
+            selectedEmotions,
+        );
+      }
       return widget.entry!;
     }
+  }
+
+  List<FilterChip> createAvailableTagsList(StateSetter stfSetState) {
+    return tagList
+        .map((tag) => FilterChip(
+              label: Text(tag.name),
+              selected: selectedTags.any((element) => element.name == tag.name),
+              showCheckmark: false,
+              selectedColor: tag.color,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the corresponding tag is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedTags.add(tag)
+                        : selectedTags
+                            .removeWhere((element) => element.name == tag.name);
+                  });
+                });
+              },
+            ))
+        .toList();
+  }
+
+  List<FilterChip> createAvailableEmotionsList(StateSetter stfSetState) {
+    return emotionList.entries
+        .map((e) => FilterChip(
+              label: Text(e.key),
+              selected:
+                  selectedEmotions.any((element) => element.name == e.key),
+              showCheckmark: false,
+              selectedColor: e.value,
+              onSelected: (bool selected) {
+                stfSetState(() {
+                  setState(() {
+                    /// When the corresponding emote is selected, add it or remove it based on the name
+                    //TODO: Update this when references are added to work only with references.
+                    selected
+                        ? selectedEmotions
+                            .add(Emotion(name: e.key, color: e.value))
+                        : selectedEmotions
+                            .removeWhere((element) => element.name == e.key);
+                  });
+                });
+              },
+            ))
+        .toList();
+  }
+
+  List<ActionChip> createSelectedTagList() {
+    return selectedTags
+        .map((tag) => ActionChip(
+      label: Text(tag.name),
+      backgroundColor: tag.color,
+      onPressed: () {
+        setState(() {
+          selectedTags.removeWhere((element) =>
+          element.name == tag.name);
+        });
+      },
+    ))
+        .toList();
+  }
+
+  List<ActionChip> createSelectedEmotionList() {
+    return selectedEmotions
+        .map((Emotion emotion) => ActionChip(
+      label: Text(emotion.name),
+      backgroundColor: emotion.color,
+      onPressed: () => _emotionalDial(context, emotion),
+    ))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
+        automaticallyImplyLeading: true,
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: SingleChildScrollView(
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(children: [
+                // Text field for the Journal Entry Title
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: titleController,
+                    key: const Key("titleInput"),
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Title',
+                      hintText: 'Inspiration is a tap away...'
+                    ),
+                  ),
+                ),
+                // Text input field for the Journal Entry Body
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GestureDetector(
+                    key: const Key("entryBodyKey"),
+                    onHorizontalDragEnd: (details) async {
+                      requestEntryTemplate(context);
+                      setState(() {});
+                    },
+                    onDoubleTap: () => setState(() => getRandomQuestion()),
+                    child: TextField(
+                      controller: entryTextController,
+                      key: const Key("journalInput"),
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Journal Entry',
+                        hintText: "Swipe right for ideas, double tap for a question...",
+                      ),
+                      maxLines: 20,
+                      minLines: 1,
+                    ),
+                  ),
+                ),
+
+                // Chip display for the tags
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  // Make the chips scrollable
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      key: const Key('TagChipsDisplay'),
+                      scrollDirection: Axis.horizontal,
+                      child: Wrap(
+                        spacing: 5,
+                        children: createSelectedTagList(),
+                      ),
+                    ),
+                  ),
+                ),
+                // Chip display for the emotions
+                Padding(
+                    padding: const EdgeInsets.all(20),
+                    // Make the chips scrollable
+                    child: Scrollbar(
+                        child: SingleChildScrollView(
+                            key: const Key('EmotionChipsDisplay'),
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 5,
+                              children: createSelectedEmotionList(),
+                            )))),
+              ]))),
+
+      // Plan save tag in replacement of the nav bar
+      bottomNavigationBar: CustomNavigationBar(
+        selectedIndex: 3,
+        allowReselect: true,
+        destinations: const [
+          NavigationDestination(
+              key: Key("planButton"),
+              icon: Icon(Icons.more_time),
+              label: "Plan"),
+          NavigationDestination(
+              key: Key("tagButton"), icon: Icon(Icons.tag), label: "Tags"),
+          NavigationDestination(
+              key: Key("emotionButton"),
+              icon: Icon(Icons.emoji_emotions),
+              label: "Emotions"),
+          NavigationDestination(
+              key: Key("saveButton"), icon: Icon(Icons.save), label: "Save"),
+        ],
+        onDestinationSelected: (index) async {
+          switch (index) {
+            case 0:
+              datePicked = await pickPlanDate() ?? datePicked;
+              isPlan = datePicked != null;
+            case 1:
+              showTagPicker();
+            case 2:
+              showEmotionPicker();
+            case 3:
+              Navigator.of(context).pop(saveEntry());
+          }
+        },
+      ),
+    );
   }
 }
 

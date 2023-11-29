@@ -250,7 +250,7 @@ Future skipToDashboard(BuildContext context) async {
   Future.delayed(const Duration(milliseconds: 1)).whenComplete(() async {
     Navigator.of(context).pop(); //pop loading screen
     Navigator.of(context).pop(); //pop password prompt
-    Navigator.of(context).pushNamed("Dashboard");
+    Navigator.of(context).pushReplacementNamed("Dashboard");
     if (isEncryptionEnabled()) {
       await showDialog(
           barrierColor: Colors.transparent,
@@ -455,7 +455,7 @@ void handleStartPress(BuildContext context) async {
       attemptLogin(context);
     } else {
       // Password not set, but initialized, no check, just entry to dashboard.
-      Navigator.of(context).pushNamed("Dashboard");
+      Navigator.of(context).pushReplacementNamed("Dashboard");
     }
   } else {
     await createPassword(context);

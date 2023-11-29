@@ -96,3 +96,13 @@ Future<void> tap(WidgetTester tester, Finder found, [bool settle = false, Durati
     await tester.pump(duration);
   }
 }
+
+/// [doubleTap] can be used to simulate a double tap on a widget with the Finder [found]
+/// This automatically pumps the widget tree after tapping.
+/// use [settle] = true, to make it pumpAndSettle
+Future<void> doubleTap(WidgetTester tester, Finder found) async {
+  await tester.tap(found);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tap(found);
+  await tester.pump();
+}

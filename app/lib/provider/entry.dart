@@ -4,6 +4,7 @@ import 'package:app/provider/settings.dart' as settings;
 import 'dart:math';
 
 List<JournalEntry> entries = [];
+List<Plan> plans = [];
 
 //add tag list
 List<Tag> tagList = [
@@ -126,7 +127,7 @@ const Map<String, List<String>> templateSet = {
 String getTemplateEntryBody(String category, int num) {
   // If category doenst exist we dont generate anything.
   if(templateSet[category] == null) return "";
-  List<String> questions = templateSet[category]!;
+  List<String> questions = List.from(templateSet[category]!);
   questions.shuffle(); // Shuffle to make things random, doesnt matter if it modifies.
   int length = questions.length;
   if(num > length) num = length;
@@ -139,6 +140,14 @@ String getTemplateEntryBody(String category, int num) {
   return indexes.map((e) => questions[e]).join("\n\n\n"); // pull those questions and join them.
 }
 
+(String, String) getTemplateRandom() {
+  String cat, body = "";
+  cat = templateSet.keys.toList()[Random().nextInt(templateSet.length)];
+  body = templateSet[cat]![Random().nextInt(templateSet[cat]!.length)];
+  return (cat, body);
+}
+
+
 void loadTagsEmotions() {
 //load tags
   Object? foundTags = settings.getOtherSetting("tags");
@@ -146,18 +155,17 @@ void loadTagsEmotions() {
   //  tags.clear();
   //  foundTags.forEach((key, value) => tags[key] = Tag(name: key, color: Color(value)));
   //}
-  if (foundTags !=null && foundTags is Map<String, int>){
+  if (foundTags != null && foundTags is Map<String, int>) {
     tagList.clear();
-    for(final MapEntry<String, int>(:key, :value) in foundTags.entries){
+    for (final MapEntry<String, int>(:key, :value) in foundTags.entries) {
       tagList.add(Tag(name: key, color: Color(value)));
     }
   }
 
-
   Object? foundEmotions = settings.getOtherSetting('emotions');
   if (foundEmotions != null && foundEmotions is Map<String, int>) {
     emotionList.clear();
-    for(final MapEntry<String, int>(:key, :value) in foundEmotions.entries){
+    for (final MapEntry<String, int>(:key, :value) in foundEmotions.entries) {
       emotionList[key] = Color(value);
     }
   }
@@ -173,7 +181,7 @@ void loadTagsEmotions() {
 void saveTagsEmotions() {
   Map<String, int> map = {};
   //tags.forEach((key, value) => map[key] = value.color.value);
-  for(final Tag element in tagList) {
+  for (final Tag element in tagList) {
     map[element.name] = element.color.value;
   }
   settings.setOtherSetting('tags', Map<String, int>.of(map));
@@ -234,7 +242,7 @@ class Emotion {
   });
 }
 
-class JournalEntry implements Comparable<JournalEntry>{
+class JournalEntry implements Comparable<JournalEntry> {
   // unique id for each entry
   final int id = UniqueKey().hashCode;
 
@@ -244,8 +252,8 @@ class JournalEntry implements Comparable<JournalEntry>{
   String previewText = "";
 
   // year, month, day
-  DateTime current = DateTime.now();
-  DateTime date = DateTime(1970, 12, 31);
+  DateTime creationDate = DateTime.now();
+  DateTime? scheduledDate;
   List<Tag> tags = [];
   List<Emotion> emotions = [];
 
@@ -254,9 +262,10 @@ class JournalEntry implements Comparable<JournalEntry>{
   JournalEntry({
     required this.title,
     required this.entryText,
-    required this.date,
     this.tags = const [],
-    this.emotions = const []
+    this.emotions = const [],
+    this.scheduledDate,
+    DateTime? dateOverride
   }) {
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
@@ -266,19 +275,22 @@ class JournalEntry implements Comparable<JournalEntry>{
     String? newEntryText,
     List<Tag>? newTags,
     List<Emotion>? newEmotions,
+    DateTime? newDate,
   ]) {
-    if(newTitle != null) title = newTitle;
-    if(newEntryText != null) {
+    if (newTitle != null) title = newTitle;
+    if (newEntryText != null) {
       entryText = newEntryText;
-      previewText = previewText.substring(0, min(previewLength, entryText.length));
+      previewText =
+          entryText.substring(0, min(previewLength, entryText.length));
     }
-    if(newTags != null) tags = newTags;
-    if(newEmotions != null) emotions = newEmotions;
+    if (newTags != null) tags = newTags;
+    if (newEmotions != null) emotions = newEmotions;
+    if (newDate != null) scheduledDate = newDate;
   }
 
   List<Color> getGradientColors() {
     List<Color> colors = [];
-    if (emotions.length >= 2){
+    if (emotions.length >= 2) {
       emotions.sort((e1, e2) => e1.strength > e2.strength ? 1 : 0);
       colors.add(emotions[0].color);
       colors.add(emotions[1].color);
@@ -288,7 +300,7 @@ class JournalEntry implements Comparable<JournalEntry>{
     } else if (tags.length >= 2) {
       colors.add(tags[0].color);
       colors.add(tags[1].color);
-    } else if (tags.isNotEmpty){
+    } else if (tags.isNotEmpty) {
       colors.add(tags[0].color);
       colors.add(Colors.white24);
     } else {
@@ -297,7 +309,6 @@ class JournalEntry implements Comparable<JournalEntry>{
     }
     return colors;
   }
-
 
   // Get the strongest emotion in the entry
   Emotion getStrongestEmotion() {
@@ -310,7 +321,10 @@ class JournalEntry implements Comparable<JournalEntry>{
       }
       return strongestEmotion;
     }
-    return Emotion(name: 'None', strength: 0, color: Colors.black); // This shouldn't happen
+    return Emotion(
+        name: 'None',
+        strength: 0,
+        color: Colors.black); // This shouldn't happen
   }
 
   /* TODO
@@ -322,14 +336,50 @@ class JournalEntry implements Comparable<JournalEntry>{
   /// we will compare them based on the [title]
   @override
   int compareTo(JournalEntry other) {
-    int order = other.date.compareTo(date) ;
+    int order = other.creationDate.compareTo(creationDate);
+    return order == 0 ? other.title.compareTo(title) : order;
+  }
+}
+
+/// [Plan]s can be marked as completed and store the date at which it was completed
+class Plan extends JournalEntry {
+  DateTime? completionDate;
+  late bool planCompleted;
+
+  Plan({
+    required super.title,
+    required super.entryText,
+    super.tags,
+    super.emotions,
+    required super.scheduledDate,
+  }) {
+    planCompleted = false;
+  }
+
+  /// Toggle completion status
+  /// If marked as completed, set completed time to current time
+  /// Otherwise, delete the completion time
+  void toggleCompletion() {
+    planCompleted = !planCompleted;
+    completionDate = planCompleted ? DateTime.now() : null;
+  }
+
+  /// If this [JournalEntry] has the same [earliestDate] as [other]
+  /// we will compare them based on the [title]
+  @override
+  int compareTo(JournalEntry other) {
+    if(other.scheduledDate == null) return -1;
+    int order = other.scheduledDate!.compareTo(scheduledDate!);
     return order == 0 ? other.title.compareTo(title) : order;
   }
 }
 
 Future<void> makeNewEntry(BuildContext context) async {
-  final JournalEntry? result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EntryPage()));
-  if (result is JournalEntry) {
+  final JournalEntry? result = await Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => const EntryPage()));
+  if (result is Plan) {
+    plans.add(result);
+  } else if (result is JournalEntry) {
     entries.add(result);
   }
 }

@@ -32,6 +32,7 @@ String nextQuote = "";
 
 class Quote extends StatefulWidget {
   final Random rand = Random();
+
   Quote({super.key});
 
   String newQuote() {
@@ -218,6 +219,7 @@ class StandardElevatedButton extends StatelessWidget {
   final Widget child;
   final Function()? onPressed;
   final double elevation = 20.0;
+
   const StandardElevatedButton({
     super.key,
     required this.child,
@@ -320,23 +322,43 @@ class StarBackground extends StatelessWidget {
 // ignore: must_be_immutable
 class CustomNavigationBar extends StatelessWidget {
   static const List<NavigationDestination> defaultDestinations = [
-    NavigationDestination(icon: Icon(Icons.dashboard), label: "Dashboard"),
-    NavigationDestination(icon: Icon(Icons.feed), label: "Entries"),
-    NavigationDestination(icon: Icon(Icons.add), label: "NewEntry"),
-    NavigationDestination(icon: Icon(Icons.calendar_month), label: "Calendar"),
-    NavigationDestination(icon: Icon(Icons.event_note), label: "Plans"),
-    NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
+    NavigationDestination(
+        key: Key("navDashboard"),
+        icon: Icon(Icons.dashboard),
+        label: "Dashboard"),
+    NavigationDestination(
+        key: Key("navEntries"), icon: Icon(Icons.feed), label: "Entries"),
+    NavigationDestination(
+        key: Key("navNewEntry"), icon: Icon(Icons.add), label: "NewEntry"),
+    NavigationDestination(
+        key: Key("navCalendar"),
+        icon: Icon(Icons.calendar_month),
+        label: "Calendar"),
+    NavigationDestination(
+        key: Key("navPlans"), icon: Icon(Icons.event_note), label: "Plans"),
+    NavigationDestination(
+        key: Key("navSettings"), icon: Icon(Icons.settings), label: "Settings"),
   ];
 
+  /// [destinations] is the different icons at the bottom that a user could tap on to visit
   final List<NavigationDestination> destinations;
+
+  /// [selectedIndex] is the currently selected destination as its place in the destination list.
   int selectedIndex;
+
+  /// [onDestinationSelected] is a function that should be called every time a selection is made, which will
+  /// update the navigation bar and perform any other necessary tasks for this navigation.
   final ValueChanged<int>? onDestinationSelected;
+
+  /// [allowReselect] fill this in here
+  bool allowReselect;
 
   CustomNavigationBar({
     super.key,
     this.selectedIndex = 0,
     this.destinations = defaultDestinations,
     this.onDestinationSelected,
+    this.allowReselect = false,
   });
 
   @override
@@ -346,12 +368,14 @@ class CustomNavigationBar extends StatelessWidget {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        if (index == selectedIndex) return;
+        if (!allowReselect && index == selectedIndex) return;
         if (index >= destinations.length) return;
         onDestinationSelected == null
             ? defaultOnDestinationSelected(index, context)
             : onDestinationSelected!(index);
-        selectedIndex = index;
+
+        // this may need a bool around it to enable your functionality.
+        // selectedIndex = index; // This needs to be here to properly update the icons on other pages, as well as prevent re-evaluation of the navigation if we are already on that page.
       },
     );
   }
@@ -369,6 +393,7 @@ class CustomNavigationBar extends StatelessWidget {
         break;
     }
   }
+
 }
 
 /// A card that displays text with a title and main text body
@@ -382,6 +407,12 @@ class DisplayCard extends StatefulWidget {
 }
 
 class _DisplayCardState extends State<DisplayCard> {
+  void toggleEntry() {
+    setState(() {
+      (widget.entry as Plan).toggleCompletion();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -397,7 +428,7 @@ class _DisplayCardState extends State<DisplayCard> {
             builder: (context) => EntryPage(entry: widget.entry),
           ));
 
-          /// Rebuild THIS widget if any chgned were made
+          // Rebuild the card for potential edits made
           setState(() {});
         },
         child: Card(
@@ -426,7 +457,7 @@ class _DisplayCardState extends State<DisplayCard> {
                       children: <Widget>[
                         // Title
                         SizedBox(
-                            width: MediaQuery.of(context).size.width - 150,
+                            width: MediaQuery.of(context).size.width - 175,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 10,
@@ -437,16 +468,31 @@ class _DisplayCardState extends State<DisplayCard> {
                                 overflow: TextOverflow.fade,
                                 maxLines: 1,
                                 softWrap: false,
-                                style: DefaultTextStyle.of(context).style.apply(
-                                      fontSizeFactor: 1.3,
-                                      fontWeightDelta: 1,
-                                    ),
+                                style: widget.entry is Plan &&
+                                        (widget.entry as Plan).planCompleted ==
+                                            true
+                                    // If plan is finished, show a strikethrough
+                                    ? TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationStyle:
+                                            TextDecorationStyle.wavy,
+                                        decorationColor:
+                                            Theme.of(context).primaryColor,
+                                        decorationThickness: 2,
+                                      )
+                                    // Otherwise no text style changes
+                                    : const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                               ),
                             )),
 
                         // preview text
                         SizedBox(
-                          width: MediaQuery.of(context).size.width - 150,
+                          width: MediaQuery.of(context).size.width - 175,
                           // height: 40,
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -462,16 +508,55 @@ class _DisplayCardState extends State<DisplayCard> {
                           ),
                         ),
                       ]),
-                  // spacer to push the date to the right and the text to the left
+
+                  // Spacer to force text to left and date to the right
                   const Spacer(),
 
-                  // Date
-                  Container(
-                    padding: const EdgeInsets.all(7),
-                    child: Text(
-                      '${widget.entry.date.month.toString()}/${widget.entry.date.day.toString()}/${widget.entry.date.year.toString()}',
+                  // Checkbox to mark plans as completed
+                  if (widget.entry is Plan)
+                    IconButton(
+                      padding: const EdgeInsets.only(top: 10),
+                      key: const Key("PlanCompleteButton"),
+                      // Show filled outline for completed
+                      icon: const Icon(Icons.check_box_outline_blank),
+                      selectedIcon: const Icon(Icons.check_box),
+                      isSelected: (widget.entry as Plan).planCompleted == true,
+                      onPressed: toggleEntry,
                     ),
-                  ),
+
+                  // Date
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Day
+                        Text(
+                          widget.entry is Plan ? widget.entry.scheduledDate!.day.toString() :widget.entry.creationDate.day.toString(),
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+
+                        const Padding(padding: EdgeInsets.only(left: 5)),
+
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // First 3 letters of the month
+                              Text(
+                                widget.entry is Plan ? widget.entry.scheduledDate!.formatDate().substring(0, 3) :widget.entry.creationDate.formatDate().substring(0, 3),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+
+                              // Year
+                              Text(
+                                widget.entry is Plan ? widget.entry.scheduledDate!.year.toString() :widget.entry.creationDate.year.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ])
+                      ],
+                    ),
+                  )
                 ]),
           ),
         ),
