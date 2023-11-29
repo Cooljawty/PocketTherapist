@@ -48,9 +48,11 @@ void main() async {
 		await widgetTester.pump(Duration(seconds: 1));
 
 		Finder okResetPassButton = find.byKey(const Key("Fail_Pass_Reset"));
-		await expectLater(okResetPassButton, findsOneWidget);
-		await tap(widgetTester, okResetPassButton);
-		await widgetTester.pump(Duration(seconds: 1));
+    //wait until incorrect password prompt appears
+    await pumpUntilFound(widgetTester, okResetPassButton);
+    await tap(widgetTester, okResetPassButton);
+    //let dialog get dismissed
+    await widgetTester.pump(const Duration(seconds: 1));
 
     await widgetTester.enterText(passwordResetField, recovery);
     await widgetTester.pump();
@@ -119,9 +121,19 @@ void main() async {
 		await widgetTester.pump(Duration(seconds: 1));
 
 		Finder okResetPassButton = find.byKey(const Key("Success_Pass_Reset"));
-		await expectLater(okResetPassButton, findsOneWidget);
-		await widgetTester.tap(okResetPassButton);
-		await widgetTester.pump(Duration(seconds: 1));
-		await expectLater(find.text("Encryption?"), findsOneWidget);
-	}, timeout: const Timeout(Duration(minutes: 2)));
+    //wait until loading is done
+    await pumpUntilFound(widgetTester, okResetPassButton);
+    await widgetTester.tap(okResetPassButton);
+    //minimum number of pumps needed to dismiss the 2 dialog boxes
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    //await widgetTester.pump();
+    await widgetTester.pump(const Duration(milliseconds: 400));
+    //reset button option should not be present but start button should be
+    expect(resetButton, findsNothing);
+    expect(find.byKey(const Key("Start_Button")), findsOneWidget);
+  }, timeout: const Timeout(Duration(minutes: 2)));
 }
