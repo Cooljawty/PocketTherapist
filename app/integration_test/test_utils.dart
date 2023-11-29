@@ -56,8 +56,8 @@ Future<void> skipToEntriesPage(WidgetTester tester, [bool settle = false]) async
 /// entries page
 Future<void> skipToCalendarPage(WidgetTester tester, [bool settle = false]) async {
   await startSkipFrontScreen(tester);
-  await pumpUntilFound(tester, find.byKey(const Key("Navigation_Destination_Calendar")), settle);
-  await tap(tester, find.byKey(const Key("Navigation_Destination_Calendar")), settle);
+  await pumpUntilFound(tester, find.byKey(const Key("navCalendar")), settle);
+  await tap(tester, find.byKey(const Key("navCalendar")), settle);
 }
 
 /// [defaultSettings] configures the default settings for testing which includes

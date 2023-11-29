@@ -91,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           .toList(),
 
                       // if changed set the new theme
-                      onChanged: (item) => setState(() {
+                      onChanged: (item) => setState (() {
                         chosenTheme = item;
                         provider.changeTheme(chosenTheme!);
                       }),
