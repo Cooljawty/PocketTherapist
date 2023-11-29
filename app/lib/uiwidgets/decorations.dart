@@ -396,6 +396,7 @@ class CustomNavigationBar extends StatelessWidget {
 
 }
 
+
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
   final JournalEntry entry;
@@ -411,6 +412,18 @@ class _DisplayCardState extends State<DisplayCard> {
     setState(() {
       (widget.entry as Plan).toggleCompletion();
     });
+  }
+
+  String getTitle(){
+    if(widget.entry is !Plan) {
+      return (widget.entry.title.length > 23)
+        ? '${widget.entry.title.substring(0, 23)}...'
+       : widget.entry.title;
+    }else{
+      return (widget.entry.title.length > 20)
+          ? '${widget.entry.title.substring(0, 20)}...'
+          : widget.entry.title;
+    }
   }
 
   @override
@@ -432,15 +445,15 @@ class _DisplayCardState extends State<DisplayCard> {
           setState(() {});
         },
         child: Card(
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: getCurrentTheme().colorScheme.outline,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
+          shape: const RoundedRectangleBorder(
+            side: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
           child: Container(
-            //width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
+              color: getCurrentTheme().colorScheme.background.withAlpha(150),
+              borderRadius: BorderRadius.circular(15),
               gradient: LinearGradient(
                 colors: widget.entry.getGradientColors(),
               ),
@@ -449,113 +462,84 @@ class _DisplayCardState extends State<DisplayCard> {
             child: Row(
                 // row to hold all information
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Column(
                       // Column to hold title and preview text
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // Title
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width - 175,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 10,
-                                top: 5,
-                              ),
-                              child: Text(
-                                widget.entry.title,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: false,
-                                style: widget.entry is Plan &&
-                                        (widget.entry as Plan).planCompleted ==
-                                            true
-                                    // If plan is finished, show a strikethrough
-                                    ? TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.lineThrough,
-                                        decorationStyle:
-                                            TextDecorationStyle.wavy,
-                                        decorationColor:
-                                            Theme.of(context).primaryColor,
-                                        decorationThickness: 2,
-                                      )
-                                    // Otherwise no text style changes
-                                    : const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                              ),
-                            )),
+                        Text(
+                          getTitle(),
+                          overflow: TextOverflow.fade,
+                          style: widget.entry is Plan &&
+                                  (widget.entry as Plan).planCompleted
+                              // If plan is finished, show a strikethrough
+                              ? DefaultTextStyle.of(context).style.apply(
+                                  fontSizeFactor: 1.3,
+                                  fontWeightDelta: 1,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationStyle:
+                                      TextDecorationStyle.wavy,
+                                  decorationColor:
+                                      Theme.of(context).primaryColor,
+                                  decorationThicknessFactor: 1,
+                                  decorationThicknessDelta: 0.0,
+                                )
+                              // Otherwise no text style changes
+                              : DefaultTextStyle.of(context).style.apply(
+                                  fontSizeFactor: 1.3,
+                                  fontWeightDelta: 1,
+                                ),
+                        ),
 
                         // preview text
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 175,
-                          // height: 40,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, bottom: 10, top: 5),
-                            child: Text(
-                              widget.entry.previewText,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              softWrap: false,
-                              style:
-                                  const TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
+                        Text(
+                          (widget.entry.entryText.length >= 30) ?
+                          '${widget.entry.entryText.substring(0,30)}...' : widget.entry.entryText,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ]),
 
-                  // Spacer to force text to left and date to the right
-                  const Spacer(),
-
-                  // Checkbox to mark plans as completed
-                  if (widget.entry is Plan)
-                    IconButton(
-                      padding: const EdgeInsets.only(top: 10),
-                      key: const Key("PlanCompleteButton"),
-                      // Show filled outline for completed
-                      icon: const Icon(Icons.check_box_outline_blank),
-                      selectedIcon: const Icon(Icons.check_box),
-                      isSelected: (widget.entry as Plan).planCompleted == true,
-                      onPressed: toggleEntry,
-                    ),
-
                   // Date
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Day
-                        Text(
-                          widget.entry is Plan ? widget.entry.scheduledDate!.day.toString() :widget.entry.creationDate.day.toString(),
-                          style: Theme.of(context).textTheme.headlineSmall,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Checkbox to mark plans as completed
+                      if (widget.entry is Plan)
+                        IconButton(
+                          key: const Key("PlanCompleteButton"),
+                          // Show filled outline for completed
+                          icon: const Icon(Icons.check_box_outline_blank),
+                          selectedIcon: const Icon(Icons.check_box),
+                          isSelected: (widget.entry as Plan).planCompleted == true,
+                          onPressed: toggleEntry,
                         ),
 
-                        const Padding(padding: EdgeInsets.only(left: 5)),
+                      // Day
+                      Text(
+                        widget.entry is Plan ? widget.entry.scheduledDate!.day.toString() :widget.entry.creationDate.day.toString(),
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
 
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // First 3 letters of the month
-                              Text(
-                                widget.entry is Plan ? widget.entry.scheduledDate!.formatDate().substring(0, 3) :widget.entry.creationDate.formatDate().substring(0, 3),
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                      const Padding(padding: EdgeInsets.only(left: 5)),
 
-                              // Year
-                              Text(
-                                widget.entry is Plan ? widget.entry.scheduledDate!.year.toString() :widget.entry.creationDate.year.toString(),
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ])
-                      ],
-                    ),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // First 3 letters of the month
+                            Text(
+                              widget.entry is Plan ? widget.entry.scheduledDate!.formatDate().substring(0, 3) :widget.entry.creationDate.formatDate().substring(0, 3),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+
+                            // Year
+                            Text(
+                              widget.entry is Plan ? widget.entry.scheduledDate!.year.toString() :widget.entry.creationDate.year.toString(),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ])
+                    ],
                   )
                 ]),
           ),
