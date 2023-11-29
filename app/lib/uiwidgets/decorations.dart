@@ -561,6 +561,7 @@ class _DisplayCardState extends State<DisplayCard> {
           ),
         ),
       ),
+    );
   }
 }
 
