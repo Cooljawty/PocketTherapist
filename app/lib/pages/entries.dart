@@ -94,18 +94,22 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     // Pad filter to the right
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                      Expanded(
-                          flex: 2,
-                          child: TextFormField(
-                            key: const Key('FilterByTextForm'),
-                            textAlign: TextAlign.center,
-                            controller: searchBarInput,
-                            onChanged: updateFilteredList,
-                            decoration: const InputDecoration(
-                                border: UnderlineInputBorder(),
-                                labelText: 'Enter a journal title',
-                                fillColor: Colors.transparent),
-                          )),
+                      //only works on entries page
+                      Visibility(
+                        visible: !widget.showPlans,
+                        child: Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              key: const Key('FilterByTextForm'),
+                              textAlign: TextAlign.center,
+                              controller: searchBarInput,
+                              onChanged: updateFilteredList,
+                              decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Enter a journal title',
+                                  fillColor: Colors.transparent),
+                            )),
+                      ),
                       Container(
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
