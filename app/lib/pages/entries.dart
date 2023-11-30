@@ -12,7 +12,6 @@ final List<DropdownMenuItem<String>> displayDropDown = displayOptions
     .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
     .toList();
 String chosenDisplay = 'Week';
-List<Tag> selectedTags = [];
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -58,7 +57,10 @@ class EntryPanelPage extends StatefulWidget {
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
   bool showAllItems = true;
-  List<JournalEntry> items = entries;
+  //update so items is duplicate to original list rather than being a refernce to entries
+  List<JournalEntry> items = entries.toList();
+  List<Tag> selectedTags = [];
+  final TextEditingController searchBarInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +71,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     entries.sort();
     plans.sort();
     if (widget.showPlans) {
-      items = plans;
-    }
-    if (selectedTags.isNotEmpty) {
-      items = filterByTag();
+      items = plans.toList();
     }
     // items.sort();
     return Consumer<ThemeSettings>(
@@ -100,6 +99,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           child: TextFormField(
                             key: const Key('FilterByTextForm'),
                             textAlign: TextAlign.center,
+                            controller: searchBarInput,
                             onChanged: updateFilteredList,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
@@ -126,34 +126,39 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         ),
                       ),
                     ]),
-                    //create new row for tag list
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: tagList
-                            .map(
-                              (tagName) => FilterChip(
-                                  selected: selectedTags.contains(tagName),
-                                  label: Text(tagName.name),
-                                  selectedColor: Color.alphaBlend(
-                                      tagName.color,
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer),
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  onSelected: (selected) {
-                                    setState(() {
+                    //create new row for tag list and make it visible on journal entry page
+                    Visibility(
+                      visible: !widget.showPlans,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: tagList
+                              .map(
+                                (tagName) => FilterChip(
+                                    selected: selectedTags.contains(tagName),
+                                    label: Text(tagName.name),
+                                    selectedColor: Color.alphaBlend(
+                                        tagName.color,
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer),
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer,
+                                    onSelected: (selected) {
                                       //update to add or remove tag
                                       selectedTags.contains(tagName)
                                           ? selectedTags.remove(tagName)
                                           : selectedTags.add(tagName);
-                                    });
-                                  }),
-                            )
-                            .toList(),
+                                      //by triggering udpate Filtered list with
+                                      //either the text in the search bar or empty we
+                                      //ensure that the title search and tag search are always synced
+                                      updateFilteredList(searchBarInput.text);
+                                    }),
+                              )
+                              .toList(),
+                        ),
                       ),
                     ),
 
@@ -240,7 +245,17 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                     },
                                   );
                                 },
-                                child: DisplayCard(entry: item),
+                                child: DisplayCard(
+                                  entry: item,
+                                  //function will be used to update the listView builder with newest search results after a user saves a journal entry.
+                                  //ex) if a user filters for all calm entries and the user edits one entry to remove the calm tag,
+                                  //after saving this either the filters should still apply to the content and the journal entry
+                                  //should not be displayed or we should reset filters. The current implementation reruns the filter
+                                  //ensuring the search bar and filtered tag list are accurate to the screen and edited entry might not be displayed
+                                  // but could be altered to reset search bars instead of filtering if its prefered.
+                                  updateDisplay: () =>
+                                      updateFilteredList(searchBarInput.text),
+                                ),
                               )
                             ]); // if in the same filter header list, then just make a new entry
                       },
@@ -292,62 +307,74 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   }
 
   //create function to update the filtered list to only contain compatable entries
+  //relative to the input passed
   void updateFilteredList(String input) {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
-    List<JournalEntry> newFilteredDisplayList = [];
-    //iterate through list to determine if an entry is compatable
-    //if it is then add it to the new list
-    for (int i = 0; i < entries.length; i++) {
-      //to handle casing we will compare lower case version of the title
-      //and of the input
-      if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
-        newFilteredDisplayList.add(entries[i]);
+    //if input is empty then we return the full list, if it isnt then this will be overwritten
+    items = entries.toList();
+    //if input is now empty then we have no need to run the search
+    if (input.isNotEmpty) {
+      List<JournalEntry> newFilteredDisplayList = [];
+      //iterate through list to determine if an entry is compatable
+      //if it is then add it to the new list
+      for (int i = 0; i < entries.length; i++) {
+        //to handle casing we will compare lower case version of the title
+        //and of the input
+        if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
+          newFilteredDisplayList.add(entries[i]);
+        }
       }
+      //update the displayed list in real time when the user is searching
+      items = newFilteredDisplayList;
     }
-    //update the displayed list in real time when the user is searching
-    setState(() => items = newFilteredDisplayList);
+    //is triggered every time the serach bar is updated so that way filtered journal entries
+    //are also filtered by tag selection
+    filterByTag();
   }
 
-//filter by tag will check the items list for all compatable journal entries
-  List<JournalEntry> filterByTag() {
-    List<JournalEntry> filteredList = [];
-    List<Tag> journalTagList = [];
-    //compare each journal entries tag list
-    for (int i = 0; i < items.length; i++) {
-      journalTagList = items[i].tags;
-      //compare the tag list and if there is one tag in both list then add it to the display
-      for (int j = 0; j < journalTagList.length; j++) {
-        for (int k = 0; k < selectedTags.length; k++) {
-          //triple nested is not ideal but name check must be used to compare tags
-          if (selectedTags[k].name == journalTagList[j].name) {
-            //check to only add one to the list
-            if (!filteredList.contains(items[i])) {
-              filteredList.add(items[i]);
-            }
+//filter with the selected tags array to check for compatable journal entries
+  void filterByTag() {
+    //search is now bounded by items because updateFiltedList
+    // already searched for compatable entries and put them in items
+    // also using toList to duplicate data instead of grabbing memory address
+    List<JournalEntry> filteredList = items.toList();
+    //if tag list for filter is empty then we return without running tag search
+    if (selectedTags.isNotEmpty) {
+      for (int i = 0; i < items.length; i++) {
+        //turn journal entry tag list into a List of string names for filter
+        List<String> journalTagsNames =
+            items[i].tags.map((currentTag) => currentTag.name).toList();
+        for (int j = 0; j < selectedTags.length; j++) {
+          //for each selected tag we should find the correlating tag in the journal entry
+          //if not then we toss the entry from the search
+          if (!journalTagsNames.contains(selectedTags[j].name)) {
+            //filtered tag not found within journal entry so remove it
+            filteredList.remove(items[i]);
+            j = selectedTags.length;
           }
-          //if there is a tag in the selected list that is not in the entry
-          //then remove the entry from filtered list and end loop
-          if (selectedTags[k].name != journalTagList[j].name) {}
         }
-        //alternative implementation with one less loop but does not function as intended, never finds pairs
-        //if (selectedTags.contains(journalTagList[j])) {
-        //  //add journal entry to list filtered list and break loop
-        //  filteredList.add(items[i]);
-        //  j = journalTagList.length;
-        //}
-        //if (journalTagList.contains(selectedTags[j])) {
-        //  //add journal entry to list filtered list and break loop
-        //  filteredList.add(items[i]);
-        //  j = journalTagList.length;
-        //}
-        //else
-        //{
-        //
-        //}
       }
     }
-    return filteredList;
+    //if tags are reimplemented as List<string> then the following implementation can be used
+    //current issue is that the tag has values do not always match because tag is a declared type
+    //but when search is done on strings the following code should work as expected
+    //Map<int, String> journalTagList = {};
+    ////compare each journal entries tag list
+    //for (int i = 0; i < items.length; i++) {
+    //  //using a tag map we can check if the journal entry contains each tag in the filter
+    //  journalTagList = items[i].tags.asMap();
+    //  for (int j = 0; j < selectedTags.length; j++) {
+    //    if (!journalTagList.containsValue(selectedTags[j])) {
+    //      //remove it from the compatable filter list
+    //      filteredList.remove(items[i]);
+    //      j = selectedTags.length;
+    //    }
+    //  }
+    //}
+    setState(() {
+      items = filteredList;
+    });
   }
 }
 
