@@ -137,12 +137,13 @@ void main() {
       await pumpUntilFound(tester, emotionButton);
     }
 
-    // Save the entry and view it
-    Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
-      await tester.scrollUntilVisible(find.text(titleText), 1);
-      // View new entry
-      await tap(tester, find.byType(DisplayCard).first, true);
-    }
+    // Save the entry and view it, removed because scroll until visible doesnt work
+    //with list view when there are multiple scrollable widgets.
+    //Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
+    //  await tester.scrollUntilVisible(find.text(titleText), 1);
+    //  // View new entry
+    //  await tap(tester, find.byType(DisplayCard).first, true);
+    //}
 
     // Test the input text fields
     testWidgets('title and body Creation', (WidgetTester tester) async {
@@ -251,6 +252,19 @@ void main() {
           find.byKey(const Key('EmotionalDial')), const Offset(100, 10));
       await tester.pump();
       expect(find.text('45'), findsOneWidget);
+      //test save and cancel buttons on emotional dial
+      await tap(tester, find.byKey(const Key('saveDial')), true);
+      // go back into emotional dial and expect value to be 45
+      await tap(tester, find.byType(ActionChip).first);
+      expect(find.text('45'), findsOneWidget);
+      //test cancel button
+      // Set value to different amount
+      await tester.drag(
+          find.byKey(const Key('EmotionalDial')), const Offset(50, 10));
+      await tester.pump();
+      await tap(tester, find.byKey(const Key('cancelDial')), true);
+      await tap(tester, find.byType(ActionChip).first);
+      expect(find.text('45'), findsOneWidget);
     });
   });
 
@@ -301,6 +315,7 @@ void main() {
       for (JournalEntry entry in entries) {
         final entryKey = find.byKey(Key(entry.id.toString()));
         await tester.pump();
+        //is no longer usable with multiple scroll widgets on display
         //await tester.scrollUntilVisible(entryKey, 1);
         // Confirm that the entry was seen
         await expectLater(entryKey, findsOneWidget);
@@ -379,6 +394,226 @@ void main() {
       await tester.pumpAndSettle();
       await tap(tester, find.text("DELETE"), true);
       expect(find.byKey(entryKey), findsNothing);
+    });
+  });
+
+  group("Entry Filter Tests", () {
+    // Create values for journal input and title input
+    late Finder titleSearchBar;
+    // New finders added for all three journal entries
+    late Finder journal1;
+    late Finder journal2;
+
+    // Create values for buttons
+    late Finder saveButton;
+    late Finder planButton;
+    late Finder tagButton;
+    late Finder emotionButton;
+    //--------------------------------------------------------------------------
+
+    final List<JournalEntry> entrys = [
+      JournalEntry(
+          title: "Extraordinary beauty of nature",
+          entryText:
+              'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+              'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+          date: DateTime(2023, 5, 17),
+          tags: [
+            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+            Tag(name: 'Centered', color: const Color(0xff794e5e)),
+          ],
+          emotions: [
+            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
+            Emotion(
+                name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+          ]),
+      JournalEntry(
+          title: "Flying Over the Ocean",
+          entryText:
+              'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+              'bright and the sky was a brilliant shade of blue. ',
+          date: DateTime(2022, 9, 12),
+          tags: [
+            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+            Tag(name: 'Content', color: const Color(0xfff1903b)),
+          ],
+          emotions: [
+            Emotion(
+                name: 'Anticipation',
+                color: const Color(0xffff8000),
+                strength: 50),
+            Emotion(
+                name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
+          ]),
+    ];
+
+    // Navigate to the new entry page
+    @override
+    Future<void> setUp(WidgetTester tester) async {
+      entries = entrys;
+      emotionList = {
+        'Happy': const Color(0xfffddd67),
+        'Trust': const Color(0xff308c7d),
+        'Fear': const Color(0xff4c4e51),
+        'Sad': const Color(0xff1f3550),
+        'Disgust': const Color(0xff384e35),
+        'Anger': const Color(0xffb51c1b),
+        'Anticipation': const Color(0xffff7fff),
+        'Surprise': const Color(0xFFFF8200),
+      };
+      await skipToEntriesPage(tester, true);
+      journal1 = find.text("Extraordinary beauty of nature");
+      journal2 = find.text("Flying Over the Ocean");
+      titleSearchBar = find.byKey(const Key('Filter_By_TextForm'));
+      await tap(tester, journal1, true);
+
+      // initialize save, plan, tag, and emotions buttons for the rest of the tests
+      saveButton = find.byKey(const Key("saveButton"));
+      await pumpUntilFound(tester, saveButton);
+      planButton = find.byKey(const Key("planButton"));
+      await pumpUntilFound(tester, planButton);
+      tagButton = find.byKey(const Key("tagButton"));
+      await pumpUntilFound(tester, tagButton);
+      emotionButton = find.byKey(const Key("emotionButton"));
+      await pumpUntilFound(tester, emotionButton);
+      //save the journal entries
+      await tap(tester, saveButton, true);
+    }
+
+    testWidgets('Journal entry title filter test', (WidgetTester tester) async {
+      await setUp(tester);
+      //initially we should see both journal entries
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //filter for journal 2
+      await tester.enterText(titleSearchBar, 'Flying');
+      await tester.pump();
+      expect(journal1, findsNothing);
+      expect(journal2, findsOneWidget);
+      //filter for journal 1
+      await tester.enterText(titleSearchBar, 'Extraordinary');
+      await tester.pump();
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsNothing);
+      //filter for both
+      await tester.enterText(titleSearchBar, '');
+      await tester.pump();
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+    });
+
+    testWidgets('Journal entry tag filter test', (WidgetTester tester) async {
+      await setUp(tester);
+      //initially we should see both journal entries
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      await tap(tester, find.text('Calm'), true);
+      //both have calm tag so nothing changes
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //filter to see journal 1 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsNothing);
+      //final filter sees no journal entries
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsNothing);
+      //filter to see journal 2 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsOneWidget);
+      //unselect content tag to see both entries
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+    });
+  });
+  group("Entry Navbar Tests", () {
+    // New finders added for all three journal entries
+    late Finder journal1;
+    late Finder journal2;
+
+    // Create values for Navbar
+    late Finder calendarButton;
+    late Finder settingsButton;
+    late Finder entriesButton;
+
+    //--------------------------------------------------------------------------
+
+    final List<JournalEntry> entrys = [
+      JournalEntry(
+          title: "Extraordinary beauty of nature",
+          entryText:
+              'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+              'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+          date: DateTime(2023, 5, 17),
+          tags: [
+            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+            Tag(name: 'Centered', color: const Color(0xff794e5e)),
+          ],
+          emotions: [
+            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
+            Emotion(
+                name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+          ]),
+      JournalEntry(
+          title: "Flying Over the Ocean",
+          entryText:
+              'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+              'bright and the sky was a brilliant shade of blue. ',
+          date: DateTime(2022, 9, 12),
+          tags: [
+            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+            Tag(name: 'Content', color: const Color(0xfff1903b)),
+          ],
+          emotions: [
+            Emotion(
+                name: 'Anticipation',
+                color: const Color(0xffff8000),
+                strength: 50),
+            Emotion(
+                name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
+          ]),
+    ];
+
+    // Navigate to the new entry page
+    @override
+    Future<void> setUp(WidgetTester tester) async {
+      entries = entrys;
+      emotionList = {
+        'Happy': const Color(0xfffddd67),
+        'Trust': const Color(0xff308c7d),
+        'Fear': const Color(0xff4c4e51),
+        'Sad': const Color(0xff1f3550),
+        'Disgust': const Color(0xff384e35),
+        'Anger': const Color(0xffb51c1b),
+        'Anticipation': const Color(0xffff7fff),
+        'Surprise': const Color(0xFFFF8200),
+      };
+      await skipToEntriesPage(tester, true);
+      //set finders for journal entries
+      journal1 = find.text("Extraordinary beauty of nature");
+      journal2 = find.text("Flying Over the Ocean");
+
+      //set navbar finders
+      calendarButton = find.byKey(const Key('navCalendar'));
+      settingsButton = find.byKey(const Key('navSettings'));
+      entriesButton = find.byKey(const Key('navEntries'));
+    }
+
+    testWidgets('nav bar test to get more coverage in entries',
+        (WidgetTester tester) async {
+      await setUp(tester);
+      //initially we should see both journal entries on the entry page
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //navigate to calendar and back
+      await tap(tester, calendarButton, true);
+      await tap(tester, entriesButton, true);
+      //navigate to settings
+      await tap(tester, settingsButton, true);
+      expect(find.text('Settings'), findsOneWidget);
     });
   });
 }

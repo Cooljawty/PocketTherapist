@@ -100,7 +100,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         child: Expanded(
                             flex: 2,
                             child: TextFormField(
-                              key: const Key('FilterByTextForm'),
+                              key: const Key('Filter_By_TextForm'),
                               textAlign: TextAlign.center,
                               controller: searchBarInput,
                               onChanged: updateFilteredList,
