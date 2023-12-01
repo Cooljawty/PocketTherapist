@@ -326,11 +326,33 @@ void main() {
 			final thisDay = DateTime.now().day;
 
 			entries = [
-				JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime.now()),
-				JournalEntry(title: "Could be better", entryText: 'I am running out of ideas', date: DateTime(thisYear, thisMonth + 1, thisDay)),
-				JournalEntry(title: "11sef sd6thisMonth + 2", entryText: ';)', date: DateTime(thisYear, thisMonth - 1, thisDay)),
-				JournalEntry(title: "This is a test", entryText: 'asdfhdf', date: DateTime(thisYear - 1, thisMonth, thisDay)),
-				JournalEntry(title: "This is the last entry", entryText: 'This is the last body', date: DateTime(thisYear - 1, thisMonth, thisDay)),
+				JournalEntry(
+					title: "This is an entry", 
+					entryText: 'This is the body', 
+					date: DateTime.now()
+				),
+				//Test first day of week exception
+				JournalEntry(
+					title: "Could be better", 
+					entryText: 'I am running out of ideas', 
+					date: DateTime(thisYear, thisMonth + 1, thisDay).subtract(Duration(days: DateTime.now().weekday - 1)),
+				),
+				//Test last day of week exception
+				JournalEntry(
+					title: "11sef sd6thisMonth + 2", 
+					entryText: ';)', 
+					date: DateTime(thisYear, thisMonth - 1, thisDay).add(Duration(days: DateTime.now().weekday - 1)),
+				),
+				JournalEntry(
+					title: "This is a test", 
+					entryText: 'asdfhdf', 
+					date: DateTime(thisYear - 1, thisMonth, thisDay),
+				),
+				JournalEntry(
+					title: "This is the last entry", 
+					entryText: 'This is the last body', 
+					date: DateTime(thisYear - 1, thisMonth, thisDay),
+				),
 			];
     }
 
