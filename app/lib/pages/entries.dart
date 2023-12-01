@@ -267,7 +267,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   }
 
   String getTimeRange(DateTime time) {
-    if (chosenDisplay == 'Week') {
+    if (chosenDisplay == DisplayOption.week) {
       DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
       int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
       DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
@@ -275,7 +275,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
       // Range for the week
       return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-    } else if (chosenDisplay == 'Month') {
+    } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
       return '${time.formatDate()} ${time.year.toString()}';
     } else {

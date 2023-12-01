@@ -393,7 +393,6 @@ void main() {
       await setUp(tester);
 
       final entry = entries[0].id.toString();
-      final entryKey = Key(entry);
       Finder entryFinder = find.byKey(ValueKey(entry));
       await tester.pump();
 
