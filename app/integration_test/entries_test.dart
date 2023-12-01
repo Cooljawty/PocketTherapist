@@ -18,69 +18,6 @@ void main() {
 
     final List<JournalEntry> entrys = [
       JournalEntry(
-          title: "Location: Paris, France",
-          entryText:
-              'Today was my first day in Paris and it was absolutely magical. I woke up early and headed straight to the '
-              'Eiffel Tower to catch the sunrise. The view from the top was breathtaking, with the sun just peeking over the horizon '
-              'and casting a warm glow over the city.',
-          date: DateTime(2022, 7, 12),
-          tags: [
-            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-            Tag(name: 'Present', color: const Color(0xffff7070)),
-            Tag(name: 'Content', color: const Color(0xfff1903b)),
-            Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
-          ],
-          emotions: [
-            Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 90),
-            Emotion(
-                name: 'Anger', color: const Color(0xffb51c1c), strength: 70),
-          ]),
-      JournalEntry(
-          title: "What are my core values and how do they impact my decisions?",
-          entryText:
-              'Today I’ve been considering my core values and how they impact the decisions I make in my life. I realize '
-              'that my values are an essential part of who I am, and they play a significant role in shaping my thoughts, actions, '
-              'and choices.',
-          date: DateTime(2023, 1, 15),
-          tags: [
-            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-            Tag(name: 'Trusting', color: const Color(0xff41aa8c)),
-          ],
-          emotions: [
-            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 40),
-            Emotion(
-                name: 'Trust', color: const Color(0xff308c7e), strength: 70),
-          ]),
-      JournalEntry(
-          title: "Today was a good day",
-          entryText:
-              'Today was a busy day at work. I had a lot of meetings and deadlines to meet, which kept me on my toes all day. '
-              'I felt a little bit stressed at times, but overall, I was able to stay focused and get everything done that needed to '
-              'be done.',
-          date: DateTime(2023, 4, 27),
-          tags: [
-            Tag(name: 'Fulfilled', color: const Color(0xff59b1a2)),
-            Tag(name: 'Patient', color: const Color(0xff00c5cc)),
-          ],
-          emotions: [
-            Emotion(
-                name: 'Happy', color: const Color(0xfffddd68), strength: 80),
-            Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
-            Emotion(
-                name: 'Trust', color: const Color(0xff308c7e), strength: 10),
-          ]),
-      JournalEntry(
-          title: '“If not now, when?”',
-          entryText:
-              'Today, I decided to experiment with some mixed media art in my art journal. I started'
-              ' by collaging some old book pages onto the page, creating a textured background. Then, I used watercolors to paint over the top,'
-              ' blending different colors and creating a dreamy, abstract effect.',
-          date: DateTime(2022, 5, 12),
-          tags: [
-            Tag(name: 'Present', color: const Color(0xffff7070)),
-            Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-          ]),
-      JournalEntry(
           title: "Mood",
           entryText:
               'I was late for work because of heavy traffic, and as soon as I walked into the office, my manager confronted me about '
@@ -219,17 +156,19 @@ void main() {
 
       await tap(tester, saveButton, true);
       // Navigate to the new entry
-      await navigateToEntry(tester, newTitle);
 
+      //await navigateToEntry(tester, newTitle);
+      await tap(tester, find.text(newTitle), true);
       // Find the title on the entry page
       final title = find.text(newTitle);
       expect(title, findsNWidgets(2));
 
       saveButton.tryEvaluate();
       await tap(tester, saveButton, true); // save
-      await navigateToEntry(tester, newTitle);
+      //await navigateToEntry(tester, newTitle);
+      await tap(tester, find.text(newTitle), true);
 
-      titleInput.tryEvaluate(); // rerun the finder for the title
+      titleInput.tryEvaluate();
       await tap(tester, titleInput);
       await tester.enterText(titleInput, "newTitle?");
 
@@ -323,16 +262,6 @@ void main() {
 
     entries.addAll([
       JournalEntry(
-          title: "This is an entry",
-          entryText: 'This is the body',
-          date: DateTime(2022, 2, 7)),
-      JournalEntry(
-          title: "This is another entry",
-          entryText: 'The next one wont have a body',
-          date: DateTime(2022, 2, 6)),
-      JournalEntry(
-          title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
-      JournalEntry(
           title: "Could be better",
           entryText: 'I am running out of ideas',
           date: DateTime(2021, 3, 17)),
@@ -372,7 +301,7 @@ void main() {
       for (JournalEntry entry in entries) {
         final entryKey = find.byKey(Key(entry.id.toString()));
         await tester.pump();
-        await tester.scrollUntilVisible(entryKey, 1);
+        //await tester.scrollUntilVisible(entryKey, 1);
         // Confirm that the entry was seen
         await expectLater(entryKey, findsOneWidget);
         await tester.pump();

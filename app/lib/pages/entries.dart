@@ -169,6 +169,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     //holds the list of entries
                     Expanded(
                         child: ListView.builder(
+                      key: const Key('Entry_Builder'),
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         // get one item
@@ -276,7 +277,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                   switch (index) {
                     case 2:
                       await makeNewEntry(context);
-                      setState(() {});
+                      //update so filter new entry appear in filtered list after being made
+                      updateFilteredList(searchBarInput.text);
                       return;
                     case 5:
                       Navigator.of(context).pushNamed(
