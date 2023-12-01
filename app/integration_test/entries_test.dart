@@ -2,6 +2,7 @@ import 'package:app/uiwidgets/decorations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:app/provider/entry.dart';
+import 'package:app/helper/dates_and_times.dart';
 import 'test_utils.dart';
 
 void main() {
@@ -334,8 +335,7 @@ void main() {
     }
 
     @override
-    Future<void> testForItems(
-        WidgetTester tester, String filter) async {
+    Future<void> testForItems( WidgetTester tester, String filter) async {
       // Show all items in the entry database
       // entry.showAllItems = show;
       await setUp(tester);
@@ -352,6 +352,20 @@ void main() {
 
       // see if the dropdown is proper
       expect(find.text(filter), findsOneWidget);
+
+			// See if date range is displayed
+      DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
+      int weekNum = firstOfYear.getWeekNumber(firstOfYear, DateTime.now());
+      DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
+      DateTime lower = upper.subtract(const Duration(days: 6));
+
+      // Range for the week
+			var rangeText = switch(filter){
+				"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
+				"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
+				_ => DateTime.now().year.toString(),
+			};
+			expect(find.text(rangeText), findsWidgets);
 
     }
 
