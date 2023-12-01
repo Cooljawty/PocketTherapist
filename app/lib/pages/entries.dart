@@ -274,10 +274,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       DateTime lower = upper.subtract(const Duration(days: 6));
 
       // Range for the week
-      return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
+      return '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${time.year.toString()}';
     } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
-      return '${time.formatDate()} ${time.year.toString()}';
+      return '${time.formatDate().month} ${time.year.toString()}';
     } else {
       // If yearly, only display year
       return time.year.toString();
