@@ -86,12 +86,11 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 		};
 		final endDate = switch(chosenDisplay) {
 			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => today.month < DateTime.december
-				? DateTime(today.year, today.month + 1, 1).subtract(const Duration(days: 1))
-				: DateTime(today.year+1, 1, 1).subtract(const Duration(days: 1)),
-			DisplayOption.year => today.month < DateTime.december
-				? DateTime(today.year+1, today.month+1, 1).subtract(const Duration(days: 1))
-				: DateTime(today.year+2, 1, 1).subtract(const Duration(days: 1)),
+			DisplayOption.month => (today.month < DateTime.december
+				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
+				.subtract(const Duration(days: 1)),
+			DisplayOption.year => DateTime(today.year+1, 1, 1)
+				.subtract(const Duration(days: 1)),
 		};
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
@@ -103,6 +102,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     filteredPlans.sort();
 
     List<JournalEntry> items = widget.showPlans ? filteredPlans : filteredEntries;
+
     // items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {

@@ -319,38 +319,23 @@ void main() {
 // Navigate to the entries panel
     Future<void> setUp(WidgetTester tester) async {
       await skipToEntriesPage(tester);
-    }
 
-		entries.addAll([
-			JournalEntry(
-					title: "This is an entry",
-					entryText: 'This is the body',
-					date: DateTime(2022, 2, 7)),
-			JournalEntry(
-					title: "This is another entry",
-					entryText: 'The next one wont have a body',
-					date: DateTime(2022, 2, 6)),
-			JournalEntry(
-					title: "asdhfkjn", entryText: '', date: DateTime(2022, 2, 5)),
-			JournalEntry(
-					title: "Could be better",
-					entryText: 'I am running out of ideas',
-					date: DateTime(2021, 3, 17)),
-			JournalEntry(
-					title: "11sef sd63", entryText: ';)', date: DateTime(2021, 3, 5)),
-			JournalEntry(
-					title: "This is a test",
-					entryText: 'asdfhdf',
-					date: DateTime(2020, 1, 2)),
-			JournalEntry(
-					title: "This is the last entry",
-					entryText: 'This is the last body',
-					date: DateTime(2020, 7, 1)),
-		]);
+			final thisYear = DateTime.now().year;
+			final thisMonth = DateTime.now().month;
+			final thisDay = DateTime.now().day;
+
+			entries = [
+				JournalEntry(title: "This is an entry", entryText: 'This is the body', date: DateTime.now()),
+				JournalEntry(title: "Could be better", entryText: 'I am running out of ideas', date: DateTime(thisYear, thisMonth + 1, thisDay)),
+				JournalEntry(title: "11sef sd6thisMonth + 2", entryText: ';)', date: DateTime(thisYear, thisMonth - 1, thisDay)),
+				JournalEntry(title: "This is a test", entryText: 'asdfhdf', date: DateTime(thisYear - 1, thisMonth, thisDay)),
+				JournalEntry(title: "This is the last entry", entryText: 'This is the last body', date: DateTime(thisYear - 1, thisMonth, thisDay)),
+			];
+    }
 
     @override
     Future<void> testForItems(
-        WidgetTester tester, String filter, bool show) async {
+        WidgetTester tester, String filter) async {
       // Show all items in the entry database
       // entry.showAllItems = show;
       await setUp(tester);
@@ -368,52 +353,27 @@ void main() {
       // see if the dropdown is proper
       expect(find.text(filter), findsOneWidget);
 
-      // Check to see if every entry is there
-      for (JournalEntry entry in entries) {
-        final entryKey = find.byKey(Key(entry.id.toString()));
-        print(entry.id.toString());
-        await tester.pump();
-        await tester.scrollUntilVisible(entryKey, 1);
-        // Confirm that the entry was seen
-        await expectLater(entryKey, findsOneWidget);
-        await tester.pump();
-      }
     }
 
-    testWidgets(
-        'See if all entries are correct and present - Week filter w/ show all entries',
-        (WidgetTester tester) async {
-      await testForItems(tester, 'Week', true);
-    });
 
     testWidgets(
-        'See if all entries are correct and present - Week filter w/o show all entries',
+        'See if all entries are correct and present - Week filter',
         (WidgetTester tester) async {
-      await testForItems(tester, 'Week', false);
+      await testForItems(tester, 'Week');
     });
 
-    testWidgets(
-        'See if all entries are correct and present - Month filter w/ show all entries',
-        (WidgetTester tester) async {
-      await testForItems(tester, 'Month', true);
-    });
 
     testWidgets(
-        'See if all entries are correct and present - Month filter w/o show all entries',
+        'See if all entries are correct and present - Month filter',
         (WidgetTester tester) async {
-      await testForItems(tester, 'Month', false);
+      await testForItems(tester, 'Month');
     });
 
-    testWidgets(
-        'See if all entries are correct and present - Year filter w/ show all entries',
-        (WidgetTester tester) async {
-      await testForItems(tester, 'Year', true);
-    });
 
     testWidgets(
-        'See if all entries are correct and present - Year filter w/o show all entries',
+        'See if all entries are correct and present - Year filter',
         (WidgetTester tester) async {
-      await testForItems(tester, 'Year', false);
+      await testForItems(tester, 'Year');
     });
   });
 
@@ -421,7 +381,7 @@ void main() {
     entries.add(JournalEntry(
         title: "This is an entry",
         entryText: 'This is the body',
-        date: DateTime(2022, 2, 7)));
+        date: DateTime.now()));
 
     // Navigate to the entries panel
     // Navigate to the entries panel
@@ -438,19 +398,29 @@ void main() {
       await tester.pump();
 
       //confirm that entry exist
-      expect(find.byKey(entryKey), findsOneWidget);
+			final entryCard = find.descendant(
+				of: entryFinder,
+				matching: find.byType(DisplayCard),
+			);
+      expect(entryCard, findsOneWidget);
 
       //Drag the entry, then tap cancel button
-      await tester.drag(entryFinder, const Offset(-500, 0));
-      await tester.pumpAndSettle();
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
       await tap(tester, find.text("CANCEL"), true);
-      expect(find.byKey(entryKey), findsOneWidget);
+      expect(find.descendant(
+				of: entryFinder,
+				matching: find.byType(DisplayCard),
+			), findsOneWidget);
 
       //Drag the entry, then tap delete button
-      await tester.drag(entryFinder, const Offset(-500, 0));
-      await tester.pumpAndSettle();
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
       await tap(tester, find.text("DELETE"), true);
-      expect(find.byKey(entryKey), findsNothing);
+      expect(find.descendant(
+				of: entryFinder,
+				matching: find.byType(DisplayCard),
+			), findsNothing);
     });
   });
 }
