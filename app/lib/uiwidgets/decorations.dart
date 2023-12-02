@@ -393,15 +393,17 @@ class CustomNavigationBar extends StatelessWidget {
         break;
     }
   }
-
 }
 
 
 /// A card that displays text with a title and main text body
 class DisplayCard extends StatefulWidget {
   final JournalEntry entry;
+  //added in nullable function to update parent widget, can be used to ensure
+  //a search is ran after user saves an entry or that the search options are reset
+  final Function()? updateDisplay;
 
-  const DisplayCard({super.key, required this.entry});
+  const DisplayCard({super.key, required this.entry, this.updateDisplay});
 
   @override
   State<DisplayCard> createState() => _DisplayCardState();
@@ -440,9 +442,10 @@ class _DisplayCardState extends State<DisplayCard> {
           await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => EntryPage(entry: widget.entry),
           ));
-
-          // Rebuild the card for potential edits made
-          setState(() {});
+          //update parent widget to sync search options or just rebuild display card
+          widget.updateDisplay?.call() ??
+              // Rebuild the card for potential edits made
+              setState(() {});
         },
         child: Card(
           shape: const RoundedRectangleBorder(
