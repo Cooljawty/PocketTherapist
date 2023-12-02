@@ -19,7 +19,7 @@ class _CalendarState extends State<Calendar> {
 	DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1); 
 	DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
-	List<({int strength, Color color})> _emotionData = [];
+	List<({int strength, Color color, bool border})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
 	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
@@ -35,7 +35,13 @@ class _CalendarState extends State<Calendar> {
 			margin: const EdgeInsets.all(4.0),
 			decoration: ShapeDecoration(
 				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
-				shape: const CircleBorder(),
+				shape: CircleBorder(
+					//Only show border if there is a plan on that day
+					side: BorderSide( 
+						style: _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
+						width: 2.5,
+					) 
+				),
 			),
 			child: Text(
 				"${day+1}", 
@@ -71,15 +77,26 @@ class _CalendarState extends State<Calendar> {
 	@override
 	Widget build(BuildContext context) {
 		//Calculate the emotion data for each day
-		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent));
+		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent, border: false));
 		for (var entry in entriesInDateRange(startDate, endDate).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
 			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
 				_emotionData[_daysFromDate(entry.date)] = (
-					strength: strongestEmotion.strength, 
-					color: strongestEmotion.color
+					strength: strongestEmotion.strength,
+					color: strongestEmotion.color,
+					border: false,
 				);
 			}
+		}
+	
+		//Find any plans in date range and add border
+		for (var plan in plansInDateRange(startDate, endDate)) {
+			final datapoint = _emotionData[_daysFromDate(plan.date)];
+			_emotionData[_daysFromDate(plan.date)] = (
+					strength: datapoint.strength,
+					color: datapoint.color,
+					border: true,
+			);
 		}
 
 		return Card(
