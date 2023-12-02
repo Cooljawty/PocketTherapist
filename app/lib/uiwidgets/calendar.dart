@@ -38,7 +38,7 @@ class _CalendarState extends State<Calendar> {
 				shape: CircleBorder(
 					//Only show border if there is a plan on that day
 					side: BorderSide( 
-						style: _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
+						style: !outOfRange && _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
 						width: 2.5,
 					) 
 				),
