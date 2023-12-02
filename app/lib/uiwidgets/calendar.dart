@@ -19,7 +19,7 @@ class _CalendarState extends State<Calendar> {
 	DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1); 
 	DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
-	List<({int strength, Color color, bool border})> _emotionData = [];
+	List<({int strength, Color? color, bool border})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
 	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
@@ -77,10 +77,13 @@ class _CalendarState extends State<Calendar> {
 	@override
 	Widget build(BuildContext context) {
 		//Calculate the emotion data for each day
-		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: Colors.transparent, border: false));
+		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: null, border: false));
 		for (var entry in entriesInDateRange(startDate, endDate).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
-			if (strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
+
+			//Color each day according to the strongest emotion, leave null if no emotions are tagged 
+			if (   _emotionData[_daysFromDate(entry.date)].color == null 
+				  || strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
 				_emotionData[_daysFromDate(entry.date)] = (
 					strength: strongestEmotion.strength,
 					color: strongestEmotion.color,
