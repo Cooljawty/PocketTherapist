@@ -78,8 +78,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   List<Tag> selectedTags = [];
   final TextEditingController searchBarInput = TextEditingController();
 
-  @override
-  Widget build(BuildContext context) {
+	List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date
 		//Show entreis in range of given date or from today
 		final today = widget.targetDate ?? DateTime.now();
@@ -101,7 +100,13 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     // Select appropriate list to display
 		final filteredEntries = entriesInDateRange(startDate, endDate).toList();
 		final filteredPlans = plansInDateRange(startDate, endDate).toList();
-		items = widget.showPlans ? filteredPlans : filteredEntries;
+		
+		return widget.showPlans ? filteredPlans : filteredEntries;
+	}
+
+  @override
+  Widget build(BuildContext context) {
+		items = _getEntriesInRange();
 		items.sort();
 
     return Consumer<ThemeSettings>(
@@ -354,7 +359,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-    items = entries.toList();
+		items = _getEntriesInRange();
     //if input is now empty then we have no need to run the search
     if (input.isNotEmpty) {
       List<JournalEntry> newFilteredDisplayList = [];
