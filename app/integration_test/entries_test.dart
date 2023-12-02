@@ -443,11 +443,11 @@ void main() {
 
     final List<JournalEntry> entrys = [
       JournalEntry(
-          title: "Extraordinary beauty of nature",
+          title: "Extraordinary Title",
           entryText:
               'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
               'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-          date: DateTime(2023, 5, 17),
+          date: DateTime(DateTime.now().year, DateTime.now().month, 5),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Centered', color: const Color(0xff794e5e)),
@@ -458,11 +458,11 @@ void main() {
                 name: 'Trust', color: const Color(0xff308c7e), strength: 100),
           ]),
       JournalEntry(
-          title: "Flying Over the Ocean",
+          title: "Flying Title",
           entryText:
               'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
               'bright and the sky was a brilliant shade of blue. ',
-          date: DateTime(2022, 9, 12),
+          date: DateTime(DateTime.now().year, DateTime.now().month, 9),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Content', color: const Color(0xfff1903b)),
@@ -492,8 +492,26 @@ void main() {
         'Surprise': const Color(0xFFFF8200),
       };
       await skipToEntriesPage(tester, true);
-      journal1 = find.text("Extraordinary beauty of nature");
-      journal2 = find.text("Flying Over the Ocean");
+
+      final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
+      await pumpUntilFound(tester, dropdownKey);
+      // find the drop down and tap it
+      await tap(tester, dropdownKey, true);
+
+      // find the Month option and tap it
+      final weekDropDown = find.text("Month").last;
+      await pumpUntilFound(tester, weekDropDown);
+      await tap(tester, weekDropDown, true);
+			await tester.pump();
+
+			journal1 = find.descendant(
+				of: find.byType(Dismissible),
+				matching: find.byKey(Key(entries[0].id.toString())),
+			);
+			journal2 = find.descendant(
+				of: find.byType(Dismissible),
+				matching: find.byKey(Key(entries[1].id.toString())),
+			);
       titleSearchBar = find.byKey(const Key('Filter_By_TextForm'));
       await tap(tester, journal1, true);
 
@@ -513,13 +531,16 @@ void main() {
     testWidgets('Journal entry title filter test', (WidgetTester tester) async {
       await setUp(tester);
       //initially we should see both journal entries
+			journal1 = find.text(entries[0].title);
+			journal2 = find.text(entries[1].title);
+
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
       //filter for journal 2
       await tester.enterText(titleSearchBar, 'Flying');
       await tester.pump();
-      expect(journal1, findsNothing);
       expect(journal2, findsOneWidget);
+      expect(journal1, findsNothing);
       //filter for journal 1
       await tester.enterText(titleSearchBar, 'Extraordinary');
       await tester.pump();
@@ -535,6 +556,9 @@ void main() {
     testWidgets('Journal entry tag filter test', (WidgetTester tester) async {
       await setUp(tester);
       //initially we should see both journal entries
+			journal1 = find.text(entries[0].title);
+			journal2 = find.text(entries[1].title);
+
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
       await tap(tester, find.text('Calm'), true);
