@@ -136,12 +136,28 @@ void main() {
 		final todayColor = (todayItem.decoration as ShapeDecoration).color; 
 		expect(todayColor, emotionList["Happy"]);
 
+		// Check that entry is still visable
+		find.byWidget(todayItem);
 		await tap(tester, find.byWidget(todayItem));
 		await pumpUntilFound(tester, find.byType(EntryPanelPage)); 
 
 		// View new entry
 		final card = find.byType(DisplayCard);
-		expect(card, findsWidgets);
+
+		for(var filter in ["Week", "Month", "Year"]) {
+			final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
+			await pumpUntilFound(tester, dropdownKey);
+			// find the drop down and tap it
+			await tap(tester, dropdownKey, true);
+
+			// find the Year option and tap it
+			final weekDropDown = find.text(filter).last;
+			await pumpUntilFound(tester, weekDropDown);
+			await tap(tester, weekDropDown, true);
+
+			expect(card, findsWidgets);
+		} 
+
 		await tap(tester, card);
 		expect(find.text("Title!"), findsOneWidget);
 		expect(find.text("Journal!"), findsOneWidget);
