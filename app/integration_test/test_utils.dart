@@ -52,6 +52,14 @@ Future<void> skipToEntriesPage(WidgetTester tester, [bool settle = false]) async
   await tap(tester, find.text("Entries"), settle);
 }
 
+/// [skipToCalendarPage] will skip throug the app from the login screen to the
+/// entries page
+Future<void> skipToCalendarPage(WidgetTester tester, [bool settle = false]) async {
+  await startSkipFrontScreen(tester);
+  await pumpUntilFound(tester, find.byKey(const Key("navCalendar")), settle);
+  await tap(tester, find.byKey(const Key("navCalendar")), settle);
+}
+
 /// [defaultSettings] configures the default settings for testing which includes
 /// no encryption and the application already being configured so that the init
 /// methods can be skipped during testing.
