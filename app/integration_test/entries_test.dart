@@ -139,11 +139,11 @@ void main() {
 
     // Save the entry and view it, removed because scroll until visible doesnt work
     //with list view when there are multiple scrollable widgets.
-    //Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
-    //  await tester.scrollUntilVisible(find.text(titleText), 1);
-    //  // View new entry
-    //  await tap(tester, find.byType(DisplayCard).first, true);
-    //}
+    Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
+     await tester.scrollUntilVisible(find.text(titleText), 1);
+     // View new entry
+     await tap(tester, find.byType(DisplayCard).first, true);
+    }
 
     // Test the input text fields
     testWidgets('title and body Creation', (WidgetTester tester) async {
@@ -154,29 +154,28 @@ void main() {
       await tap(tester, titleInput, true);
       await tester.enterText(titleInput, newTitle);
       await tester.pump();
+      await doubleTap(tester, find.byKey(const Key("entryBodyKey")));
+      await tester.drag(find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
 
       await tap(tester, saveButton, true);
       // Navigate to the new entry
-
-      //await navigateToEntry(tester, newTitle);
-      await tap(tester, find.text(newTitle), true);
       // Find the title on the entry page
       final title = find.text(newTitle);
-      expect(title, findsNWidgets(2));
+      expect(title, findsNWidgets(1));
+      await tap(tester, title, true); // save
+      // await navigateToEntry(tester, newTitle);
 
-      saveButton.tryEvaluate();
-      await tap(tester, saveButton, true); // save
-      //await navigateToEntry(tester, newTitle);
-      await tap(tester, find.text(newTitle), true);
-
-      titleInput.tryEvaluate();
+      titleInput.tryEvaluate(); // rerun the finder for the title
       await tap(tester, titleInput);
       await tester.enterText(titleInput, "newTitle?");
+      await tester.pumpAndSettle();
+
 
       saveButton.tryEvaluate();
       await tap(tester, saveButton, true); // save
       expect(find.text("newTitle?"),
-          findsOneWidget); // Find the updated title on the screen
+          findsOneWidget); // Find the updateOverrided title on the screen
+
     });
 
     testWidgets('Plan Button', (WidgetTester tester) async {
@@ -315,8 +314,6 @@ void main() {
       for (JournalEntry entry in entries) {
         final entryKey = find.byKey(Key(entry.id.toString()));
         await tester.pump();
-        //is no longer usable with multiple scroll widgets on display
-        //await tester.scrollUntilVisible(entryKey, 1);
         // Confirm that the entry was seen
         await expectLater(entryKey, findsOneWidget);
         await tester.pump();
@@ -462,8 +459,9 @@ void main() {
         'Surprise': const Color(0xFFFF8200),
       };
       await skipToEntriesPage(tester, true);
-      journal1 = find.text("Extraordinary beauty of nature");
-      journal2 = find.text("Flying Over the Ocean");
+      await tester.pump();
+      journal1 = find.byKey(Key(entrys[0].id.toString()));
+      journal2 = find.byKey(Key(entrys[1].id.toString()));
       titleSearchBar = find.byKey(const Key('Filter_By_TextForm'));
       await tap(tester, journal1, true);
 
@@ -529,6 +527,7 @@ void main() {
       expect(journal2, findsOneWidget);
     });
   });
+
   group("Entry Navbar Tests", () {
     // New finders added for all three journal entries
     late Finder journal1;
@@ -593,8 +592,8 @@ void main() {
       };
       await skipToEntriesPage(tester, true);
       //set finders for journal entries
-      journal1 = find.text("Extraordinary beauty of nature");
-      journal2 = find.text("Flying Over the Ocean");
+      journal1 = find.byKey(Key(entrys[0].id.toString()));
+      journal2 = find.byKey(Key(entrys[1].id.toString()));
 
       //set navbar finders
       calendarButton = find.byKey(const Key('navCalendar'));

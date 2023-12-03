@@ -267,6 +267,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     this.scheduledDate,
     DateTime? dateOverride
   }) {
+    if(dateOverride !=null) creationDate = dateOverride;
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
 

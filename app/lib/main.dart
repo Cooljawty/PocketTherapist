@@ -70,8 +70,6 @@ class _RootAppState extends State<RootApp> {
                         "Plans": (context) => const EntryPanelPage(showPlans: true),
                         "Settings": (context) => const SettingsPage(),
                         "Welcome": (context) => const WelcomePage(),
-                        "Tags": (context) => const TagSettingsPage(),
-                        "NewEntry": (context) => const EntryPage(),
                         // "Emotions": (context) => const EmotionSettingsPage(),
                       },
                       initialRoute: "Welcome",
@@ -97,7 +95,6 @@ class _RootAppState extends State<RootApp> {
       case 'hide':
         break;
       case 'pause':
-        _save();
         break;
       case 'detach':
         break;
@@ -115,9 +112,5 @@ class _RootAppState extends State<RootApp> {
     // Add more here as needed..
 
     settings.setInitialized();
-  }
-
-  Future<void> _save() async {
-    await settings.save();
   }
 }

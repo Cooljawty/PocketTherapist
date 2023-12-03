@@ -58,22 +58,19 @@ class EntryPanelPage extends StatefulWidget {
 class _EntryPanelPageState extends State<EntryPanelPage> {
   bool showAllItems = true;
   //update so items is duplicate to original list rather than being a refernce to entries
-  List<JournalEntry> items = entries.toList();
+  List<JournalEntry> items = entries;
   List<Tag> selectedTags = [];
+  List<String> selectedEmotions = [];
   final TextEditingController searchBarInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // Sort the Journal entries by most recent date
-    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
-
-    // Select appropriate list to display
     entries.sort();
     plans.sort();
     if (widget.showPlans) {
       items = plans.toList();
     }
-    // items.sort();
+    items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -95,21 +92,18 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       //only works on entries page
-                      Visibility(
-                        visible: !widget.showPlans,
-                        child: Expanded(
-                            flex: 2,
-                            child: TextFormField(
-                              key: const Key('Filter_By_TextForm'),
-                              textAlign: TextAlign.center,
-                              controller: searchBarInput,
-                              onChanged: updateFilteredList,
-                              decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: 'Enter a journal title',
-                                  fillColor: Colors.transparent),
-                            )),
-                      ),
+                      Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            key: const Key('Filter_By_TextForm'),
+                            textAlign: TextAlign.center,
+                            controller: searchBarInput,
+                            onChanged: updateFilteredList,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Enter a journal title',
+                                fillColor: Colors.transparent),
+                          )),
                       Container(
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
@@ -131,40 +125,47 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       ),
                     ]),
                     //create new row for tag list and make it visible on journal entry page
-                    Visibility(
-                      visible: !widget.showPlans,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: tagList
-                              .map(
-                                (tagName) => FilterChip(
-                                    selected: selectedTags.contains(tagName),
-                                    label: Text(tagName.name),
-                                    selectedColor: Color.alphaBlend(
-                                        tagName.color,
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer),
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    onSelected: (selected) {
-                                      //update to add or remove tag
-                                      selectedTags.contains(tagName)
-                                          ? selectedTags.remove(tagName)
-                                          : selectedTags.add(tagName);
-                                      //by triggering udpate Filtered list with
-                                      //either the text in the search bar or empty we
-                                      //ensure that the title search and tag search are always synced
-                                      updateFilteredList(searchBarInput.text);
-                                    }),
-                              )
-                              .toList(),
-                        ),
+                    const Text("Select tags to filter entries."),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: tagList
+                            .map(
+                              (tag) => FilterChip(
+                                  selected: selectedTags.contains(tag),
+                                  label: Text(tag.name),
+                                  selectedColor: Color.alphaBlend(
+                                      tag.color,
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer),
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  onSelected: (selected) {
+                                    //update to add or remove tag
+                                    selectedTags.contains(tag)
+                                        ? selectedTags.remove(tag)
+                                        : selectedTags.add(tag);
+                                    //by triggering udpate Filtered list with
+                                    //either the text in the search bar or empty we
+                                    //ensure that the title search and tag search are always synced
+                                    updateFilteredList(searchBarInput.text);
+                                  }),
+                            )
+                            .toList(),
                       ),
                     ),
+                    const Text("Select emotions to filter entries."),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: generateEmotionFilterChips(),
+                      ),
+                    ),
+
 
                     //holds the list of entries
                     Expanded(
@@ -319,70 +320,96 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-    items = entries.toList();
-    //if input is now empty then we have no need to run the search
-    if (input.isNotEmpty) {
-      List<JournalEntry> newFilteredDisplayList = [];
-      //iterate through list to determine if an entry is compatable
-      //if it is then add it to the new list
-      for (int i = 0; i < entries.length; i++) {
-        //to handle casing we will compare lower case version of the title
-        //and of the input
-        if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
-          newFilteredDisplayList.add(entries[i]);
-        }
-      }
-      //update the displayed list in real time when the user is searching
-      items = newFilteredDisplayList;
-    }
+    items = widget.showPlans ? plans.toList(): entries.toList();
+    items = items.where((element) => element.title.toLowerCase().contains(input.toLowerCase())).toList();
+
     //is triggered every time the serach bar is updated so that way filtered journal entries
     //are also filtered by tag selection
-    filterByTag();
-  }
-
-//filter with the selected tags array to check for compatable journal entries
-  void filterByTag() {
-    //search is now bounded by items because updateFiltedList
-    // already searched for compatable entries and put them in items
-    // also using toList to duplicate data instead of grabbing memory address
-    List<JournalEntry> filteredList = items.toList();
-    //if tag list for filter is empty then we return without running tag search
-    if (selectedTags.isNotEmpty) {
-      for (int i = 0; i < items.length; i++) {
-        //turn journal entry tag list into a List of string names for filter
-        List<String> journalTagsNames =
-            items[i].tags.map((currentTag) => currentTag.name).toList();
-        for (int j = 0; j < selectedTags.length; j++) {
-          //for each selected tag we should find the correlating tag in the journal entry
-          //if not then we toss the entry from the search
-          if (!journalTagsNames.contains(selectedTags[j].name)) {
-            //filtered tag not found within journal entry so remove it
-            filteredList.remove(items[i]);
-            j = selectedTags.length;
-          }
+    items = items.where((element) {
+      for(Tag tag in selectedTags){
+        if (!element.tags.map((e) => e.name).contains(tag.name)){
+          return false;
         }
       }
-    }
-    //if tags are reimplemented as List<string> then the following implementation can be used
-    //current issue is that the tag has values do not always match because tag is a declared type
-    //but when search is done on strings the following code should work as expected
-    //Map<int, String> journalTagList = {};
-    ////compare each journal entries tag list
-    //for (int i = 0; i < items.length; i++) {
-    //  //using a tag map we can check if the journal entry contains each tag in the filter
-    //  journalTagList = items[i].tags.asMap();
-    //  for (int j = 0; j < selectedTags.length; j++) {
-    //    if (!journalTagList.containsValue(selectedTags[j])) {
-    //      //remove it from the compatable filter list
-    //      filteredList.remove(items[i]);
-    //      j = selectedTags.length;
-    //    }
-    //  }
-    //}
-    setState(() {
-      items = filteredList;
-    });
+      return true;
+    }).toList();
+    /// Filter by selected emotions as well
+    items = items.where((element) {
+      for(String emote in selectedEmotions){
+        if (!element.emotions.map((e) => e.name).contains(emote)){
+          return false;
+        }
+      }
+      return true;
+    }).toList();
+    setState(() {});
   }
+  
+  List<Widget> generateEmotionFilterChips() {
+    List<FilterChip> chips = [];
+    for(final MapEntry<String, Color>(:key, :value) in emotionList.entries){
+      chips.add(FilterChip(
+          selected: selectedEmotions.contains(key),
+          label: Text(key),
+          selectedColor: Color.alphaBlend(
+              value,
+              Theme.of(context)
+                  .colorScheme
+                  .primaryContainer),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          onSelected: (selected) {
+            selectedEmotions.contains(key) ? selectedEmotions.remove(key) : selectedEmotions.add(key);
+            updateFilteredList(searchBarInput.text);
+          },
+      ));
+    }
+    return chips;
+  }
+  
+//
+// //filter with the selected tags array to check for compatable journal entries
+//   void filterByTag() {
+//     //search is now bounded by items because updateFiltedList
+//     // already searched for compatable entries and put them in items
+//     // also using toList to duplicate data instead of grabbing memory address
+//
+//     //
+//     // List<JournalEntry> filteredList = items.toList();
+//     // //if tag list for filter is empty then we return without running tag search
+//     // if (selectedTags.isNotEmpty) {
+//     //   for (int i = 0; i < items.length; i++) {
+//     //     //turn journal entry tag list into a List of string names for filter
+//     //     List<String> journalTagsNames =
+//     //         items[i].tags.map((currentTag) => currentTag.name).toList();
+//     //     for (int j = 0; j < selectedTags.length; j++) {
+//     //       //for each selected tag we should find the correlating tag in the journal entry
+//     //       //if not then we toss the entry from the search
+//     //       if (!journalTagsNames.contains(selectedTags[j].name)) {
+//     //         //filtered tag not found within journal entry so remove it
+//     //         filteredList.remove(items[i]);
+//     //         j = selectedTags.length;
+//     //       }
+//     //     }
+//     //   }
+//     // }
+//     //if tags are reimplemented as List<string> then the following implementation can be used
+//     //current issue is that the tag has values do not always match because tag is a declared type
+//     //but when search is done on strings the following code should work as expected
+//     //Map<int, String> journalTagList = {};
+//     ////compare each journal entries tag list
+//     //for (int i = 0; i < items.length; i++) {
+//     //  //using a tag map we can check if the journal entry contains each tag in the filter
+//     //  journalTagList = items[i].tags.asMap();
+//     //  for (int j = 0; j < selectedTags.length; j++) {
+//     //    if (!journalTagList.containsValue(selectedTags[j])) {
+//     //      //remove it from the compatable filter list
+//     //      filteredList.remove(items[i]);
+//     //      j = selectedTags.length;
+//     //    }
+//     //  }
+//     //}
+//     setState((){});
+//   }
 }
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
