@@ -5,7 +5,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/main.dart' as app;
-import 'package:app/helper/classes.dart';
 import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:app/provider/settings.dart' as settings;
 

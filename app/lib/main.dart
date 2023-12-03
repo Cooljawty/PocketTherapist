@@ -1,7 +1,6 @@
 import 'package:app/pages/calendar.dart';
 import 'package:app/pages/dashboard.dart';
 import 'package:app/pages/entries.dart';
-import 'package:app/pages/plans.dart';
 import 'package:app/pages/settings.dart';
 import 'package:app/pages/welcome.dart';
 import 'package:app/provider/theme_settings.dart';
@@ -9,7 +8,7 @@ import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main()  {
+void main() {
   //Things that need to be done before the application is ran.
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const RootApp());
@@ -19,13 +18,13 @@ void main()  {
 /// It contains the main functions and loading that will be necessary for
 /// the rest of the application to run.
 class RootApp extends StatefulWidget {
-  const RootApp({super.key}) ;
+  const RootApp({super.key});
 
   @override
   State<RootApp> createState() => _RootAppState();
 }
 
-class _RootAppState extends State<RootApp>  {
+class _RootAppState extends State<RootApp> {
   late final AppLifecycleListener _listener;
 
   @override
@@ -53,44 +52,57 @@ class _RootAppState extends State<RootApp>  {
 
   @override
   Widget build(BuildContext context) {
-    return  FutureBuilder(
+    return FutureBuilder(
       future: _load(),
-      builder: (context, snapshot) => snapshot.connectionState == ConnectionState.done ? ChangeNotifierProvider<ThemeSettings>(
-          create: (context) => ThemeSettings(),
-          builder: (context, child) {
-            final provider = Provider.of<ThemeSettings>(context);
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: provider.theme,
-              routes: {
-                "Calendar": (context) => const CalendarPage(),
-                "Dashboard": (context) => const DashboardPage(),
-                "Entries":(context) => const EntryPanelPage(),
-                "Plans": (context) => const PlansPage(),
-                "Settings": (context) => const SettingsPage(),
-                "Welcome": (context) => const WelcomePage(),
-                "Tags": (context) => const TagSettingsPage(),
-                "NewEntry": (context) => const EntryPage(),
-                // "Emotions": (context) => const EmotionSettingsPage(),
-              },
-              initialRoute: "Welcome",
-            );
-          }) : const Directionality(textDirection: TextDirection.ltr, child: Center(child: CircularProgressIndicator())),
+      builder: (context, snapshot) =>
+          snapshot.connectionState == ConnectionState.done
+              ? ChangeNotifierProvider<ThemeSettings>(
+                  create: (context) => ThemeSettings(),
+                  builder: (context, child) {
+                    final provider = Provider.of<ThemeSettings>(context);
+                    return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      theme: provider.theme,
+                      routes: {
+                        "Calendar": (context) => const CalendarPage(),
+                        "Dashboard": (context) => const DashboardPage(),
+                        "Entries": (context) => const EntryPanelPage(),
+                        "Plans": (context) => const EntryPanelPage(showPlans: true),
+                        "Settings": (context) => const SettingsPage(),
+                        "Welcome": (context) => const WelcomePage(),
+                        "Tags": (context) => const TagSettingsPage(),
+                        "NewEntry": (context) => const EntryPage(),
+                        // "Emotions": (context) => const EmotionSettingsPage(),
+                      },
+                      initialRoute: "Welcome",
+                    );
+                  })
+              : const Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Center(
+                    //reverted because loading screen image is not always loaded before showing this screen
+                    child: CircularProgressIndicator(),
+                  )),
     );
-
   }
 
-  _handleTransition(String state )  {
-    switch(state){
-    case 'show': break;
-    case 'resume': break;
-    case 'inactive': break;
-    case 'hide': break;
-    case 'pause':
-      _save();
-      break;
-    case 'detach': break;
-    case 'restart': break;
+  _handleTransition(String state) {
+    switch (state) {
+      case 'show':
+        break;
+      case 'resume':
+        break;
+      case 'inactive':
+        break;
+      case 'hide':
+        break;
+      case 'pause':
+        _save();
+        break;
+      case 'detach':
+        break;
+      case 'restart':
+        break;
     }
   }
 
@@ -109,4 +121,3 @@ class _RootAppState extends State<RootApp>  {
     await settings.save();
   }
 }
-
