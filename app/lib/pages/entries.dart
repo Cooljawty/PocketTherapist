@@ -332,7 +332,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
       return '${time.formatDate().month} ${time.year.toString()}';
-    }
+    }// If day, only display day month and year
     else if (chosenDisplay == DisplayOption.day){
       return '${time.formatDate().day} ${time.formatDate().month} ${time.year.toString()}';
     }
