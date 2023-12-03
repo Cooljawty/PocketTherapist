@@ -140,11 +140,11 @@ void main() {
 
     // Save the entry and view it, removed because scroll until visible doesnt work
     //with list view when there are multiple scrollable widgets.
-    Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
-     await tester.scrollUntilVisible(find.text(titleText), 1);
-     // View new entry
-     await tap(tester, find.byType(DisplayCard).first, true);
-    }
+    // Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
+    //  await tester.scrollUntilVisible(find.text(titleText), 1);
+    //  // View new entry
+    //  await tap(tester, find.byType(DisplayCard).first, true);
+    // }
 
     // Test the input text fields
     testWidgets('title and body Creation', (WidgetTester tester) async {
