@@ -52,6 +52,14 @@ Future<void> skipToEntriesPage(WidgetTester tester, [bool settle = false]) async
   await tap(tester, find.text("Entries"), settle);
 }
 
+/// [skipToPlansPage] will skip throug the app from the login screen to the
+/// entries page
+Future<void> skipToPlansPage(WidgetTester tester, [bool settle = false]) async {
+  await startSkipFrontScreen(tester);
+  await pumpUntilFound(tester, find.text("Plans"), settle);
+  await tap(tester, find.text("Plans"), settle);
+}
+
 /// [skipToCalendarPage] will skip throug the app from the login screen to the
 /// entries page
 Future<void> skipToCalendarPage(WidgetTester tester, [bool settle = false]) async {

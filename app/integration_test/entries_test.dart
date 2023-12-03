@@ -205,7 +205,7 @@ void main() {
           tester,
           find.descendant(
               of: find.byType(DisplayCard),
-              matching: find.byKey(const Key("PlanCompleteButton"))));
+              matching: find.byKey(const Key("PlanCompleteButton"))).first);
     });
 
     // Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
@@ -515,6 +515,39 @@ void main() {
       expect(journal2, findsNothing);
       //final filter sees no journal entries
       await tap(tester, find.text('Content'), true);
+      await tap(tester, find.text('Content'), true);
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsNothing);
+      //filter to see journal 2 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsOneWidget);
+      //unselect content tag to see both entries
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+    });
+
+    testWidgets('Journal entry emotions filter test', (WidgetTester tester) async {
+      await setUp(tester);
+      //initially we should see both journal entries
+			journal1 = find.text(entries[0].title);
+			journal2 = find.text(entries[1].title);
+
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      await tap(tester, find.text('Happy'), true);
+      await tap(tester, find.text('Happy'), true);
+      //both have calm tag so nothing changes
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //filter to see journal 1 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsNothing);
+      //final filter sees no journal entries
+      await tap(tester, find.text('Content'), true);
       expect(journal1, findsNothing);
       expect(journal2, findsNothing);
       //filter to see journal 2 only
@@ -624,4 +657,55 @@ void main() {
       expect(find.text('Settings'), findsOneWidget);
     });
   });
+
+  group("Plan Deletion Tests", () {
+    plans.add(Plan(
+        title: "This is an entry",
+        entryText: 'This is the body',
+        scheduledDate: DateTime(2022, 2, 7)
+    ));
+
+    // Navigate to the entries panel
+    // Navigate to the entries panel
+    Future<void> setUp(WidgetTester tester) async {
+      await skipToPlansPage(tester);
+    }
+
+    testWidgets('Remove an plan from the list.', (WidgetTester tester) async {
+      await setUp(tester);
+
+      final entry = plans[0].id.toString();
+      Finder entryFinder = find.byKey(ValueKey(entry));
+      await tester.pump();
+
+      //confirm that entry exist
+      final entryCard = find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      );
+      await tap(tester, entryCard, true);
+
+      await tester.enterText(find.byKey(const Key("titleInput")), "New Title");
+      await tap(tester, find.byKey(const Key("saveButton")));
+
+      //Drag the entry, then tap cancel button
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
+      await tap(tester, find.text("CANCEL"), true);
+      expect(find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      ), findsOneWidget);
+
+      //Drag the entry, then tap delete button
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
+      await tap(tester, find.text("DELETE"), true);
+      expect(find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      ), findsNothing);
+    });
+  });
+
 }

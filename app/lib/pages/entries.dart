@@ -141,9 +141,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 														chosenDisplay = switch(item) {
 															"Week" => DisplayOption.week,
 															"Month" => DisplayOption.month,
-															"Year" => DisplayOption.year,
-															_ => null,
-														} ?? chosenDisplay;
+															_ => DisplayOption.year,
+														};
 													}),
 												),
                       ),
