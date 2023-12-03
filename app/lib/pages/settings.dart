@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:app/provider/entry.dart';
 import 'package:app/uiwidgets/decorations.dart';

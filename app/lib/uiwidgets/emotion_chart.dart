@@ -183,7 +183,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						RadarDataSet(
 							entryRadius: 0.0,
 							borderColor: strongestEmotion,
-							fillColor: strongestEmotion!.withOpacity(0.5),
+							fillColor: strongestEmotion.withOpacity(0.5),
 							dataEntries: emotionValues,
 						),
 					],
