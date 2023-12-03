@@ -118,6 +118,19 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     // Pad filter to the right
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(//Has button for second Nav bar
+                        width: MediaQuery.of(context).size.width / 6,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              toggleNav();
+
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                            ),
+                            key: const Key("breakDown"),
+                            child: const Icon(Icons.more_horiz)),
+                      ),
                       //only works on entries page
                       Visibility(
                         visible: !widget.showPlans,
@@ -134,20 +147,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                   fillColor: Colors.transparent),
                             )),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              toggleNav();
 
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                            ),
-                            key: const Key("breakDown"),
-                            child: const Icon(Icons.more_horiz)),
-                      ),
-                      Container(
+                      Container(//for drop down day-year
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
@@ -309,6 +310,34 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             ]); // if in the same filter header list, then just make a new entry
                       },
                     )),
+                    Card(
+                        child: Visibility(
+                          //within a column
+                            visible: isVisibleStats,
+                            child: RichText(
+                                text: TextSpan(children: [
+
+                                  TextSpan(
+                                      style: TextStyle(fontSize: 20),
+                                      text:
+
+                                      'Average Emotion Strength: ${getAverageEmotion(entries)} \n'),
+                                  TextSpan(
+                                      style: TextStyle(fontSize: 20),
+                                      text:
+                                      'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'),
+                                  TextSpan(
+                                      style: TextStyle(fontSize: 20),
+                                      text:
+                                      'Most Common Tag: ${getMostCommonTag(entries)} \n')
+                                ])))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+
+
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -345,18 +374,202 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                   visible: isVisibleNav,
                   child: BottomNavigationBar(
                     currentIndex: currPos,
-                    onTap: (int index) => setState(() => currPos = index),
+                    onTap: (int index) => setState(() { currPos = index; if(index ==0){toggleStats();} }
+                    ),
+
                     backgroundColor: Colors.deepPurple,
+
                     items: [
+
                       BottomNavigationBarItem (icon: Icon(Icons.access_time_rounded), label: "Stats"),
                       BottomNavigationBarItem(icon: Icon(Icons.abc), label: "Select All"),
+
                     ],
+
+
                   )
                 )],
             ));
       },
     );
   }
+
+
+  // start of stats functions
+  String getAverageEmotion(List<JournalEntry> entries) {
+    //sort entries from this month
+    List<JournalEntry> entriesFromMonth = entries
+        .where((e) => (e.date.isBefore(DateTime.now()) &&
+        e.date.isAfter(DateTime.now().subtract(const Duration(days: 30)))))
+        .toList();
+    double averageIntensity = 0;
+    int totalIntensity = 0;
+    List<int> strengthList = [];
+    bool emotionsExistFlag = false;
+    //grab entry
+    for (var entry in entriesFromMonth) {
+      List<Emotion> entryEmotions = entry.emotions;
+      if (entry.emotions.isNotEmpty) {
+        // there are emotions
+        emotionsExistFlag = true;
+      }
+      for (var emotion in entryEmotions) {
+        strengthList.add(emotion.strength);
+      } //ends inner for
+    } // ends outer for
+
+    if (!emotionsExistFlag) {
+      // no emotions exist, strength is 0.0
+      return "0.0";
+    }
+    //get avg intensity
+    for (var strength in strengthList) {
+      totalIntensity += strength;
+    }
+
+    //calculate average
+    averageIntensity = totalIntensity / strengthList.length;
+    return averageIntensity.toStringAsFixed(2);
+  } //ends func
+
+  String getMostFrequentEmotion(List<JournalEntry> entries) {
+    //sort entries from this month
+    List<JournalEntry> entriesFromMonth = entries
+        .where((e) => (e.date.isBefore(DateTime.now()) &&
+        e.date.isAfter(DateTime.now().subtract(const Duration(days: 30)))))
+        .toList();
+
+    var maxValue = 0;
+    var maxKey = "";
+    //list if two or more emotions are the most frequent
+    List<String> frequentEmotions = [];
+    //map to track emotion use
+    Map<String, int> emotionsAndAmounts = {
+      'Happy': 0,
+      'Trust': 0,
+      'Fear': 0,
+      'Sad': 0,
+      'Disgust': 0,
+      'Anger': 0,
+      'Surprise': 0,
+      'Anticipation': 0
+    };
+    //no entries
+    if (entriesFromMonth.isEmpty) {
+      return "N/A";
+    }
+    //go through all entries in the list
+    for (var entry in entriesFromMonth) {
+      List<Emotion> entryEmotions = entry.emotions;
+      //go through all emotions in the entry
+      for (var emotion in entryEmotions) {
+        //get the current occurrence of the emotion and increase by 1
+        int? valBeforeUpdate = emotionsAndAmounts[emotion.name];
+        emotionsAndAmounts.update(
+            emotion.name, (value) => valBeforeUpdate! + 1);
+      } //ends inner for
+    } // ends outer for
+    emotionsAndAmounts.forEach((key, value) {
+      if (value > maxValue && value > 0) {
+        //find the most frequent emotion and add it to the list
+        maxKey = key;
+        maxValue = value;
+        frequentEmotions.clear(); //found a new max
+        frequentEmotions.add(maxKey);
+      }
+      if (value == maxValue && !frequentEmotions.contains(key) && value > 0) {
+        frequentEmotions.add(key); //two or more emotions are the max
+      }
+    });
+    return frequentEmotions.join(", ");
+  }
+
+  String getEmotionsTillNow(List<JournalEntry> entries) {
+    //sort entries from this month
+    List<JournalEntry> entriesFromMonth = entries
+        .where((e) => (e.date.isBefore(DateTime.now()) &&
+        e.date.isAfter(DateTime.now().subtract(const Duration(days: 30)))))
+        .toList();
+
+    //list if two or more emotions are the most frequent
+    List<String> frequentEmotions = [];
+    //map to track emotion use
+    Map<String, int> emotionsAndAmounts = {
+      'Happy': 0,
+      'Trust': 0,
+      'Fear': 0,
+      'Sad': 0,
+      'Disgust': 0,
+      'Anger': 0,
+      'Surprise': 0,
+      'Anticipation': 0
+    };
+
+    //no entries
+    if (entriesFromMonth.isEmpty) {
+      return "N/A";
+    }
+    //go through all entries in the list
+    for (var entry in entriesFromMonth) {
+      List<Emotion> entryEmotions = entry.emotions;
+      //go through all emotions in the entry
+      for (var emotion in entryEmotions) {
+        //get the current occurrence of the emotion and increase by 1
+        int? valBeforeUpdate = emotionsAndAmounts[emotion.name];
+        emotionsAndAmounts.update(
+            emotion.name, (value) => valBeforeUpdate! + 1);
+        //find the most frequent emotion and add it to the list
+      } //ends inner for
+    } // ends outer for
+
+    emotionsAndAmounts.forEach((key, value) {
+      if (value > 0 && !frequentEmotions.contains(key)) {
+        //Emotion exist, add it to list
+        frequentEmotions.add(key);
+      }
+    });
+    return frequentEmotions.join(", ");
+  } //ends func
+
+  String getMostCommonTag(List<JournalEntry> entries) {
+//list if two or more tags are the most frequent
+    List<String> frequentTags = [];
+
+    //maps for tags and how often they appear
+    Map<String, int> tagsAndOccurrences = {};
+    //go through every entry
+    for (var entry in entries) {
+      var maxValue = 0;
+      var maxKey = "";
+      List<Tag> entryTags = entry.tags;
+      //go through each tag in the entry
+      for (var tag in entryTags) {
+        //if the tag is not a key in map add it, assign val to 0
+        if (tagsAndOccurrences.containsKey(tag.name) == false) {
+          tagsAndOccurrences[tag.name] = 0;
+        } else {//tag exist and has appeared again, increase val by 1
+          int? valBeforeUpdate = tagsAndOccurrences[tag.name];
+          tagsAndOccurrences.update(tag.name, (value) => valBeforeUpdate! + 1);
+        }
+        //go through map and find most frequent tag based on value
+        tagsAndOccurrences.forEach((key, value) {
+          if (value > maxValue) {
+            maxKey = key;
+            maxValue = value;
+            frequentTags.clear(); //found a new max
+            frequentTags.add(maxKey);
+          }//keys occur equal number of times, and keys are not the tag isn't already in the list.
+          if (value == maxValue && key != maxKey  && frequentTags.contains(key) == false) {
+            frequentTags.add(key); //two or more emotions are the max
+          }
+        });
+      }
+    }
+    return frequentTags.join(", ");
+  }
+
+
+  //end of stats functions
 
   String getTimeRange(DateTime time) {
     if (chosenDisplay == DisplayOption.week) {
