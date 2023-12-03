@@ -5,13 +5,23 @@ import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../uiwidgets/decorations.dart';
+import 'package:app/helper/dates_and_times.dart';
 
 // Display options
-const List<String> displayOptions = ['Week', 'Month', 'Year'];
-final List<DropdownMenuItem<String>> displayDropDown = displayOptions
-    .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
+enum DisplayOption{ 
+	week, month, year; 
+
+	@override
+	String toString() => switch(this) {
+		DisplayOption.week => "Week",
+		DisplayOption.month => "Month",
+		DisplayOption.year => "Year",
+	};
+}
+DisplayOption chosenDisplay = DisplayOption.week;
+final List<DropdownMenuItem<String>> displayDropDown = DisplayOption.values
+    .map((item) => DropdownMenuItem<String>(value: item.toString(), child: Text(item.toString())))
     .toList();
-String chosenDisplay = 'Week';
 
 //
 // /// [getFilteredList] returns a list that is filtered by the [chosenDisplay] (week, month, year)
@@ -48,15 +58,20 @@ String chosenDisplay = 'Week';
 class EntryPanelPage extends StatefulWidget {
   final bool showPlans;
 
+	final DateTime? targetDate;
+
+  static Route<dynamic> route({targetDate}) {
+    return MaterialPageRoute(builder: (context) => EntryPanelPage(targetDate: targetDate));
+  }
+
   /// [showPlans] to show either regular entries or plans
-  const EntryPanelPage({super.key, this.showPlans = false});
+  const EntryPanelPage({super.key, this.targetDate, this.showPlans = false});
 
   @override
   State<EntryPanelPage> createState() => _EntryPanelPageState();
 }
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
-  bool showAllItems = true;
   //update so items is duplicate to original list rather than being a refernce to entries
   List<JournalEntry> items = entries.toList();
   List<Tag> selectedTags = [];
@@ -64,16 +79,19 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Sort the Journal entries by most recent date
-    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
     // Select appropriate list to display
-    entries.sort();
     plans.sort();
+		if (widget.targetDate != null ){
+			items = _getEntriesInRange();
+		}
+
     if (widget.showPlans) {
       items = plans.toList();
     }
-    // items.sort();
+
+		items.sort();
+
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -121,13 +139,18 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           key: const Key("SortByDateDropDown"),
                           borderRadius: BorderRadius.circular(10.0),
                           // Set up the dropdown menu items
-                          value: chosenDisplay,
+                          value: chosenDisplay.toString(),
                           items: displayDropDown,
                           // if changed set new display option
-                          onChanged: (item) => setState(() {
-                            chosenDisplay = item ?? chosenDisplay;
-                          }),
-                        ),
+													onChanged: (item) => setState(() {
+														chosenDisplay = switch(item) {
+															"Week" => DisplayOption.week,
+															"Month" => DisplayOption.month,
+															"Year" => DisplayOption.year,
+															_ => null,
+														} ?? chosenDisplay;
+													}),
+												),
                       ),
                     ]),
                     //create new row for tag list and make it visible on journal entry page
@@ -184,7 +207,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         } else {
                           // else check if same date by filters
                           isSameDate = time.isWithinDateRange(
-                              items[index - 1].date, chosenDisplay);
+                              items[index - 1].date, chosenDisplay.toString());
                         }
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -251,6 +274,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                   );
                                 },
                                 child: DisplayCard(
+																	key: Key(item.id.toString()),
                                   entry: item,
                                   //function will be used to update the listView builder with newest search results after a user saves a journal entry.
                                   //ex) if a user filters for all calm entries and the user edits one entry to remove the calm tag,
@@ -295,17 +319,17 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   }
 
   String getTimeRange(DateTime time) {
-    if (chosenDisplay == 'Week') {
+    if (chosenDisplay == DisplayOption.week) {
       DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
       int weekNum = firstOfYear.getWeekNumber(firstOfYear, time);
       DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
       DateTime lower = upper.subtract(const Duration(days: 6));
 
       // Range for the week
-      return '${lower.formatDate()} ${lower.day.toString()} - ${upper.formatDate()} ${upper.day.toString()}, ${time.year.toString()}';
-    } else if (chosenDisplay == 'Month') {
+      return '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${time.year.toString()}';
+    } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
-      return '${time.formatDate()} ${time.year.toString()}';
+      return '${time.formatDate().month} ${time.year.toString()}';
     } else {
       // If yearly, only display year
       return time.year.toString();
@@ -382,6 +406,32 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       items = filteredList;
     });
   }
+
+	List<JournalEntry> _getEntriesInRange() {
+    // Sort the Journal entries by most recent date
+		//Show entreis in range of given date or from today
+		final today = widget.targetDate ?? DateTime.now();
+		final startDate = switch(chosenDisplay) {
+			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
+			DisplayOption.month => DateTime(today.year, today.month, 1), 
+			DisplayOption.year => DateTime(today.year, 1, 1), 
+		};
+		final endDate = switch(chosenDisplay) {
+			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
+			DisplayOption.month => (today.month < DateTime.december
+				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
+				.subtract(const Duration(days: 1)),
+			DisplayOption.year => DateTime(today.year+1, 1, 1)
+				.subtract(const Duration(days: 1)),
+		};
+    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+
+    // Select appropriate list to display
+		final filteredEntries = entriesInDateRange(startDate, endDate, items).toList();
+		final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
+		
+		return widget.showPlans ? filteredPlans : filteredEntries;
+	}
 }
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
@@ -430,6 +480,7 @@ class _EntryPageState extends State<EntryPage> {
     entryTextController.dispose();
     super.dispose();
   }
+
 
   // Make an Alert Dialog Box that will display the emotional dial and a save button
   void _emotionalDial(BuildContext context, Emotion emotion) async {
@@ -697,6 +748,7 @@ class _EntryPageState extends State<EntryPage> {
         forceMaterialTransparency: true,
       ),
       body: SingleChildScrollView(
+        key: const Key("ScrollMe"),
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Column(children: [
@@ -789,71 +841,5 @@ class _EntryPageState extends State<EntryPage> {
         },
       ),
     );
-  }
-}
-
-/// [Formatter] is an extended DateTime Object that
-extension Formatter on DateTime {
-  // Get the month string
-  String formatDate() {
-    switch (month) {
-      case 1:
-        return 'January';
-      case 2:
-        return 'February';
-      case 3:
-        return 'March';
-      case 4:
-        return 'April';
-      case 5:
-        return 'May';
-      case 6:
-        return 'June';
-      case 7:
-        return 'July';
-      case 8:
-        return 'August';
-      case 9:
-        return 'September';
-      case 10:
-        return 'October';
-      case 11:
-        return 'November';
-      case 12:
-        return 'December';
-      default:
-        return 'Date is Wrong'; // This should never happen
-    }
-  }
-
-  // Check if entries are in the same filter date
-  bool isWithinDateRange(DateTime other, String display) {
-    switch (display) {
-      // If week filter, then check if in the same year, month, and week
-      case 'Week':
-        final firstWeek = DateTime(DateTime.now().year, 1, 1);
-        return (year == other.year &&
-            month == other.month &&
-            (getWeekNumber(firstWeek, this) ==
-                getWeekNumber(firstWeek, other)));
-      // if month filter, then check for same year and month
-      case 'Month':
-        return (year == other.year && month == other.month);
-      // if year filter, then check for same year
-      case 'Year':
-        return (year == other.year);
-      // This should never happen
-      default:
-        return false;
-    }
-  }
-
-  // get the week number for DateTime math in headers and filters
-  int getWeekNumber(DateTime start, DateTime end) {
-    start = DateTime(start.year, start.month, start.day);
-    end = DateTime(end.year, end.month, end.day);
-
-    // return the difference between the start and end date by week rounded up
-    return (end.difference(start).inDays / 7).ceil();
   }
 }

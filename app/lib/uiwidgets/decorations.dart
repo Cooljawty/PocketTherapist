@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:starsview/starsview.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
+import 'package:app/helper/dates_and_times.dart';
 
 List<String> quotes = [
   "Is God willing to prevent evil, but not able? Then he is not omnipotent. Is he able, but not willing? Then he is Malevolent. Is he both able and willing? Then whence cometh evil? Is he neither able nor willing? Then why call him God?",
@@ -547,7 +548,7 @@ class _DisplayCardState extends State<DisplayCard> {
                             children: [
                               // First 3 letters of the month
                               Text(
-                                widget.entry.date.formatDate().substring(0, 3),
+                                widget.entry.date.formatDate().month.substring(0, 3),
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
 
