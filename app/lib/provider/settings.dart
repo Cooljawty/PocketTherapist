@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/uiwidgets/decorations.dart';
+import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +37,8 @@ const String encryptionToggleKey = 'encryption';
 
 const String accentColorKey = "accent";
 
+const String emotionGraphTypeKey = 'emotionGraphType';
+
 /// The color of all accents, like buttons and sizing.
 
 Map<String, dynamic> _settings = {
@@ -44,6 +47,7 @@ Map<String, dynamic> _settings = {
   fontScaleKey: 1.0,
   encryptionToggleKey: false,
   accentColorKey: Colors.deepPurpleAccent[100]!.value,
+  emotionGraphTypeKey: GraphTypes.time.toString(),
 };
 
 Directory? _settingsStorageDirectory;
@@ -101,6 +105,7 @@ Future<void> reset([bool? all]) async {
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
     accentColorKey: const Color(0xFFB388FF).value,
+    emotionGraphTypeKey: GraphTypes.time.toString(),
   };
   if (all != null && all) {
     // entry.reset();
@@ -127,6 +132,7 @@ void setAccentColor(Color newColor) =>
     _settings[accentColorKey] = newColor.value;
 Future<void> setPassword(String newPassword) async =>
     await encryptor.setPassword(newPassword);
+void setEmotionGraphType(GraphTypes type) => _settings[emotionGraphTypeKey] = type.toString();
 void setOtherSetting(String key, Object? value) => _settings[key] = value;
 
 void setMockValues(Map<String, dynamic> value) {
@@ -148,6 +154,7 @@ ThemeData getCurrentTheme() => switch (_settings[themeKey] as int) {
 double getFontScale() => _settings[fontScaleKey];
 bool isEncryptionEnabled() => _settings[encryptionToggleKey];
 Color getAccentColor() => Color(_settings[accentColorKey]);
+GraphTypes getEmotionGraphType() => GraphTypes.values.byName(_settings[emotionGraphTypeKey]);
 Object? getOtherSetting(String key) {
   Object? value = _settings[key];
   if (value == null) {

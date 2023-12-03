@@ -277,14 +277,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                 },
                                 child: DisplayCard(
                                   entry: item,
-                                  //function will be used to update the listView builder with newest search results after a user saves a journal entry.
-                                  //ex) if a user filters for all calm entries and the user edits one entry to remove the calm tag,
-                                  //after saving this either the filters should still apply to the content and the journal entry
-                                  //should not be displayed or we should reset filters. The current implementation reruns the filter
-                                  //ensuring the search bar and filtered tag list are accurate to the screen and edited entry might not be displayed
-                                  // but could be altered to reset search bars instead of filtering if its prefered.
-                                  updateDisplay: () =>
-                                      updateFilteredList(searchBarInput.text),
                                 ),
                               )
                             ]); // if in the same filter header list, then just make a new entry

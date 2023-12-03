@@ -81,6 +81,7 @@ class _CalendarState extends State<Calendar> {
 		for (var entry in entriesInDateRange(startDate, endDate, entries).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
 
+
 			//Color each day according to the strongest emotion, leave null if no emotions are tagged 
 			if (   _emotionData[_daysFromDate(entry.creationDate)].color == null 
 				  || strongestEmotion.strength > _emotionData[_daysFromDate(entry.creationDate)].strength) {

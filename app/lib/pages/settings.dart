@@ -1,14 +1,14 @@
 import 'dart:ui';
 import 'package:app/provider/entry.dart';
 import 'package:app/uiwidgets/decorations.dart';
+import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
-  final List<Tag>? existingTags;
-  const SettingsPage({super.key, this.existingTags});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -135,6 +135,31 @@ class _SettingsPageState extends State<SettingsPage> {
                           Icons.arrow_forward_ios,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
+                      ],
+                    )),
+//Toggleing emotion graph display type
+                StandardElevatedButton(
+                    onPressed: ()=> setState(() {
+                      final otherGraphType = switch(settings.getEmotionGraphType()) {
+                        GraphTypes.time => GraphTypes.frequency,
+                        GraphTypes.frequency => GraphTypes.time,
+                      };
+                      settings.setEmotionGraphType(otherGraphType);
+                    }),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Toggle Emotion Graph Display Type',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )),
+                        Text(settings.getEmotionGraphType().toString(),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
                       ],
                     )),
 
