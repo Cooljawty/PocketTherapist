@@ -79,16 +79,16 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   final TextEditingController searchBarInput = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    items = widget.showPlans ? plans : entries ;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    entries.sort();
+    plans.sort();
 		if (widget.targetDate != null ){
 			items = _getEntriesInRange();
 		}
+
+    if (widget.showPlans) {
+      items = plans.toList();
+    }
     items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
@@ -275,7 +275,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                     },
                                   );
                                 },
-                                child: DisplayCard(entry: item),
+                                child: DisplayCard(
+                                  entry: item,
+                                ),
                               )
                             ]); // if in the same filter header list, then just make a new entry
                       },

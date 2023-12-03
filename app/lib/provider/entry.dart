@@ -325,7 +325,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     return Emotion(
         name: 'None',
         strength: 0,
-        color: Colors.black.withAlpha(100)); // This shouldn't happen
+        color: Colors.black); // This shouldn't happen
   }
 
   /* TODO
@@ -385,7 +385,7 @@ Future<void> makeNewEntry(BuildContext context) async {
   }
 }
 
-Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry> entryList) => entryList.where((entry) {
+Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry>entryList) => entryList.where((entry) {
 	return (entry.creationDate.isBefore(endDate.add(const Duration(days: 1))) && entry.creationDate.isAfter(startDate.subtract(const Duration(days: 1))))
 	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(startDate.year, startDate.month, startDate.day)
 	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(endDate.year, endDate.month, endDate.day);
