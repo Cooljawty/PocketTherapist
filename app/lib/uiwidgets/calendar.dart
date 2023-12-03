@@ -78,7 +78,7 @@ class _CalendarState extends State<Calendar> {
 	Widget build(BuildContext context) {
 		//Calculate the emotion data for each day
 		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: null, border: false));
-		for (var entry in entriesInDateRange(startDate, endDate).toList()) {
+		for (var entry in entriesInDateRange(startDate, endDate, entries).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
 
 			//Color each day according to the strongest emotion, leave null if no emotions are tagged 
@@ -93,7 +93,7 @@ class _CalendarState extends State<Calendar> {
 		}
 	
 		//Find any plans in date range and add border
-		for (var plan in plansInDateRange(startDate, endDate)) {
+		for (var plan in plansInDateRange(startDate, endDate, plans)) {
 			final datapoint = _emotionData[_daysFromDate(plan.date)];
 			_emotionData[_daysFromDate(plan.date)] = (
 					strength: datapoint.strength,

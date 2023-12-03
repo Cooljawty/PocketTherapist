@@ -284,13 +284,13 @@ Future<void> makeNewEntry(BuildContext context) async {
   }
 }
 
-Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate) => entries.where((entry) {
+Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry>entryList) => entryList.where((entry) {
 	return (entry.date.isBefore(endDate.add(const Duration(days: 1))) && entry.date.isAfter(startDate.subtract(const Duration(days: 1))))
 	|| DateTime(entry.date.year, entry.date.month, entry.date.day) == DateTime(startDate.year, startDate.month, startDate.day)
 	|| DateTime(entry.date.year, entry.date.month, entry.date.day) == DateTime(endDate.year, endDate.month, endDate.day);
 });
 
-Iterable<Plan> plansInDateRange(DateTime startDate, DateTime endDate) => plans.where((plan) {
+Iterable<JournalEntry> plansInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry> planList) => planList.where((plan) {
 	return (plan.date.isBefore(endDate.add(const Duration(days: 1))) && plan.date.isAfter(startDate.subtract(const Duration(days: 1))))
 	|| DateTime(plan.date.year, plan.date.month, plan.date.day) == DateTime(startDate.year, startDate.month, startDate.day)
 	|| DateTime(plan.date.year, plan.date.month, plan.date.day) == DateTime(endDate.year, endDate.month, endDate.day);

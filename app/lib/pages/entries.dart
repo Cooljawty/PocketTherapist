@@ -72,41 +72,24 @@ class EntryPanelPage extends StatefulWidget {
 }
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
-  bool showAllItems = true;
   //update so items is duplicate to original list rather than being a refernce to entries
   List<JournalEntry> items = entries.toList();
   List<Tag> selectedTags = [];
   final TextEditingController searchBarInput = TextEditingController();
 
-	List<JournalEntry> _getEntriesInRange() {
-    // Sort the Journal entries by most recent date
-		//Show entreis in range of given date or from today
-		final today = widget.targetDate ?? DateTime.now();
-		final startDate = switch(chosenDisplay) {
-			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
-			DisplayOption.month => DateTime(today.year, today.month, 1), 
-			DisplayOption.year => DateTime(today.year, 1, 1), 
-		};
-		final endDate = switch(chosenDisplay) {
-			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => (today.month < DateTime.december
-				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
-				.subtract(const Duration(days: 1)),
-			DisplayOption.year => DateTime(today.year+1, 1, 1)
-				.subtract(const Duration(days: 1)),
-		};
-    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
-
-    // Select appropriate list to display
-		final filteredEntries = entriesInDateRange(startDate, endDate).toList();
-		final filteredPlans = plansInDateRange(startDate, endDate).toList();
-		
-		return widget.showPlans ? filteredPlans : filteredEntries;
-	}
-
   @override
   Widget build(BuildContext context) {
-		items = _getEntriesInRange();
+
+    // Select appropriate list to display
+    plans.sort();
+		if (widget.targetDate != null ){
+			items = _getEntriesInRange();
+		}
+
+    if (widget.showPlans) {
+      items = plans.toList();
+    }
+
 		items.sort();
 
     return Consumer<ThemeSettings>(
@@ -359,7 +342,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-		items = _getEntriesInRange();
+    items = entries.toList();
     //if input is now empty then we have no need to run the search
     if (input.isNotEmpty) {
       List<JournalEntry> newFilteredDisplayList = [];
@@ -423,6 +406,32 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       items = filteredList;
     });
   }
+
+	List<JournalEntry> _getEntriesInRange() {
+    // Sort the Journal entries by most recent date
+		//Show entreis in range of given date or from today
+		final today = widget.targetDate ?? DateTime.now();
+		final startDate = switch(chosenDisplay) {
+			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
+			DisplayOption.month => DateTime(today.year, today.month, 1), 
+			DisplayOption.year => DateTime(today.year, 1, 1), 
+		};
+		final endDate = switch(chosenDisplay) {
+			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
+			DisplayOption.month => (today.month < DateTime.december
+				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
+				.subtract(const Duration(days: 1)),
+			DisplayOption.year => DateTime(today.year+1, 1, 1)
+				.subtract(const Duration(days: 1)),
+		};
+    //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
+
+    // Select appropriate list to display
+		final filteredEntries = entriesInDateRange(startDate, endDate, items).toList();
+		final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
+		
+		return widget.showPlans ? filteredPlans : filteredEntries;
+	}
 }
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
@@ -471,6 +480,7 @@ class _EntryPageState extends State<EntryPage> {
     entryTextController.dispose();
     super.dispose();
   }
+
 
   // Make an Alert Dialog Box that will display the emotional dial and a save button
   void _emotionalDial(BuildContext context, Emotion emotion) async {

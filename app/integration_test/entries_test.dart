@@ -343,7 +343,7 @@ void main() {
 			expect(find.text(rangeText), findsWidgets);
 
       // Check to see if every entry in the time span is there
-      for (JournalEntry entry in entriesInDateRange(upper, lower)) {
+      for (JournalEntry entry in entriesInDateRange(upper, lower, entries)) {
 
         final entryKey = find.byKey(Key(entry.id.toString()));
 				final entryCard = find.descendant(
@@ -434,11 +434,6 @@ void main() {
     late Finder journal1;
     late Finder journal2;
 
-    // Create values for buttons
-    late Finder saveButton;
-    late Finder planButton;
-    late Finder tagButton;
-    late Finder emotionButton;
     //--------------------------------------------------------------------------
 
     final List<JournalEntry> entrys = [
@@ -504,15 +499,11 @@ void main() {
       await tap(tester, weekDropDown, true);
 			await tester.pump();
 
-			journal1 = find.descendant(
-				of: find.byType(Dismissible),
-				matching: find.byKey(Key(entries[0].id.toString())),
-			);
-			journal2 = find.descendant(
-				of: find.byType(Dismissible),
-				matching: find.byKey(Key(entries[1].id.toString())),
-			);
+			journal1 = find.byKey(Key(entrys[0].id.toString()));
+      journal2 = find.byKey(Key(entrys[1].id.toString()));
       titleSearchBar = find.byKey(const Key('Filter_By_TextForm'));
+
+			/*
       await tap(tester, journal1, true);
 
       // initialize save, plan, tag, and emotions buttons for the rest of the tests
@@ -526,6 +517,7 @@ void main() {
       await pumpUntilFound(tester, emotionButton);
       //save the journal entries
       await tap(tester, saveButton, true);
+			*/
     }
 
     testWidgets('Journal entry title filter test', (WidgetTester tester) async {
@@ -647,8 +639,14 @@ void main() {
       };
       await skipToEntriesPage(tester, true);
       //set finders for journal entries
-      journal1 = find.text("Extraordinary beauty of nature");
-      journal2 = find.text("Flying Over the Ocean");
+			journal1 = find.descendant(
+				of: find.byType(Dismissible),
+				matching: find.byKey(Key(entries[0].id.toString())),
+			);
+			journal2 = find.descendant(
+				of: find.byType(Dismissible),
+				matching: find.byKey(Key(entries[1].id.toString())),
+			);
 
       //set navbar finders
       calendarButton = find.byKey(const Key('navCalendar'));
