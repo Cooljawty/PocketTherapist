@@ -61,6 +61,8 @@ class EntryPanelPage extends StatefulWidget {
 
 	final DateTime? targetDate;
 
+
+
   static Route<dynamic> route({targetDate}) {
     return MaterialPageRoute(builder: (context) => EntryPanelPage(targetDate: targetDate));
   }
@@ -78,6 +80,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   List<Tag> selectedTags = [];
   final TextEditingController searchBarInput = TextEditingController();
 
+  bool isVisibleNav = false;
+  bool isVisibleStats = false;
+
   @override
   Widget build(BuildContext context) {
 
@@ -92,7 +97,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     }
 
 		items.sort();
-
+    int currPos = 0;
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -128,6 +133,19 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                   labelText: 'Enter a journal title',
                                   fillColor: Colors.transparent),
                             )),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              toggleNav();
+
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                            ),
+                            key: const Key("breakDown"),
+                            child: const Icon(Icons.more_horiz)),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width / 3,
@@ -295,27 +313,47 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                 ),
               ),
             ]),
-            bottomNavigationBar: CustomNavigationBar(
-                selectedIndex: widget.showPlans ? 4 : 1,
+            bottomNavigationBar: Stack(
 
-                /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
-                onDestinationSelected: (index) async {
-                  switch (index) {
-                    case 2:
-                      await makeNewEntry(context);
-                      //update so filter new entry appear in filtered list after being made
-                      updateFilteredList(searchBarInput.text);
-                      return;
-                    case 5:
-                      Navigator.of(context).pushNamed(
-                          CustomNavigationBar.defaultDestinations[index].label);
-                      return;
-                    case _:
-                      Navigator.of(context).pushReplacementNamed(
-                          CustomNavigationBar.defaultDestinations[index].label);
-                      break;
-                  }
-                }));
+              children: [Visibility(
+                  visible: !isVisibleNav,
+                child: CustomNavigationBar(
+                    selectedIndex: widget.showPlans ? 4 : 1,
+
+                    /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+                    onDestinationSelected: (index) async {
+                      switch (index) {
+                        case 2:
+                          await makeNewEntry(context);
+                          //update so filter new entry appear in filtered list after being made
+                          updateFilteredList(searchBarInput.text);
+                          return;
+                        case 5:
+                          Navigator.of(context).pushNamed(
+                              CustomNavigationBar.defaultDestinations[index].label);
+                          return;
+                        case _:
+                          Navigator.of(context).pushReplacementNamed(
+                              CustomNavigationBar.defaultDestinations[index].label);
+                          break;
+                      }
+                    }),
+              ),
+              //second nav
+                Visibility(
+
+                  visible: isVisibleNav,
+                  child: BottomNavigationBar(
+                    currentIndex: currPos,
+                    onTap: (int index) => setState(() => currPos = index),
+                    backgroundColor: Colors.deepPurple,
+                    items: [
+                      BottomNavigationBarItem (icon: Icon(Icons.access_time_rounded), label: "Stats"),
+                      BottomNavigationBarItem(icon: Icon(Icons.abc), label: "Select All"),
+                    ],
+                  )
+                )],
+            ));
       },
     );
   }
@@ -444,7 +482,32 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 		
 		return widget.showPlans ? filteredPlans : filteredEntries;
 	}
-}
+
+  void toggleNav() async {
+    setState(() {
+      isVisibleNav = !isVisibleNav;
+      //bottomNavigationBar = CustomEntriesNav;
+    });
+    if(isVisibleStats){
+      toggleStats();
+    }
+
+  }
+
+
+  void toggleStats() async {
+    print("isVisibleStats:");
+    print(isVisibleStats);
+    setState(() {
+
+      isVisibleStats = !isVisibleStats;
+
+      //bottomNavigationBar = CustomEntriesNav;
+    });
+    print(isVisibleStats);
+
+  }
+}//ends page
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
 /// creation of new entries, modification of them.
