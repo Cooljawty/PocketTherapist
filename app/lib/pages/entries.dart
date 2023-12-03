@@ -8,8 +8,8 @@ import '../uiwidgets/decorations.dart';
 import 'package:app/helper/dates_and_times.dart';
 
 // Display options
-enum DisplayOption{ 
-	week, month, year; 
+enum DisplayOption{
+	week, month, year;
 
 	@override
 	String toString() => switch(this) {
@@ -73,14 +73,14 @@ class EntryPanelPage extends StatefulWidget {
 
 class _EntryPanelPageState extends State<EntryPanelPage> {
   //update so items is duplicate to original list rather than being a refernce to entries
-  List<JournalEntry> items = entries.toList();
+  List<JournalEntry> items = entries;
   List<Tag> selectedTags = [];
+  List<String> selectedEmotions = [];
   final TextEditingController searchBarInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-    // Select appropriate list to display
+    entries.sort();
     plans.sort();
 		if (widget.targetDate != null ){
 			items = _getEntriesInRange();
@@ -89,9 +89,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     if (widget.showPlans) {
       items = plans.toList();
     }
-
-		items.sort();
-
+    items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
         return Scaffold(
@@ -113,21 +111,18 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       //only works on entries page
-                      Visibility(
-                        visible: !widget.showPlans,
-                        child: Expanded(
-                            flex: 2,
-                            child: TextFormField(
-                              key: const Key('Filter_By_TextForm'),
-                              textAlign: TextAlign.center,
-                              controller: searchBarInput,
-                              onChanged: updateFilteredList,
-                              decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  labelText: 'Enter a journal title',
-                                  fillColor: Colors.transparent),
-                            )),
-                      ),
+                      Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            key: const Key('Filter_By_TextForm'),
+                            textAlign: TextAlign.center,
+                            controller: searchBarInput,
+                            onChanged: updateFilteredList,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Enter a journal title',
+                                fillColor: Colors.transparent),
+                          )),
                       Container(
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
@@ -146,48 +141,54 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 														chosenDisplay = switch(item) {
 															"Week" => DisplayOption.week,
 															"Month" => DisplayOption.month,
-															"Year" => DisplayOption.year,
-															_ => null,
-														} ?? chosenDisplay;
+															_ => DisplayOption.year,
+														};
 													}),
 												),
                       ),
                     ]),
                     //create new row for tag list and make it visible on journal entry page
-                    Visibility(
-                      visible: !widget.showPlans,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: tagList
-                              .map(
-                                (tagName) => FilterChip(
-                                    selected: selectedTags.contains(tagName),
-                                    label: Text(tagName.name),
-                                    selectedColor: Color.alphaBlend(
-                                        tagName.color,
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer),
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    onSelected: (selected) {
-                                      //update to add or remove tag
-                                      selectedTags.contains(tagName)
-                                          ? selectedTags.remove(tagName)
-                                          : selectedTags.add(tagName);
-                                      //by triggering udpate Filtered list with
-                                      //either the text in the search bar or empty we
-                                      //ensure that the title search and tag search are always synced
-                                      updateFilteredList(searchBarInput.text);
-                                    }),
-                              )
-                              .toList(),
-                        ),
+                    const Text("Select tags to filter entries."),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: tagList
+                            .map(
+                              (tag) => FilterChip(
+                                  selected: selectedTags.contains(tag),
+                                  label: Text(tag.name),
+                                  selectedColor: Color.alphaBlend(
+                                      tag.color,
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer),
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  onSelected: (selected) {
+                                    //update to add or remove tag
+                                    selectedTags.contains(tag)
+                                        ? selectedTags.remove(tag)
+                                        : selectedTags.add(tag);
+                                    //by triggering udpate Filtered list with
+                                    //either the text in the search bar or empty we
+                                    //ensure that the title search and tag search are always synced
+                                    updateFilteredList(searchBarInput.text);
+                                  }),
+                            )
+                            .toList(),
                       ),
                     ),
+                    const Text("Select emotions to filter entries."),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: generateEmotionFilterChips(),
+                      ),
+                    ),
+
 
                     //holds the list of entries
                     Expanded(
@@ -197,7 +198,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       itemBuilder: (context, index) {
                         // get one item
                         final item = items[index];
-                        final time = item.;
+                        final time = widget.showPlans ? item.scheduledDate! : item.creationDate;
 
                         // Dividers by filter
                         bool isSameDate = true;
@@ -207,7 +208,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         } else {
                           // else check if same date by filters
                           isSameDate = time.isWithinDateRange(
-                              items[index - 1].date, chosenDisplay.toString());
+                              widget.showPlans ? items[index - 1].scheduledDate!
+                                  : items[index - 1].creationDate, chosenDisplay.toString());
                         }
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -274,7 +276,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                   );
                                 },
                                 child: DisplayCard(
-																	key: Key(item.id.toString()),
                                   entry: item,
                                   //function will be used to update the listView builder with newest search results after a user saves a journal entry.
                                   //ex) if a user filters for all calm entries and the user edits one entry to remove the calm tag,
@@ -342,79 +343,105 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-    items = entries.toList();
-    //if input is now empty then we have no need to run the search
-    if (input.isNotEmpty) {
-      List<JournalEntry> newFilteredDisplayList = [];
-      //iterate through list to determine if an entry is compatable
-      //if it is then add it to the new list
-      for (int i = 0; i < entries.length; i++) {
-        //to handle casing we will compare lower case version of the title
-        //and of the input
-        if (entries[i].title.toLowerCase().contains(input.toLowerCase())) {
-          newFilteredDisplayList.add(entries[i]);
-        }
-      }
-      //update the displayed list in real time when the user is searching
-      items = newFilteredDisplayList;
-    }
+    items = widget.showPlans ? plans.toList(): entries.toList();
+    items = items.where((element) => element.title.toLowerCase().contains(input.toLowerCase())).toList();
+
     //is triggered every time the serach bar is updated so that way filtered journal entries
     //are also filtered by tag selection
-    filterByTag();
-  }
-
-//filter with the selected tags array to check for compatable journal entries
-  void filterByTag() {
-    //search is now bounded by items because updateFiltedList
-    // already searched for compatable entries and put them in items
-    // also using toList to duplicate data instead of grabbing memory address
-    List<JournalEntry> filteredList = items.toList();
-    //if tag list for filter is empty then we return without running tag search
-    if (selectedTags.isNotEmpty) {
-      for (int i = 0; i < items.length; i++) {
-        //turn journal entry tag list into a List of string names for filter
-        List<String> journalTagsNames =
-            items[i].tags.map((currentTag) => currentTag.name).toList();
-        for (int j = 0; j < selectedTags.length; j++) {
-          //for each selected tag we should find the correlating tag in the journal entry
-          //if not then we toss the entry from the search
-          if (!journalTagsNames.contains(selectedTags[j].name)) {
-            //filtered tag not found within journal entry so remove it
-            filteredList.remove(items[i]);
-            j = selectedTags.length;
-          }
+    items = items.where((element) {
+      for(Tag tag in selectedTags){
+        if (!element.tags.map((e) => e.name).contains(tag.name)){
+          return false;
         }
       }
-    }
-    //if tags are reimplemented as List<string> then the following implementation can be used
-    //current issue is that the tag has values do not always match because tag is a declared type
-    //but when search is done on strings the following code should work as expected
-    //Map<int, String> journalTagList = {};
-    ////compare each journal entries tag list
-    //for (int i = 0; i < items.length; i++) {
-    //  //using a tag map we can check if the journal entry contains each tag in the filter
-    //  journalTagList = items[i].tags.asMap();
-    //  for (int j = 0; j < selectedTags.length; j++) {
-    //    if (!journalTagList.containsValue(selectedTags[j])) {
-    //      //remove it from the compatable filter list
-    //      filteredList.remove(items[i]);
-    //      j = selectedTags.length;
-    //    }
-    //  }
-    //}
-    setState(() {
-      items = filteredList;
-    });
+      return true;
+    }).toList();
+    /// Filter by selected emotions as well
+    items = items.where((element) {
+      for(String emote in selectedEmotions){
+        if (!element.emotions.map((e) => e.name).contains(emote)){
+          return false;
+        }
+      }
+      return true;
+    }).toList();
+    setState(() {});
   }
+
+  List<Widget> generateEmotionFilterChips() {
+    List<FilterChip> chips = [];
+    for(final MapEntry<String, Color>(:key, :value) in emotionList.entries){
+      chips.add(FilterChip(
+          selected: selectedEmotions.contains(key),
+          label: Text(key),
+          selectedColor: Color.alphaBlend(
+              value,
+              Theme.of(context)
+                  .colorScheme
+                  .primaryContainer),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          onSelected: (selected) {
+            selectedEmotions.contains(key) ? selectedEmotions.remove(key) : selectedEmotions.add(key);
+            updateFilteredList(searchBarInput.text);
+          },
+      ));
+    }
+    return chips;
+  }
+
+//
+// //filter with the selected tags array to check for compatable journal entries
+//   void filterByTag() {
+//     //search is now bounded by items because updateFiltedList
+//     // already searched for compatable entries and put them in items
+//     // also using toList to duplicate data instead of grabbing memory address
+//
+//     //
+//     // List<JournalEntry> filteredList = items.toList();
+//     // //if tag list for filter is empty then we return without running tag search
+//     // if (selectedTags.isNotEmpty) {
+//     //   for (int i = 0; i < items.length; i++) {
+//     //     //turn journal entry tag list into a List of string names for filter
+//     //     List<String> journalTagsNames =
+//     //         items[i].tags.map((currentTag) => currentTag.name).toList();
+//     //     for (int j = 0; j < selectedTags.length; j++) {
+//     //       //for each selected tag we should find the correlating tag in the journal entry
+//     //       //if not then we toss the entry from the search
+//     //       if (!journalTagsNames.contains(selectedTags[j].name)) {
+//     //         //filtered tag not found within journal entry so remove it
+//     //         filteredList.remove(items[i]);
+//     //         j = selectedTags.length;
+//     //       }
+//     //     }
+//     //   }
+//     // }
+//     //if tags are reimplemented as List<string> then the following implementation can be used
+//     //current issue is that the tag has values do not always match because tag is a declared type
+//     //but when search is done on strings the following code should work as expected
+//     //Map<int, String> journalTagList = {};
+//     ////compare each journal entries tag list
+//     //for (int i = 0; i < items.length; i++) {
+//     //  //using a tag map we can check if the journal entry contains each tag in the filter
+//     //  journalTagList = items[i].tags.asMap();
+//     //  for (int j = 0; j < selectedTags.length; j++) {
+//     //    if (!journalTagList.containsValue(selectedTags[j])) {
+//     //      //remove it from the compatable filter list
+//     //      filteredList.remove(items[i]);
+//     //      j = selectedTags.length;
+//     //    }
+//     //  }
+//     //}
+//     setState((){});
+//   }
 
 	List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date
 		//Show entreis in range of given date or from today
 		final today = widget.targetDate ?? DateTime.now();
 		final startDate = switch(chosenDisplay) {
-			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
-			DisplayOption.month => DateTime(today.year, today.month, 1), 
-			DisplayOption.year => DateTime(today.year, 1, 1), 
+			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
+			DisplayOption.month => DateTime(today.year, today.month, 1),
+			DisplayOption.year => DateTime(today.year, 1, 1),
 		};
 		final endDate = switch(chosenDisplay) {
 			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
@@ -429,7 +456,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     // Select appropriate list to display
 		final filteredEntries = entriesInDateRange(startDate, endDate, items).toList();
 		final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
-		
+
 		return widget.showPlans ? filteredPlans : filteredEntries;
 	}
 }
@@ -466,8 +493,10 @@ class _EntryPageState extends State<EntryPage> {
       selectedEmotions = widget.entry!.emotions;
       titleController.text = widget.entry!.title;
       entryTextController.text = widget.entry!.entryText;
-      datePicked = widget.entry!.date;
-    } else {
+      isPlan = widget.entry!.scheduledDate == null;
+      datePicked = widget.entry!.scheduledDate;
+    }
+    else {
       selectedTags = [];
       selectedEmotions = [];
     }
@@ -480,7 +509,6 @@ class _EntryPageState extends State<EntryPage> {
     entryTextController.dispose();
     super.dispose();
   }
-
 
   // Make an Alert Dialog Box that will display the emotional dial and a save button
   void _emotionalDial(BuildContext context, Emotion emotion) async {
@@ -574,13 +602,7 @@ class _EntryPageState extends State<EntryPage> {
     var selectedTime = await pickTime();
     if (selectedTime == null) return null;
 
-    return DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
+    return selectedDate.toLocal();
   }
 
   void showTagPicker() {
@@ -636,7 +658,7 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   // Make the journal entry and save it
-  JournalEntry? getEntry() {
+  JournalEntry? saveEntry() {
     // Database entry point for creating journal entry
     if (widget.entry == null && !isPlan) {
       //TODO: do database things to save new journal entry: db.insert
@@ -645,7 +667,6 @@ class _EntryPageState extends State<EntryPage> {
         entryText: entryTextController.text,
         tags: selectedTags,
         emotions: selectedEmotions,
-        date: DateTime.now(),
       );
     } else if (widget.entry == null) {
       return Plan(
@@ -653,14 +674,28 @@ class _EntryPageState extends State<EntryPage> {
         entryText: entryTextController.text,
         tags: selectedTags,
         emotions: selectedEmotions,
-        date: datePicked!,
+        scheduledDate: datePicked!,
       );
     } else {
       // entry exists, we are modifying
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
-      widget.entry!.update(titleController.text, entryTextController.text,
-          selectedTags, selectedEmotions, datePicked);
+      if(widget.entry! is Plan){
+        widget.entry!.update(
+            titleController.text,
+            entryTextController.text,
+            selectedTags,
+            selectedEmotions,
+            datePicked
+        );
+      } else {
+        widget.entry!.update(
+            titleController.text,
+            entryTextController.text,
+            selectedTags,
+            selectedEmotions,
+        );
+      }
       return widget.entry!;
     }
   }
@@ -738,12 +773,58 @@ class _EntryPageState extends State<EntryPage> {
         .toList();
   }
 
+  void requestEntryTemplate(BuildContext context) async {
+    String category = "";
+    int questions = 6;
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Guided Journaling"),
+        content: SizedBox(
+            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.width/3,
+            child: Row(
+              children: [
+                const Text('Category: '),
+                DropdownMenu<String>(
+                  key: const Key("Template_Selection"),
+                  dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                  onSelected: (value) {
+                    category = value!;
+                  },
+                ),
+              ],
+            )
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
+        ],
+      ),
+    );
+    if(category == "") return;
+    DateTime today = DateTime.now();
+    /// Format [dateSlug] is yyyy-mm-dd
+    String dateSlug ="${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
+    if (titleController.text.isEmpty) {
+      titleController.text = "$dateSlug - $category";
+    }
+    entryTextController.text = getTemplateEntryBody(category, questions);
+  }
+
+  void getRandomQuestion() {
+    (String, String) results = getTemplateRandom();
+    if (titleController.text.isEmpty) {
+      titleController.text = results.$1;
+    }
+    entryTextController.text += "${results.$2}\n\n";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.entry == null ? 'New Entry' : widget.entry!.title),
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         centerTitle: true,
         forceMaterialTransparency: true,
       ),
@@ -761,21 +842,31 @@ class _EntryPageState extends State<EntryPage> {
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Title',
+                      hintText: 'Inspiration is a tap away...'
                     ),
                   ),
                 ),
                 // Text input field for the Journal Entry Body
                 Padding(
                   padding: const EdgeInsets.all(20),
-                  child: TextField(
-                    controller: entryTextController,
-                    key: const Key("journalInput"),
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Journal Entry',
+                  child: GestureDetector(
+                    key: const Key("entryBodyKey"),
+                    onHorizontalDragEnd: (details) async {
+                      requestEntryTemplate(context);
+                      setState(() {});
+                    },
+                    onDoubleTap: () => setState(() => getRandomQuestion()),
+                    child: TextField(
+                      controller: entryTextController,
+                      key: const Key("journalInput"),
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Journal Entry',
+                        hintText: "Swipe right for ideas, double tap for a question...",
+                      ),
+                      maxLines: 20,
+                      minLines: 1,
                     ),
-                    maxLines: 8,
-                    minLines: 1,
                   ),
                 ),
 
@@ -829,14 +920,14 @@ class _EntryPageState extends State<EntryPage> {
         onDestinationSelected: (index) async {
           switch (index) {
             case 0:
-              datePicked = await pickPlanDate();
+              datePicked = await pickPlanDate() ?? datePicked;
               isPlan = datePicked != null;
             case 1:
               showTagPicker();
             case 2:
               showEmotionPicker();
             case 3:
-              Navigator.pop(context, getEntry());
+              Navigator.of(context).pop(saveEntry());
           }
         },
       ),

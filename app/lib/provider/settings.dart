@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/encryptor.dart' as encryptor;
 import 'package:app/uiwidgets/decorations.dart';
+import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:app/provider/entry.dart' as entry;
-import 'package:app/uiwidgets/emotion_chart.dart';
 
 /// Used for error messages
 const String preferencesPrefix = "pocket-therapist";
@@ -37,8 +37,6 @@ const String encryptionToggleKey = 'encryption';
 
 const String accentColorKey = "accent";
 
-/// What the default emotion graph type to display
-
 const String emotionGraphTypeKey = 'emotionGraphType';
 
 /// The color of all accents, like buttons and sizing.
@@ -49,7 +47,7 @@ Map<String, dynamic> _settings = {
   fontScaleKey: 1.0,
   encryptionToggleKey: false,
   accentColorKey: Colors.deepPurpleAccent[100]!.value,
-	emotionGraphTypeKey: GraphTypes.time.toString(),
+  emotionGraphTypeKey: GraphTypes.time.toString(),
 };
 
 Directory? _settingsStorageDirectory;
@@ -107,7 +105,7 @@ Future<void> reset([bool? all]) async {
     fontScaleKey: 1.0,
     encryptionToggleKey: false,
     accentColorKey: const Color(0xFFB388FF).value,
-		emotionGraphTypeKey: GraphTypes.time.toString(),
+    emotionGraphTypeKey: GraphTypes.time.toString(),
   };
   if (all != null && all) {
     // entry.reset();
@@ -126,11 +124,15 @@ void setInitialized() {
 
 void setConfigured(bool value) => _settings[configuredKey] = value;
 void setTheme(ThemeOption theme) => _settings[themeKey] = theme.index;
-void setFontScale(double newFontScale) => _settings[fontScaleKey] = newFontScale;
-void setEncryptionStatus(bool newStatus) => _settings[encryptionToggleKey] = newStatus;
-void setAccentColor(Color newColor) => _settings[accentColorKey] = newColor.value;
+void setFontScale(double newFontScale) =>
+    _settings[fontScaleKey] = newFontScale;
+void setEncryptionStatus(bool newStatus) =>
+    _settings[encryptionToggleKey] = newStatus;
+void setAccentColor(Color newColor) =>
+    _settings[accentColorKey] = newColor.value;
+Future<void> setPassword(String newPassword) async =>
+    await encryptor.setPassword(newPassword);
 void setEmotionGraphType(GraphTypes type) => _settings[emotionGraphTypeKey] = type.toString();
-Future<void> setPassword(String newPassword) async => encryptor.setPassword(newPassword);
 void setOtherSetting(String key, Object? value) => _settings[key] = value;
 
 void setMockValues(Map<String, dynamic> value) {
@@ -152,6 +154,7 @@ ThemeData getCurrentTheme() => switch (_settings[themeKey] as int) {
 double getFontScale() => _settings[fontScaleKey];
 bool isEncryptionEnabled() => _settings[encryptionToggleKey];
 Color getAccentColor() => Color(_settings[accentColorKey]);
+GraphTypes getEmotionGraphType() => GraphTypes.values.byName(_settings[emotionGraphTypeKey]);
 Object? getOtherSetting(String key) {
   Object? value = _settings[key];
   if (value == null) {
@@ -161,8 +164,6 @@ Object? getOtherSetting(String key) {
 }
 
 String getVaultFolder() => _settingsStorageDirectory!.path;
-
-GraphTypes getEmotionGraphType() => GraphTypes.values.byName(_settings[emotionGraphTypeKey]);
 
 /// [_handleResetEverythingPress] - Requests confirmation, if confirmed, erases
 ///                                 all user data & passwords securely.
@@ -256,28 +257,31 @@ Future skipToDashboard(BuildContext context) async {
   Future.delayed(const Duration(milliseconds: 1)).whenComplete(() async {
     Navigator.of(context).pop(); //pop loading screen
     Navigator.of(context).pop(); //pop password prompt
-    Navigator.of(context).pushNamed("Dashboard");
-    await showDialog(
-        barrierColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          String? recovery = encryptor.getRecoveryPhrase();
-          return AlertDialog(
-              title: const Text("Recovery Phrase"),
-              backgroundColor: Theme.of(context).colorScheme.onBackground,
-              actions: [
-                TextButton(
-                    key: const Key("Recovery_Phrase_Confirm"),
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Ok")),
-                TextButton(
-                    key: const Key("Recovery_Phrase_Copy"),
-                    onPressed: () =>
-                        Clipboard.setData(ClipboardData(text: recovery!)),
-                    child: const Text("Copy")),
-              ],
-              content: Text('Here is your recovery phrase $recovery!\n\nKeep it safe!'));
-        });
+    Navigator.of(context).pushReplacementNamed("Dashboard");
+    if (isEncryptionEnabled()) {
+      await showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          builder: (context) {
+            String? recovery = encryptor.getRecoveryPhrase();
+            return AlertDialog(
+                title: const Text("Recovery Phrase"),
+                backgroundColor: Theme.of(context).colorScheme.onBackground,
+                actions: [
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Confirm"),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Ok")),
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Copy"),
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: recovery!)),
+                      child: const Text("Copy")),
+                ],
+                content: Text(
+                    'Here is your recovery phrase $recovery!\n\nKeep it safe!'));
+          });
+    }
   });
 }
 
@@ -458,7 +462,7 @@ void handleStartPress(BuildContext context) async {
       attemptLogin(context);
     } else {
       // Password not set, but initialized, no check, just entry to dashboard.
-      Navigator.of(context).pushNamed("Dashboard");
+      Navigator.of(context).pushReplacementNamed("Dashboard");
     }
   } else {
     await createPassword(context);

@@ -20,17 +20,11 @@ class _CalendarPageState extends State<CalendarPage> {
 				child: Column(
 					children: [
 						const Text('Calendar'),
-						Padding(
-							padding: const EdgeInsets.fromLTRB(12, 12, 12, 18),
-							child: Align(
-								child: Column(
-									children: [
-										const Calendar(),
-										EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7)),
-									],
-								),
-							),
+						const Padding(
+						  padding: EdgeInsets.all(8.0),
+						  child: Calendar(),
 						),
+						EmotionGraph(startDate: DateTime(2023, 1, 1), endDate: DateTime(2023, 1, 7),),
 					],
 				),
 			),

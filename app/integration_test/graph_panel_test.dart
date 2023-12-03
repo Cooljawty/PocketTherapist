@@ -8,39 +8,14 @@ import 'package:app/main.dart' as app;
 import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:app/provider/settings.dart' as settings;
 
+import 'test_utils.dart';
+
 void main() {
-
-  setUp(() {
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-  });
-
-  tearDown(() async {
-    await settings.reset();
-  });
-
-
   testWidgets('Displaying emotion time chart', (tester) async {
-    app.main();
-		await tester.pump();
-
-		settings.setMockValues({
-			'emotions': {
-				'Anger': Colors.red,
-				'Sad': Colors.blue,
-				'Happy': Colors.green,
-			},
-			'emotionGraphType': GraphTypes.time.toString(),
-			'configured': true,
-			'encryption': false,
-		});
-		await tester.pump();
-
 		//Navigate to graph page
-		await tester.tap(find.byKey(const Key("Start_Button")));
-    await tester.pumpAndSettle();
-		await tester.tap(find.byKey(const Key("Navbar_Destination_Calendar")));
-    await tester.pumpAndSettle();
+		await startSkipFrontScreen(tester);
+		await pumpUntilFound(tester, find.byKey(const Key("navCalendar")), true);
+		await tap(tester, find.byKey(const Key("navCalendar")), true);
 
 		//Two graphs should exist
 		expect(find.byType(EmotionGraph), findsOneWidget);
@@ -51,27 +26,21 @@ void main() {
 	});
 
   testWidgets('Displaying emotion frequency chart', (tester) async {
-    app.main();
-		await tester.pump();
-
-		settings.setMockValues({
-			'emotions': {
-				'Anger': Colors.red,
-				'Sad': Colors.blue,
-				'Happy': Colors.green,
-			},
-			'emotionGraphType': GraphTypes.frequency.toString(),
-			'configured': true,
-			'encryption': false,
+		await startAppWithSettings(tester, {
+			settings.configuredKey: true,
+			settings.encryptionToggleKey: false,
+			settings.emotionGraphTypeKey: GraphTypes.frequency.toString()
 		});
-		await tester.pump();
 
-		//Navigate to graph page
-		await tester.tap(find.byKey(const Key("Start_Button")));
-    await tester.pumpAndSettle();
-		await tester.tap(find.byKey(const Key("Navbar_Destination_Calendar")));
-    await tester.pumpAndSettle();
+		// Enter the app
+		Finder startButton = find.byKey(const Key("Start_Button"));
+		await pumpUntilFound(tester, startButton);
+		await tap(tester, startButton);
 
+
+		await pumpUntilFound(tester, find.byKey(const Key("navCalendar")), true);
+		await tap(tester, find.byKey(const Key("navCalendar")), true);
+		await tester.pumpAndSettle();
 		//Two graphs should exist
 		expect(find.byType(EmotionGraph), findsOneWidget);
 

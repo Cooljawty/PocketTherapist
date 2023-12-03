@@ -28,7 +28,7 @@ class EmotionGraph extends StatefulWidget {
 		super.key, 
 		required this.startDate, 
 		required this.endDate, 
-		type 
+		type
 	}) : type = type ?? settings.getEmotionGraphType();
 
 	@override
@@ -38,7 +38,7 @@ class EmotionGraph extends StatefulWidget {
 class _EmotionGraphState extends State<EmotionGraph> {
 	static const maxStrength = 60.0;
 
-	static const _months = [ null, 
+	static const _months = [
 		"January", "February", 
 		"March", "April", "May", 
 		"June", "July", "August", 
@@ -56,7 +56,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	Map<String, List<FlSpot>> _emotionData = {};
 	
 	//X is the number of days from the start entry
-	double getX(JournalEntry entry) => entry.date.difference(widget.startDate).inDays.floorToDouble();
+	double getX(JournalEntry entry) => entry.creationDate.difference(widget.startDate).inDays.floorToDouble();
 	double getXFromDay(DateTime day) => day.difference(widget.startDate).inDays.toDouble().floorToDouble();
 	
 	Widget _getTimeChart(){
@@ -92,8 +92,8 @@ class _EmotionGraphState extends State<EmotionGraph> {
 								"$emotion: ",
 								settings.getCurrentTheme().textTheme.displayMedium!,
 								//Print value in emotion's color
-								children: [ 
-									TextSpan( 
+								children: [
+									TextSpan(
 										text: "$value%",
 										style: settings.getCurrentTheme().textTheme.displayMedium!.copyWith(
 											color: emotionList[emotion]
@@ -114,7 +114,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					getDrawingVerticalLine: (_) => FlLine(
 						dashArray: [1, 0],
 						strokeWidth: 0.8,
-						color: gridColor, 
+						color: gridColor,
 					),
 				),
 
@@ -124,7 +124,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 					)
 				),
 
-				//Create a line for each emotion 
+				//Create a line for each emotion
 				lineBarsData: _emotionData.entries.map((entry) => LineChartBarData(
 						show: entry.value.any((value) => value.y != 0),
 						spots: entry.value,
@@ -151,14 +151,15 @@ class _EmotionGraphState extends State<EmotionGraph> {
 
 		//Find the strongest emotion based on calculated radial values
 		var max = 0.0;
-		final strongestEmotion = emotionList[_emotionData.keys.elementAt(emotionValues.lastIndexWhere((emotion) { 
+		var index = emotionValues.lastIndexWhere((emotion) {
 			if (emotion.value > max) {
 				max = emotion.value;
 				return true;
 			} else {
 				return false;
 			}
-		}))];
+		});
+		Color strongestEmotion = index == -1 ? Colors.transparent : emotionList[_emotionData.keys.elementAt(index)] as Color;
 
 		return Container(
 			padding: const EdgeInsets.only(top: 14,),
@@ -207,11 +208,10 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	
 	@override
 	Widget build(BuildContext context) {
-		final entries = entriesBetween(widget.startDate, widget.endDate); 
 		_emotionData = Map.fromIterable(emotionList.keys, value: (i) => List<FlSpot>.generate(getXFromDay(widget.endDate).floor()+1, (day) => FlSpot(day.toDouble(), 0)));
 
 		//Calculate sum strength for each emotion
-		for (var entry in entries){
+		for (var entry in entriesInDateRange(widget.startDate, widget.endDate, entries)){
 			for (var emotion in entry.emotions){
 				final dayIndex = getX(entry).floor();
 				//Set the y position has the highest intensity of the day
@@ -224,7 +224,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
 		} 	
 
 		return Expanded(
-			child: Card( 
+			child: Card(
 				//aspectRatio: 1.75,
 				child: Padding(
 					padding: const EdgeInsets.all(12.0),
@@ -232,8 +232,8 @@ class _EmotionGraphState extends State<EmotionGraph> {
 						children: [
 							Container(
 								margin: const EdgeInsets.only(bottom: 10),
-								child: Text( 
-									"${_months[widget.startDate.month]} ${_daySuffix(widget.startDate.day)} - ${_daySuffix(widget.endDate.day)}", 
+								child: Text(
+									"${_months[widget.startDate.month]} ${_daySuffix(widget.startDate.day)} - ${_daySuffix(widget.endDate.day)}",
 									style: settings.getCurrentTheme().textTheme.titleLarge,
 									textAlign: TextAlign.center,
 								),
@@ -252,178 +252,174 @@ class _EmotionGraphState extends State<EmotionGraph> {
 	}
 }
 
-//TEMPERARY Variables/Classes
-List<JournalEntry> entriesBetween(DateTime start, DateTime end) {
-	final testEntries = <JournalEntry>[
-			JournalEntry(
-				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 1), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 1), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 1, 2), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					Emotion(
-						name: "Anger",
-						color: Colors.red,
-						strength: 8,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 3), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 15,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 3), 
-				emotions: [
-					Emotion(
-						name: "Anger",
-						color: Colors.red,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 1", entryText: "", 
-				date: DateTime(2023, 1, 17), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day one entry 2", entryText: "", 
-				date: DateTime(2023, 1, 25), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 1, 30), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 30,
-					),
-					Emotion(
-						name: "Anger",
-						color: Colors.red,
-						strength: 8,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 1", entryText: "", 
-				date: DateTime(2023, 1, 26), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 15,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Day thrree entry 2", entryText: "", 
-				date: DateTime(2023, 1, 12), 
-				emotions: [
-					Emotion(
-						name: "Anger",
-						color: Colors.red,
-						strength: 60,
-					),
-				]
-			),
-			JournalEntry(
-				title: "", entryText: "", 
-				date: DateTime(2023, 1, 11), 
-			),
-			JournalEntry(
-				title: "Happy day", entryText: "", 
-				date: DateTime(2023, 1, 24), 
-				emotions: [
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-				]
-			),
-			JournalEntry(
-				title: "Out of range entry", entryText: "", 
-				date: DateTime(2023, 1, 14), 
-				emotions: [
-					Emotion(
-						name: "Sad",
-						color: Colors.blue,
-						strength: 60,
-					),
-					Emotion(
-						name: "Happy",
-						color: Colors.green,
-						strength: 30,
-					),
-					Emotion(
-						name: "Anger",
-						color: Colors.red,
-						strength: 30,
-					),
-				]
-			),
-		];
 
-	testEntries.retainWhere((e) => ( !e.date.isBefore(start) && !e.date.isAfter(end)));
-	testEntries.sort((a, b) => a.date.compareTo(b.date));
-	return testEntries;
-}
+
+// final testEntries = <JournalEntry>[
+// 	JournalEntry(
+// 			title: "Day one entry 1", entryText: "",
+// 			date: DateTime(2023, 1, 1),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 60,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day one entry 2", entryText: "",
+// 			date: DateTime(2023, 1, 1),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "", entryText: "",
+// 			date: DateTime(2023, 1, 2),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 30,
+// 				),
+// 				Emotion(
+// 					name: "Anger",
+// 					color: Colors.red,
+// 					strength: 8,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day thrree entry 1", entryText: "",
+// 			date: DateTime(2023, 1, 3),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 15,
+// 				),
+// 				Emotion(
+// 					name: "Happy",
+// 					color: Colors.green,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day thrree entry 2", entryText: "",
+// 			date: DateTime(2023, 1, 3),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Anger",
+// 					color: Colors.red,
+// 					strength: 60,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day one entry 1", entryText: "",
+// 			date: DateTime(2023, 1, 17),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 60,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day one entry 2", entryText: "",
+// 			date: DateTime(2023, 1, 25),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "", entryText: "",
+// 			date: DateTime(2023, 1, 30),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 30,
+// 				),
+// 				Emotion(
+// 					name: "Anger",
+// 					color: Colors.red,
+// 					strength: 8,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day thrree entry 1", entryText: "",
+// 			date: DateTime(2023, 1, 26),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 15,
+// 				),
+// 				Emotion(
+// 					name: "Happy",
+// 					color: Colors.green,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Day thrree entry 2", entryText: "",
+// 			date: DateTime(2023, 1, 12),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Anger",
+// 					color: Colors.red,
+// 					strength: 60,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 		title: "", entryText: "",
+// 		date: DateTime(2023, 1, 11),
+// 	),
+// 	JournalEntry(
+// 			title: "Happy day", entryText: "",
+// 			date: DateTime(2023, 1, 24),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Happy",
+// 					color: Colors.green,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// 	JournalEntry(
+// 			title: "Out of range entry", entryText: "",
+// 			date: DateTime(2023, 1, 14),
+// 			emotions: [
+// 				Emotion(
+// 					name: "Sad",
+// 					color: Colors.blue,
+// 					strength: 60,
+// 				),
+// 				Emotion(
+// 					name: "Happy",
+// 					color: Colors.green,
+// 					strength: 30,
+// 				),
+// 				Emotion(
+// 					name: "Anger",
+// 					color: Colors.red,
+// 					strength: 30,
+// 				),
+// 			]
+// 	),
+// ];
+

@@ -70,8 +70,6 @@ class _RootAppState extends State<RootApp> {
                         "Plans": (context) => const EntryPanelPage(showPlans: true),
                         "Settings": (context) => const SettingsPage(),
                         "Welcome": (context) => const WelcomePage(),
-                        "Tags": (context) => const TagSettingsPage(),
-                        "NewEntry": (context) => const EntryPage(),
                         // "Emotions": (context) => const EmotionSettingsPage(),
                       },
                       initialRoute: "Welcome",

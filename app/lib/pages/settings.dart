@@ -1,15 +1,15 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:app/provider/entry.dart';
 import 'package:app/uiwidgets/decorations.dart';
+import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/theme_settings.dart';
 import 'package:app/provider/settings.dart' as settings;
 import 'package:flutter/material.dart';
-import 'package:app/uiwidgets/emotion_chart.dart';
 
 class SettingsPage extends StatefulWidget {
-  final List<Tag>? existingTags;
-  const SettingsPage({super.key, this.existingTags});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -138,16 +138,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                     )),
-
-								//Toggleing emotion graph display type
+//Toggleing emotion graph display type
                 StandardElevatedButton(
                     onPressed: ()=> setState(() {
-											final otherGraphType = switch(settings.getEmotionGraphType()) {
-												GraphTypes.time => GraphTypes.frequency,
-												GraphTypes.frequency => GraphTypes.time,
-											};
-											settings.setEmotionGraphType(otherGraphType);
-										}),
+                      final otherGraphType = switch(settings.getEmotionGraphType()) {
+                        GraphTypes.time => GraphTypes.frequency,
+                        GraphTypes.frequency => GraphTypes.time,
+                      };
+                      settings.setEmotionGraphType(otherGraphType);
+                    }),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -164,7 +163,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         )
                       ],
                     )),
-								//Opening valut file
+
                 StandardElevatedButton(
                     onPressed: settings.loadFile,
                     child: Row(
