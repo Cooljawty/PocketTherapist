@@ -49,3 +49,48 @@ This is the libraries folder, but this is really the dart source folder. This is
 
 ### app/test
 - This is where the unit tests exist.
+
+# Environment
+Below is the output of `flutter doctor -v`, you can use this to tune your installation to ours.
+
+
+[✓] Flutter (Channel stable, 3.16.0, on Arch Linux 6.6.2-arch1-1, locale en_US.UTF-8)
+- Flutter version 3.16.0 on channel stable at /opt/flutter
+- Upstream repository https://github.com/flutter/flutter.git
+- Framework revision db7ef5bf9f (3 weeks ago), 2023-11-15 11:25:44 -0800
+- Engine revision 74d16627b9
+- Dart version 3.2.0
+- DevTools version 2.28.2
+
+[!] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+- Android SDK at /opt/android-sdk
+- Platform android-34, build-tools 34.0.0
+- ANDROID_HOME = /opt/android-sdk
+- ANDROID_SDK_ROOT = /opt/android-sdk
+- Java binary at: /opt/android-studio/jbr/bin/java
+- Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b829.9-10027231)
+- ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
+
+[✗] Chrome - develop for the web (Cannot find Chrome executable at google-chrome)
+- ! Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome executable.
+
+[✓] Linux toolchain - develop for Linux desktop
+- clang version 16.0.6
+- cmake version 3.27.9
+- ninja version 1.11.1
+- pkg-config version 2.0.3
+
+[✓] Android Studio (version 2022.3)
+- Android Studio at /opt/android-studio
+- Flutter plugin version 75.1.2
+- Dart plugin can be installed from:
+- 🔨 https://plugins.jetbrains.com/plugin/6351-dart
+- Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b829.9-10027231)
+
+[✓] Connected device (2 available)
+- sdk gphone64 x86 64 (mobile) • emulator-5554 • android-x64 • Android 14 (API 34) (emulator)
+- Linux (desktop)              • linux         • linux-x64   • Arch Linux 6.6.2-arch1-1
+
+[✓] Network resources
+- All expected network resources are available.
+****
