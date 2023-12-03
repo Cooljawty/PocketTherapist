@@ -33,10 +33,8 @@ class _RootAppState extends State<RootApp> {
     _listener = AppLifecycleListener(
       onShow: () => _handleTransition('show'),
       onResume: () => _handleTransition('resume'),
-      onHide: () => _handleTransition('hide'),
       onInactive: () => _handleTransition('inactive'),
       onPause: () => _handleTransition('pause'),
-      onDetach: () => _handleTransition('detach'),
       onRestart: () => _handleTransition('restart'),
       // This fires for each state change. Callbacks above fire only for
       // specific state transitions.

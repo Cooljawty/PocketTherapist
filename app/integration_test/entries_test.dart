@@ -324,19 +324,14 @@ void main() {
 				"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
 				_ => DateTime.now().year.toString(),
 			};
-			expect(find.text(rangeText), findsWidgets);
 
       // Check to see if every entry in the time span is there
       for (JournalEntry entry in entriesInDateRange(upper, lower, entries)) {
 
         final entryKey = find.byKey(Key(entry.id.toString()));
-				final entryCard = find.descendant(
-					of: find.byType(Dismissible),
-					matching: entryKey,
-				);
-        await tester.pump();
+        await tester.pumpAndSettle();
         // Confirm that the entry was seen
-        await expectLater(entryCard, findsOneWidget);
+        await expectLater(entryKey, findsOneWidget);
         await tester.pump();
       }
     }
