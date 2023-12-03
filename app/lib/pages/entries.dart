@@ -127,7 +127,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         width: MediaQuery.of(context).size.width / 6,
                         child: ElevatedButton(
                             onPressed: () {
-                              toggleNav();
+                              toggleStats();
                             },
                             style: ElevatedButton.styleFrom(
                               shape: const CircleBorder(),
@@ -325,7 +325,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                               TextSpan(
                                   style: TextStyle(fontSize: 20),
                                   text:
-                                      'Most Frequent Emotions: ${getMostFrequentEmotion(entries)} \n'),
+                                      'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'),
                               TextSpan(
                                   style: TextStyle(fontSize: 20),
                                   text:
@@ -339,114 +339,34 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                 ),
               ),
             ]),
-            bottomNavigationBar: Stack(
-              children: [
-                Visibility(
-                  visible: !isVisibleNav,
-                  child: CustomNavigationBar(
-                      selectedIndex: widget.showPlans ? 4 : 1,
+            bottomNavigationBar: CustomNavigationBar(
+                selectedIndex: widget.showPlans ? 4 : 1,
 
-                      /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
-                      onDestinationSelected: (index) async {
-                        switch (index) {
-                          case 2:
-                            await makeNewEntry(context);
-                            //update so filter new entry appear in filtered list after being made
-                            updateFilteredList(searchBarInput.text);
-                            return;
-                          case 5:
-                            Navigator.of(context).pushNamed(CustomNavigationBar
-                                .defaultDestinations[index].label);
-                            return;
-                          case _:
-                            Navigator.of(context).pushReplacementNamed(
-                                CustomNavigationBar
-                                    .defaultDestinations[index].label);
-                            break;
-                        }
-                      }),
-                ),
-                //second nav
-                Visibility(
-                    visible: isVisibleNav,
-                    child: BottomNavigationBar(
-                      currentIndex: currPos,
-                      onTap: (int index) => setState(() {
-                        currPos = index;
-                        if (index == 0) {
-                          toggleStats();
-                        }
-                      }),
-                      backgroundColor: Colors.deepPurple,
-                      items: [
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.access_time_rounded),
-                            label: "Stats"),
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.abc), label: "Select All"),
-                      ],
-                    ))
-              ],
-            ));
+                /// We need a custom navigator here because the page needs to update when a new entry is made, but make new entry should be separate from everything else.
+                onDestinationSelected: (index) async {
+                  switch (index) {
+                    case 2:
+                      await makeNewEntry(context);
+                      //update so filter new entry appear in filtered list after being made
+                      updateFilteredList(searchBarInput.text);
+                      return;
+                    case 5:
+                      Navigator.of(context).pushNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      return;
+                    case _:
+                      Navigator.of(context).pushReplacementNamed(
+                          CustomNavigationBar.defaultDestinations[index].label);
+                      break;
+                  }
+                }));
       },
     );
   }
 
-//   /// Filter JournalEntries to only include the past N days
-//   /// based on what the current [chosenDisplay] is
-//   List<JournalEntry> filterByTime(List<JournalEntry> entries) {
-//     // Amount of days to filter entries by
-//     int days = 0;
-//     if (chosenDisplay == DisplayOption.day)
-//       days = 1;
-//     else if (chosenDisplay == DisplayOption.week)
-//       days = 7;
-//     else if (chosenDisplay == DisplayOption.month)
-//       days = 31;
-//     else
-//       days = 365;
-//
-//     //sort entries from this month
-//     return entries
-//         .where((e) => (e.date.isBefore(DateTime.now()) &&
-//             e.date.isAfter(DateTime.now().subtract(Duration(days: days)))))
-//         .toList();
-//   }
-
-// //COMMENT HERE:
-//   // start of stats functions chosenDisplay == DisplayOption.week
-//   String getAverageEmotion(List<JournalEntry> entries) {
-//     List<JournalEntry> filteredEntries = filterByTime(entries);
-//     double averageIntensity = 0;
-//     int totalIntensity = 0;
-//     List<int> strengthList = [];
-//     bool emotionsExistFlag = false;
-//     //grab entry
-//     for (var entry in filteredEntries) {
-//       for (var emotion in entry.emotions) { // grab all the emotions in the entry
-//         strengthList.add(emotion.strength);
-//       } //ends inner for
-//     } // ends outer for
-//
-//     if (strengthList.length == 0) return "0.0";
-//     //get avg intensity
-//     for (var strength in strengthList) {
-//       totalIntensity += strength;
-//     }
-//
-//     //calculate average
-//     averageIntensity = totalIntensity / strengthList.length;
-//     return averageIntensity.toStringAsFixed(2);
-//   } //ends func
-
   String getMostFrequentEmotion(List<JournalEntry> entries) {
-//     List<JournalEntry> filteredEntries = filterByTime(entries);
     List<JournalEntry> filteredEntries = _getEntriesInRange();
 
-    var maxValue = 0;
-    var maxKey = "";
-    //list if two or more emotions are the most frequent
-    List<String> frequentEmotions = [];
     //map to track emotion use
     Map<String, int> emotionsAndAmounts = {
       'Happy': 0,
@@ -458,54 +378,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       'Surprise': 0,
       'Anticipation': 0
     };
-    //no entries
-    if (filteredEntries.isEmpty) {
-      return "N/A";
-    }
-    //go through all entries in the list
-    for (var entry in filteredEntries) {
-      List<Emotion> entryEmotions = entry.emotions;
-      //go through all emotions in the entry
-      for (var emotion in entryEmotions) {
-        //get the current occurrence of the emotion and increase by 1
-        int? valBeforeUpdate = emotionsAndAmounts[emotion.name];
-        emotionsAndAmounts.update(
-            emotion.name, (value) => valBeforeUpdate! + 1);
-      } //ends inner for
-    } // ends outer for
-    emotionsAndAmounts.forEach((key, value) {
-      if (value > maxValue && value > 0) {
-        //find the most frequent emotion and add it to the list
-        maxKey = key;
-        maxValue = value;
-        frequentEmotions.clear(); //found a new max
-        frequentEmotions.add(maxKey);
-      }
-      if (value == maxValue && !frequentEmotions.contains(key) && value > 0) {
-        frequentEmotions.add(key); //two or more emotions are the max
-      }
-    });
-    return frequentEmotions.join(", ");
-  }
-
-  String getEmotionsTillNow(List<JournalEntry> entries) {
-//     List<JournalEntry> filteredEntries = filterByTime(entries);
-    List<JournalEntry> filteredEntries = _getEntriesInRange();
-
-    //list if two or more emotions are the most frequent
-    List<String> frequentEmotions = [];
-    //map to track emotion use
-    Map<String, int> emotionsAndAmounts = {
-      'Happy': 0,
-      'Trust': 0,
-      'Fear': 0,
-      'Sad': 0,
-      'Disgust': 0,
-      'Anger': 0,
-      'Surprise': 0,
-      'Anticipation': 0
-    };
-
     //no entries
     if (filteredEntries.isEmpty) {
       return "N/A";
@@ -514,12 +386,50 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     for (var entry in filteredEntries) {
       //go through all emotions in the entry
       for (var emotion in entry.emotions) {
-        emotionsAndAmounts[emotion.name] = emotionsAndAmounts[emotion.name]! + 1;
-        //get the current occurrence of the emotion and increase by 1
-//         int? valBeforeUpdate = emotionsAndAmounts[emotion.name];
-//         emotionsAndAmounts.update(
-//             emotion.name, (value) => valBeforeUpdate! + 1);
+        emotionsAndAmounts[emotion.name] =
+            emotionsAndAmounts[emotion.name]! + 1;
+      } //ends inner for
+    } // ends outer for
+
+    var maxValue = 0;
+    var maxKey = "";
+    emotionsAndAmounts.forEach((key, value) {
+      if (value > maxValue && value > 0) {
         //find the most frequent emotion and add it to the list
+        maxKey = key;
+        maxValue = value;
+      }
+    });
+    return maxKey;
+  }
+
+  String getEmotionsTillNow(List<JournalEntry> entries) {
+    List<JournalEntry> filteredEntries = _getEntriesInRange();
+
+    //list if two or more emotions are the most frequent
+    List<String> frequentEmotions = [];
+    //map to track emotion use
+    Map<String, int> emotionsAndAmounts = {
+      'Happy': 0,
+      'Trust': 0,
+      'Fear': 0,
+      'Sad': 0,
+      'Disgust': 0,
+      'Anger': 0,
+      'Surprise': 0,
+      'Anticipation': 0
+    };
+
+    //no entries
+    if (filteredEntries.isEmpty) {
+      return "N/A";
+    }
+    //go through all entries in the list
+    for (var entry in filteredEntries) {
+      //go through all emotions in the entry, increase count of that emotion
+      for (var emotion in entry.emotions) {
+        emotionsAndAmounts[emotion.name] =
+            emotionsAndAmounts[emotion.name]! + 1;
       } //ends inner for
     } // ends outer for
 
@@ -533,7 +443,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   } //ends func
 
   String getMostCommonTag(List<JournalEntry> entries) {
-//     List<JournalEntry> filteredEntries = filterByTime(entries);
     List<JournalEntry> filteredEntries = _getEntriesInRange();
 //list if two or more tags are the most frequent
     List<String> frequentTags = [];
@@ -542,36 +451,30 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     Map<String, int> tagsAndOccurrences = {};
     //go through every entry
     for (var entry in filteredEntries) {
-      var maxValue = 0;
-      var maxKey = "";
       List<Tag> entryTags = entry.tags;
       //go through each tag in the entry
       for (var tag in entryTags) {
         //if the tag is not a key in map add it, assign val to 0
-        if (tagsAndOccurrences.containsKey(tag.name) == false) {
-          tagsAndOccurrences[tag.name] = 0;
+        if (!tagsAndOccurrences.containsKey(tag.name)) {
+          tagsAndOccurrences[tag.name] = 1;
         } else {
-          //tag exist and has appeared again, increase val by 1
-          int? valBeforeUpdate = tagsAndOccurrences[tag.name];
-          tagsAndOccurrences.update(tag.name, (value) => valBeforeUpdate! + 1);
+          tagsAndOccurrences[tag.name] = tagsAndOccurrences[tag.name]! + 1;
         }
-        //go through map and find most frequent tag based on value
-        tagsAndOccurrences.forEach((key, value) {
-          if (value > maxValue) {
-            maxKey = key;
-            maxValue = value;
-            frequentTags.clear(); //found a new max
-            frequentTags.add(maxKey);
-          } //keys occur equal number of times, and keys are not the tag isn't already in the list.
-          if (value == maxValue &&
-              key != maxKey &&
-              frequentTags.contains(key) == false) {
-            frequentTags.add(key); //two or more emotions are the max
-          }
-        });
       }
     }
-    return frequentTags.join(", ");
+
+    int maxValue = 0;
+    String freqTag = "";
+    //go through map and find most frequent tag based on value
+    tagsAndOccurrences.forEach((key, value) {
+      if (value > maxValue && value > 0) {
+        //find the most frequent tag and add it to the list
+        freqTag = key;
+        maxValue = value;
+      }
+    });
+
+    return freqTag;
   }
 
   //end of stats functions
@@ -706,15 +609,15 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return widget.showPlans ? filteredPlans : filteredEntries;
   }
 
-  void toggleNav() async {
-    setState(() {
-      isVisibleNav = !isVisibleNav;
-      //bottomNavigationBar = CustomEntriesNav;
-    });
-    if (isVisibleStats) {
-      toggleStats();
-    }
-  }
+  // void toggleNav() async {
+  //   setState(() {
+  //     isVisibleNav = !isVisibleNav;
+  //     //bottomNavigationBar = CustomEntriesNav;
+  //   });
+  //   if (isVisibleStats) {
+  //     toggleStats();
+  //   }
+  // }
 
   void toggleStats() async {
     print("isVisibleStats:");
