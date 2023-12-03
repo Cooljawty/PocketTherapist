@@ -99,4 +99,8 @@ Below is the output of `flutter doctor -v`, you can use this to tune your instal
 # Code Coverage
 We use CodeCov in this repository for easy automated upload and processing of codecoverage. But it could just as easily be acomplished with genhtml +lcov
 
-[]!(https://codecov.io/gh/S1robe/Pocket-Therapist/graphs/tree.svg?token=UV1ODNUYHT)
+![codecov](https://codecov.io/gh/S1robe/Pocket-Therapist/graph/badge.svg?token=UV1ODNUYHT)
+
+`This is what our code coverage looks like`
+
+![](https://codecov.io/gh/S1robe/Pocket-Therapist/graphs/tree.svg?token=UV1ODNUYHT)
