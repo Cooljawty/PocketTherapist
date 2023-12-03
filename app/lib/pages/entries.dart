@@ -197,7 +197,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       itemBuilder: (context, index) {
                         // get one item
                         final item = items[index];
-                        final time = item.date;
+                        final time = item.;
 
                         // Dividers by filter
                         bool isSameDate = true;

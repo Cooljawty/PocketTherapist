@@ -58,6 +58,96 @@ Map<String, Color> emotionList = {
 //
 //};
 
+const Map<String, List<String>> templateSet = {
+  "Relationships": [
+    "Who do you trust most? Why?",
+    "What are your strengths in relationships (kindness, empathy, etc.)?",
+    "How do you draw strength from loved ones?",
+    "What do you value most in relationships (trust, respect, sense of humor, etc.)?",
+    "What three important things have you learned from previous relationships?",
+    "What five traits do you value most in potential partners?",
+    "How do you show compassion to others? How can you extend that same compassion to yourself?",
+    "What are three things working well in your current relationship? What are three things that could be better?",
+    "What boundaries could you set in your relationships to safeguard your own well-being?",
+    "What do you most want your children (or future children) to learn from you?",
+    "How can you better support and appreciate your loved ones?",
+    "What does love mean to you? How do you recognize it in a relationship?",
+    "List three things you’d like to tell a friend, family member, or partner.",
+   ],
+  "Career" : [
+    "How do you use your personal strengths and abilities at work?",
+    "How do your co-workers and supervisors recognize your strengths?",
+    "How does work fulfill you? Does it leave you wanting more?",
+    "What part of your workday do you most enjoy?",
+    "What about your work feels real, necessary, or important to you?",
+    "Do you see yourself in the same job in 10 years?",
+    "What are your career ambitions?",
+    "What three things can help you begin working to accomplish those goals?",
+    "What can you do to improve your work performance?",
+    "What does your work teach you? Does it offer continued opportunities for learning and growth?",
+    "Does your work drain or overwhelm you? Why? Is this something you can change?",
+  ],
+  "Reflection" : [
+    "What values do you consider most important in life (honesty, justice, altruism, loyalty, etc.)? How do your actions align with those values?",
+    "What three changes can you make to live according to your personal values?",
+    "Describe yourself using the first 10 words that come to mind. Then, list 10 words that you’d like to use to describe yourself. List a few ways to transform those descriptions into reality.",
+    "What do you appreciate most about your personality? What aspects do you find harder to accept?",
+    "Explore an opinion or two that you held in the past but have since questioned or changed. What led you to change that opinion?",
+    "List three personal beliefs that you’re willing to reconsider or further explore.",
+    "Finish this sentence: “My life would be incomplete without …”",
+    "Describe one or two significant life events that helped shape you into who you are today.",
+    "When do you trust yourself most? When do you find it harder to have faith in your instincts?",
+    "What three things would you most like others (loved ones, potential friends and partners, professional acquaintances, etc.) to know about you?",
+  ],
+  "Emotions": [
+    "What difficult thoughts or emotions come up most frequently for you?",
+    "Which emotions do you find hardest to accept (guilt, anger, disappointment, etc.)? How do you handle these emotions?",
+    "Describe a choice you regret. What did you learn from it?",
+    "What parts of daily life cause stress, frustration, or sadness? What can you do to change those experiences?",
+    "What are three things that can instantly disrupt a good mood and bring you down? What strategies do you use to counter these effects?",
+    "What are three self-defeating thoughts that show up in your self-talk? How can you reframe them to encourage yourself instead?",
+    "What go-to coping strategies help you get through moments of emotional or physical pain?",
+    "Who do you trust with your most painful and upsetting feelings? How can you connect with them when feeling low?",
+    "What do you fear most? Have your fears changed throughout life?",
+  ],
+  "Goals": [
+    "What parts of life surprised you most? What turned out the way you expected it would?",
+    "What three things would you share with your teenage self? What three questions would you want to ask an older version of yourself?",
+    "List three important goals. How do they match up to your goals from 5 years ago?",
+    "Do your goals truly reflect your desires? Or do they reflect what someone else (a parent, partner, friend, etc.) wants for you?",
+    "What helps you stay focused and motivated when you feel discouraged?",
+    "What do you look forward to most in the future?",
+    "Identify one area where you’d like to improve. Then, list three specific actions you can take to create that change.",
+    "How do you make time for yourself each day?",
+    "What do you most want to accomplish in life?",
+    "List three obstacles lying in the way of your contentment or happiness. Then, list two potential solutions to begin overcoming each obstacle.",
+],
+};
+
+String getTemplateEntryBody(String category, int num) {
+  // If category doenst exist we dont generate anything.
+  if(templateSet[category] == null) return "";
+  List<String> questions = List.from(templateSet[category]!);
+  questions.shuffle(); // Shuffle to make things random, doesnt matter if it modifies.
+  int length = questions.length;
+  if(num > length) num = length;
+  if(num == length) return questions.join("\n\n\n"); // Join questions with 2 spaces between for answering.
+
+  // num < length
+  Set<int> indexes = {};
+  // Generate 'num' random unique numbers.
+  while(indexes.length != num){indexes.add(Random().nextInt(length));}
+  return indexes.map((e) => questions[e]).join("\n\n\n"); // pull those questions and join them.
+}
+
+(String, String) getTemplateRandom() {
+  String cat, body = "";
+  cat = templateSet.keys.toList()[Random().nextInt(templateSet.length)];
+  body = templateSet[cat]![Random().nextInt(templateSet[cat]!.length)];
+  return (cat, body);
+}
+
+
 void loadTagsEmotions() {
 //load tags
   Object? foundTags = settings.getOtherSetting("tags");
@@ -163,7 +253,7 @@ class JournalEntry implements Comparable<JournalEntry> {
 
   // year, month, day
   DateTime creationDate = DateTime.now();
-  DateTime date = DateTime(1970, 12, 31);
+  DateTime? scheduledDate;
   List<Tag> tags = [];
   List<Emotion> emotions = [];
 
@@ -172,10 +262,12 @@ class JournalEntry implements Comparable<JournalEntry> {
   JournalEntry({
     required this.title,
     required this.entryText,
-    required this.date,
     this.tags = const [],
     this.emotions = const [],
+    this.scheduledDate,
+    DateTime? dateOverride
   }) {
+    if(dateOverride !=null) creationDate = dateOverride;
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
 
@@ -194,7 +286,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     }
     if (newTags != null) tags = newTags;
     if (newEmotions != null) emotions = newEmotions;
-    if (newDate != null) date = newDate;
+    if (newDate != null) scheduledDate = newDate;
   }
 
   List<Color> getGradientColors() {
@@ -245,7 +337,7 @@ class JournalEntry implements Comparable<JournalEntry> {
   /// we will compare them based on the [title]
   @override
   int compareTo(JournalEntry other) {
-    int order = other.date.compareTo(date);
+    int order = other.creationDate.compareTo(creationDate);
     return order == 0 ? other.title.compareTo(title) : order;
   }
 }
@@ -258,9 +350,9 @@ class Plan extends JournalEntry {
   Plan({
     required super.title,
     required super.entryText,
-    required super.date,
     super.tags,
     super.emotions,
+    required super.scheduledDate,
   }) {
     planCompleted = false;
   }
@@ -271,6 +363,15 @@ class Plan extends JournalEntry {
   void toggleCompletion() {
     planCompleted = !planCompleted;
     completionDate = planCompleted ? DateTime.now() : null;
+  }
+
+  /// If this [JournalEntry] has the same [earliestDate] as [other]
+  /// we will compare them based on the [title]
+  @override
+  int compareTo(JournalEntry other) {
+    if(other.scheduledDate == null) return -1;
+    int order = other.scheduledDate!.compareTo(scheduledDate!);
+    return order == 0 ? other.title.compareTo(title) : order;
   }
 }
 
@@ -285,14 +386,14 @@ Future<void> makeNewEntry(BuildContext context) async {
 }
 
 Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry>entryList) => entryList.where((entry) {
-	return (entry.date.isBefore(endDate.add(const Duration(days: 1))) && entry.date.isAfter(startDate.subtract(const Duration(days: 1))))
-	|| DateTime(entry.date.year, entry.date.month, entry.date.day) == DateTime(startDate.year, startDate.month, startDate.day)
-	|| DateTime(entry.date.year, entry.date.month, entry.date.day) == DateTime(endDate.year, endDate.month, endDate.day);
+	return (entry.creationDate.isBefore(endDate.add(const Duration(days: 1))) && entry.creationDate.isAfter(startDate.subtract(const Duration(days: 1))))
+	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(startDate.year, startDate.month, startDate.day)
+	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(endDate.year, endDate.month, endDate.day);
 });
 
 Iterable<JournalEntry> plansInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry> planList) => planList.where((plan) {
-	return (plan.date.isBefore(endDate.add(const Duration(days: 1))) && plan.date.isAfter(startDate.subtract(const Duration(days: 1))))
-	|| DateTime(plan.date.year, plan.date.month, plan.date.day) == DateTime(startDate.year, startDate.month, startDate.day)
-	|| DateTime(plan.date.year, plan.date.month, plan.date.day) == DateTime(endDate.year, endDate.month, endDate.day);
+	return (plan.creationDate.isBefore(endDate.add(const Duration(days: 1))) && plan.creationDate.isAfter(startDate.subtract(const Duration(days: 1))))
+	|| DateTime(plan.creationDate.year, plan.creationDate.month, plan.creationDate.day) == DateTime(startDate.year, startDate.month, startDate.day)
+	|| DateTime(plan.creationDate.year, plan.creationDate.month, plan.creationDate.day) == DateTime(endDate.year, endDate.month, endDate.day);
 });
 
