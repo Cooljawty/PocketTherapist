@@ -319,11 +319,11 @@ void main() {
       DateTime lower = upper.subtract(const Duration(days: 6));
 
       // See if range label is displaying correctly
-			var rangeText = switch(filter){
-				"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
-				"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
-				_ => DateTime.now().year.toString(),
-			};
+			// var rangeText = switch(filter){
+			// 	"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
+			// 	"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
+			// 	_ => DateTime.now().year.toString(),
+			// };
 
       // Check to see if every entry in the time span is there
       for (JournalEntry entry in entriesInDateRange(upper, lower, entries)) {
