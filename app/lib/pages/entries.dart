@@ -79,16 +79,16 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   final TextEditingController searchBarInput = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    items = widget.showPlans ? plans : entries ;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    entries.sort();
-    plans.sort();
 		if (widget.targetDate != null ){
 			items = _getEntriesInRange();
 		}
-
-    if (widget.showPlans) {
-      items = plans.toList();
-    }
     items.sort();
     return Consumer<ThemeSettings>(
       builder: (context, value, child) {
@@ -275,17 +275,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                     },
                                   );
                                 },
-                                child: DisplayCard(
-                                  entry: item,
-                                  //function will be used to update the listView builder with newest search results after a user saves a journal entry.
-                                  //ex) if a user filters for all calm entries and the user edits one entry to remove the calm tag,
-                                  //after saving this either the filters should still apply to the content and the journal entry
-                                  //should not be displayed or we should reset filters. The current implementation reruns the filter
-                                  //ensuring the search bar and filtered tag list are accurate to the screen and edited entry might not be displayed
-                                  // but could be altered to reset search bars instead of filtering if its prefered.
-                                  updateDisplay: () =>
-                                      updateFilteredList(searchBarInput.text),
-                                ),
+                                child: DisplayCard(entry: item),
                               )
                             ]); // if in the same filter header list, then just make a new entry
                       },
@@ -388,51 +378,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     }
     return chips;
   }
-
-//
-// //filter with the selected tags array to check for compatable journal entries
-//   void filterByTag() {
-//     //search is now bounded by items because updateFiltedList
-//     // already searched for compatable entries and put them in items
-//     // also using toList to duplicate data instead of grabbing memory address
-//
-//     //
-//     // List<JournalEntry> filteredList = items.toList();
-//     // //if tag list for filter is empty then we return without running tag search
-//     // if (selectedTags.isNotEmpty) {
-//     //   for (int i = 0; i < items.length; i++) {
-//     //     //turn journal entry tag list into a List of string names for filter
-//     //     List<String> journalTagsNames =
-//     //         items[i].tags.map((currentTag) => currentTag.name).toList();
-//     //     for (int j = 0; j < selectedTags.length; j++) {
-//     //       //for each selected tag we should find the correlating tag in the journal entry
-//     //       //if not then we toss the entry from the search
-//     //       if (!journalTagsNames.contains(selectedTags[j].name)) {
-//     //         //filtered tag not found within journal entry so remove it
-//     //         filteredList.remove(items[i]);
-//     //         j = selectedTags.length;
-//     //       }
-//     //     }
-//     //   }
-//     // }
-//     //if tags are reimplemented as List<string> then the following implementation can be used
-//     //current issue is that the tag has values do not always match because tag is a declared type
-//     //but when search is done on strings the following code should work as expected
-//     //Map<int, String> journalTagList = {};
-//     ////compare each journal entries tag list
-//     //for (int i = 0; i < items.length; i++) {
-//     //  //using a tag map we can check if the journal entry contains each tag in the filter
-//     //  journalTagList = items[i].tags.asMap();
-//     //  for (int j = 0; j < selectedTags.length; j++) {
-//     //    if (!journalTagList.containsValue(selectedTags[j])) {
-//     //      //remove it from the compatable filter list
-//     //      filteredList.remove(items[i]);
-//     //      j = selectedTags.length;
-//     //    }
-//     //  }
-//     //}
-//     setState((){});
-//   }
 
 	List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date

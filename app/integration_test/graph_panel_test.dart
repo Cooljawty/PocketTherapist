@@ -48,5 +48,4 @@ void main() {
 		final emotionGraph = find.byType(RadarChart);
 		expect(emotionGraph, findsOneWidget);
 	});
-
 }
