@@ -9,10 +9,11 @@ import 'package:app/helper/dates_and_times.dart';
 
 // Display options
 enum DisplayOption{ 
-	week, month, year; 
+	day, week, month, year;
 
 	@override
 	String toString() => switch(this) {
+    DisplayOption.day => "Day",
 		DisplayOption.week => "Week",
 		DisplayOption.month => "Month",
 		DisplayOption.year => "Year",
@@ -144,6 +145,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           // if changed set new display option
 													onChanged: (item) => setState(() {
 														chosenDisplay = switch(item) {
+                              "Day" => DisplayOption.day,
 															"Week" => DisplayOption.week,
 															"Month" => DisplayOption.month,
 															"Year" => DisplayOption.year,
@@ -330,7 +332,11 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
       return '${time.formatDate().month} ${time.year.toString()}';
-    } else {
+    }
+    else if (chosenDisplay == DisplayOption.day){
+      return '${time.formatDate().day} ${time.formatDate().month} ${time.year.toString()}';
+    }
+    else {
       // If yearly, only display year
       return time.year.toString();
     }
@@ -410,22 +416,28 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 	List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date
 		//Show entreis in range of given date or from today
+    print("widget.targetDate: ${widget.targetDate}==================+++++++++++++++");
 		final today = widget.targetDate ?? DateTime.now();
+    print("Choosen Display:${chosenDisplay}*********************************");
 		final startDate = switch(chosenDisplay) {
-			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)), 
+      DisplayOption.day => today.subtract(Duration(days: 1)),
+      DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
 			DisplayOption.month => DateTime(today.year, today.month, 1), 
 			DisplayOption.year => DateTime(today.year, 1, 1), 
 		};
 		final endDate = switch(chosenDisplay) {
+    DisplayOption.day => today.add(Duration(days: 1)),
 			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => (today.month < DateTime.december
+			DisplayOption.month => (today.month < DateTime.december//next month of this year, or if in december, this year
 				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
-				.subtract(const Duration(days: 1)),
+				.subtract(const Duration(days: 1)),//ends month
 			DisplayOption.year => DateTime(today.year+1, 1, 1)
 				.subtract(const Duration(days: 1)),
 		};
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
-
+    print("TODAY DATE: ${(DateTime(today.year, today.month, today.day))}=======================================++"); // strt d end d
+    print("Start Date: ${startDate}=======================================++");
+    print("End Date: ${endDate}=======================================++");
     // Select appropriate list to display
 		final filteredEntries = entriesInDateRange(startDate, endDate, items).toList();
 		final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
