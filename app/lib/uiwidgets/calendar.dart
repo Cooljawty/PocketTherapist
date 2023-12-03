@@ -82,9 +82,9 @@ class _CalendarState extends State<Calendar> {
 			final strongestEmotion = entry.getStrongestEmotion();
 
 			//Color each day according to the strongest emotion, leave null if no emotions are tagged 
-			if (   _emotionData[_daysFromDate(entry.date)].color == null 
-				  || strongestEmotion.strength > _emotionData[_daysFromDate(entry.date)].strength) {
-				_emotionData[_daysFromDate(entry.date)] = (
+			if (   _emotionData[_daysFromDate(entry.creationDate)].color == null 
+				  || strongestEmotion.strength > _emotionData[_daysFromDate(entry.creationDate)].strength) {
+				_emotionData[_daysFromDate(entry.creationDate)] = (
 					strength: strongestEmotion.strength,
 					color: strongestEmotion.color,
 					border: false,
@@ -94,8 +94,8 @@ class _CalendarState extends State<Calendar> {
 	
 		//Find any plans in date range and add border
 		for (var plan in plansInDateRange(startDate, endDate, plans)) {
-			final datapoint = _emotionData[_daysFromDate(plan.date)];
-			_emotionData[_daysFromDate(plan.date)] = (
+			final datapoint = _emotionData[_daysFromDate(plan.creationDate)];
+			_emotionData[_daysFromDate(plan.creationDate)] = (
 					strength: datapoint.strength,
 					color: datapoint.color,
 					border: true,

@@ -82,7 +82,7 @@ class ThemeSettings with ChangeNotifier {
     dialogBackgroundColor: Colors.deepPurpleAccent,
     //DialogTheme will set the theme for all Dialog elements but also overwrites the background color above
     dialogTheme: const DialogTheme(
-      backgroundColor: Colors.deepPurpleAccent,
+      backgroundColor: Color(0xff1B1734),
       elevation: 20.0,
       shadowColor: Colors.black,
       //covers the text style for the top part of the dialog box, textstyle is body medium by default
@@ -289,7 +289,7 @@ class ThemeSettings with ChangeNotifier {
     dialogBackgroundColor: Colors.deepPurpleAccent,
     //DialogTheme will set the theme for all Dialog elements but also overwrites the background color above
     dialogTheme: const DialogTheme(
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: Colors.white,
       elevation: 20.0,
       shadowColor: Colors.black,
       //covers the text style for the top part of the dialog box, textstyle is body medium by default

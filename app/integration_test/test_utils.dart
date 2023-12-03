@@ -52,6 +52,14 @@ Future<void> skipToEntriesPage(WidgetTester tester, [bool settle = false]) async
   await tap(tester, find.text("Entries"), settle);
 }
 
+/// [skipToPlansPage] will skip throug the app from the login screen to the
+/// entries page
+Future<void> skipToPlansPage(WidgetTester tester, [bool settle = false]) async {
+  await startSkipFrontScreen(tester);
+  await pumpUntilFound(tester, find.text("Plans"), settle);
+  await tap(tester, find.text("Plans"), settle);
+}
+
 /// [skipToCalendarPage] will skip throug the app from the login screen to the
 /// entries page
 Future<void> skipToCalendarPage(WidgetTester tester, [bool settle = false]) async {
@@ -103,4 +111,14 @@ Future<void> tap(WidgetTester tester, Finder found, [bool settle = false, Durati
   } else {
     await tester.pump(duration);
   }
+}
+
+/// [doubleTap] can be used to simulate a double tap on a widget with the Finder [found]
+/// This automatically pumps the widget tree after tapping.
+/// use [settle] = true, to make it pumpAndSettle
+Future<void> doubleTap(WidgetTester tester, Finder found) async {
+  await tester.tap(found);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tap(found);
+  await tester.pump();
 }

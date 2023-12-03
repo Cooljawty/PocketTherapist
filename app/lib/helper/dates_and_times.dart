@@ -16,8 +16,7 @@ extension Formatter on DateTime {
 				DateTime.september => 'September',
 				DateTime.october =>'October',
 				DateTime.november =>'November',
-				DateTime.december =>'December',
-				_ => formatErrorString, // This should never happen
+				_ =>'December',
 			},
 			weekday: switch (weekday) {
 				DateTime.monday => "Monday",
@@ -26,16 +25,14 @@ extension Formatter on DateTime {
 				DateTime.thursday => "Thursday",
 				DateTime.friday => "Friday",
 				DateTime.saturday => "Saturday",
-				DateTime.sunday => "Sunday",
-				_ => formatErrorString, // This should never happen
+				_ => "Sunday",
 			},
 			day: switch (day) {
 				1 => "1st",
 				2 => "2nd",
 				3 => "3rd",
 				_ when day < 31 => "${day}th",
-				31 => "31st",
-				_ => formatErrorString, // This should never happen
+				_ => "31st",
 			},
 		);
   }

@@ -33,10 +33,8 @@ class _RootAppState extends State<RootApp> {
     _listener = AppLifecycleListener(
       onShow: () => _handleTransition('show'),
       onResume: () => _handleTransition('resume'),
-      onHide: () => _handleTransition('hide'),
       onInactive: () => _handleTransition('inactive'),
       onPause: () => _handleTransition('pause'),
-      onDetach: () => _handleTransition('detach'),
       onRestart: () => _handleTransition('restart'),
       // This fires for each state change. Callbacks above fire only for
       // specific state transitions.
@@ -70,8 +68,6 @@ class _RootAppState extends State<RootApp> {
                         "Plans": (context) => const EntryPanelPage(showPlans: true),
                         "Settings": (context) => const SettingsPage(),
                         "Welcome": (context) => const WelcomePage(),
-                        "Tags": (context) => const TagSettingsPage(),
-                        "NewEntry": (context) => const EntryPage(),
                         // "Emotions": (context) => const EmotionSettingsPage(),
                       },
                       initialRoute: "Welcome",
@@ -97,7 +93,6 @@ class _RootAppState extends State<RootApp> {
       case 'hide':
         break;
       case 'pause':
-        _save();
         break;
       case 'detach':
         break;
@@ -115,9 +110,5 @@ class _RootAppState extends State<RootApp> {
     // Add more here as needed..
 
     settings.setInitialized();
-  }
-
-  Future<void> _save() async {
-    await settings.save();
   }
 }

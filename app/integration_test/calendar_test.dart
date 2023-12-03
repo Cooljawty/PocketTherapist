@@ -112,7 +112,7 @@ void main() {
 			JournalEntry(
 				title: "Title!",
 				entryText: "Journal!",
-				date: today,
+				dateOverride: today,
 				emotions: [ 
 					Emotion(
 						name: "Happy", 

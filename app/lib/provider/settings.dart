@@ -250,28 +250,31 @@ Future skipToDashboard(BuildContext context) async {
   Future.delayed(const Duration(milliseconds: 1)).whenComplete(() async {
     Navigator.of(context).pop(); //pop loading screen
     Navigator.of(context).pop(); //pop password prompt
-    Navigator.of(context).pushNamed("Dashboard");
-    await showDialog(
-        barrierColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          String? recovery = encryptor.getRecoveryPhrase();
-          return AlertDialog(
-              title: const Text("Recovery Phrase"),
-              backgroundColor: Theme.of(context).colorScheme.onBackground,
-              actions: [
-                TextButton(
-                    key: const Key("Recovery_Phrase_Confirm"),
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Ok")),
-                TextButton(
-                    key: const Key("Recovery_Phrase_Copy"),
-                    onPressed: () =>
-                        Clipboard.setData(ClipboardData(text: recovery!)),
-                    child: const Text("Copy")),
-              ],
-              content: Text('Here is your recovery phrase $recovery!\n\nKeep it safe!'));
-        });
+    Navigator.of(context).pushReplacementNamed("Dashboard");
+    if (isEncryptionEnabled()) {
+      await showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          builder: (context) {
+            String? recovery = encryptor.getRecoveryPhrase();
+            return AlertDialog(
+                title: const Text("Recovery Phrase"),
+                backgroundColor: Theme.of(context).colorScheme.onBackground,
+                actions: [
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Confirm"),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Ok")),
+                  TextButton(
+                      key: const Key("Recovery_Phrase_Copy"),
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: recovery!)),
+                      child: const Text("Copy")),
+                ],
+                content: Text(
+                    'Here is your recovery phrase $recovery!\n\nKeep it safe!'));
+          });
+    }
   });
 }
 
@@ -452,7 +455,7 @@ void handleStartPress(BuildContext context) async {
       attemptLogin(context);
     } else {
       // Password not set, but initialized, no check, just entry to dashboard.
-      Navigator.of(context).pushNamed("Dashboard");
+      Navigator.of(context).pushReplacementNamed("Dashboard");
     }
   } else {
     await createPassword(context);
