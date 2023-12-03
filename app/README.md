@@ -94,3 +94,9 @@ Below is the output of `flutter doctor -v`, you can use this to tune your instal
 [✓] Network resources
 - All expected network resources are available.
 ****
+
+
+# Code Coverage
+We use CodeCov in this repository for easy automated upload and processing of codecoverage. But it could just as easily be acomplished with genhtml +lcov
+
+[]!(https://codecov.io/gh/S1robe/Pocket-Therapist/graphs/tree.svg?token=UV1ODNUYHT)
