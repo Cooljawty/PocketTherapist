@@ -16,13 +16,13 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-	DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1); 
-	DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+	DateTime startDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1); 
+	DateTime endDate = DateTime.utc(DateTime.now().year, DateTime.now().month + 1, 0);
 
 	List<({int strength, Color? color, bool border})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
-	DateTime _getLastOfTheMonth(DateTime date) => DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
+	DateTime _getLastOfTheMonth(DateTime date) => DateTime.utc(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
 
 
 	///Displays a given day of the month in a container with the color set 
@@ -57,11 +57,13 @@ class _CalendarState extends State<Calendar> {
 	///Returns the full grid of dates including the days of the last and 
 	///next month that would be part of the week
 	List<Widget> _getCalendarDays() {
-		endDate = _getLastOfTheMonth(startDate);
-
 		final datesInRange = <Widget>[];
-		for (var day = 1; day <= _daysFromDate(endDate)+1; day += 1) {
-			datesInRange.add(_displayDay(day));
+		var date = startDate;
+			debugPrint("$startDate $endDate");
+		while (date.isBefore(endDate.add(const Duration(days: 1)))) {
+			debugPrint("$date");
+			datesInRange.add(_displayDay(date.day));
+			date = date.add(const Duration( hours: 24));
 		}
 
 		//Fill the start and end to line up weekdays
@@ -74,6 +76,8 @@ class _CalendarState extends State<Calendar> {
 		});
 
 		if( prePaddedDays.length + datesInRange.length + postPaddedDays.length < 6*7 ) {
+			debugPrint("$startDate $endDate");
+			debugPrint("${prePaddedDays.length + datesInRange.length + postPaddedDays.length} days ${prePaddedDays.length} + ${datesInRange.length} + ${postPaddedDays.length}");
 			postPaddedDays.addAll(List<Widget>.generate(7, (day) {
 				return _displayDay((day + 1) + (7 - endDate.weekday), outOfRange: true);
 			}));
@@ -84,8 +88,10 @@ class _CalendarState extends State<Calendar> {
 	
 	@override
 	Widget build(BuildContext context) {
+		endDate = _getLastOfTheMonth(startDate);
+
 		//Calculate the emotion data for each day
-		_emotionData = List.filled(_daysFromDate(endDate) +1, (strength: 0, color: null, border: false));
+		_emotionData = List.filled(_daysFromDate(endDate) +2, (strength: 0, color: null, border: false));
 		for (var entry in entriesInDateRange(startDate, endDate, entries).toList()) {
 			final strongestEmotion = entry.getStrongestEmotion();
 
@@ -125,7 +131,7 @@ class _CalendarState extends State<Calendar> {
 									icon: const Icon( Icons.navigate_before, ),
 									onPressed: ()=> setState(() {
 										endDate = startDate.subtract(const Duration(days: 1));
-										startDate = DateTime(endDate.year, endDate.month, 1);
+										startDate = DateTime.utc(endDate.year, endDate.month, 1);
 									}),
 								),
 								Expanded( 
