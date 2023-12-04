@@ -34,11 +34,11 @@ class _CalendarState extends State<Calendar> {
 			alignment: Alignment.center,
 			margin: const EdgeInsets.all(4.0),
 			decoration: ShapeDecoration(
-				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
+				color: outOfRange ? Colors.transparent : _emotionData[day-1].color, 
 				shape: CircleBorder(
 					//Only show border if there is a plan on that day
 					side: BorderSide( 
-						style: !outOfRange && _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
+						style: !outOfRange && _emotionData[day-1].border ? BorderStyle.solid : BorderStyle.none, 
 						width: 2.5,
 					) 
 				),
