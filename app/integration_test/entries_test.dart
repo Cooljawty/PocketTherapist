@@ -618,9 +618,23 @@ void main() {
       expect(journal2, findsOneWidget);
     });
 
-    testWidgets("Test showStatsToggle", (widgetTester ) async{
-      await skipToEntriesPage(widgetTester);
-      await widgetTester.press(find.byKey(const Key("toggleStats")));
+    testWidgets("Test showStatsToggle", (WidgetTester tester ) async{
+      const toggleKey = Key("toggleStats");
+      await setUp(tester);
+
+      //initially we should see both journal entries
+      journal1 = find.text(entries[0].title);
+      journal2 = find.text(entries[1].title);
+      //find the entries
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //find the key
+      expect(find.byKey(toggleKey), findsOneWidget);
+      //tap the key
+      await tap(tester, find.byKey(toggleKey), true);
+     // await tester.press(find.byKey(toggleKey));
+      //await pumpUntilFound(tester, find.text("Statistics"));
+
       expect(find.text("Statistics"), findsOneWidget);
 
     });
@@ -776,3 +790,10 @@ void main() {
     });
   });
 }
+
+
+
+
+
+
+
