@@ -85,8 +85,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   List<String> selectedEmotions = [];
   final TextEditingController searchBarInput = TextEditingController();
 
-  bool isVisibleNav = false;
-  bool isVisibleStats = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,10 +120,11 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     // Pad filter to the right
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                      Container(
+                      SizedBox(
                         //Has button for second Nav bar
                         width: MediaQuery.of(context).size.width / 6,
                         child: ElevatedButton(
+
                             onPressed: () {
                               showStats();
                             },
@@ -169,8 +169,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                   "Month" => DisplayOption.month,
                                   "Year" => DisplayOption.year,
                                   _ => DisplayOption.year,
-                                } ??
-                                chosenDisplay;
+                                };
                           }),
                         ),
                       ),
@@ -329,10 +328,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     //               text:
                     //                   'Most Common Tag: ${getMostCommonTag(entries)} \n')
                     //         ])))),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: <Widget>[],
+                    // ),
                   ],
                 ),
               ),
@@ -443,7 +442,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   String getMostCommonTag(List<JournalEntry> entries) {
     List<JournalEntry> filteredEntries = _getEntriesInRange();
 //list if two or more tags are the most frequent
-    List<String> frequentTags = [];
 
     //maps for tags and how often they appear
     Map<String, int> tagsAndOccurrences = {};
@@ -558,13 +556,13 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //Show entreis in range of given date or from today
     final today = widget.targetDate ?? DateTime.now();
     final startDate = switch (chosenDisplay) {
-      DisplayOption.day => today.subtract(Duration(days: 1)),
+      DisplayOption.day => today.subtract(const Duration(days: 1)),
       DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
       DisplayOption.month => DateTime(today.year, today.month, 1),
       DisplayOption.year => DateTime(today.year, 1, 1),
     };
     final endDate = switch (chosenDisplay) {
-      DisplayOption.day => today.add(Duration(days: 1)),
+      DisplayOption.day => today.add(const Duration(days: 1)),
       DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
       DisplayOption.month => (today.month < DateTime.december
               ? DateTime(today.year, today.month + 1, 1)
@@ -583,13 +581,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return widget.showPlans ? filteredPlans : filteredEntries;
   }
 
-  void toggleStats() async {
-    setState(() {
-      isVisibleStats = !isVisibleStats;
 
-      //bottomNavigationBar = CustomEntriesNav;
-    });
-  }
 
   void showStats() {
     showDialog(

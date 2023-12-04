@@ -179,6 +179,9 @@ void main() {
 
     });
 
+
+
+
     testWidgets('Plan Button', (WidgetTester tester) async {
       await setUp(tester);
 
@@ -277,6 +280,14 @@ void main() {
         JournalEntry(
             title: "Could be better",
             entryText: 'I am running out of ideas',
+            dateOverride: DateTime(2021, 3, 17, 5)),
+        JournalEntry(
+            title: "Could be better",
+            entryText: 'I am running out of ideas',
+            dateOverride: DateTime(2021, 3, 17, 6)),
+        JournalEntry(
+            title: "Could be better",
+            entryText: 'I am running out of ideas',
             dateOverride: DateTime(2021, 3, 17)),
         JournalEntry(
             title: "11sef sd63",
@@ -342,6 +353,12 @@ void main() {
         (WidgetTester tester) async {
       await testForItems(tester, 'Week');
     });
+
+    testWidgets(
+        'See if all entries are correct and present - Day filter',
+            (WidgetTester tester) async {
+          await testForItems(tester, 'Day');
+        });
 
 
     testWidgets(
