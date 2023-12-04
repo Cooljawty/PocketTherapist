@@ -80,4 +80,54 @@ void main() {
     final emotionGraph = find.byType(RadarChart);
     expect(emotionGraph, findsOneWidget);
   });
+
+	testWidgets('Test forward date switching', (WidgetTester tester) async {
+		await skipToCalendarPage(tester, true);
+		
+    final nextButton = find.byKey(const Key("Graph_Next"));
+		expect(nextButton, findsOneWidget);
+
+    //Test forward
+		var date = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isBefore(DateTime.utc(DateTime.now().year + 4, DateTime.now().month, 1)) ){
+			//Calculate date of next month
+			if ( date.month < 12 ){
+				date = DateTime( date.year, date.month + 1, 1);
+			} else {
+				date = DateTime( date.year + 1, 1, 1);
+			}
+
+			//Go to next month and test amount of days are correct
+			await tap(tester, nextButton);
+		
+			final endDate = date.add(Duration(days: date.getDaysInMonth()));
+			final calendarDays = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
+			expect(calendarDays, findsNWidgets(7*6));
+		}
+	});
+
+	testWidgets('Test backwards date switching', (WidgetTester tester) async {
+		await skipToCalendarPage(tester, true);
+		
+    final previousButton = find.byKey(const Key("Graph_Previous"));
+		expect(previousButton, findsOneWidget);
+
+    //Test backward
+		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isAfter(DateTime(DateTime.now().year - 4, DateTime.now().month, 1)) ){
+			//Calculate date of next month
+			if ( date.month < 12 ){
+				date = DateTime( date.year, date.month -1, 1);
+			} else {
+				date = DateTime( date.year -1, 12, 1);
+			}
+
+			//Go to next month and test amount of days are correct
+			await tap(tester, previousButton);
+		
+			final endDate = date.add(Duration(days: date.getDaysInMonth()));
+			final calendarDays = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
+			expect(calendarDays, findsNWidgets(7*6));
+		}
+	});
 }
