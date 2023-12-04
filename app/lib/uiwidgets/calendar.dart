@@ -22,7 +22,7 @@ class _CalendarState extends State<Calendar> {
 	List<({int strength, Color? color, bool border})> _emotionData = [];
 
 	int _daysFromDate(DateTime day) => day.difference(startDate).inDays;
-	DateTime _getLastOfTheMonth(DateTime date) =>  DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
+	DateTime _getLastOfTheMonth(DateTime date) => DateTime(date.year, date.month + 1, 1).subtract(const Duration(days: 1));
 
 
 	///Displays a given day of the month in a container with the color set 
@@ -34,17 +34,17 @@ class _CalendarState extends State<Calendar> {
 			alignment: Alignment.center,
 			margin: const EdgeInsets.all(4.0),
 			decoration: ShapeDecoration(
-				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
+				color: outOfRange ? Colors.transparent : _emotionData[day-1].color, 
 				shape: CircleBorder(
 					//Only show border if there is a plan on that day
 					side: BorderSide( 
-						style: !outOfRange && _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
+						style: !outOfRange && _emotionData[day-1].border ? BorderStyle.solid : BorderStyle.none, 
 						width: 2.5,
 					) 
 				),
 			),
 			child: Text(
-				"${day+1}", 
+				"${day}", 
 				//Have days outside of the current month be greyed out
 				style: outOfRange ? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(
 					color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5)
@@ -57,19 +57,27 @@ class _CalendarState extends State<Calendar> {
 	///Returns the full grid of dates including the days of the last and 
 	///next month that would be part of the week
 	List<Widget> _getCalendarDays() {
+		endDate = _getLastOfTheMonth(startDate);
+
 		final datesInRange = <Widget>[];
-		for (var day = 0; day <= _daysFromDate(endDate); day += 1) {
+		for (var day = 1; day <= _daysFromDate(endDate)+1; day += 1) {
 			datesInRange.add(_displayDay(day));
 		}
 
 		//Fill the start and end to line up weekdays
-		final startFirstWeek = startDate.subtract(Duration(days: startDate.weekday));
-		final prePaddedDays = List<Widget>.generate(startDate.weekday - 1, (day) {
-			return _displayDay( startFirstWeek.day + day, outOfRange: true);
+		final firstWeekday = startDate.subtract(Duration(days: startDate.weekday - 1));
+		final prePaddedDays = List<Widget>.generate(startDate.weekday-1, (day) {
+			return _displayDay( firstWeekday.day + day, outOfRange: true);
 		});
 		final postPaddedDays = List<Widget>.generate(7 - endDate.weekday, (day) {
-			return _displayDay(day, outOfRange: true);
+			return _displayDay(day+1, outOfRange: true);
 		});
+
+		if( prePaddedDays.length + datesInRange.length + postPaddedDays.length < 6*7 ) {
+			postPaddedDays.addAll(List<Widget>.generate(7, (day) {
+				return _displayDay((day + 1) + (7 - endDate.weekday), outOfRange: true);
+			}));
+		}
 
 		return prePaddedDays + datesInRange + postPaddedDays;
 	}
