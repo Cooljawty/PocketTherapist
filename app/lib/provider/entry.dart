@@ -39,10 +39,10 @@ Map<String, Color> emotionList = {
   'Happy': const Color(0xfffddd67),
   'Trust': const Color(0xff308c7d),
   'Fear': const Color(0xff4c4e51),
-  'Sad': const Color(0xff1f3550),
+  'Anticipation': const Color(0xffff7fff),
   'Disgust': const Color(0xff384e35),
   'Anger': const Color(0xffb51c1b),
-  'Anticipation': const Color(0xffff7fff),
+  'Sad': const Color(0xff1f3550),
   'Surprise': const Color(0xFFFF8200),
 };
 
@@ -73,8 +73,8 @@ const Map<String, List<String>> templateSet = {
     "How can you better support and appreciate your loved ones?",
     "What does love mean to you? How do you recognize it in a relationship?",
     "List three things you’d like to tell a friend, family member, or partner.",
-   ],
-  "Career" : [
+  ],
+  "Career": [
     "How do you use your personal strengths and abilities at work?",
     "How do your co-workers and supervisors recognize your strengths?",
     "How does work fulfill you? Does it leave you wanting more?",
@@ -87,7 +87,7 @@ const Map<String, List<String>> templateSet = {
     "What does your work teach you? Does it offer continued opportunities for learning and growth?",
     "Does your work drain or overwhelm you? Why? Is this something you can change?",
   ],
-  "Reflection" : [
+  "Reflection": [
     "What values do you consider most important in life (honesty, justice, altruism, loyalty, etc.)? How do your actions align with those values?",
     "What three changes can you make to live according to your personal values?",
     "Describe yourself using the first 10 words that come to mind. Then, list 10 words that you’d like to use to describe yourself. List a few ways to transform those descriptions into reality.",
@@ -121,23 +121,30 @@ const Map<String, List<String>> templateSet = {
     "How do you make time for yourself each day?",
     "What do you most want to accomplish in life?",
     "List three obstacles lying in the way of your contentment or happiness. Then, list two potential solutions to begin overcoming each obstacle.",
-],
+  ],
 };
 
 String getTemplateEntryBody(String category, int num) {
   // If category doenst exist we dont generate anything.
-  if(templateSet[category] == null) return "";
+  if (templateSet[category] == null) return "";
   List<String> questions = List.from(templateSet[category]!);
-  questions.shuffle(); // Shuffle to make things random, doesnt matter if it modifies.
+  questions
+      .shuffle(); // Shuffle to make things random, doesnt matter if it modifies.
   int length = questions.length;
-  if(num > length) num = length;
-  if(num == length) return questions.join("\n\n\n"); // Join questions with 2 spaces between for answering.
+  if (num > length) num = length;
+  if (num == length)
+    return questions
+        .join("\n\n\n"); // Join questions with 2 spaces between for answering.
 
   // num < length
   Set<int> indexes = {};
   // Generate 'num' random unique numbers.
-  while(indexes.length != num){indexes.add(Random().nextInt(length));}
-  return indexes.map((e) => questions[e]).join("\n\n\n"); // pull those questions and join them.
+  while (indexes.length != num) {
+    indexes.add(Random().nextInt(length));
+  }
+  return indexes
+      .map((e) => questions[e])
+      .join("\n\n\n"); // pull those questions and join them.
 }
 
 (String, String) getTemplateRandom() {
@@ -146,7 +153,6 @@ String getTemplateEntryBody(String category, int num) {
   body = templateSet[cat]![Random().nextInt(templateSet[cat]!.length)];
   return (cat, body);
 }
-
 
 void loadTagsEmotions() {
 //load tags
@@ -259,15 +265,14 @@ class JournalEntry implements Comparable<JournalEntry> {
 
   static const previewLength = 25;
 
-  JournalEntry({
-    required this.title,
-    required this.entryText,
-    this.tags = const [],
-    this.emotions = const [],
-    this.scheduledDate,
-    DateTime? dateOverride
-  }) {
-    if(dateOverride !=null) creationDate = dateOverride;
+  JournalEntry(
+      {required this.title,
+      required this.entryText,
+      this.tags = const [],
+      this.emotions = const [],
+      this.scheduledDate,
+      DateTime? dateOverride}) {
+    if (dateOverride != null) creationDate = dateOverride;
     previewText = entryText.substring(0, min(previewLength, entryText.length));
   }
 
@@ -369,7 +374,7 @@ class Plan extends JournalEntry {
   /// we will compare them based on the [title]
   @override
   int compareTo(JournalEntry other) {
-    if(other.scheduledDate == null) return -1;
+    if (other.scheduledDate == null) return -1;
     int order = other.scheduledDate!.compareTo(scheduledDate!);
     return order == 0 ? other.title.compareTo(title) : order;
   }
@@ -385,15 +390,32 @@ Future<void> makeNewEntry(BuildContext context) async {
   }
 }
 
-Iterable<JournalEntry> entriesInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry>entryList) => entryList.where((entry) {
-	return (entry.creationDate.isBefore(endDate.add(const Duration(days: 1))) && entry.creationDate.isAfter(startDate.subtract(const Duration(days: 1))))
-	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(startDate.year, startDate.month, startDate.day)
-	|| DateTime(entry.creationDate.year, entry.creationDate.month, entry.creationDate.day) == DateTime(endDate.year, endDate.month, endDate.day);
-});
+Iterable<JournalEntry> entriesInDateRange(
+        DateTime startDate, DateTime endDate, List<JournalEntry> entryList) =>
+    entryList.where((entry) {
+      return (entry.creationDate
+                  .isBefore(endDate.add(const Duration(days: 1))) &&
+              entry.creationDate
+                  .isAfter(startDate.subtract(const Duration(days: 1)))) ||
+          DateTime(entry.creationDate.year, entry.creationDate.month,
+                  entry.creationDate.day) ==
+              DateTime(startDate.year, startDate.month, startDate.day) ||
+          DateTime(entry.creationDate.year, entry.creationDate.month,
+                  entry.creationDate.day) ==
+              DateTime(endDate.year, endDate.month, endDate.day);
+    });
 
-Iterable<JournalEntry> plansInDateRange(DateTime startDate, DateTime endDate, List<JournalEntry> planList) => planList.where((plan) {
-	return (plan.creationDate.isBefore(endDate.add(const Duration(days: 1))) && plan.creationDate.isAfter(startDate.subtract(const Duration(days: 1))))
-	|| DateTime(plan.creationDate.year, plan.creationDate.month, plan.creationDate.day) == DateTime(startDate.year, startDate.month, startDate.day)
-	|| DateTime(plan.creationDate.year, plan.creationDate.month, plan.creationDate.day) == DateTime(endDate.year, endDate.month, endDate.day);
-});
-
+Iterable<JournalEntry> plansInDateRange(
+        DateTime startDate, DateTime endDate, List<JournalEntry> planList) =>
+    planList.where((plan) {
+      return (plan.creationDate
+                  .isBefore(endDate.add(const Duration(days: 1))) &&
+              plan.creationDate
+                  .isAfter(startDate.subtract(const Duration(days: 1)))) ||
+          DateTime(plan.creationDate.year, plan.creationDate.month,
+                  plan.creationDate.day) ==
+              DateTime(startDate.year, startDate.month, startDate.day) ||
+          DateTime(plan.creationDate.year, plan.creationDate.month,
+                  plan.creationDate.day) ==
+              DateTime(endDate.year, endDate.month, endDate.day);
+    });
