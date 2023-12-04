@@ -8,13 +8,13 @@ void main() {
       DateTime beforeTwo = DateTime.now();
       DateTime beforeThree = DateTime.now().add(const Duration(seconds: 5));
       DateTime beforeFour = DateTime(2000, 1, 31);
-      expect(before.isSameDate(beforeTwo, 'Week'), true);
-      expect(before.isSameDate(beforeTwo, 'Month'), true);
-      expect(before.isSameDate(beforeTwo, 'Year'), true);
-      expect(before.isSameDate(beforeThree, 'Test'), false);
-      expect(before.isSameDate(beforeFour, 'Year'), false);
-      expect(before.isSameDate(beforeFour, 'Month'), false);
-      expect(before.isSameDate(beforeFour, 'Day'), false);
+      expect(before.isWithinDateRange(beforeTwo, 'Week'), true);
+      expect(before.isWithinDateRange(beforeTwo, 'Month'), true);
+      expect(before.isWithinDateRange(beforeTwo, 'Year'), true);
+      expect(before.isWithinDateRange(beforeThree, 'Test'), false);
+      expect(before.isWithinDateRange(beforeFour, 'Year'), false);
+      expect(before.isWithinDateRange(beforeFour, 'Month'), false);
+      expect(before.isWithinDateRange(beforeFour, 'Day'), false);
   });
 
 }
