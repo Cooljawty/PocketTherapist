@@ -133,7 +133,10 @@ class _QuoteState extends State<Quote> with TickerProviderStateMixin {
         setState(() {
           clicked = true;
           visible = !clicked;
-          nextQuote = widget.newQuote();
+          nextQuote = currentQuote;
+          while (currentQuote == nextQuote) {
+            nextQuote = widget.newQuote();
+          }
         });
       },
     );
