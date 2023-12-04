@@ -1,11 +1,10 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-
 import 'package:fl_chart/fl_chart.dart';
-
+import 'package:app/helper/dates_and_times.dart';
 import 'package:app/provider/entry.dart';
 import 'package:app/provider/settings.dart' as settings;
+
 
 /// Graph Types
 /// An enum for each graph type an [EmotionGraph] can be displayed as
@@ -35,24 +34,6 @@ class EmotionGraph extends StatefulWidget {
 
 class _EmotionGraphState extends State<EmotionGraph> {
   static const maxStrength = 60.0;
-
-  static const _months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "November",
-    "October",
-    "November",
-    "December"
-  ];
-
-  String _daySuffix(day) =>
-      switch (day) { 1 => "1st", 2 => "2nd", 3 => "3rd", _ => "${day}th" };
 
   Map<String, List<FlSpot>> _emotionData = {};
 
@@ -265,7 +246,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
               Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: Text(
-                  "${_months[widget.startDate.month]} ${_daySuffix(widget.startDate.day)} - ${_daySuffix(widget.endDate.day)}",
+                  "${widget.startDate.formatDate().month} ${widget.startDate.formatDate().day} - ${widget.endDate.formatDate().day}",
                   style: settings.getCurrentTheme().textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
