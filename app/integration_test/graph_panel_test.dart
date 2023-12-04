@@ -4,22 +4,49 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/uiwidgets/emotion_chart.dart';
+import 'package:app/provider/entry.dart';
+import 'package:app/provider/settings.dart' as settings;
+import 'package:app/helper/dates_and_times.dart';
 
 import 'test_utils.dart';
 
 void main() {
-  testWidgets('Displaying emotion time chart', (tester) async {
-    //Navigate to graph page
-    await startSkipFrontScreen(tester);
-    await pumpUntilFound(tester, find.byKey(const Key("navCalendar")), true);
-    await tap(tester, find.byKey(const Key("navCalendar")), true);
 
+	@override
+	Future<void> setUp(WidgetTester tester) async {
+		entries = [
+			JournalEntry(
+				title: "Title!",
+				entryText: "Journal!",
+				dateOverride: DateTime(DateTime.now().year, DateTime.now().month, (DateTime.now().getDaysInMonth()/2).round()),
+				emotions: [ 
+					Emotion(
+						name: "Happy", 
+						color: emotionList["Happy"]!, 
+						strength: 50
+					),
+				]
+			),
+		];
+
+    //Navigate to graph page
+    await skipToCalendarPage(tester, true);
+	}
+
+  testWidgets('Displaying emotion time chart', (tester) async {
+		settings.setEmotionGraphType(GraphTypes.time);
     //Two graphs should exist
     expect(find.byType(EmotionGraph), findsOneWidget);
 
     //Check time chart
     final emotionGraph = find.byType(LineChart);
     expect(emotionGraph, findsOneWidget);
+
+		//Check the tooltip
+		tester.longPress(emotionGraph);
+		final tooltips = find.byType(LineTooltipItem);
+		expect(find.text("Happy"), findsOneWidget);
+		expect(find.text("Sad"), findsNothing);
   });
 
   testWidgets('Displaying emotion frequency chart', (tester) async {
