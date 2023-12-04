@@ -34,11 +34,11 @@ class _CalendarState extends State<Calendar> {
 			alignment: Alignment.center,
 			margin: const EdgeInsets.all(4.0),
 			decoration: ShapeDecoration(
-				color: outOfRange ? Colors.transparent : _emotionData[day-1].color, 
+				color: outOfRange ? Colors.transparent : _emotionData[day].color, 
 				shape: CircleBorder(
 					//Only show border if there is a plan on that day
 					side: BorderSide( 
-						style: !outOfRange && _emotionData[day-1].border ? BorderStyle.solid : BorderStyle.none, 
+						style: !outOfRange && _emotionData[day].border ? BorderStyle.solid : BorderStyle.none, 
 						width: 2.5,
 					) 
 				),
@@ -59,11 +59,9 @@ class _CalendarState extends State<Calendar> {
 	List<Widget> _getCalendarDays() {
 		final datesInRange = <Widget>[];
 		var date = startDate;
-			debugPrint("$startDate $endDate");
 		while (date.isBefore(endDate.add(const Duration(days: 1)))) {
-			debugPrint("$date");
 			datesInRange.add(_displayDay(date.day));
-			date = date.add(const Duration( hours: 24));
+			date = date.add(const Duration( days: 1));
 		}
 
 		//Fill the start and end to line up weekdays
@@ -75,13 +73,10 @@ class _CalendarState extends State<Calendar> {
 			return _displayDay(day+1, outOfRange: true);
 		});
 
-		if( prePaddedDays.length + datesInRange.length + postPaddedDays.length < 6*7 ) {
-			debugPrint("$startDate $endDate");
-			debugPrint("${prePaddedDays.length + datesInRange.length + postPaddedDays.length} days ${prePaddedDays.length} + ${datesInRange.length} + ${postPaddedDays.length}");
-			postPaddedDays.addAll(List<Widget>.generate(7, (day) {
-				return _displayDay((day + 1) + (7 - endDate.weekday), outOfRange: true);
-			}));
-		}
+		final totalDays = prePaddedDays.length + datesInRange.length + postPaddedDays.length;
+		postPaddedDays.addAll(List<Widget>.generate(6*7 - totalDays, (day) {
+			return _displayDay((day + 1) + (7 - endDate.weekday), outOfRange: true);
+		}));
 
 		return prePaddedDays + datesInRange + postPaddedDays;
 	}
