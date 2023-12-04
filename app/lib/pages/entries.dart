@@ -85,8 +85,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
   List<String> selectedEmotions = [];
   final TextEditingController searchBarInput = TextEditingController();
 
-
-
   @override
   Widget build(BuildContext context) {
     entries.sort(); //TODO mess around
@@ -124,7 +122,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         //Has button for second Nav bar
                         width: MediaQuery.of(context).size.width / 6,
                         child: ElevatedButton(
-
                             onPressed: () {
                               showStats();
                             },
@@ -164,12 +161,12 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           // if changed set new display option
                           onChanged: (item) => setState(() {
                             chosenDisplay = switch (item) {
-                                  "Day" => DisplayOption.day,
-                                  "Week" => DisplayOption.week,
-                                  "Month" => DisplayOption.month,
-                                  "Year" => DisplayOption.year,
-                                  _ => DisplayOption.year,
-                                };
+                              "Day" => DisplayOption.day,
+                              "Week" => DisplayOption.week,
+                              "Month" => DisplayOption.month,
+                              "Year" => DisplayOption.year,
+                              _ => DisplayOption.year,
+                            };
                           }),
                         ),
                       ),
@@ -312,26 +309,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             ]); // if in the same filter header list, then just make a new entry
                       },
                     )),
-
-                    // Card(
-                    //     child: Visibility(
-                    //         //within a column
-                    //         visible: isVisibleStats,
-                    //         child: RichText(
-                    //             text: TextSpan(children: [
-                    //           TextSpan(
-                    //               style: TextStyle(fontSize: 20),
-                    //               text:
-                    //                   'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'),
-                    //           TextSpan(
-                    //               style: TextStyle(fontSize: 20),
-                    //               text:
-                    //                   'Most Common Tag: ${getMostCommonTag(entries)} \n')
-                    //         ])))),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: <Widget>[],
-                    // ),
                   ],
                 ),
               ),
@@ -400,45 +377,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return mostEmotion;
   }
 
-  // String getEmotionsTillNow(List<JournalEntry> entries) {
-  //   List<JournalEntry> filteredEntries = _getEntriesInRange();
-  //
-  //   //list if two or more emotions are the most frequent
-  //   List<String> frequentEmotions = [];
-  //   //map to track emotion use
-  //   Map<String, int> emotionsAndAmounts = {
-  //     'Happy': 0,
-  //     'Trust': 0,
-  //     'Fear': 0,
-  //     'Sad': 0,
-  //     'Disgust': 0,
-  //     'Anger': 0,
-  //     'Surprise': 0,
-  //     'Anticipation': 0
-  //   };
-  //
-  //   //no entries
-  //   if (filteredEntries.isEmpty) {
-  //     return "N/A";
-  //   }
-  //   //go through all entries in the list
-  //   for (var entry in filteredEntries) {
-  //     //go through all emotions in the entry, increase count of that emotion
-  //     for (var emotion in entry.emotions) {
-  //       emotionsAndAmounts[emotion.name] =
-  //           emotionsAndAmounts[emotion.name]! + 1;
-  //     } //ends inner for
-  //   } // ends outer for
-  //
-  //   emotionsAndAmounts.forEach((key, value) {
-  //     if (value > 0 && !frequentEmotions.contains(key)) {
-  //       //Emotion exist, add it to list
-  //       frequentEmotions.add(key);
-  //     }
-  //   });
-  //   return frequentEmotions.join(", ");
-  // } //ends func
-
   String getMostCommonTag(List<JournalEntry> entries) {
     List<JournalEntry> filteredEntries = _getEntriesInRange();
 //list if two or more tags are the most frequent
@@ -447,9 +385,8 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     Map<String, int> tagsAndOccurrences = {};
     //go through every entry
     for (var entry in filteredEntries) {
-      List<Tag> entryTags = entry.tags;
       //go through each tag in the entry
-      for (var tag in entryTags) {
+      for (var tag in entry.tags) {
         //if the tag is not a key in map add it, assign val to 0
         if (!tagsAndOccurrences.containsKey(tag.name)) {
           tagsAndOccurrences[tag.name] = 1;
@@ -581,21 +518,17 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return widget.showPlans ? filteredPlans : filteredEntries;
   }
 
-
-
   void showStats() {
     showDialog(
         context: context,
         builder: (dialogContext) {
           return StatefulBuilder(
             builder: (stfContext, stfSetState) {
-
               return AlertDialog(
                 title: const Text("Statistics"),
                 content: Text(
-
                     'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'
-                        ' Most Common Tag: ${getMostCommonTag(entries)} \n'),
+                    ' Most Common Tag: ${getMostCommonTag(entries)} \n'),
               );
             },
           );

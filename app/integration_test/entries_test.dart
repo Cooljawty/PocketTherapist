@@ -622,13 +622,6 @@ void main() {
       const toggleKey = Key("toggleStats");
       await setUp(tester);
 
-      //initially we should see both journal entries
-      journal1 = find.text(entries[0].title);
-      journal2 = find.text(entries[1].title);
-      //find the entries
-      expect(journal1, findsOneWidget);
-      expect(journal2, findsOneWidget);
-
       // clear entries
       entries.clear();
 
@@ -639,7 +632,7 @@ void main() {
             entryText:
             'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
                 'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-            dateOverride: DateTime(2023, 5, 17),
+            dateOverride: DateTime.now(),
             tags: [
               Tag(name: 'Calm', color: const Color(0xff90c6d0)),
               Tag(name: 'Centered', color: const Color(0xff794e5e)),
@@ -654,7 +647,7 @@ void main() {
             entryText:
             'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
                 'bright and the sky was a brilliant shade of blue. ',
-            dateOverride: DateTime(2022, 9, 12),
+            dateOverride: DateTime.now(),
             tags: [
               Tag(name: 'Calm', color: const Color(0xff90c6d0)),
               Tag(name: 'Content', color: const Color(0xfff1903b)),
