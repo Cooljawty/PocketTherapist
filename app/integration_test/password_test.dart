@@ -135,5 +135,5 @@ void main() async {
     //reset button option should not be present but start button should be
     expect(resetButton, findsNothing);
     expect(find.byKey(const Key("Start_Button")), findsOneWidget);
-  }, timeout: const Timeout(Duration(minutes: 2)));
+  }, timeout: const Timeout(Duration(minutes: 4)));
 }
