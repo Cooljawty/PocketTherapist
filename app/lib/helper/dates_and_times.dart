@@ -83,6 +83,7 @@ extension Formatter on DateTime {
         return false;
     }
   }
+	/*
 	int getDaysInMonth() => switch (month) {
 			1 || 3 || 5 || 7 || 8 ||12 => 31,
 			4 || 6 || 9 || 10 || 11 => 30,
@@ -90,6 +91,7 @@ extension Formatter on DateTime {
 	};
 
 	bool isLeapYear() => !((year % 100 == 0) && (year % 400 != 0)) && (year % 4 == 0);
+	*/
 
 }
 
