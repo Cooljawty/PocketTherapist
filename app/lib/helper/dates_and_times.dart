@@ -4,40 +4,37 @@ extension Formatter on DateTime {
   // Get the month string
   ({String day, String month, String weekday}) formatDate() {
     return (
-      month: switch (month) {
-        DateTime.january => 'January',
-        DateTime.february => 'February',
-        DateTime.march => 'March',
-        DateTime.april => 'April',
-        DateTime.may => 'May',
-        DateTime.june => 'June',
-        DateTime.july => 'July',
-        DateTime.august => 'August',
-        DateTime.september => 'September',
-        DateTime.october => 'October',
-        DateTime.november => 'November',
-        DateTime.december => 'December',
-        _ => formatErrorString, // This should never happen
-      },
-      weekday: switch (weekday) {
-        DateTime.monday => "Monday",
-        DateTime.tuesday => "Tuesday",
-        DateTime.wednesday => "Wednesday",
-        DateTime.thursday => "Thursday",
-        DateTime.friday => "Friday",
-        DateTime.saturday => "Saturday",
-        DateTime.sunday => "Sunday",
-        _ => formatErrorString, // This should never happen
-      },
-      day: switch (day) {
-        1 => "1st",
-        2 => "2nd",
-        3 => "3rd",
-        _ when day < 31 => "${day}th",
-        31 => "31st",
-        _ => formatErrorString, // This should never happen
-      },
-    );
+			month: switch (month) {
+				DateTime.january => 'January',
+				DateTime.february => 'February',
+				DateTime.march => 'March',
+				DateTime.april => 'April',
+				DateTime.may => 'May',
+				DateTime.june => 'June',
+				DateTime.july => 'July',
+				DateTime.august  => 'August',
+				DateTime.september => 'September',
+				DateTime.october =>'October',
+				DateTime.november =>'November',
+				_ =>'December',
+			},
+			weekday: switch (weekday) {
+				DateTime.monday => "Monday",
+				DateTime.tuesday => "Tuesday",
+				DateTime.wednesday => "Wednesday",
+				DateTime.thursday => "Thursday",
+				DateTime.friday => "Friday",
+				DateTime.saturday => "Saturday",
+				_ => "Sunday",
+			},
+			day: switch (day) {
+				1 => "1st",
+				2 => "2nd",
+				3 => "3rd",
+				_ when day < 31 => "${day}th",
+				_ => "31st",
+			},
+		);
   }
 
   // get the week number for DateTime math in headers and filters

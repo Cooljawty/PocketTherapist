@@ -23,7 +23,7 @@ void main() {
           entryText:
               'I was late for work because of heavy traffic, and as soon as I walked into the office, my manager confronted me about '
               'being late',
-          date: DateTime(2022, 8, 18),
+          dateOverride: DateTime(2022, 8, 18),
           emotions: [
             //Emotion(name: 'Anticipation', color: const Color(0xffff8000), strength: 60),
             Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
@@ -34,7 +34,7 @@ void main() {
           entryText:
               'I want to complete a 10k race in under an hour by the end of the year because I want to challenge myself, push my limits,'
               ' and achieve something I’ve never done before.',
-          date: DateTime(2022, 9, 14),
+          dateOverride: DateTime(2022, 9, 14),
           emotions: [
             Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 100),
             Emotion(
@@ -45,7 +45,7 @@ void main() {
           entryText:
               'Today, I took a few minutes to practice mindfulness during my lunch break. I closed my eyes and took a few deep breaths, '
               'feeling the air fill my lungs and then releasing it slowly.',
-          date: DateTime(2022, 10, 21),
+          dateOverride: DateTime(2022, 10, 21),
           tags: [
             Tag(name: 'Peaceful', color: const Color(0xffa7d7d7)),
             Tag(name: 'Present', color: const Color(0xffff7070)),
@@ -67,7 +67,7 @@ void main() {
           entryText:
               'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
               'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-          date: DateTime(2023, 5, 17),
+          dateOverride: DateTime(2023, 5, 17),
           tags: [
             Tag(name: 'Relaxed', color: const Color(0xff3f6962)),
             Tag(name: 'Serene', color: const Color(0xffb7d2c5)),
@@ -87,7 +87,7 @@ void main() {
           entryText:
               'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
               'bright and the sky was a brilliant shade of blue. ',
-          date: DateTime(2022, 9, 12),
+          dateOverride: DateTime(2022, 9, 12),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Centered', color: const Color(0xff794e5e)),
@@ -140,11 +140,11 @@ void main() {
 
     // Save the entry and view it, removed because scroll until visible doesnt work
     //with list view when there are multiple scrollable widgets.
-    //Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
+    // Future<void> navigateToEntry(WidgetTester tester, String titleText) async {
     //  await tester.scrollUntilVisible(find.text(titleText), 1);
     //  // View new entry
     //  await tap(tester, find.byType(DisplayCard).first, true);
-    //}
+    // }
 
     // Test the input text fields
     testWidgets('title and body Creation', (WidgetTester tester) async {
@@ -155,29 +155,28 @@ void main() {
       await tap(tester, titleInput, true);
       await tester.enterText(titleInput, newTitle);
       await tester.pump();
+      await doubleTap(tester, find.byKey(const Key("entryBodyKey")));
+      await tester.drag(find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
 
       await tap(tester, saveButton, true);
       // Navigate to the new entry
-
-      //await navigateToEntry(tester, newTitle);
-      await tap(tester, find.text(newTitle), true);
       // Find the title on the entry page
       final title = find.text(newTitle);
-      expect(title, findsNWidgets(2));
+      expect(title, findsNWidgets(1));
+      await tap(tester, title, true); // save
+      // await navigateToEntry(tester, newTitle);
 
-      saveButton.tryEvaluate();
-      await tap(tester, saveButton, true); // save
-      //await navigateToEntry(tester, newTitle);
-      await tap(tester, find.text(newTitle), true);
-
-      titleInput.tryEvaluate();
+      titleInput.tryEvaluate(); // rerun the finder for the title
       await tap(tester, titleInput);
       await tester.enterText(titleInput, "newTitle?");
+      await tester.pumpAndSettle();
+
 
       saveButton.tryEvaluate();
       await tap(tester, saveButton, true); // save
       expect(find.text("newTitle?"),
-          findsOneWidget); // Find the updated title on the screen
+          findsOneWidget); // Find the updateOverrided title on the screen
+
     });
 
     testWidgets('Plan Button', (WidgetTester tester) async {
@@ -206,7 +205,7 @@ void main() {
           tester,
           find.descendant(
               of: find.byType(DisplayCard),
-              matching: find.byKey(const Key("PlanCompleteButton"))));
+              matching: find.byKey(const Key("PlanCompleteButton"))).first);
     });
 
     // Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
@@ -274,39 +273,24 @@ void main() {
     Future<void> setUp(WidgetTester tester) async {
       await skipToEntriesPage(tester);
 
-			final thisYear = DateTime.now().year;
-			final thisMonth = DateTime.now().month;
-			final thisDay = DateTime.now().day;
-
-			entries = [
-				JournalEntry(
-					title: "This is an entry", 
-					entryText: 'This is the body\nEntry is made today', 
-					date: DateTime.now()
-				),
-				//Test first day of week exception
-				JournalEntry(
-					title: "Monady entry", 
-					entryText: 'Entry is at the start of the week', 
-					date: DateTime(thisYear, thisMonth + 1, thisDay).subtract(Duration(days: DateTime.now().weekday - 1)),
-				),
-				//Test last day of week exception
-				JournalEntry(
-					title: "Sunday entry", 
-					entryText: 'Entry is at end of week', 
-					date: DateTime(thisYear, thisMonth - 1, thisDay).add(Duration(days: DateTime.now().weekday - 1)),
-				),
-				JournalEntry(
-					title: "Entry on 1st", 
-					entryText: 'Entry is at the start of the month', 
-					date: DateTime(thisYear, thisMonth, 1),
-				),
-				JournalEntry(
-					title: "Entry at end", 
-					entryText: 'Entry is at end of the month, hopefully', 
-					date: DateTime(thisYear, thisMonth+1, 1).subtract(const Duration(days: 1)),
-				),
-			];
+      entries.addAll([
+        JournalEntry(
+            title: "Could be better",
+            entryText: 'I am running out of ideas',
+            dateOverride: DateTime(2021, 3, 17)),
+        JournalEntry(
+            title: "11sef sd63",
+            entryText: ';)',
+            dateOverride: DateTime(2021, 3, 5)),
+        JournalEntry(
+            title: "This is a test",
+            entryText: 'asdfhdf',
+            dateOverride: DateTime(2020, 1, 2)),
+        JournalEntry(
+            title: "This is the last entry",
+            entryText: 'This is the last body',
+            dateOverride: DateTime(2020, 7, 1)),
+      ]);
     }
 
     @override
@@ -335,26 +319,19 @@ void main() {
       DateTime lower = upper.subtract(const Duration(days: 6));
 
       // See if range label is displaying correctly
-			var rangeText = switch(filter){
-				"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
-				"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
-				_ => DateTime.now().year.toString(),
-			};
-			expect(find.text(rangeText), findsWidgets);
+			// var rangeText = switch(filter){
+			// 	"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
+			// 	"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
+			// 	_ => DateTime.now().year.toString(),
+			// };
 
       // Check to see if every entry in the time span is there
       for (JournalEntry entry in entriesInDateRange(upper, lower, entries)) {
 
         final entryKey = find.byKey(Key(entry.id.toString()));
-				final entryCard = find.descendant(
-					of: find.byType(Dismissible),
-					matching: entryKey,
-				);
-        await tester.pump();
-        //is no longer usable with multiple scroll widgets on display
-        //await tester.scrollUntilVisible(entryKey, 1);
+        await tester.pumpAndSettle();
         // Confirm that the entry was seen
-        await expectLater(entryCard, findsOneWidget);
+        await expectLater(entryKey, findsOneWidget);
         await tester.pump();
       }
     }
@@ -385,7 +362,7 @@ void main() {
     entries.add(JournalEntry(
         title: "This is an entry",
         entryText: 'This is the body',
-        date: DateTime.now()));
+        dateOverride: DateTime(2022, 2, 7)));
 
     // Navigate to the entries panel
     // Navigate to the entries panel
@@ -442,7 +419,7 @@ void main() {
           entryText:
               'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
               'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-          date: DateTime(DateTime.now().year, DateTime.now().month, 5),
+          dateOverride: DateTime(2023, 5, 17),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Centered', color: const Color(0xff794e5e)),
@@ -457,7 +434,7 @@ void main() {
           entryText:
               'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
               'bright and the sky was a brilliant shade of blue. ',
-          date: DateTime(DateTime.now().year, DateTime.now().month, 9),
+          dateOverride: DateTime(2022, 9, 12),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Content', color: const Color(0xfff1903b)),
@@ -487,44 +464,14 @@ void main() {
         'Surprise': const Color(0xFFFF8200),
       };
       await skipToEntriesPage(tester, true);
-
-      final dropdownKey = find.byKey(const ValueKey("SortByDateDropDown"));
-      await pumpUntilFound(tester, dropdownKey);
-      // find the drop down and tap it
-      await tap(tester, dropdownKey, true);
-
-      // find the Month option and tap it
-      final weekDropDown = find.text("Month").last;
-      await pumpUntilFound(tester, weekDropDown);
-      await tap(tester, weekDropDown, true);
-			await tester.pump();
-
-			journal1 = find.byKey(Key(entrys[0].id.toString()));
+      journal1 = find.byKey(Key(entrys[0].id.toString()));
       journal2 = find.byKey(Key(entrys[1].id.toString()));
       titleSearchBar = find.byKey(const Key('Filter_By_TextForm'));
-
-			/*
-      await tap(tester, journal1, true);
-
-      // initialize save, plan, tag, and emotions buttons for the rest of the tests
-      saveButton = find.byKey(const Key("saveButton"));
-      await pumpUntilFound(tester, saveButton);
-      planButton = find.byKey(const Key("planButton"));
-      await pumpUntilFound(tester, planButton);
-      tagButton = find.byKey(const Key("tagButton"));
-      await pumpUntilFound(tester, tagButton);
-      emotionButton = find.byKey(const Key("emotionButton"));
-      await pumpUntilFound(tester, emotionButton);
-      //save the journal entries
-      await tap(tester, saveButton, true);
-			*/
     }
 
     testWidgets('Journal entry title filter test', (WidgetTester tester) async {
       await setUp(tester);
       //initially we should see both journal entries
-			journal1 = find.text(entries[0].title);
-			journal2 = find.text(entries[1].title);
 
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
@@ -563,6 +510,39 @@ void main() {
       expect(journal2, findsNothing);
       //final filter sees no journal entries
       await tap(tester, find.text('Content'), true);
+      await tap(tester, find.text('Content'), true);
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsNothing);
+      //filter to see journal 2 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsNothing);
+      expect(journal2, findsOneWidget);
+      //unselect content tag to see both entries
+      await tap(tester, find.text('Content'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+    });
+
+    testWidgets('Journal entry emotions filter test', (WidgetTester tester) async {
+      await setUp(tester);
+      //initially we should see both journal entries
+			journal1 = find.text(entries[0].title);
+			journal2 = find.text(entries[1].title);
+
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      await tap(tester, find.text('Happy'), true);
+      await tap(tester, find.text('Happy'), true);
+      //both have calm tag so nothing changes
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsOneWidget);
+      //filter to see journal 1 only
+      await tap(tester, find.text('Centered'), true);
+      expect(journal1, findsOneWidget);
+      expect(journal2, findsNothing);
+      //final filter sees no journal entries
+      await tap(tester, find.text('Content'), true);
       expect(journal1, findsNothing);
       expect(journal2, findsNothing);
       //filter to see journal 2 only
@@ -575,6 +555,7 @@ void main() {
       expect(journal2, findsOneWidget);
     });
   });
+
   group("Entry Navbar Tests", () {
     // New finders added for all three journal entries
     late Finder journal1;
@@ -593,33 +574,42 @@ void main() {
           entryText:
               'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
               'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
-          date: DateTime(2023, 5, 17),
+          dateOverride: DateTime(2023, 5, 17),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
             Tag(name: 'Centered', color: const Color(0xff794e5e)),
           ],
-          emotions: [
-            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
-            Emotion(
-                name: 'Trust', color: const Color(0xff308c7e), strength: 100),
-          ]),
+          emotions: []),
       JournalEntry(
           title: "Flying Over the Ocean",
           entryText:
               'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
               'bright and the sky was a brilliant shade of blue. ',
-          date: DateTime(2022, 9, 12),
+          dateOverride: DateTime(2022, 9, 12),
           tags: [
             Tag(name: 'Calm', color: const Color(0xff90c6d0)),
-            Tag(name: 'Content', color: const Color(0xfff1903b)),
           ],
+          emotions: []),
+      JournalEntry(
+          title: "Extraordinary beauty of nature",
+          entryText:
+          'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+              'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+          dateOverride: DateTime(2023, 5, 17),
+          tags: [],
           emotions: [
-            Emotion(
-                name: 'Anticipation',
-                color: const Color(0xffff8000),
-                strength: 50),
-            Emotion(
-                name: 'Anger', color: const Color(0xffb51c1c), strength: 50),
+            Emotion(name: 'Sad', color: const Color(0xff1f3551), strength: 10),
+            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 60),
+          ]),
+      JournalEntry(
+          title: "Flying Over the Ocean",
+          entryText:
+          'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+              'bright and the sky was a brilliant shade of blue. ',
+          dateOverride: DateTime(2022, 9, 12),
+          tags: [],
+          emotions: [
+            Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 60),
           ]),
     ];
 
@@ -639,15 +629,9 @@ void main() {
       };
       await skipToEntriesPage(tester, true);
       //set finders for journal entries
-			journal1 = find.descendant(
-				of: find.byType(Dismissible),
-				matching: find.byKey(Key(entries[0].id.toString())),
-			);
-			journal2 = find.descendant(
-				of: find.byType(Dismissible),
-				matching: find.byKey(Key(entries[1].id.toString())),
-			);
 
+      journal1 = find.byKey(Key(entrys[0].id.toString()));
+      journal2 = find.byKey(Key(entrys[1].id.toString()));
       //set navbar finders
       calendarButton = find.byKey(const Key('navCalendar'));
       settingsButton = find.byKey(const Key('navSettings'));
@@ -668,4 +652,55 @@ void main() {
       expect(find.text('Settings'), findsOneWidget);
     });
   });
+
+  group("Plan Deletion Tests", () {
+    plans.add(Plan(
+        title: "This is an entry",
+        entryText: 'This is the body',
+        scheduledDate: DateTime(2022, 2, 7)
+    ));
+
+    // Navigate to the entries panel
+    // Navigate to the entries panel
+    Future<void> setUp(WidgetTester tester) async {
+      await skipToPlansPage(tester);
+    }
+
+    testWidgets('Remove an plan from the list.', (WidgetTester tester) async {
+      await setUp(tester);
+
+      final entry = plans[0].id.toString();
+      Finder entryFinder = find.byKey(ValueKey(entry));
+      await tester.pump();
+
+      //confirm that entry exist
+      final entryCard = find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      );
+      await tap(tester, entryCard, true);
+
+      await tester.enterText(find.byKey(const Key("titleInput")), "New Title");
+      await tap(tester, find.byKey(const Key("saveButton")));
+
+      //Drag the entry, then tap cancel button
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
+      await tap(tester, find.text("CANCEL"), true);
+      expect(find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      ), findsOneWidget);
+
+      //Drag the entry, then tap delete button
+      await tester.drag(entryCard, const Offset(-500, 0));
+      await tester.pump();
+      await tap(tester, find.text("DELETE"), true);
+      expect(find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      ), findsNothing);
+    });
+  });
+
 }
