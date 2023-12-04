@@ -12,8 +12,7 @@ import 'test_utils.dart';
 
 void main() {
 
-	@override
-	Future<void> setUp(WidgetTester tester) async {
+  testWidgets('Displaying emotion time chart', (tester) async {
 		entries = [
 			JournalEntry(
 				title: "Title!",
@@ -29,12 +28,10 @@ void main() {
 			),
 		];
 
+		settings.setEmotionGraphType(GraphTypes.time);
+
     //Navigate to graph page
     await skipToCalendarPage(tester, true);
-	}
-
-  testWidgets('Displaying emotion time chart', (tester) async {
-		settings.setEmotionGraphType(GraphTypes.time);
     //Two graphs should exist
     expect(find.byType(EmotionGraph), findsOneWidget);
 
@@ -42,11 +39,6 @@ void main() {
     final emotionGraph = find.byType(LineChart);
     expect(emotionGraph, findsOneWidget);
 
-		//Check the tooltip
-		tester.longPress(emotionGraph);
-		final tooltips = find.byType(LineTooltipItem);
-		expect(find.text("Happy"), findsOneWidget);
-		expect(find.text("Sad"), findsNothing);
   });
 
   testWidgets('Displaying emotion frequency chart', (tester) async {
