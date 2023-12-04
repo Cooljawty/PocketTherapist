@@ -400,44 +400,44 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return mostEmotion;
   }
 
-  String getEmotionsTillNow(List<JournalEntry> entries) {
-    List<JournalEntry> filteredEntries = _getEntriesInRange();
-
-    //list if two or more emotions are the most frequent
-    List<String> frequentEmotions = [];
-    //map to track emotion use
-    Map<String, int> emotionsAndAmounts = {
-      'Happy': 0,
-      'Trust': 0,
-      'Fear': 0,
-      'Sad': 0,
-      'Disgust': 0,
-      'Anger': 0,
-      'Surprise': 0,
-      'Anticipation': 0
-    };
-
-    //no entries
-    if (filteredEntries.isEmpty) {
-      return "N/A";
-    }
-    //go through all entries in the list
-    for (var entry in filteredEntries) {
-      //go through all emotions in the entry, increase count of that emotion
-      for (var emotion in entry.emotions) {
-        emotionsAndAmounts[emotion.name] =
-            emotionsAndAmounts[emotion.name]! + 1;
-      } //ends inner for
-    } // ends outer for
-
-    emotionsAndAmounts.forEach((key, value) {
-      if (value > 0 && !frequentEmotions.contains(key)) {
-        //Emotion exist, add it to list
-        frequentEmotions.add(key);
-      }
-    });
-    return frequentEmotions.join(", ");
-  } //ends func
+  // String getEmotionsTillNow(List<JournalEntry> entries) {
+  //   List<JournalEntry> filteredEntries = _getEntriesInRange();
+  //
+  //   //list if two or more emotions are the most frequent
+  //   List<String> frequentEmotions = [];
+  //   //map to track emotion use
+  //   Map<String, int> emotionsAndAmounts = {
+  //     'Happy': 0,
+  //     'Trust': 0,
+  //     'Fear': 0,
+  //     'Sad': 0,
+  //     'Disgust': 0,
+  //     'Anger': 0,
+  //     'Surprise': 0,
+  //     'Anticipation': 0
+  //   };
+  //
+  //   //no entries
+  //   if (filteredEntries.isEmpty) {
+  //     return "N/A";
+  //   }
+  //   //go through all entries in the list
+  //   for (var entry in filteredEntries) {
+  //     //go through all emotions in the entry, increase count of that emotion
+  //     for (var emotion in entry.emotions) {
+  //       emotionsAndAmounts[emotion.name] =
+  //           emotionsAndAmounts[emotion.name]! + 1;
+  //     } //ends inner for
+  //   } // ends outer for
+  //
+  //   emotionsAndAmounts.forEach((key, value) {
+  //     if (value > 0 && !frequentEmotions.contains(key)) {
+  //       //Emotion exist, add it to list
+  //       frequentEmotions.add(key);
+  //     }
+  //   });
+  //   return frequentEmotions.join(", ");
+  // } //ends func
 
   String getMostCommonTag(List<JournalEntry> entries) {
     List<JournalEntry> filteredEntries = _getEntriesInRange();
@@ -593,6 +593,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
               return AlertDialog(
                 title: const Text("Statistics"),
                 content: Text(
+
                     'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'
                         ' Most Common Tag: ${getMostCommonTag(entries)} \n'),
               );

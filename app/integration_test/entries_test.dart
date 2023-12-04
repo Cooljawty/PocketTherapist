@@ -628,6 +628,50 @@ void main() {
       //find the entries
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
+
+      // clear entries
+      entries.clear();
+
+      //add new entries
+      final List<JournalEntry> toggleEntries = [
+        JournalEntry(
+            title: "Extraordinary Title",
+            entryText:
+            'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+                'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+            dateOverride: DateTime(2023, 5, 17),
+            tags: [
+              Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+              Tag(name: 'Centered', color: const Color(0xff794e5e)),
+            ],
+            emotions: [
+              Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
+              Emotion(
+                  name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+            ]),
+        JournalEntry(//second
+            title: "Flying Title",
+            entryText:
+            'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+                'bright and the sky was a brilliant shade of blue. ',
+            dateOverride: DateTime(2022, 9, 12),
+            tags: [
+              Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+              Tag(name: 'Content', color: const Color(0xfff1903b)),
+            ],
+            emotions: [
+              Emotion(
+                  name: 'Fear',
+                  color: const Color(0xffff8000),
+                  strength: 50),
+              Emotion(
+                  name: 'Happy', color: const Color(0xffb51c1c), strength: 50),
+            ]),
+      ];
+      //ends new entries
+
+      //sets entries to the new set
+      entries = toggleEntries;
       //find the key
       expect(find.byKey(toggleKey), findsOneWidget);
       //tap the key
@@ -636,6 +680,9 @@ void main() {
       //await pumpUntilFound(tester, find.text("Statistics"));
 
       expect(find.text("Statistics"), findsOneWidget);
+      //use these
+      expect(find.text('Fear'), findsOneWidget);
+      expect(find.text('Calm'), findsOneWidget);
 
     });
   });
