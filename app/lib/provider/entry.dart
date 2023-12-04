@@ -132,9 +132,10 @@ String getTemplateEntryBody(String category, int num) {
       .shuffle(); // Shuffle to make things random, doesnt matter if it modifies.
   int length = questions.length;
   if (num > length) num = length;
-  if (num == length)
+  if (num == length){
     return questions
         .join("\n\n\n"); // Join questions with 2 spaces between for answering.
+	}
 
   // num < length
   Set<int> indexes = {};

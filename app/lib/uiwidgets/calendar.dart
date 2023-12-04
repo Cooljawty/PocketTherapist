@@ -44,7 +44,7 @@ class _CalendarState extends State<Calendar> {
 				),
 			),
 			child: Text(
-				"${day}", 
+				"$day", 
 				//Have days outside of the current month be greyed out
 				style: outOfRange ? settings.getCurrentTheme().textTheme.labelLarge!.copyWith(
 					color: settings.getCurrentTheme().textTheme.labelLarge!.color!.withOpacity(0.5)
