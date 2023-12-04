@@ -131,7 +131,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             style: ElevatedButton.styleFrom(
                               shape: const CircleBorder(),
                             ),
-                            key: const Key("breakDown"),
+                            key: const Key("toggleStats"),
                             child: const Icon(Icons.more_horiz)),
                       ),
                       //only works on entries page
@@ -589,6 +589,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
         builder: (dialogContext) {
           return StatefulBuilder(
             builder: (stfContext, stfSetState) {
+
               return AlertDialog(
                 title: const Text("Statistics"),
                 content: Text(
