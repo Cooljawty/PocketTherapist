@@ -18,6 +18,7 @@ void main() {
         home: CalendarPage(),
     )});
 
+
   testWidgets('Test calendar widget constructor', (WidgetTester tester) async {
 		await tester.pumpWidget(myApp);
 
@@ -27,17 +28,8 @@ void main() {
 		final calendarGrid = find.byKey(const Key("Calendar_Grid"));
 		expect(calendarGrid, findsOneWidget);
 
-		//Ensuere the right number of days are on grid
-		final today = DateTime.now();
-		final firstOfTheMonth = DateTime(today.year, today.month, 1);
-		final lastOfTheMonth = DateTime(today.month < DateTime.december ? today.year : today.year+1, today.month < DateTime.december ? today.month + 1 : 1, 1).subtract(const Duration(days: 1));
-
-		final firstWeekPadding = firstOfTheMonth.weekday - 1;
-		final lastWeekPadding = 7 - lastOfTheMonth.weekday;
-		final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
-
 		final calendarDays = find.byKey(const Key("Calendar_Day"));
-		expect(calendarDays, findsNWidgets(totalDays));
+		expect(calendarDays, findsNWidgets(7*6));
   });
 
 	testWidgets('Test forward date switching', (WidgetTester tester) async {
@@ -47,8 +39,8 @@ void main() {
 		expect(nextButton, findsOneWidget);
 
     //Test forward
-		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
-		while( date.isBefore(DateTime(DateTime.now().year + 4, DateTime.now().month, 1)) ){
+		var date = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isBefore(DateTime.utc(DateTime.now().year + 4, DateTime.now().month, 1)) ){
 			//Calculate date of next month
 			if ( date.month < 12 ){
 				date = DateTime( date.year, date.month + 1, 1);
@@ -56,17 +48,11 @@ void main() {
 				date = DateTime( date.year + 1, 1, 1);
 			}
 
-			final firstOfTheMonth = DateTime(date.year, date.month, 1);
-			final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(const Duration(days: 1));
-
-			final firstWeekPadding = firstOfTheMonth.weekday - 1;
-			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
-			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
-
 			//Go to next month and test amount of days are correct
 			await tap(tester, nextButton);
+		
 			final calendarDays = find.byKey(const Key("Calendar_Day"));
-			expect(calendarDays, findsNWidgets(totalDays));
+			expect(calendarDays, findsNWidgets(7*6));
 		}
 	});
 
@@ -79,21 +65,17 @@ void main() {
     //Test backward
 		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
 		while( date.isAfter(DateTime(DateTime.now().year - 4, DateTime.now().month, 1)) ){
-			//Calculate date of previous month
-			final lastOfPreviousMonth = date.subtract(const Duration(days: 1));
-			date = DateTime(lastOfPreviousMonth.year, lastOfPreviousMonth.month, 1);
+			//Calculate date of next month
+			if ( date.month < 12 ){
+				date = DateTime( date.year, date.month -1, 1);
+			} else {
+				date = DateTime( date.year -1, 12, 1);
+			}
 
-		final firstOfTheMonth = DateTime(date.year, date.month, 1);
-		final lastOfTheMonth = DateTime(date.month < DateTime.december ? date.year : date.year+1, date.month < DateTime.december ? date.month + 1 : 1, 1).subtract(const Duration(days: 1));
-
-			final firstWeekPadding = firstOfTheMonth.weekday - 1;
-			final lastWeekPadding = 7 - lastOfTheMonth.weekday;
-			final totalDays = firstWeekPadding + (lastOfTheMonth.difference(firstOfTheMonth).inDays + 1) + lastWeekPadding;
-
-			//Go to previous month and test amount of days are correct
 			await tap(tester, previousButton);
+
 			final calendarDays = find.byKey(const Key("Calendar_Day"));
-			expect(calendarDays, findsNWidgets(totalDays));
+			expect(calendarDays, findsNWidgets(7*6));
 		}
 	});
 
