@@ -126,7 +126,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         width: MediaQuery.of(context).size.width / 6,
                         child: ElevatedButton(
                             onPressed: () {
-                              toggleStats();
+                              showStats();
                             },
                             style: ElevatedButton.styleFrom(
                               shape: const CircleBorder(),
@@ -217,7 +217,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       ),
                     ),
 
-
                     //holds the list of entries
                     Expanded(
                         child: ListView.builder(
@@ -226,7 +225,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       itemBuilder: (context, index) {
                         // get one item
                         final item = items[index];
-                        final time = widget.showPlans ? item.scheduledDate! : item.creationDate;
+                        final time = widget.showPlans
+                            ? item.scheduledDate!
+                            : item.creationDate;
 
                         // Dividers by filter
                         bool isSameDate = true;
@@ -236,8 +237,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         } else {
                           // else check if same date by filters
                           isSameDate = time.isWithinDateRange(
-                              widget.showPlans ? items[index - 1].scheduledDate!
-                                  : items[index - 1].creationDate, chosenDisplay.toString());
+                              widget.showPlans
+                                  ? items[index - 1].scheduledDate!
+                                  : items[index - 1].creationDate,
+                              chosenDisplay.toString());
                         }
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -310,21 +313,22 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                             ]); // if in the same filter header list, then just make a new entry
                       },
                     )),
-                    Card(
-                        child: Visibility(
-                            //within a column
-                            visible: isVisibleStats,
-                            child: RichText(
-                                text: TextSpan(children: [
-                              TextSpan(
-                                  style: TextStyle(fontSize: 20),
-                                  text:
-                                      'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'),
-                              TextSpan(
-                                  style: TextStyle(fontSize: 20),
-                                  text:
-                                      'Most Common Tag: ${getMostCommonTag(entries)} \n')
-                            ])))),
+
+                    // Card(
+                    //     child: Visibility(
+                    //         //within a column
+                    //         visible: isVisibleStats,
+                    //         child: RichText(
+                    //             text: TextSpan(children: [
+                    //           TextSpan(
+                    //               style: TextStyle(fontSize: 20),
+                    //               text:
+                    //                   'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'),
+                    //           TextSpan(
+                    //               style: TextStyle(fontSize: 20),
+                    //               text:
+                    //                   'Most Common Tag: ${getMostCommonTag(entries)} \n')
+                    //         ])))),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[],
@@ -385,16 +389,16 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
       } //ends inner for
     } // ends outer for
 
-    var maxValue = 0;
-    var maxKey = "";
+    var emotionCount = 0;
+    var mostEmotion = "";
     emotionsAndAmounts.forEach((key, value) {
-      if (value > maxValue && value > 0) {
+      if (value > emotionCount && value > 0) {
         //find the most frequent emotion and add it to the list
-        maxKey = key;
-        maxValue = value;
+        mostEmotion = key;
+        emotionCount = value;
       }
     });
-    return maxKey;
+    return mostEmotion;
   }
 
   String getEmotionsTillNow(List<JournalEntry> entries) {
@@ -500,23 +504,27 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-    items = widget.showPlans ? plans.toList(): entries.toList();
-    items = items.where((element) => element.title.toLowerCase().contains(input.toLowerCase())).toList();
+    items = widget.showPlans ? plans.toList() : entries.toList();
+    items = items
+        .where((element) =>
+            element.title.toLowerCase().contains(input.toLowerCase()))
+        .toList();
 
     //is triggered every time the serach bar is updated so that way filtered journal entries
     //are also filtered by tag selection
     items = items.where((element) {
-      for(Tag tag in selectedTags){
-        if (!element.tags.map((e) => e.name).contains(tag.name)){
+      for (Tag tag in selectedTags) {
+        if (!element.tags.map((e) => e.name).contains(tag.name)) {
           return false;
         }
       }
       return true;
     }).toList();
+
     /// Filter by selected emotions as well
     items = items.where((element) {
-      for(String emote in selectedEmotions){
-        if (!element.emotions.map((e) => e.name).contains(emote)){
+      for (String emote in selectedEmotions) {
+        if (!element.emotions.map((e) => e.name).contains(emote)) {
           return false;
         }
       }
@@ -527,20 +535,19 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
   List<Widget> generateEmotionFilterChips() {
     List<FilterChip> chips = [];
-    for(final MapEntry<String, Color>(:key, :value) in emotionList.entries){
+    for (final MapEntry<String, Color>(:key, :value) in emotionList.entries) {
       chips.add(FilterChip(
-          selected: selectedEmotions.contains(key),
-          label: Text(key),
-          selectedColor: Color.alphaBlend(
-              value,
-              Theme.of(context)
-                  .colorScheme
-                  .primaryContainer),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          onSelected: (selected) {
-            selectedEmotions.contains(key) ? selectedEmotions.remove(key) : selectedEmotions.add(key);
-            updateFilteredList(searchBarInput.text);
-          },
+        selected: selectedEmotions.contains(key),
+        label: Text(key),
+        selectedColor: Color.alphaBlend(
+            value, Theme.of(context).colorScheme.primaryContainer),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        onSelected: (selected) {
+          selectedEmotions.contains(key)
+              ? selectedEmotions.remove(key)
+              : selectedEmotions.add(key);
+          updateFilteredList(searchBarInput.text);
+        },
       ));
     }
     return chips;
@@ -548,23 +555,24 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
   List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date
-		//Show entreis in range of given date or from today
-		final today = widget.targetDate ?? DateTime.now();
-		final startDate = switch(chosenDisplay) {
+    //Show entreis in range of given date or from today
+    final today = widget.targetDate ?? DateTime.now();
+    final startDate = switch (chosenDisplay) {
       DisplayOption.day => today.subtract(Duration(days: 1)),
-			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
-			DisplayOption.month => DateTime(today.year, today.month, 1),
-			DisplayOption.year => DateTime(today.year, 1, 1),
-		};
-		final endDate = switch(chosenDisplay) {
+      DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
+      DisplayOption.month => DateTime(today.year, today.month, 1),
+      DisplayOption.year => DateTime(today.year, 1, 1),
+    };
+    final endDate = switch (chosenDisplay) {
       DisplayOption.day => today.add(Duration(days: 1)),
-			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => (today.month < DateTime.december
-				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
-				.subtract(const Duration(days: 1)),
-			DisplayOption.year => DateTime(today.year+1, 1, 1)
-				.subtract(const Duration(days: 1)),
-		};
+      DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
+      DisplayOption.month => (today.month < DateTime.december
+              ? DateTime(today.year, today.month + 1, 1)
+              : DateTime(today.year + 1, 1, 1))
+          .subtract(const Duration(days: 1)),
+      DisplayOption.year =>
+        DateTime(today.year + 1, 1, 1).subtract(const Duration(days: 1)),
+    };
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
     // Select appropriate list to display
@@ -575,16 +583,29 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     return widget.showPlans ? filteredPlans : filteredEntries;
   }
 
-
   void toggleStats() async {
-    print("isVisibleStats:");
-    print(isVisibleStats);
     setState(() {
       isVisibleStats = !isVisibleStats;
 
       //bottomNavigationBar = CustomEntriesNav;
     });
-    print(isVisibleStats);
+  }
+
+  void showStats() {
+    showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return StatefulBuilder(
+            builder: (stfContext, stfSetState) {
+              return AlertDialog(
+                title: const Text("Statistics"),
+                content: Text(
+                    'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'
+                        ' Most Common Tag: ${getMostCommonTag(entries)} \n'),
+              );
+            },
+          );
+        });
   }
 } //ends page
 
@@ -622,8 +643,7 @@ class _EntryPageState extends State<EntryPage> {
       entryTextController.text = widget.entry!.entryText;
       isPlan = widget.entry!.scheduledDate == null;
       datePicked = widget.entry!.scheduledDate;
-    }
-    else {
+    } else {
       selectedTags = [];
       selectedEmotions = [];
     }
@@ -807,20 +827,15 @@ class _EntryPageState extends State<EntryPage> {
       // entry exists, we are modifying
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
-      if(widget.entry! is Plan){
-        widget.entry!.update(
-            titleController.text,
-            entryTextController.text,
-            selectedTags,
-            selectedEmotions,
-            datePicked
-        );
+      if (widget.entry! is Plan) {
+        widget.entry!.update(titleController.text, entryTextController.text,
+            selectedTags, selectedEmotions, datePicked);
       } else {
         widget.entry!.update(
-            titleController.text,
-            entryTextController.text,
-            selectedTags,
-            selectedEmotions,
+          titleController.text,
+          entryTextController.text,
+          selectedTags,
+          selectedEmotions,
         );
       }
       return widget.entry!;
@@ -908,30 +923,35 @@ class _EntryPageState extends State<EntryPage> {
       builder: (context) => AlertDialog(
         title: const Text("Guided Journaling"),
         content: SizedBox(
-            width: MediaQuery.of(context).size.width/3,
-            height: MediaQuery.of(context).size.width/3,
+            width: MediaQuery.of(context).size.width / 3,
+            height: MediaQuery.of(context).size.width / 3,
             child: Row(
               children: [
                 const Text('Category: '),
                 DropdownMenu<String>(
                   key: const Key("Template_Selection"),
-                  dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                  dropdownMenuEntries: templateSet.keys
+                      .map((e) => DropdownMenuEntry(value: e, label: e))
+                      .toList(),
                   onSelected: (value) {
                     category = value!;
                   },
                 ),
               ],
-            )
-        ),
+            )),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Generate!"))
         ],
       ),
     );
-    if(category == "") return;
+    if (category == "") return;
     DateTime today = DateTime.now();
+
     /// Format [dateSlug] is yyyy-mm-dd
-    String dateSlug ="${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
+    String dateSlug =
+        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     if (titleController.text.isEmpty) {
       titleController.text = "$dateSlug - $category";
     }
@@ -967,10 +987,9 @@ class _EntryPageState extends State<EntryPage> {
                     controller: titleController,
                     key: const Key("titleInput"),
                     decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Title',
-                      hintText: 'Inspiration is a tap away...'
-                    ),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Title',
+                        hintText: 'Inspiration is a tap away...'),
                   ),
                 ),
                 // Text input field for the Journal Entry Body
@@ -989,7 +1008,8 @@ class _EntryPageState extends State<EntryPage> {
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: 'Journal Entry',
-                        hintText: "Swipe right for ideas, double tap for a question...",
+                        hintText:
+                            "Swipe right for ideas, double tap for a question...",
                       ),
                       maxLines: 20,
                       minLines: 1,
