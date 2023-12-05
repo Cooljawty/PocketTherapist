@@ -48,10 +48,7 @@ class _CalendarPageState extends State<CalendarPage> {
 							// ignore: prefer_const_constructors
 						  child: Calendar(),
 						),
-						EmotionGraph(
-							startDate: DateTime(DateTime.now().year, DateTime.now().month, 1), 
-							endDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().getDaysInMonth()), 
-						),
+						EmotionGraph(),
 					],
 				),
 			),

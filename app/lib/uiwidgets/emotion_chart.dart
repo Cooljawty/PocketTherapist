@@ -20,12 +20,10 @@ enum GraphTypes {
 /// either a line plot of the intesity of that emotion over the range, or the relative
 /// intensities of each emotion in a radial chart
 class EmotionGraph extends StatefulWidget {
-  final DateTime startDate;
-  final DateTime endDate;
   final GraphTypes type;
 
   EmotionGraph(
-      {super.key, required this.startDate, required this.endDate, type})
+      {super.key, type})
       : type = type ?? settings.getEmotionGraphType();
 
   @override
@@ -33,15 +31,18 @@ class EmotionGraph extends StatefulWidget {
 }
 
 class _EmotionGraphState extends State<EmotionGraph> {
+	DateTime startDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1); 
+	DateTime endDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1).add(Duration(days: DateTime.now().getDaysInMonth()-1)); 
+
   static const maxStrength = 60.0;
 
   Map<String, List<FlSpot>> _emotionData = {};
 
   //X is the number of days from the start entry
   double getX(JournalEntry entry) =>
-      entry.creationDate.difference(widget.startDate).inDays.floorToDouble();
+      entry.creationDate.difference(startDate).inDays.floorToDouble();
   double getXFromDay(DateTime day) =>
-      day.difference(widget.startDate).inDays.toDouble().floorToDouble();
+      day.difference(startDate).inDays.toDouble().floorToDouble();
 
   Widget _getTimeChart() {
     final gridColor = settings.getCurrentTheme().colorScheme.onBackground;
@@ -94,7 +95,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
           ),
         ),
 
-        minX: 0.0, maxX: getXFromDay(widget.endDate),
+        minX: 0.0, maxX: getXFromDay(endDate),
         minY: 0.0, maxY: maxStrength,
         gridData: FlGridData(
           drawHorizontalLine: false,
@@ -136,7 +137,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
     final emotionValues = _emotionData.entries.map((entry) {
       final sum = entry.value.fold(0.0, (sum, strength) => sum += strength.y);
       return RadarEntry(
-          value: sum / (maxStrength * getXFromDay(widget.endDate)));
+          value: sum / (maxStrength * getXFromDay(endDate)));
     }).toList();
 
     //Find the strongest emotion based on calculated radial values
@@ -195,17 +196,17 @@ class _EmotionGraphState extends State<EmotionGraph> {
   }
 
   Widget _getTimeTitles(double value, TitleMeta meta) {
-    final day = widget.startDate.add(Duration(days: value.toInt())).day;
+    final day = startDate.add(Duration(days: value.toInt())).day;
 
     final startOfWeek =
-        widget.startDate.add(Duration(days: value.floor())).weekday ==
-            widget.startDate.weekday;
+        startDate.add(Duration(days: value.floor())).weekday ==
+            startDate.weekday;
     return SideTitleWidget(
       axisSide: meta.axisSide,
       //Dont label last line if it's not the end of the week
       child: Text(
-          (startOfWeek || getXFromDay(widget.endDate) <= 7.0)
-              ? "${widget.startDate.month}/$day"
+          (startOfWeek || getXFromDay(endDate) <= 7.0)
+              ? "${startDate.month}/$day"
               : "",
           style: settings.getCurrentTheme().textTheme.labelMedium),
     );
@@ -215,12 +216,12 @@ class _EmotionGraphState extends State<EmotionGraph> {
   Widget build(BuildContext context) {
     _emotionData = Map.fromIterable(emotionList.keys,
         value: (i) => List<FlSpot>.generate(
-            getXFromDay(widget.endDate).floor() + 1,
+            getXFromDay(endDate).floor() + 1,
             (day) => FlSpot(day.toDouble(), 0)));
 
     //Calculate sum strength for each emotion
     for (var entry
-        in entriesInDateRange(widget.startDate, widget.endDate, entries)) {
+        in entriesInDateRange(startDate, endDate, entries)) {
       for (var emotion in entry.emotions) {
         final dayIndex = getX(entry).floor();
         //Set the y position has the highest intensity of the day
@@ -243,14 +244,33 @@ class _EmotionGraphState extends State<EmotionGraph> {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: Text(
-                  "${widget.startDate.formatDate().month} ${widget.startDate.formatDate().day} - ${widget.endDate.formatDate().day}",
-                  style: settings.getCurrentTheme().textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+							Row(
+								children: [
+									IconButton(
+										key: const Key("Graph_Previous"),
+										icon: const Icon( Icons.navigate_before, ),
+										onPressed: ()=> setState(() {
+											endDate = startDate.subtract(const Duration(days: 1));
+											startDate = DateTime.utc(endDate.year, endDate.month, 1);
+										}),
+									),
+									Expanded(
+										child: Text(
+											"${startDate.formatDate().month} ${startDate.formatDate().day} - ${endDate.formatDate().day}",
+											style: settings.getCurrentTheme().textTheme.titleLarge,
+											textAlign: TextAlign.center,
+										),
+									),
+									IconButton(
+										key: const Key("Graph_Next"),
+										icon: const Icon( Icons.navigate_next, ),
+										onPressed: ()=> setState(() {
+											startDate = endDate.add(const Duration(days: 1));
+											endDate = DateTime.utc(startDate.year, startDate.month + 1, 1).subtract(const Duration(days: 1));
+										}),
+									),
+								]
+							),
               Expanded(
                   child: switch (widget.type) {
                 GraphTypes.time => _getTimeChart(),
@@ -263,175 +283,3 @@ class _EmotionGraphState extends State<EmotionGraph> {
     );
   }
 }
-
-
-
-// final testEntries = <JournalEntry>[
-// 	JournalEntry(
-// 			title: "Day one entry 1", entryText: "",
-// 			date: DateTime(2023, 1, 1),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 60,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day one entry 2", entryText: "",
-// 			date: DateTime(2023, 1, 1),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "", entryText: "",
-// 			date: DateTime(2023, 1, 2),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 30,
-// 				),
-// 				Emotion(
-// 					name: "Anger",
-// 					color: Colors.red,
-// 					strength: 8,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day thrree entry 1", entryText: "",
-// 			date: DateTime(2023, 1, 3),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 15,
-// 				),
-// 				Emotion(
-// 					name: "Happy",
-// 					color: Colors.green,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day thrree entry 2", entryText: "",
-// 			date: DateTime(2023, 1, 3),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Anger",
-// 					color: Colors.red,
-// 					strength: 60,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day one entry 1", entryText: "",
-// 			date: DateTime(2023, 1, 17),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 60,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day one entry 2", entryText: "",
-// 			date: DateTime(2023, 1, 25),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "", entryText: "",
-// 			date: DateTime(2023, 1, 30),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 30,
-// 				),
-// 				Emotion(
-// 					name: "Anger",
-// 					color: Colors.red,
-// 					strength: 8,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day thrree entry 1", entryText: "",
-// 			date: DateTime(2023, 1, 26),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 15,
-// 				),
-// 				Emotion(
-// 					name: "Happy",
-// 					color: Colors.green,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Day thrree entry 2", entryText: "",
-// 			date: DateTime(2023, 1, 12),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Anger",
-// 					color: Colors.red,
-// 					strength: 60,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 		title: "", entryText: "",
-// 		date: DateTime(2023, 1, 11),
-// 	),
-// 	JournalEntry(
-// 			title: "Happy day", entryText: "",
-// 			date: DateTime(2023, 1, 24),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Happy",
-// 					color: Colors.green,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// 	JournalEntry(
-// 			title: "Out of range entry", entryText: "",
-// 			date: DateTime(2023, 1, 14),
-// 			emotions: [
-// 				Emotion(
-// 					name: "Sad",
-// 					color: Colors.blue,
-// 					strength: 60,
-// 				),
-// 				Emotion(
-// 					name: "Happy",
-// 					color: Colors.green,
-// 					strength: 30,
-// 				),
-// 				Emotion(
-// 					name: "Anger",
-// 					color: Colors.red,
-// 					strength: 30,
-// 				),
-// 			]
-// 	),
-// ];
-
