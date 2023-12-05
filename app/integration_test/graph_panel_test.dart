@@ -5,7 +5,6 @@ import 'package:fl_chart/fl_chart.dart';
 
 import 'package:app/uiwidgets/emotion_chart.dart';
 import 'package:app/provider/entry.dart';
-import 'package:app/provider/settings.dart' as settings;
 import 'package:app/helper/dates_and_times.dart';
 
 import 'test_utils.dart';

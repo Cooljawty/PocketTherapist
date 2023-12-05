@@ -2,7 +2,6 @@ import 'package:app/provider/entry.dart';
 import 'package:app/uiwidgets/calendar.dart';
 import 'package:app/uiwidgets/decorations.dart';
 import 'package:app/uiwidgets/emotion_chart.dart';
-import 'package:app/helper/dates_and_times.dart';
 import 'package:flutter/material.dart';
 
 /// [CalendarPage] is the page that displays tthe calendar and related mood
