@@ -37,6 +37,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
   static const maxStrength = 60.0;
 
   Map<String, List<FlSpot>> _emotionData = {};
+	Map<String, bool> _chartedEmotions = {};
 
   //X is the number of days from the start entry
   double getX(JournalEntry entry) =>
@@ -113,7 +114,7 @@ class _EmotionGraphState extends State<EmotionGraph> {
         //Create a line for each emotion
         lineBarsData: _emotionData.entries
             .map((entry) => LineChartBarData(
-                  show: entry.value.any((value) => value.y != 0),
+                  show: _chartedEmotions[entry.key] == true,
                   spots: entry.value,
                   color: emotionList[entry.key],
                   dotData: const FlDotData(
@@ -214,25 +215,30 @@ class _EmotionGraphState extends State<EmotionGraph> {
 
   @override
   Widget build(BuildContext context) {
-    _emotionData = Map.fromIterable(emotionList.keys,
-        value: (i) => List<FlSpot>.generate(
-            getXFromDay(endDate).floor() + 1,
-            (day) => FlSpot(day.toDouble(), 0)));
+    _chartedEmotions = Map.fromIterable(emotionList.keys, value: (entry) => false);
+    _emotionData = Map.fromIterable(emotionList.keys, value: (i) {
+			return List<FlSpot>.generate(
+				getXFromDay(endDate).floor() + 1,
+				(day) => FlSpot(day.toDouble(), 0)
+			);
+		});
 
     //Calculate sum strength for each emotion
-    for (var entry
-        in entriesInDateRange(startDate, endDate, entries)) {
+    for (var entry in entriesInDateRange(startDate, endDate, entries)) {
       for (var emotion in entry.emotions) {
         final dayIndex = getX(entry).floor();
+
+				_chartedEmotions[emotion.name] = true;
+
         //Set the y position has the highest intensity of the day
         if (dayIndex < _emotionData[emotion.name]!.length) {
           _emotionData[emotion.name]![dayIndex] = FlSpot(
-              getX(entry),
-              math.max(_emotionData[emotion.name]![dayIndex].y,
-                  emotion.strength.toDouble()));
+						getX(entry),
+						math.max(_emotionData[emotion.name]![dayIndex].y, emotion.strength.toDouble())
+					);
         } else {
           _emotionData[emotion.name]![dayIndex] =
-              FlSpot(getX(entry), emotion.strength.toDouble());
+						FlSpot(getX(entry), emotion.strength.toDouble());
         }
       }
     }
