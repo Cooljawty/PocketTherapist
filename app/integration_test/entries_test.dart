@@ -156,7 +156,8 @@ void main() {
       await tester.enterText(titleInput, newTitle);
       await tester.pump();
       await doubleTap(tester, find.byKey(const Key("entryBodyKey")));
-      await tester.drag(find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
+      await tester.drag(
+          find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
 
       await tap(tester, saveButton, true);
       // Navigate to the new entry
@@ -171,13 +172,59 @@ void main() {
       await tester.enterText(titleInput, "newTitle?");
       await tester.pumpAndSettle();
 
-
       saveButton.tryEvaluate();
       await tap(tester, saveButton, true); // save
       expect(find.text("newTitle?"),
           findsOneWidget); // Find the updateOverrided title on the screen
-
     });
+    // testWidgets('title and body Creation', (WidgetTester tester) async {
+    //   await setUp(tester);
+    //   String newTitle = "Title!";
+    //
+    //   // Test adding title to the title field
+    //   await tap(tester, titleInput, true);
+    //   await tester.enterText(titleInput, newTitle);
+    //   await tester.pump();
+    //   await doubleTap(tester, find.byKey(const Key("entryBodyKey")));
+    //   await tester.drag(
+    //       find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
+    //
+    //   await tap(tester, saveButton, true);
+    //   // Navigate to the new entry
+    //   // Find the title on the entry page
+    //   final title = find.text(newTitle);
+    //   expect(title, findsNWidgets(1));
+    //   await tap(tester, title, true); // save
+    //   // await navigateToEntry(tester, newTitle);
+    //
+    //   titleInput.tryEvaluate(); // rerun the finder for the title
+    //   await tap(tester, titleInput);
+    //   await tester.enterText(titleInput, "newTitle?");
+    //   await tester.pumpAndSettle();
+    //
+    //   saveButton.tryEvaluate();
+    //   await tap(tester, saveButton, true); // save
+    //   expect(find.text("newTitle?"),
+    //       findsOneWidget); // Find the updateOverrided title on the screen
+    // });
+
+    testWidgets('Create entry and hit the toggle on entries page',
+        (WidgetTester tester) async {
+      await setUp(tester);
+      String newTitle = "Title!";
+
+      // Test adding title to the title field
+      await tap(tester, titleInput, true);
+      await tester.enterText(titleInput, newTitle);
+      await tester.pump();
+      await doubleTap(tester, find.byKey(const Key("entryBodyKey")));
+      await tester.drag(
+          find.byKey(const Key('entryBodyKey')), const Offset(500, 10));
+
+      await tap(tester, saveButton, true);
+      // Navigate to the new entry
+      // Find the title on the entry page
+    }); // may delete
 
     testWidgets('Plan Button', (WidgetTester tester) async {
       await setUp(tester);
@@ -203,9 +250,11 @@ void main() {
 
       await tap(
           tester,
-          find.descendant(
-              of: find.byType(DisplayCard),
-              matching: find.byKey(const Key("PlanCompleteButton"))).first);
+          find
+              .descendant(
+                  of: find.byType(DisplayCard),
+                  matching: find.byKey(const Key("PlanCompleteButton")))
+              .first);
     });
 
     // Test if the tags interact properly with the alert dialog, chip display, and the created journal entry page
@@ -269,11 +318,19 @@ void main() {
   });
 
   group("Entry Display Tests", () {
-// Navigate to the entries panel
+      // Navigate to the entries panel
     Future<void> setUp(WidgetTester tester) async {
       await skipToEntriesPage(tester);
 
       entries.addAll([
+        JournalEntry(
+            title: "Could be better",
+            entryText: 'I am running out of ideas',
+            dateOverride: DateTime(2021, 3, 17, 5)),
+        JournalEntry(
+            title: "Could be better",
+            entryText: 'I am running out of ideas',
+            dateOverride: DateTime(2021, 3, 17, 6)),
         JournalEntry(
             title: "Could be better",
             entryText: 'I am running out of ideas',
@@ -294,7 +351,7 @@ void main() {
     }
 
     @override
-    Future<void> testForItems( WidgetTester tester, String filter) async {
+    Future<void> testForItems(WidgetTester tester, String filter) async {
       // Show all items in the entry database
       // entry.showAllItems = show;
       await setUp(tester);
@@ -312,22 +369,21 @@ void main() {
       // see if the dropdown is proper
       expect(find.text(filter), findsOneWidget);
 
-			// See if date range is displayed
+      // See if date range is displayed
       DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
       int weekNum = firstOfYear.getWeekNumber(firstOfYear, DateTime.now());
       DateTime upper = firstOfYear.add(Duration(days: (weekNum * 7)));
       DateTime lower = upper.subtract(const Duration(days: 6));
 
       // See if range label is displaying correctly
-			// var rangeText = switch(filter){
-			// 	"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
-			// 	"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
-			// 	_ => DateTime.now().year.toString(),
-			// };
+      // var rangeText = switch(filter){
+      // 	"Week" => '${lower.formatDate().month} ${lower.formatDate().day} - ${upper.formatDate().month} ${upper.formatDate().day}, ${DateTime.now().year.toString()}',
+      // 	"Month" => "${DateTime.now().formatDate().month} ${DateTime.now().year.toString()}",
+      // 	_ => DateTime.now().year.toString(),
+      // };
 
       // Check to see if every entry in the time span is there
       for (JournalEntry entry in entriesInDateRange(upper, lower, entries)) {
-
         final entryKey = find.byKey(Key(entry.id.toString()));
         await tester.pumpAndSettle();
         // Confirm that the entry was seen
@@ -336,23 +392,25 @@ void main() {
       }
     }
 
-
-    testWidgets(
-        'See if all entries are correct and present - Week filter',
+    testWidgets('See if all entries are correct and present - Week filter',
         (WidgetTester tester) async {
       await testForItems(tester, 'Week');
     });
 
+    testWidgets('See if all entries are correct and present - Day filter',
+        (WidgetTester tester) async {
+      await testForItems(tester, 'Day');
 
-    testWidgets(
-        'See if all entries are correct and present - Month filter',
+
+    });
+
+
+    testWidgets('See if all entries are correct and present - Month filter',
         (WidgetTester tester) async {
       await testForItems(tester, 'Month');
     });
 
-
-    testWidgets(
-        'See if all entries are correct and present - Year filter',
+    testWidgets('See if all entries are correct and present - Year filter',
         (WidgetTester tester) async {
       await testForItems(tester, 'Year');
     });
@@ -378,29 +436,33 @@ void main() {
       await tester.pump();
 
       //confirm that entry exist
-			final entryCard = find.descendant(
-				of: entryFinder,
-				matching: find.byType(DisplayCard),
-			);
+      final entryCard = find.descendant(
+        of: entryFinder,
+        matching: find.byType(DisplayCard),
+      );
       expect(entryCard, findsOneWidget);
 
       //Drag the entry, then tap cancel button
       await tester.drag(entryCard, const Offset(-500, 0));
       await tester.pump();
       await tap(tester, find.text("CANCEL"), true);
-      expect(find.descendant(
-				of: entryFinder,
-				matching: find.byType(DisplayCard),
-			), findsOneWidget);
+      expect(
+          find.descendant(
+            of: entryFinder,
+            matching: find.byType(DisplayCard),
+          ),
+          findsOneWidget);
 
       //Drag the entry, then tap delete button
       await tester.drag(entryCard, const Offset(-500, 0));
       await tester.pump();
       await tap(tester, find.text("DELETE"), true);
-      expect(find.descendant(
-				of: entryFinder,
-				matching: find.byType(DisplayCard),
-			), findsNothing);
+      expect(
+          find.descendant(
+            of: entryFinder,
+            matching: find.byType(DisplayCard),
+          ),
+          findsNothing);
     });
   });
 
@@ -495,8 +557,8 @@ void main() {
     testWidgets('Journal entry tag filter test', (WidgetTester tester) async {
       await setUp(tester);
       //initially we should see both journal entries
-			journal1 = find.text(entries[0].title);
-			journal2 = find.text(entries[1].title);
+      journal1 = find.text(entries[0].title);
+      journal2 = find.text(entries[1].title);
 
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
@@ -524,11 +586,12 @@ void main() {
       expect(journal2, findsOneWidget);
     });
 
-    testWidgets('Journal entry emotions filter test', (WidgetTester tester) async {
+    testWidgets('Journal entry emotions filter test',
+        (WidgetTester tester) async {
       await setUp(tester);
       //initially we should see both journal entries
-			journal1 = find.text(entries[0].title);
-			journal2 = find.text(entries[1].title);
+      journal1 = find.text(entries[0].title);
+      journal2 = find.text(entries[1].title);
 
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
@@ -553,6 +616,78 @@ void main() {
       await tap(tester, find.text('Content'), true);
       expect(journal1, findsOneWidget);
       expect(journal2, findsOneWidget);
+    });
+
+    testWidgets("Test showStatsToggle", (WidgetTester tester ) async{
+      const toggleKey = Key("toggleStats");
+      await setUp(tester);
+
+      // clear entries
+      entries.clear();
+      
+      //add new entries
+      final List<JournalEntry> toggleEntries = [
+        JournalEntry(
+            title: "Extraordinary Title",
+            entryText:
+            'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+                'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
+            dateOverride: DateTime.now(),
+            tags: [
+              Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+              Tag(name: 'Centered', color: const Color(0xff794e5e)),
+            ],
+            emotions: [
+              Emotion(name: 'Fear', color: const Color(0xff4c4e52), strength: 50),
+              Emotion(
+                  name: 'Trust', color: const Color(0xff308c7e), strength: 100),
+            ]),
+        JournalEntry(//second
+            title: "Flying Title",
+            entryText:
+            'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+                'bright and the sky was a brilliant shade of blue. ',
+            dateOverride: DateTime.now(),
+            tags: [
+              Tag(name: 'Calm', color: const Color(0xff90c6d0)),
+              Tag(name: 'Content', color: const Color(0xfff1903b)),
+            ],
+            emotions: [
+              Emotion(
+                  name: 'Fear',
+                  color: const Color(0xffff8000),
+                  strength: 50),
+              Emotion(
+                  name: 'Happy', color: const Color(0xffb51c1c), strength: 50),
+            ]),
+      ];
+      //ends new entries
+
+      //sets entries to the new set
+      entries = toggleEntries;
+
+      late Finder calendarButton;
+      late Finder entriesButton;
+      // //tap to cal
+      calendarButton = find.byKey(const Key('navCalendar'));
+      entriesButton = find.byKey(const Key('navEntries'));
+      //
+      await tap( tester,calendarButton, true);
+      await tap( tester,entriesButton, true);
+      //await skipToCalendarPage(tester);
+      //await skipToEntriesPage(tester );
+      //find the key
+      expect(find.byKey(toggleKey), findsOneWidget);
+      //tap the key
+      await tap(tester, find.byKey(toggleKey), true);
+     // await tester.press(find.byKey(toggleKey));
+      //await pumpUntilFound(tester, find.text("Statistics"));
+
+      expect(find.text("Statistics"), findsOneWidget);
+      //use these
+      expect(find.text('Fear'), findsOneWidget);
+      expect(find.text('Calm'), findsOneWidget);
+
     });
   });
 
@@ -593,7 +728,7 @@ void main() {
       JournalEntry(
           title: "Extraordinary beauty of nature",
           entryText:
-          'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
+              'Today, I went for a hike at the nearby nature reserve and was struck by the abundance of wildflowers in bloom. As I walked '
               'along the trail, I noticed a field of vibrant blue, white, and red poppies swaying gently in the breeze.',
           dateOverride: DateTime(2023, 5, 17),
           tags: [],
@@ -604,7 +739,7 @@ void main() {
       JournalEntry(
           title: "Flying Over the Ocean",
           entryText:
-          'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
+              'Last night, I dreamed I was flying over the ocean, soaring through the sky with my arms outstretched. The sun was shining '
               'bright and the sky was a brilliant shade of blue. ',
           dateOverride: DateTime(2022, 9, 12),
           tags: [],
@@ -657,8 +792,7 @@ void main() {
     plans.add(Plan(
         title: "This is an entry",
         entryText: 'This is the body',
-        scheduledDate: DateTime(2022, 2, 7)
-    ));
+        scheduledDate: DateTime(2022, 2, 7)));
 
     // Navigate to the entries panel
     // Navigate to the entries panel
@@ -687,20 +821,30 @@ void main() {
       await tester.drag(entryCard, const Offset(-500, 0));
       await tester.pump();
       await tap(tester, find.text("CANCEL"), true);
-      expect(find.descendant(
-        of: entryFinder,
-        matching: find.byType(DisplayCard),
-      ), findsOneWidget);
+      expect(
+          find.descendant(
+            of: entryFinder,
+            matching: find.byType(DisplayCard),
+          ),
+          findsOneWidget);
 
       //Drag the entry, then tap delete button
       await tester.drag(entryCard, const Offset(-500, 0));
       await tester.pump();
       await tap(tester, find.text("DELETE"), true);
-      expect(find.descendant(
-        of: entryFinder,
-        matching: find.byType(DisplayCard),
-      ), findsNothing);
+      expect(
+          find.descendant(
+            of: entryFinder,
+            matching: find.byType(DisplayCard),
+          ),
+          findsNothing);
     });
   });
-
 }
+
+
+
+
+
+
+

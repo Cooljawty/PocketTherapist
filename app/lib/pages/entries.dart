@@ -8,19 +8,25 @@ import '../uiwidgets/decorations.dart';
 import 'package:app/helper/dates_and_times.dart';
 
 // Display options
-enum DisplayOption{
-	week, month, year;
+enum DisplayOption {
+  day,
+  week,
+  month,
+  year;
 
-	@override
-	String toString() => switch(this) {
-		DisplayOption.week => "Week",
-		DisplayOption.month => "Month",
-		DisplayOption.year => "Year",
-	};
+  @override
+  String toString() => switch (this) {
+        DisplayOption.day => "Day",
+        DisplayOption.week => "Week",
+        DisplayOption.month => "Month",
+        DisplayOption.year => "Year",
+      };
 }
+
 DisplayOption chosenDisplay = DisplayOption.week;
 final List<DropdownMenuItem<String>> displayDropDown = DisplayOption.values
-    .map((item) => DropdownMenuItem<String>(value: item.toString(), child: Text(item.toString())))
+    .map((item) => DropdownMenuItem<String>(
+        value: item.toString(), child: Text(item.toString())))
     .toList();
 
 //
@@ -58,10 +64,11 @@ final List<DropdownMenuItem<String>> displayDropDown = DisplayOption.values
 class EntryPanelPage extends StatefulWidget {
   final bool showPlans;
 
-	final DateTime? targetDate;
+  final DateTime? targetDate;
 
   static Route<dynamic> route({targetDate}) {
-    return MaterialPageRoute(builder: (context) => EntryPanelPage(targetDate: targetDate));
+    return MaterialPageRoute(
+        builder: (context) => EntryPanelPage(targetDate: targetDate));
   }
 
   /// [showPlans] to show either regular entries or plans
@@ -80,11 +87,12 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
   @override
   Widget build(BuildContext context) {
-    entries.sort();
+    entries.sort(); //TODO mess around
+    // Select appropriate list to display
     plans.sort();
-		if (widget.targetDate != null ){
-			items = _getEntriesInRange();
-		}
+    if (widget.targetDate != null) {
+      items = _getEntriesInRange();
+    }
 
     if (widget.showPlans) {
       items = plans.toList();
@@ -110,6 +118,19 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                     // Pad filter to the right
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      SizedBox(
+                        //Has button for second Nav bar
+                        width: MediaQuery.of(context).size.width / 6,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              showStats();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                            ),
+                            key: const Key("toggleStats"),
+                            child: const Icon(Icons.more_horiz)),
+                      ),
                       //only works on entries page
                       Expanded(
                           flex: 2,
@@ -124,6 +145,7 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                                 fillColor: Colors.transparent),
                           )),
                       Container(
+                        //for drop down day-year
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
@@ -137,14 +159,16 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                           value: chosenDisplay.toString(),
                           items: displayDropDown,
                           // if changed set new display option
-													onChanged: (item) => setState(() {
-														chosenDisplay = switch(item) {
-															"Week" => DisplayOption.week,
-															"Month" => DisplayOption.month,
-															_ => DisplayOption.year,
-														};
-													}),
-												),
+                          onChanged: (item) => setState(() {
+                            chosenDisplay = switch (item) {
+                              "Day" => DisplayOption.day,
+                              "Week" => DisplayOption.week,
+                              "Month" => DisplayOption.month,
+                              "Year" => DisplayOption.year,
+                              _ => DisplayOption.year,
+                            };
+                          }),
+                        ),
                       ),
                     ]),
                     //create new row for tag list and make it visible on journal entry page
@@ -189,7 +213,6 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       ),
                     ),
 
-
                     //holds the list of entries
                     Expanded(
                         child: ListView.builder(
@@ -198,7 +221,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                       itemBuilder: (context, index) {
                         // get one item
                         final item = items[index];
-                        final time = widget.showPlans ? item.scheduledDate! : item.creationDate;
+                        final time = widget.showPlans
+                            ? item.scheduledDate!
+                            : item.creationDate;
 
                         // Dividers by filter
                         bool isSameDate = true;
@@ -208,8 +233,10 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
                         } else {
                           // else check if same date by filters
                           isSameDate = time.isWithinDateRange(
-                              widget.showPlans ? items[index - 1].scheduledDate!
-                                  : items[index - 1].creationDate, chosenDisplay.toString());
+                              widget.showPlans
+                                  ? items[index - 1].scheduledDate!
+                                  : items[index - 1].creationDate,
+                              chosenDisplay.toString());
                         }
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -311,6 +338,80 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     );
   }
 
+  String getMostFrequentEmotion(List<JournalEntry> entries) {
+    List<JournalEntry> filteredEntries = _getEntriesInRange();
+
+    //map to track emotion use
+    Map<String, int> emotionsAndAmounts = {
+      'Happy': 0,
+      'Trust': 0,
+      'Fear': 0,
+      'Sad': 0,
+      'Disgust': 0,
+      'Anger': 0,
+      'Surprise': 0,
+      'Anticipation': 0
+    };
+    //no entries
+    if (filteredEntries.isEmpty) {
+      return "N/A";
+    }
+    //go through all entries in the list
+    for (var entry in filteredEntries) {
+      //go through all emotions in the entry
+      for (var emotion in entry.emotions) {
+        emotionsAndAmounts[emotion.name] =
+            emotionsAndAmounts[emotion.name]! + 1;
+      } //ends inner for
+    } // ends outer for
+
+    var emotionCount = 0;
+    var mostEmotion = "";
+    emotionsAndAmounts.forEach((key, value) {
+      if (value > emotionCount && value > 0) {
+        //find the most frequent emotion and add it to the list
+        mostEmotion = key;
+        emotionCount = value;
+      }
+    });
+    return mostEmotion;
+  }
+
+  String getMostCommonTag(List<JournalEntry> entries) {
+    List<JournalEntry> filteredEntries = _getEntriesInRange();
+//list if two or more tags are the most frequent
+
+    //maps for tags and how often they appear
+    Map<String, int> tagsAndOccurrences = {};
+    //go through every entry
+    for (var entry in filteredEntries) {
+      //go through each tag in the entry
+      for (var tag in entry.tags) {
+        //if the tag is not a key in map add it, assign val to 0
+        if (!tagsAndOccurrences.containsKey(tag.name)) {
+          tagsAndOccurrences[tag.name] = 1;
+        } else {
+          tagsAndOccurrences[tag.name] = tagsAndOccurrences[tag.name]! + 1;
+        }
+      }
+    }
+
+    int maxValue = 0;
+    String freqTag = "";
+    //go through map and find most frequent tag based on value
+    tagsAndOccurrences.forEach((key, value) {
+      if (value > maxValue && value > 0) {
+        //find the most frequent tag and add it to the list
+        freqTag = key;
+        maxValue = value;
+      }
+    });
+
+    return freqTag;
+  }
+
+  //end of stats functions
+
   String getTimeRange(DateTime time) {
     if (chosenDisplay == DisplayOption.week) {
       DateTime firstOfYear = DateTime(DateTime.now().year, 1, 1);
@@ -323,6 +424,9 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     } else if (chosenDisplay == DisplayOption.month) {
       // If monthly, only display month and year
       return '${time.formatDate().month} ${time.year.toString()}';
+    } // If day, only display day month and year
+    else if (chosenDisplay == DisplayOption.day) {
+      return '${time.formatDate().day} ${time.formatDate().month} ${time.year.toString()}';
     } else {
       // If yearly, only display year
       return time.year.toString();
@@ -335,23 +439,27 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
     //first trim off excess spaces from the left and right side of input
     input = input.trim();
     //if input is empty then we return the full list, if it isnt then this will be overwritten
-    items = widget.showPlans ? plans.toList(): entries.toList();
-    items = items.where((element) => element.title.toLowerCase().contains(input.toLowerCase())).toList();
+    items = widget.showPlans ? plans.toList() : entries.toList();
+    items = items
+        .where((element) =>
+            element.title.toLowerCase().contains(input.toLowerCase()))
+        .toList();
 
     //is triggered every time the serach bar is updated so that way filtered journal entries
     //are also filtered by tag selection
     items = items.where((element) {
-      for(Tag tag in selectedTags){
-        if (!element.tags.map((e) => e.name).contains(tag.name)){
+      for (Tag tag in selectedTags) {
+        if (!element.tags.map((e) => e.name).contains(tag.name)) {
           return false;
         }
       }
       return true;
     }).toList();
+
     /// Filter by selected emotions as well
     items = items.where((element) {
-      for(String emote in selectedEmotions){
-        if (!element.emotions.map((e) => e.name).contains(emote)){
+      for (String emote in selectedEmotions) {
+        if (!element.emotions.map((e) => e.name).contains(emote)) {
           return false;
         }
       }
@@ -362,51 +470,71 @@ class _EntryPanelPageState extends State<EntryPanelPage> {
 
   List<Widget> generateEmotionFilterChips() {
     List<FilterChip> chips = [];
-    for(final MapEntry<String, Color>(:key, :value) in emotionList.entries){
+    for (final MapEntry<String, Color>(:key, :value) in emotionList.entries) {
       chips.add(FilterChip(
-          selected: selectedEmotions.contains(key),
-          label: Text(key),
-          selectedColor: Color.alphaBlend(
-              value,
-              Theme.of(context)
-                  .colorScheme
-                  .primaryContainer),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          onSelected: (selected) {
-            selectedEmotions.contains(key) ? selectedEmotions.remove(key) : selectedEmotions.add(key);
-            updateFilteredList(searchBarInput.text);
-          },
+        selected: selectedEmotions.contains(key),
+        label: Text(key),
+        selectedColor: Color.alphaBlend(
+            value, Theme.of(context).colorScheme.primaryContainer),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        onSelected: (selected) {
+          selectedEmotions.contains(key)
+              ? selectedEmotions.remove(key)
+              : selectedEmotions.add(key);
+          updateFilteredList(searchBarInput.text);
+        },
       ));
     }
     return chips;
   }
 
-	List<JournalEntry> _getEntriesInRange() {
+  List<JournalEntry> _getEntriesInRange() {
     // Sort the Journal entries by most recent date
-		//Show entreis in range of given date or from today
-		final today = widget.targetDate ?? DateTime.now();
-		final startDate = switch(chosenDisplay) {
-			DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
-			DisplayOption.month => DateTime(today.year, today.month, 1),
-			DisplayOption.year => DateTime(today.year, 1, 1),
-		};
-		final endDate = switch(chosenDisplay) {
-			DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
-			DisplayOption.month => (today.month < DateTime.december
-				? DateTime(today.year, today.month + 1, 1) : DateTime(today.year+1, 1, 1))
-				.subtract(const Duration(days: 1)),
-			DisplayOption.year => DateTime(today.year+1, 1, 1)
-				.subtract(const Duration(days: 1)),
-		};
+    //Show entreis in range of given date or from today
+    final today = widget.targetDate ?? DateTime.now();
+    final startDate = switch (chosenDisplay) {
+      DisplayOption.day => today.subtract(const Duration(days: 1)),
+      DisplayOption.week => today.subtract(Duration(days: today.weekday - 1)),
+      DisplayOption.month => DateTime(today.year, today.month, 1),
+      DisplayOption.year => DateTime(today.year, 1, 1),
+    };
+    final endDate = switch (chosenDisplay) {
+      DisplayOption.day => today.add(const Duration(days: 1)),
+      DisplayOption.week => today.add(Duration(days: 7 - today.weekday)),
+      DisplayOption.month => (today.month < DateTime.december
+              ? DateTime(today.year, today.month + 1, 1)
+              : DateTime(today.year + 1, 1, 1))
+          .subtract(const Duration(days: 1)),
+      DisplayOption.year =>
+        DateTime(today.year + 1, 1, 1).subtract(const Duration(days: 1)),
+    };
     //sortedItems = getFilteredList(entries, chosenDisplay, showAllItems);
 
     // Select appropriate list to display
-		final filteredEntries = entriesInDateRange(startDate, endDate, items).toList();
-		final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
+    final filteredEntries =
+        entriesInDateRange(startDate, endDate, items).toList();
+    final filteredPlans = plansInDateRange(startDate, endDate, items).toList();
 
-		return widget.showPlans ? filteredPlans : filteredEntries;
-	}
-}
+    return widget.showPlans ? filteredPlans : filteredEntries;
+  }
+
+  void showStats() {
+    showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return StatefulBuilder(
+            builder: (stfContext, stfSetState) {
+              return AlertDialog(
+                title: const Text("Statistics"),
+                content: Text(
+                    'Most Frequent Emotion: ${getMostFrequentEmotion(entries)} \n'
+                    ' Most Common Tag: ${getMostCommonTag(entries)} \n'),
+              );
+            },
+          );
+        });
+  }
+} //ends page
 
 /// [EntryPage] is the page where an individual entry is displayed. it handles both
 /// creation of new entries, modification of them.
@@ -442,8 +570,7 @@ class _EntryPageState extends State<EntryPage> {
       entryTextController.text = widget.entry!.entryText;
       isPlan = widget.entry!.scheduledDate == null;
       datePicked = widget.entry!.scheduledDate;
-    }
-    else {
+    } else {
       selectedTags = [];
       selectedEmotions = [];
     }
@@ -627,20 +754,15 @@ class _EntryPageState extends State<EntryPage> {
       // entry exists, we are modifying
       //TODO: do database things for updating journal entry
       // I have the full record, just patch the record.
-      if(widget.entry! is Plan){
-        widget.entry!.update(
-            titleController.text,
-            entryTextController.text,
-            selectedTags,
-            selectedEmotions,
-            datePicked
-        );
+      if (widget.entry! is Plan) {
+        widget.entry!.update(titleController.text, entryTextController.text,
+            selectedTags, selectedEmotions, datePicked);
       } else {
         widget.entry!.update(
-            titleController.text,
-            entryTextController.text,
-            selectedTags,
-            selectedEmotions,
+          titleController.text,
+          entryTextController.text,
+          selectedTags,
+          selectedEmotions,
         );
       }
       return widget.entry!;
@@ -728,30 +850,35 @@ class _EntryPageState extends State<EntryPage> {
       builder: (context) => AlertDialog(
         title: const Text("Guided Journaling"),
         content: SizedBox(
-            width: MediaQuery.of(context).size.width/3,
-            height: MediaQuery.of(context).size.width/3,
+            width: MediaQuery.of(context).size.width / 3,
+            height: MediaQuery.of(context).size.width / 3,
             child: Row(
               children: [
                 const Text('Category: '),
                 DropdownMenu<String>(
                   key: const Key("Template_Selection"),
-                  dropdownMenuEntries: templateSet.keys.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                  dropdownMenuEntries: templateSet.keys
+                      .map((e) => DropdownMenuEntry(value: e, label: e))
+                      .toList(),
                   onSelected: (value) {
                     category = value!;
                   },
                 ),
               ],
-            )
-        ),
+            )),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Generate!"))
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Generate!"))
         ],
       ),
     );
-    if(category == "") return;
+    if (category == "") return;
     DateTime today = DateTime.now();
+
     /// Format [dateSlug] is yyyy-mm-dd
-    String dateSlug ="${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
+    String dateSlug =
+        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     if (titleController.text.isEmpty) {
       titleController.text = "$dateSlug - $category";
     }
@@ -776,7 +903,7 @@ class _EntryPageState extends State<EntryPage> {
         forceMaterialTransparency: true,
       ),
       body: SingleChildScrollView(
-        key: const Key("ScrollMe"),
+          key: const Key("ScrollMe"),
           child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Column(children: [
@@ -787,10 +914,9 @@ class _EntryPageState extends State<EntryPage> {
                     controller: titleController,
                     key: const Key("titleInput"),
                     decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Title',
-                      hintText: 'Inspiration is a tap away...'
-                    ),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Title',
+                        hintText: 'Inspiration is a tap away...'),
                   ),
                 ),
                 // Text input field for the Journal Entry Body
@@ -809,7 +935,8 @@ class _EntryPageState extends State<EntryPage> {
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: 'Journal Entry',
-                        hintText: "Swipe right for ideas, double tap for a question...",
+                        hintText:
+                            "Swipe right for ideas, double tap for a question...",
                       ),
                       maxLines: 20,
                       minLines: 1,

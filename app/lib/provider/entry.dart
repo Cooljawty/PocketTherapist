@@ -331,7 +331,7 @@ class JournalEntry implements Comparable<JournalEntry> {
     return Emotion(
         name: 'None',
         strength: 0,
-        color: Colors.black); // This shouldn't happen
+        color: Colors.grey); // This shouldn't happen
   }
 
   /* TODO
