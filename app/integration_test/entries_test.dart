@@ -624,7 +624,7 @@ void main() {
 
       // clear entries
       entries.clear();
-
+      
       //add new entries
       final List<JournalEntry> toggleEntries = [
         JournalEntry(
@@ -665,6 +665,17 @@ void main() {
 
       //sets entries to the new set
       entries = toggleEntries;
+
+      late Finder calendarButton;
+      late Finder entriesButton;
+      // //tap to cal
+      calendarButton = find.byKey(const Key('navCalendar'));
+      entriesButton = find.byKey(const Key('navEntries'));
+      //
+      await tap( tester,calendarButton, true);
+      await tap( tester,entriesButton, true);
+      //await skipToCalendarPage(tester);
+      //await skipToEntriesPage(tester );
       //find the key
       expect(find.byKey(toggleKey), findsOneWidget);
       //tap the key
