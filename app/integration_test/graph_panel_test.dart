@@ -28,7 +28,23 @@ void main() {
 			),
 		];
 
-		settings.setEmotionGraphType(GraphTypes.time);
+    Map<String, Object> settingsMap = {
+      "configured": true,
+      "encryption": false,
+      "emotionGraphType": GraphTypes.time.toString(),
+      //load emotions for map
+      "emotions": [
+        "Happy",
+        "Trust",
+        "Fear",
+        "Sad",
+        "Disgust",
+        "Anger",
+        "Anticipation",
+        "Surprise"
+      ]
+    };
+    await startAppWithSettings(tester, settingsMap);
 
     //Navigate to graph page
     await skipToCalendarPage(tester, true);
@@ -91,18 +107,19 @@ void main() {
 		var date = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
 		while( date.isBefore(DateTime.utc(DateTime.now().year + 4, DateTime.now().month, 1)) ){
 			//Calculate date of next month
-			if ( date.month < 12 ){
-				date = DateTime( date.year, date.month + 1, 1);
+			if ( date.month != DateTime.december ){
+				date = DateTime.utc( date.year, date.month + 1, 1);
 			} else {
-				date = DateTime( date.year + 1, 1, 1);
+				date = DateTime.utc( date.year + 1, 1, 1);
 			}
 
 			//Go to next month and test amount of days are correct
 			await tap(tester, nextButton);
+			await tester.pump();
 		
-			final endDate = date.add(Duration(days: date.getDaysInMonth()));
-			final calendarDays = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
-			expect(calendarDays, findsNWidgets(7*6));
+			final endDate = DateTime.utc(date.year, date.month, date.getDaysInMonth());
+			final dateRange = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
+			expect(dateRange, findsOneWidget);
 		}
 	});
 
@@ -113,21 +130,22 @@ void main() {
 		expect(previousButton, findsOneWidget);
 
     //Test backward
-		var date = DateTime(DateTime.now().year, DateTime.now().month, 1);
-		while( date.isAfter(DateTime(DateTime.now().year - 4, DateTime.now().month, 1)) ){
+		var date = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
+		while( date.isAfter(DateTime.utc(DateTime.now().year - 4, DateTime.now().month, 1)) ){
 			//Calculate date of next month
-			if ( date.month < 12 ){
-				date = DateTime( date.year, date.month -1, 1);
+			if ( date.month != DateTime.january ){
+				date = DateTime.utc( date.year, date.month -1, 1);
 			} else {
-				date = DateTime( date.year -1, 12, 1);
+				date = DateTime.utc( date.year -1, 12, 1);
 			}
 
 			//Go to next month and test amount of days are correct
 			await tap(tester, previousButton);
+			await tester.pump();
 		
-			final endDate = date.add(Duration(days: date.getDaysInMonth()));
-			final calendarDays = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
-			expect(calendarDays, findsNWidgets(7*6));
+			final endDate = DateTime.utc(date.year, date.month, date.getDaysInMonth());
+			final dateRange = find.text("${date.formatDate().month} ${date.formatDate().day} - ${endDate.formatDate().day}");
+			expect(dateRange, findsOneWidget);
 		}
 	});
 }
